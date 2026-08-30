@@ -1,4 +1,5 @@
 import { PlaceCategory } from '@/types';
+import { getAssetUrl } from '@/utils/paths';
 
 export const JEDDAW_IMAGE_ASSETS = {
   heritage: '/images/places/historic-al-balad.jpg',
@@ -25,44 +26,50 @@ export function resolvePlaceImageUrl(
   providedUrl?: string
 ): string {
   if (providedUrl && (providedUrl.startsWith('/') || providedUrl.startsWith('http'))) {
-    return providedUrl;
+    return getAssetUrl(providedUrl);
   }
+
+  let chosen = JEDDAW_IMAGE_ASSETS.waterfront;
 
   if (tags.includes('yacht') || tags.includes('marina')) {
-    return JEDDAW_IMAGE_ASSETS.yacht_marina;
-  }
-  if (tags.includes('digital_art') || tags.includes('teamlab')) {
-    return JEDDAW_IMAGE_ASSETS.digital_art;
-  }
-  if (tags.includes('specialty_coffee') || tags.includes('bakery')) {
-    return JEDDAW_IMAGE_ASSETS.specialty_coffee;
-  }
-  if (tags.includes('seafood')) {
-    return JEDDAW_IMAGE_ASSETS.seafood;
-  }
-  if (tags.includes('beach') || tags.includes('resort')) {
-    return JEDDAW_IMAGE_ASSETS.beach_sunset;
-  }
-  if (tags.includes('gaming') || tags.includes('theme_park') || tags.includes('entertainment')) {
-    return JEDDAW_IMAGE_ASSETS.entertainment_gaming;
+    chosen = JEDDAW_IMAGE_ASSETS.yacht_marina;
+  } else if (tags.includes('digital_art') || tags.includes('teamlab')) {
+    chosen = JEDDAW_IMAGE_ASSETS.digital_art;
+  } else if (tags.includes('specialty_coffee') || tags.includes('bakery')) {
+    chosen = JEDDAW_IMAGE_ASSETS.specialty_coffee;
+  } else if (tags.includes('seafood')) {
+    chosen = JEDDAW_IMAGE_ASSETS.seafood;
+  } else if (tags.includes('beach') || tags.includes('resort')) {
+    chosen = JEDDAW_IMAGE_ASSETS.beach_sunset;
+  } else if (tags.includes('gaming') || tags.includes('theme_park') || tags.includes('entertainment')) {
+    chosen = JEDDAW_IMAGE_ASSETS.entertainment_gaming;
+  } else {
+    switch (category) {
+      case 'heritage':
+        chosen = JEDDAW_IMAGE_ASSETS.heritage;
+        break;
+      case 'waterfront':
+        chosen = JEDDAW_IMAGE_ASSETS.waterfront;
+        break;
+      case 'culinary':
+        chosen = tags.includes('fine_dining')
+          ? JEDDAW_IMAGE_ASSETS.fine_dining
+          : JEDDAW_IMAGE_ASSETS.specialty_coffee;
+        break;
+      case 'arts_entertainment':
+        chosen = JEDDAW_IMAGE_ASSETS.digital_art;
+        break;
+      case 'beach_resorts':
+        chosen = JEDDAW_IMAGE_ASSETS.beach_sunset;
+        break;
+      case 'nature_parks':
+        chosen = JEDDAW_IMAGE_ASSETS.entertainment_gaming;
+        break;
+      default:
+        chosen = JEDDAW_IMAGE_ASSETS.waterfront;
+        break;
+    }
   }
 
-  switch (category) {
-    case 'heritage':
-      return JEDDAW_IMAGE_ASSETS.heritage;
-    case 'waterfront':
-      return JEDDAW_IMAGE_ASSETS.waterfront;
-    case 'culinary':
-      return tags.includes('fine_dining')
-        ? JEDDAW_IMAGE_ASSETS.fine_dining
-        : JEDDAW_IMAGE_ASSETS.specialty_coffee;
-    case 'arts_entertainment':
-      return JEDDAW_IMAGE_ASSETS.digital_art;
-    case 'beach_resorts':
-      return JEDDAW_IMAGE_ASSETS.beach_sunset;
-    case 'nature_parks':
-      return JEDDAW_IMAGE_ASSETS.entertainment_gaming;
-    default:
-      return JEDDAW_IMAGE_ASSETS.waterfront;
-  }
+  return getAssetUrl(chosen);
 }

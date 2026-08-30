@@ -7,6 +7,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 import { Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
+import { getAssetUrl } from '@/utils/paths';
 
 interface Destination {
   id: 'obhur' | 'balad' | 'rawdah';
@@ -42,7 +43,7 @@ const DESTINATIONS: Record<string, Destination> = {
     weatherEn: '🌊 28°C • Gentle Sea Breeze • Golden Sunset',
     budget: '~150 ر.س',
     budgetEn: '~150 SAR',
-    bgImage: '/images/realms/obhur-marina.jpg',
+    bgImage: getAssetUrl('/images/realms/obhur-marina.jpg'),
     districtId: 'obhur',
     districtName: 'أبحر (الشمالية والجنوبية)',
     vibe: 'beach_sunset',
@@ -62,7 +63,7 @@ const DESTINATIONS: Record<string, Destination> = {
     weatherEn: '🌙 26°C • Magical Evening • Al-Balad Lanterns',
     budget: '~75 ر.س',
     budgetEn: '~75 SAR',
-    bgImage: '/images/realms/albalad-heritage.jpg',
+    bgImage: getAssetUrl('/images/realms/albalad-heritage.jpg'),
     districtId: 'al-balad',
     districtName: 'البلد التاريخية',
     vibe: 'heritage_arts',
@@ -82,7 +83,7 @@ const DESTINATIONS: Record<string, Destination> = {
     weatherEn: '✨ 27°C • Vibrant Atmosphere • Specialty Coffee Hub',
     budget: '~220 ر.س',
     budgetEn: '~220 SAR',
-    bgImage: '/images/realms/alrawdah-coffee.jpg',
+    bgImage: getAssetUrl('/images/realms/alrawdah-coffee.jpg'),
     districtId: 'al-rawdah',
     districtName: 'حي الروضة',
     vibe: 'coffee_dessert',

@@ -6,6 +6,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 
 export const Footer: React.FC = () => {
   const { isRTL, language } = useLanguage();
@@ -30,7 +31,7 @@ export const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               <div className="w-11 h-11 rounded-2xl overflow-hidden bg-abyss-900 border border-gold-500/40 p-0.5 flex items-center justify-center shadow-glow-gold shrink-0">
                 <img
-                  src="/images/brand/jadawel-logo.jpg"
+                  src={getAssetUrl('/images/brand/jadawel-logo.jpg')}
                   alt="Jadawel Logo"
                   className="w-full h-full object-cover rounded-[14px]"
                 />

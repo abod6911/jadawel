@@ -14,11 +14,12 @@ import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
+import { getAssetUrl } from '@/utils/paths';
 
 const JEDDAH_SNAPS = [
-  { url: '/images/realms/obhur-marina.jpg', label: 'واجهة ومارينا أبحر', en: 'Obhur Marina' },
-  { url: '/images/realms/albalad-heritage.jpg', label: 'رواشين البلد التاريخية', en: 'Al-Balad Heritage' },
-  { url: '/images/realms/alrawdah-coffee.jpg', label: 'كافيهات الروضة المختصة', en: 'Al-Rawdah Coffee' },
+  { url: getAssetUrl('/images/realms/obhur-marina.jpg'), label: 'واجهة ومارينا أبحر', en: 'Obhur Marina' },
+  { url: getAssetUrl('/images/realms/albalad-heritage.jpg'), label: 'رواشين البلد التاريخية', en: 'Al-Balad Heritage' },
+  { url: getAssetUrl('/images/realms/alrawdah-coffee.jpg'), label: 'كافيهات الروضة المختصة', en: 'Al-Rawdah Coffee' },
 ];
 
 export const PageOrchestrator: React.FC = () => {

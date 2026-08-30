@@ -13,6 +13,7 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 
 export const Navbar: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
@@ -47,7 +48,7 @@ export const Navbar: React.FC = () => {
         >
           <div className="w-8 h-8 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden bg-abyss-950 border border-gold-500/40 p-0.5 flex items-center justify-center shadow-glow-gold group-hover:scale-105 transition-transform shrink-0">
             <img
-              src="/images/brand/jadawel-logo.jpg"
+              src={getAssetUrl('/images/brand/jadawel-logo.jpg')}
               alt="Jadawel Logo"
               className="w-full h-full object-cover rounded-[10px] sm:rounded-[14px]"
             />
