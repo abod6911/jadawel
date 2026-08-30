@@ -8,6 +8,7 @@ import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { Place } from '@/types';
 import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 
 export const SwapPlaceModal: React.FC = () => {
   const { language, t } = useLanguage();
@@ -55,7 +56,7 @@ export const SwapPlaceModal: React.FC = () => {
         <div className="p-3.5 rounded-2xl bg-navy-950 border border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <img
-              src={currentPlace.imageUrl}
+              src={getAssetUrl(currentPlace.imageUrl)}
               alt={currentPlace.nameEn}
               className="w-12 h-12 rounded-xl object-cover"
             />
@@ -92,7 +93,7 @@ export const SwapPlaceModal: React.FC = () => {
                 >
                   <div className="flex items-center gap-3">
                     <img
-                      src={altPlace.imageUrl}
+                      src={getAssetUrl(altPlace.imageUrl)}
                       alt={altPlace.nameEn}
                       className="w-14 h-14 rounded-xl object-cover shrink-0"
                     />

@@ -5,6 +5,7 @@ import { Waves, Flame, Sparkles, Coffee, Landmark, Gamepad2, ArrowLeft, ArrowRig
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 
 export const BentoMoodGrid: React.FC = () => {
   const { language, isRTL } = useLanguage();
@@ -48,7 +49,7 @@ export const BentoMoodGrid: React.FC = () => {
           className="md:col-span-7 relative min-h-[300px] md:min-h-[340px] rounded-[2rem] overflow-hidden border border-white/15 group cursor-pointer shadow-cinematic hover:border-teal-400/50 transition-all duration-500"
         >
           <img
-            src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80&w=1200"
+            src={getAssetUrl('/images/moods/mood-beach.jpg')}
             alt="شواطئ وغروب بحري"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
@@ -85,7 +86,7 @@ export const BentoMoodGrid: React.FC = () => {
           className="md:col-span-5 relative min-h-[300px] md:min-h-[340px] rounded-[2rem] overflow-hidden border border-white/15 group cursor-pointer shadow-cinematic hover:border-gold-400/50 transition-all duration-500"
         >
           <img
-            src="https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&q=80&w=1200"
+            src={getAssetUrl('/images/moods/mood-food.jpg')}
             alt="مطاعم ومقاهي رايقة"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
@@ -122,7 +123,7 @@ export const BentoMoodGrid: React.FC = () => {
           className="md:col-span-6 relative min-h-[260px] md:min-h-[280px] rounded-[2rem] overflow-hidden border border-white/15 group cursor-pointer shadow-cinematic hover:border-gold-500/50 transition-all duration-500"
         >
           <img
-            src="https://images.unsplash.com/photo-1578895210405-907db486c111?auto=format&fit=crop&q=80&w=1200"
+            src={getAssetUrl('/images/moods/mood-heritage.jpg')}
             alt="سهرات وتراث البلد"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />
@@ -155,7 +156,7 @@ export const BentoMoodGrid: React.FC = () => {
           className="md:col-span-6 relative min-h-[260px] md:min-h-[280px] rounded-[2rem] overflow-hidden border border-white/15 group cursor-pointer shadow-cinematic hover:border-coral-400/50 transition-all duration-500"
         >
           <img
-            src="https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&q=80&w=1200"
+            src={getAssetUrl('/images/moods/mood-gaming.jpg')}
             alt="ألعاب وتحديات حماس"
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
           />

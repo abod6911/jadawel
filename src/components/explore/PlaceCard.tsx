@@ -5,6 +5,7 @@ import { Star, MapPin, Clock, Plus, ExternalLink, Heart, Check } from 'lucide-re
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Place } from '@/types';
+import { getAssetUrl } from '@/utils/paths';
 
 interface PlaceCardProps {
   place: Place;
@@ -31,7 +32,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       {/* Image Banner */}
       <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
         <img
-          src={place.imageUrl}
+          src={getAssetUrl(place.imageUrl)}
           alt={place.nameEn}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           loading="lazy"

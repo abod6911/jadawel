@@ -6,6 +6,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { Itinerary, PlanVariantKey } from '@/types';
 import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 
 interface StoryPassModalProps {
@@ -85,7 +86,7 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-2xl overflow-hidden bg-abyss-950 border border-gold-500/50 p-0.5 flex items-center justify-center shadow-glow-gold shrink-0">
                 <img
-                  src="/images/brand/jadawel-logo.jpg"
+                  src={getAssetUrl('/images/brand/jadawel-logo.jpg')}
                   alt="Jadawel Logo"
                   className="w-full h-full object-cover rounded-[14px]"
                 />

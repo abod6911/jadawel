@@ -20,6 +20,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { ItineraryStop } from '@/types';
 import { soundEngine } from '@/utils/audioEngine';
+import { getAssetUrl } from '@/utils/paths';
 
 interface TimelineCardProps {
   stop: ItineraryStop;
@@ -124,7 +125,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
           {/* 4K Visual Thumbnail */}
           <div className="md:col-span-4 relative aspect-[16/11] rounded-2xl overflow-hidden bg-abyss-950 border border-white/10 group-hover:border-gold-500/30 transition-colors">
             <img
-              src={place.imageUrl}
+              src={getAssetUrl(place.imageUrl)}
               alt={place.nameEn}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />

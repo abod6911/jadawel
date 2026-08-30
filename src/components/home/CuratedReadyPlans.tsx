@@ -5,6 +5,7 @@ import { Sparkles, ArrowLeft, ArrowRight, Clock, Coins, MapPin, Tag, Gift } from
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { CURATED_PLANS } from '@/data/curated-plans';
+import { getAssetUrl } from '@/utils/paths';
 
 export const CuratedReadyPlans: React.FC = () => {
   const { language, isRTL } = useLanguage();
@@ -64,7 +65,7 @@ export const CuratedReadyPlans: React.FC = () => {
               <div>
                 <div className="relative aspect-[16/10] overflow-hidden bg-navy-950">
                   <img
-                    src={plan.heroImage}
+                    src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />

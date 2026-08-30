@@ -16,6 +16,7 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
+import { getAssetUrl } from '@/utils/paths';
 
 export const PlaceDetailModal: React.FC = () => {
   const { language, t } = useLanguage();
@@ -38,7 +39,7 @@ export const PlaceDetailModal: React.FC = () => {
         {/* Hero Photo Banner */}
         <div className="relative aspect-[16/9] -mx-5 -mt-5 sm:-mx-6 sm:-mt-6 rounded-t-3xl overflow-hidden bg-navy-950">
           <img
-            src={selectedPlace.imageUrl}
+            src={getAssetUrl(selectedPlace.imageUrl)}
             alt={selectedPlace.nameEn}
             className="w-full h-full object-cover"
           />
