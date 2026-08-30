@@ -1,0 +1,103 @@
+/**
+ * JADAWEL (جداول) — Luxury Red Sea Design Tokens & Atmospheric System
+ */
+
+:root {
+  /* Mathematical Scaling Engine for 320px to 4K */
+  --dw: 1440;
+  --dh: 960;
+  --u: max(min(0.75px, calc(100vh / 720)), min(calc(100vw / 1440), calc(100vh / 960)));
+  --dh-px: calc(960 * var(--u));
+  --vshift: calc(max(0px, (100vh - var(--dh-px))) * 0.4);
+
+  /* Ambient Canvas & Depth */
+  --bg-abyss: #081B26;                         /* Deep Red Sea Midnight Canvas */
+  --bg-surface-glass: rgba(16, 41, 52, 0.65); /* Ultra-blurred Glassmorphic Surface */
+  --bg-elevated: #13303D;                       /* Elevated Interactive Cards */
+  --bg-sand-warm: #FBF8F2;                      /* Editorial Warm Sand/Ivory for light elements */
+
+  /* Atmospheric Sunset & Coral Accents */
+  --coral-primary: #F46F52;                     /* Jadawel Signature Sunset Coral */
+  --coral-glow: rgba(244, 111, 82, 0.35);
+  --teal-marine: #1D8C88;                       /* Marine Coastal Teal */
+  --teal-glow: rgba(29, 140, 136, 0.35);
+  --gold-rawashin: #F6C77A;                     /* Hijazi Heritage Gold */
+  --gold-glow: rgba(246, 199, 122, 0.25);
+
+  /* Typography Colors */
+  --text-pearl: #F8F7F3;                        /* Soft Luminescent Pearl White */
+  --text-muted: #AFC1C6;                        /* Elegant Slate */
+  --text-dark: #0E1E26;
+
+  /* Borders & Cinematic Glows */
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-active: rgba(246, 199, 122, 0.4);
+  --shadow-cinematic: 0 20px 50px -10px rgba(0, 0, 0, 0.6), 0 0 30px rgba(29, 140, 136, 0.15);
+  --shadow-coral-glow: 0 10px 30px -5px rgba(244, 111, 82, 0.45);
+  --shadow-gold-glow: 0 10px 30px -5px rgba(246, 199, 122, 0.35);
+  --shadow-teal-glow: 0 10px 30px -5px rgba(29, 140, 136, 0.35);
+}
+
+@supports (height: 100dvh) {
+  :root {
+    --u: max(min(0.75px, calc(100dvh / 720)), min(calc(100vw / 1440), calc(100dvh / 960)));
+    --vshift: calc(max(0px, (100dvh - var(--dh-px))) * 0.4);
+  }
+}
+
+/* Glassmorphism & Atmospheric Utilities */
+.glass-surface {
+  background: var(--bg-surface-glass);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border-glass);
+}
+
+.glass-surface-elevated {
+  background: rgba(19, 48, 61, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.glass-dock {
+  background: rgba(7, 21, 30, 0.85);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid rgba(246, 199, 122, 0.25);
+  box-shadow: var(--shadow-cinematic);
+}
+
+/* Atmospheric Mesh Gradients */
+.bg-mesh-abyss {
+  background-color: #081B26;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(29, 140, 136, 0.22) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(244, 111, 82, 0.18) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(246, 199, 122, 0.12) 0px, transparent 50%);
+}
+
+.bg-mesh-card {
+  background: linear-gradient(145deg, rgba(19, 48, 61, 0.85) 0%, rgba(7, 21, 30, 0.95) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Floating animation */
+@keyframes floatGentle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.animate-float {
+  animation: floatGentle 5s ease-in-out infinite;
+}
+
+/* Hijazi Rawashin Lattice SVG overlay */
+.rawashin-lattice {
+  background-image: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M20 0 L40 20 L20 40 L0 20 Z' fill='none' stroke='rgba(246,199,122,0.06)' stroke-width='1'/%3E%3Ccircle cx='20' cy='20' r='4' fill='none' stroke='rgba(29,140,136,0.08)' stroke-width='1'/%3E%3C/svg%3E");
+  background-size: 40px 40px;
+}
