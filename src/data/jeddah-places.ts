@@ -1473,6 +1473,9 @@ export const JEDDAH_PLACES: Place[] = [
   }
 ];
 
+export const JEDDAH_PLACES_SEED: Place[] = JEDDAH_PLACES;
 export const JEDDAW_PLACES_SEED: Place[] = JEDDAH_PLACES;
 export const JEDDAH_SEED_PLACES: Place[] = JEDDAH_PLACES;
+
+export type { Place, JeddahDistrict, CompanionType, VibeType } from '@/types';
 

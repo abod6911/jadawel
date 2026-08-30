@@ -506,3 +506,187 @@ function getDistrictLabel(districtId: string): string {
   const found = JEDDAH_DISTRICTS.find((d) => d.id === districtId);
   return found ? found.nameAr : 'جدة';
 }
+
+// =========================================================================
+// JADAWEL V2 MASTER GENERATOR & TYPES
+// =========================================================================
+
+export interface PlanStop {
+  stopOrder: number;
+  timeSlot: string;
+  place: Place;
+  transitMinutesToNext: number;
+  transitKmToNext: number;
+  estimatedCostSAR: number;
+}
+
+export interface GeneratedPlan {
+  id: string;
+  title: { ar: string; en: string };
+  tagline: { ar: string; en: string };
+  archetype: 'fast_local' | 'balanced_master' | 'free_route' | 'luxury_vip';
+  totalDurationHours: string;
+  totalCostSAR: number;
+  totalTransitMinutes: number;
+  totalKm: number;
+  isFreePlan: boolean;
+  stops: PlanStop[];
+}
+
+export interface UserPreferences {
+  district: string;
+  companion: string;
+  budgetTier: 'free_0' | 'economy_60' | 'balanced_150' | 'luxury_350' | string;
+  durationHours: number; // e.g., 2, 4, 6
+  vibe: string;
+  startTime?: string; // "17:00"
+}
+
+/**
+ * Haversine Distance in Kilometers
+ */
+export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Number((R * c).toFixed(1));
+}
+
+/**
+ * Master Plan Generator
+ */
+export function generateJadawelPlans(prefs: UserPreferences): GeneratedPlan[] {
+  const isFreeRequested = prefs.budgetTier === 'free_0' || prefs.budgetTier === 'free';
+
+  // 1. Candidate Filtering
+  let pool = JEDDAH_PLACES.filter((p) => {
+    if (isFreeRequested) return p.averageCostSAR === 0;
+    if (prefs.district !== 'all' && prefs.district !== 'all_jeddah' && p.district !== prefs.district) {
+      return true; // Keep with slight penalty for multi-pass
+    }
+    return true;
+  });
+
+  if (pool.length < 3) pool = JEDDAH_PLACES;
+
+  // Helper to construct a curated route
+  const buildArchetypePlan = (
+    archetype: GeneratedPlan['archetype'],
+    titleAr: string,
+    titleEn: string,
+    taglineAr: string,
+    taglineEn: string,
+    filterFn: (p: Place) => boolean
+  ): GeneratedPlan => {
+    let selected = pool.filter(filterFn);
+    if (selected.length < 3) selected = pool;
+
+    // Linear Proximity Sorting
+    const sortedStops: Place[] = [selected[0]];
+    const remaining = selected.slice(1);
+
+    while (remaining.length > 0 && sortedStops.length < 4) {
+      const current = sortedStops[sortedStops.length - 1];
+      remaining.sort((a, b) => {
+        const distA = calculateDistanceKm(current.coordinates.lat, current.coordinates.lng, a.coordinates.lat, a.coordinates.lng);
+        const distB = calculateDistanceKm(current.coordinates.lat, current.coordinates.lng, b.coordinates.lat, b.coordinates.lng);
+        return distA - distB;
+      });
+      sortedStops.push(remaining.shift()!);
+    }
+
+    // Build timeline slots
+    let currentHour = 17; // Default 5:00 PM
+    let currentMin = 0;
+    let totalCost = 0;
+    let totalKm = 0;
+    let totalTransitMins = 0;
+
+    const stops: PlanStop[] = sortedStops.map((place, idx) => {
+      const timeSlot = `${String(currentHour % 12 || 12).padStart(2, '0')}:${String(currentMin).padStart(2, '0')} ${currentHour >= 12 ? 'م' : 'ص'}`;
+      totalCost += place.averageCostSAR;
+
+      let dist = 0;
+      let transit = 0;
+
+      if (idx < sortedStops.length - 1) {
+        const next = sortedStops[idx + 1];
+        dist = calculateDistanceKm(place.coordinates.lat, place.coordinates.lng, next.coordinates.lat, next.coordinates.lng);
+        transit = Math.max(8, Math.round(dist * 2.5)); // ~2.5 mins per km in city
+        totalKm += dist;
+        totalTransitMins += transit;
+      }
+
+      // Advance time clock
+      currentMin += (place.durationMinutes || place.dwellTimeMinutes || 60) + transit;
+      while (currentMin >= 60) {
+        currentHour += 1;
+        currentMin -= 60;
+      }
+
+      return {
+        stopOrder: idx + 1,
+        timeSlot,
+        place,
+        transitMinutesToNext: transit,
+        transitKmToNext: dist,
+        estimatedCostSAR: place.averageCostSAR,
+      };
+    });
+
+    return {
+      id: `plan-${archetype}-${Date.now()}`,
+      title: { ar: titleAr, en: titleEn },
+      tagline: { ar: taglineAr, en: taglineEn },
+      archetype,
+      totalDurationHours: `${prefs.durationHours || 4} ساعات`,
+      totalCostSAR: totalCost,
+      totalTransitMinutes: totalTransitMins,
+      totalKm: Number(totalKm.toFixed(1)),
+      isFreePlan: totalCost === 0,
+      stops,
+    };
+  };
+
+  // Generate the 3 tailored plans
+  return [
+    buildArchetypePlan(
+      'fast_local',
+      '⚡ الأقرب والأسرع',
+      'Fast & Local',
+      'أقل وقت ضائع في الطريق ومحطات متجاورة بنفس الحي',
+      'Minimal transit time with clustered neighborhood stops',
+      (p) => (prefs.district === 'all' || prefs.district === 'all_jeddah' ? true : p.district === prefs.district)
+    ),
+    buildArchetypePlan(
+      'balanced_master',
+      '⚖️ الخطة الموزونة',
+      'The Balanced Masterpiece',
+      'أفضل مزيج بين التمشية، القهوة المختصة، وتجربة الأكل المميزة',
+      'Ideal rhythm between sightseeing, specialty coffee, and dining',
+      (p) => p.rating >= 4.7
+    ),
+    isFreeRequested
+      ? buildArchetypePlan(
+          'free_route',
+          '🆓 خطة الروقان المجانية (0 ر.س)',
+          '100% Free Jeddah Route',
+          'استمتع بجدة والبحر والتراث بدون ما تدفع ولا ريال',
+          'Experience Jeddah waterfronts and heritage at zero cost',
+          (p) => p.averageCostSAR === 0
+        )
+      : buildArchetypePlan(
+          'luxury_vip',
+          '💎 التجربة الفخمة VIP',
+          'Signature Luxury VIP',
+          'أرقى الجلسات، إطلالات البحر واليخوت، وتجارب فاخرة',
+          'Premium yachts, sea view lounges, and fine dining',
+          (p) => p.averageCostSAR >= 90
+        ),
+  ];
+}
+
