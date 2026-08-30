@@ -59,6 +59,7 @@ export type VibeType =
   | 'gaming_challenges'
   | 'calm_nature'
   | 'heritage_arts'
+  | 'free_walk'
   | 'surprise_me';
 
 export type AmbienceType =
@@ -66,7 +67,7 @@ export type AmbienceType =
   | 'open_air_beach'
   | 'mixed';
 
-export type BudgetTier = 'budget' | 'economy' | 'moderate' | 'premium' | 'luxury';
+export type BudgetTier = 'free' | 'budget' | 'economy' | 'moderate' | 'premium' | 'luxury';
 
 export interface Place {
   id: string;
@@ -86,6 +87,7 @@ export interface Place {
   };
   priceTier: PriceTier;
   averageCostSAR: number;
+  isFree?: boolean;
   durationMinutes?: number;
   dwellTimeMinutes: number;
   bestTime: BestTimeToVisit;
@@ -216,7 +218,7 @@ export interface WizardPreferences {
   };
 }
 
-export type PlanVariantKey = 'fastest' | 'balanced' | 'luxury';
+export type PlanVariantKey = 'fastest' | 'balanced' | 'luxury' | 'free';
 
 export interface PlanVariant {
   id: PlanVariantKey;
@@ -242,11 +244,14 @@ export interface Itinerary {
   createdAt: string;
   preferences: WizardPreferences;
   daysCount: number;
-  activeVariant: 'fastest' | 'balanced' | 'luxury';
+  activeVariant: PlanVariantKey;
   variants: {
+    [key in PlanVariantKey]?: PlanVariant;
+  } & {
     fastest: PlanVariant;
     balanced: PlanVariant;
     luxury: PlanVariant;
+    free?: PlanVariant;
   };
   stops: ItineraryStop[];
   financials: FinancialBreakdown;

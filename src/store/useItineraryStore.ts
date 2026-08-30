@@ -7,6 +7,7 @@ import {
   Theme,
   WizardPreferences,
   PlanVariant,
+  PlanVariantKey,
 } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { CURATED_PLANS } from '@/data/curated-plans';
@@ -28,8 +29,8 @@ interface ItineraryState {
 
   // Itinerary & Variants
   currentItinerary: Itinerary | null;
-  activeVariant: 'fastest' | 'balanced' | 'luxury';
-  savedItineraries: Itinerary[];
+  activeVariant: PlanVariantKey;
+  savedItineraries: [];
   favoritePlaceIds: string[];
 
   // Wizard state (7 steps)
@@ -57,7 +58,7 @@ interface ItineraryState {
   setWizardStep: (step: number) => void;
   updateWizardPreferences: (partial: Partial<WizardPreferences>) => void;
   generatePlanFromPreferences: () => void;
-  setActiveVariant: (variant: 'fastest' | 'balanced' | 'luxury') => void;
+  setActiveVariant: (variant: PlanVariantKey) => void;
 
   // Live Outing Controls
   openLiveOuting: () => void;
@@ -147,7 +148,7 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
       const plan = generateMultiPlanVariants(get().wizardPreferences);
       set({
         currentItinerary: plan,
-        activeVariant: 'balanced',
+        activeVariant: plan.activeVariant,
         isGeneratingPlan: false,
         activeNavTab: 'timeline',
       });
@@ -157,7 +158,8 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
   setActiveVariant: (variantKey) => {
     const current = get().currentItinerary;
     if (!current) return;
-    const variantObj = current.variants[variantKey];
+    const variantObj = current.variants[variantKey] || current.variants.balanced;
+    if (!variantObj) return;
     set({
       activeVariant: variantKey,
       currentItinerary: {

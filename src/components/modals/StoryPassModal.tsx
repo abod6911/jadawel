@@ -28,7 +28,7 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
 
   if (!itinerary) return null;
 
-  const currentPlan = itinerary.variants[activeVariant];
+  const currentPlan = itinerary.variants[activeVariant] || itinerary.variants.balanced;
 
   const handleShareStory = () => {
     soundEngine.playClick();

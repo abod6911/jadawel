@@ -19,8 +19,8 @@ export const SplitBillModal: React.FC = () => {
 
   if (!isSplitBillOpen || !currentItinerary) return null;
 
-  const currentVariant = currentItinerary.variants[currentItinerary.activeVariant];
-  const financials = currentVariant.financials;
+  const currentVariant = currentItinerary.variants[currentItinerary.activeVariant] || currentItinerary.variants.balanced;
+  const financials = currentVariant?.financials || currentItinerary.financials;
 
   const safeTotalSAR = financials.totalSAR ?? (financials.totalPerPersonSAR * 2);
   const foodBase = financials.foodAndBeverageSAR || Math.round(safeTotalSAR * 0.65);

@@ -20,17 +20,18 @@ export const SwapPlaceModal: React.FC = () => {
   if (!stopToSwap) return null;
 
   const currentPlace = stopToSwap.place;
-
-  // Find candidate alternatives in same category, district, or same vibe
   const existingPlaceIds = new Set(currentItinerary?.stops.map((s) => s.place.id));
+  const isFreeContext = currentPlace.averageCostSAR === 0 || currentItinerary?.activeVariant === 'free';
 
   const alternatives = JEDDAH_PLACES.filter(
     (p) =>
       p.id !== currentPlace.id &&
       !existingPlaceIds.has(p.id) &&
+      (isFreeContext ? p.averageCostSAR === 0 : true) &&
       (p.district === currentPlace.district ||
         p.category === currentPlace.category ||
-        p.priceTier === currentPlace.priceTier)
+        p.priceTier === currentPlace.priceTier ||
+        (isFreeContext && p.averageCostSAR === 0))
   ).slice(0, 5);
 
   const handleSelectAlternative = (newPlace: Place) => {

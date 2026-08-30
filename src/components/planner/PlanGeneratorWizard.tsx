@@ -317,9 +317,10 @@ export const PlanGeneratorWizard: React.FC = () => {
 
               {/* Step 5: Budget */}
               {wizardStep === 5 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-3.5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3 sm:gap-3.5">
                   {[
-                    { id: 'economy', label: 'على قد الجيب (≤60 ر.س)', desc: 'أماكن مجانية ومطاعم شعبية لذيذة' },
+                    { id: 'free', label: 'خطة مجانية 100% (0 ر.س)', desc: 'ممشى بحري، أزقة التراث، وفنون مفتوحة' },
+                    { id: 'economy', label: 'على قد الجيب (≤60 ر.س)', desc: 'أماكن ومطاعم ومقاهي شعبية لذيذة' },
                     { id: 'moderate', label: 'موزونة (~150 ر.س)', desc: 'مقاهي مختصة ووجبة عشاء مميزة' },
                     { id: 'premium', label: 'دلع ومميز (~350 ر.س)', desc: 'مطاعم راقية وفعاليات ومقاهي فخمة' },
                     { id: 'luxury', label: 'VIP فخم (+600 ر.س)', desc: 'نادي اليخوت والمارينا وأرقى الموائد' },

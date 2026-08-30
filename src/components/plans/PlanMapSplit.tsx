@@ -10,12 +10,12 @@ export const PlanMapSplit: React.FC = () => {
 
   if (!currentItinerary) return null;
 
-  const currentVariantData = currentItinerary.variants[activeVariant];
+  const currentVariantData = (currentItinerary.variants as any)[activeVariant] || currentItinerary.variants.balanced;
 
   return (
     <div className="w-full h-full min-h-[480px] lg:min-h-[580px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-gold-500/30 shadow-cinematic bg-abyss-950">
       <RouteMap
-        stops={currentVariantData.stops}
+        stops={currentVariantData?.stops || currentItinerary.stops}
         className="w-full h-full min-h-[480px] lg:min-h-[580px]"
       />
     </div>

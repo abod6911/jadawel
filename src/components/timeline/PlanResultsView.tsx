@@ -41,6 +41,8 @@ import { StoryPassModal } from '@/components/modals/StoryPassModal';
 import { InteractiveMap } from '@/components/map/InteractiveMap';
 import { soundEngine } from '@/utils/audioEngine';
 
+import { PlanVariant, ItineraryStop } from '@/types';
+
 export const PlanResultsView: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
@@ -87,7 +89,9 @@ export const PlanResultsView: React.FC = () => {
   }
 
   const { variants } = currentItinerary;
-  const currentVariantData = variants[activeVariant];
+  const currentVariantData: PlanVariant = (variants as any)[activeVariant] || variants.balanced;
+  const thirdVariantObj = variants.free || variants.luxury;
+  const isThirdFree = !!variants.free;
 
   const variantTabs = [
     {
@@ -111,22 +115,27 @@ export const PlanResultsView: React.FC = () => {
       activeBorder: 'border-gold-400 ring-2 ring-gold-400/40 bg-abyss-800',
     },
     {
-      id: 'luxury' as const,
-      title: variants.luxury.titleAr,
-      titleEn: variants.luxury.titleEn,
-      badge: variants.luxury.badgeAr,
-      badgeEn: variants.luxury.badgeEn,
-      icon: Crown,
-      color: 'text-coral-400',
-      activeBorder: 'border-coral-400 ring-2 ring-coral-400/40 bg-abyss-800',
+      id: (isThirdFree ? 'free' : 'luxury') as any,
+      title: thirdVariantObj.titleAr,
+      titleEn: thirdVariantObj.titleEn,
+      badge: thirdVariantObj.badgeAr,
+      badgeEn: thirdVariantObj.badgeEn,
+      icon: isThirdFree ? Sparkles : Crown,
+      color: isThirdFree ? 'text-teal-300' : 'text-coral-400',
+      activeBorder: isThirdFree
+        ? 'border-teal-400 ring-2 ring-teal-400/40 bg-abyss-800'
+        : 'border-coral-400 ring-2 ring-coral-400/40 bg-abyss-800',
     },
   ];
 
   // Budget calculations
-  const totalPerPerson = currentVariantData.financials.totalPerPersonSAR;
-  const foodShare = Math.round(totalPerPerson * 0.65);
-  const ticketsShare = Math.round(totalPerPerson * 0.22);
-  const uberShare = Math.max(15, totalPerPerson - foodShare - ticketsShare);
+  const totalPerPerson = currentVariantData?.financials?.totalPerPersonSAR || 0;
+  const isFreePlan = totalPerPerson === 0;
+  const foodShare = isFreePlan ? 0 : Math.round(totalPerPerson * 0.65);
+  const ticketsShare = isFreePlan ? 0 : Math.round(totalPerPerson * 0.22);
+  const uberShare = isFreePlan
+    ? (currentVariantData?.financials?.estimatedTransitSAR || 0)
+    : Math.max(15, totalPerPerson - foodShare - ticketsShare);
 
   return (
     <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-20 lg:pb-8">
@@ -188,8 +197,8 @@ export const PlanResultsView: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] sm:text-xs text-pearl-muted font-medium pt-0.5 sm:pt-1">
-                  <span>~{variants[tab.id].financials.totalPerPersonSAR} ر.س / شخص</span>
-                  <span>~{variants[tab.id].totalTransitMinutes} د مشاوير</span>
+                  <span>~{(variants as any)[tab.id]?.financials?.totalPerPersonSAR ?? 0} ر.س / شخص</span>
+                  <span>~{(variants as any)[tab.id]?.totalTransitMinutes ?? 15} د مشاوير</span>
                 </div>
               </div>
             );
