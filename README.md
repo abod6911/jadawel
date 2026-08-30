@@ -83,7 +83,7 @@ jadawel/
 ---
 
 ## 👤 المطور (Author)
-- **GitHub:** [@abed6911](https://github.com/abed6911)
+- **GitHub:** [@abod6911](https://github.com/abod6911)
 
 ---
 © 2026 جداول | JADAWEL — جميع الحقوق محفوظة.
