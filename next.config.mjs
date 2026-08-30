@@ -1,13 +1,11 @@
 /** @type {import('next').NextConfig} */
-const isGithubPages = process.env.DEPLOY_TARGET === 'gh-pages' || process.env.GITHUB_ACTIONS === 'true';
-
 const nextConfig = {
   reactStrictMode: true,
-  output: isGithubPages ? 'export' : undefined,
-  basePath: isGithubPages ? '/jadawel' : '',
-  assetPrefix: isGithubPages ? '/jadawel' : '',
+  output: 'export',
+  basePath: '/jadawel',
+  assetPrefix: '/jadawel/',
   env: {
-    NEXT_PUBLIC_BASE_PATH: isGithubPages ? '/jadawel' : '',
+    NEXT_PUBLIC_BASE_PATH: '/jadawel',
   },
   images: {
     unoptimized: true,
