@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -19,17 +19,22 @@ export const PageOrchestrator: React.FC = () => {
   const [introDone, setIntroDone] = useState(false);
   const activeNavTab = useItineraryStore((state) => state.activeNavTab);
 
+  useEffect(() => {
+    if (typeof window !== 'undefined' && sessionStorage.getItem('jadawel_intro_seen')) {
+      setIntroDone(true);
+    }
+  }, []);
+
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-pearl selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
-      {/* 1. 1:1 OUTFIT LUXURY EDITORIAL INTRO */}
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-[#FBFBFA] selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
+      {/* 1. JADAWEL INTRO OVERLAY */}
       <JadawelIntro onComplete={() => setIntroDone(true)} />
 
-      {/* 2. PERSISTENT APP SHELL */}
-      <motion.div
-        className="flex-1 flex flex-col w-full"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
+      {/* 2. PERSISTENT APP SHELL WITH SMOOTH OPACITY HANDOFF */}
+      <div
+        className={`flex-1 flex flex-col w-full transition-opacity duration-700 ${
+          introDone ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        }`}
       >
         {/* Navigation Bar */}
         <Navbar />
@@ -120,7 +125,7 @@ export const PageOrchestrator: React.FC = () => {
 
         {/* Mobile Bottom Dock Navigation */}
         <MobileNav />
-      </motion.div>
+      </div>
     </div>
   );
 };
