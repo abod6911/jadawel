@@ -1,0 +1,200 @@
+/**
+ * JADAWEL (جداول) — Motion Design Tokens & Keyframe System
+ * Optimized for 60/120 FPS hardware-accelerated animations (Transforms & Opacity)
+ * WCAG 2.1 AA/AAA Compliant (prefers-reduced-motion)
+ */
+
+:root {
+  /* ==========================================================================
+     1. Motion Timing Tokens (Snappy & Distraction-Free: 75ms - 350ms)
+     ========================================================================== */
+  --motion-duration-instant: 75ms;   /* Micro-clicks, switches, active states */
+  --motion-duration-fast: 150ms;      /* Tooltips, hover cues, inline edit focus */
+  --motion-duration-normal: 250ms;    /* Modals, drawers, row entries, tabs */
+  --motion-duration-slow: 350ms;      /* Full-page sheets, complex layout morphs */
+  --motion-duration-shimmer: 1600ms;  /* Skeleton loader shimmer wave */
+
+  /* ==========================================================================
+     2. Easing Curves (Cubic-Beziers)
+     ========================================================================== */
+  /* Snappy entrance curve: rapid initial acceleration, elegant deceleration */
+  --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  
+  /* Standard smooth transition curve for opacity & subtle fades */
+  --motion-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  
+  /* Tactile micro-bounce for icons, checkmarks, badges */
+  --motion-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  
+  /* Exit curve: rapid departure to keep UI feeling responsive */
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+
+  /* Linear for constant-rate shimmers and infinite loops */
+  --motion-ease-linear: linear;
+}
+
+/* ==========================================================================
+   3. Hardware-Accelerated Keyframes (Composite Layer Only)
+   ========================================================================== */
+
+/* Shimmer Wave for Skeleton Loading (Zero Layout Repaint) */
+@keyframes jadawelShimmer {
+  0% {
+    transform: translate3d(-100%, 0, 0);
+  }
+  100% {
+    transform: translate3d(100%, 0, 0);
+  }
+}
+
+/* Fade & Slide In Up (Staggered Table Rows, Dropdowns) */
+@keyframes jadawelFadeInUp {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 6px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Fade & Scale In (Modals, Dialogs, Tooltips) */
+@keyframes jadawelScaleIn {
+  0% {
+    opacity: 0;
+    transform: scale3d(0.96, 0.96, 1) translate3d(0, 8px, 0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale3d(1, 1, 1) translate3d(0, 0, 0);
+  }
+}
+
+/* Drawer Slide In (LTR / Right-to-Left aware via CSS variables) */
+@keyframes jadawelDrawerSlideIn {
+  0% {
+    transform: translate3d(var(--drawer-slide-from, 100%), 0, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/* Pulse Focus Glow (Inline Cell Edit) */
+@keyframes jadawelFocusGlow {
+  0%, 100% {
+    box-shadow: 0 0 0 1.5px #E5A962, 0 0 14px -2px rgba(229, 169, 98, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 1.5px #E5A962, 0 0 20px 2px rgba(229, 169, 98, 0.6);
+  }
+}
+
+/* Tactile Pop (Checkmarks & Badges) */
+@keyframes jadawelPop {
+  0% {
+    transform: scale3d(0.7, 0.7, 1);
+  }
+  60% {
+    transform: scale3d(1.15, 1.15, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}
+
+/* ==========================================================================
+   4. High-Performance Utility Classes
+   ========================================================================== */
+
+/* GPU Isolation Layer */
+.gpu-layer {
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Tactile Active Press */
+.tactile-press {
+  transition: transform var(--motion-duration-instant) var(--motion-ease-spring),
+              box-shadow var(--motion-duration-instant) var(--motion-ease-smooth),
+              filter var(--motion-duration-instant) var(--motion-ease-smooth);
+}
+.tactile-press:active {
+  transform: scale3d(0.97, 0.97, 1);
+}
+
+/* Shimmer Skeleton Wave */
+.skeleton-shimmer {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.05);
+}
+.skeleton-shimmer::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translate3d(-100%, 0, 0);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(229, 169, 98, 0.08) 35%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(229, 169, 98, 0.08) 65%,
+    transparent 100%
+  );
+  animation: jadawelShimmer var(--motion-duration-shimmer) infinite var(--motion-ease-linear);
+}
+
+/* Staggered Row Fade-In via CSS Custom Properties */
+.animate-row-stagger {
+  opacity: 0;
+  animation: jadawelFadeInUp var(--motion-duration-normal) var(--motion-ease-spring) forwards;
+  animation-delay: calc(var(--row-index, 0) * 30ms);
+}
+
+/* Inline Edit Focus Glow (No Layout Shift) */
+.cell-editing {
+  position: relative;
+  z-index: 10;
+  background-color: rgba(22, 28, 36, 0.95) !important;
+  box-shadow: 0 0 0 1.5px #E5A962, 0 0 16px -2px rgba(229, 169, 98, 0.45) !important;
+  transition: box-shadow var(--motion-duration-fast) var(--motion-ease-spring),
+              background-color var(--motion-duration-fast) var(--motion-ease-smooth);
+}
+
+/* Popover / Dropdown Scale-In */
+.dropdown-scale-origin {
+  transform-origin: var(--dropdown-origin, top right);
+  animation: jadawelScaleIn var(--motion-duration-fast) var(--motion-ease-spring) forwards;
+}
+
+/* ==========================================================================
+   5. Strict Reduced-Motion Accessibility Rules (WCAG 2.1 Compliance)
+   ========================================================================== */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .skeleton-shimmer::after {
+    animation: none !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .tactile-press:active {
+    transform: none !important;
+  }
+
+  .animate-row-stagger {
+    opacity: 1 !important;
+    transform: none !important;
+    animation: none !important;
+  }
+}
