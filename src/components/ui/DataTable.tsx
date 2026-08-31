@@ -22,7 +22,8 @@ import {
   X, 
   ArrowUpDown, 
   Command as CommandIcon,
-  ChevronDown
+  Eye,
+  Share2
 } from 'lucide-react';
 import { StatusBadge, StatusVariant } from './StatusBadge';
 import { ProgressBarCell } from './ProgressBarCell';
@@ -30,6 +31,11 @@ import { EmptyState } from './EmptyState';
 import { FloatingActionBar } from './FloatingActionBar';
 import { CommandPalette, CommandAction } from './CommandPalette';
 import { SkeletonTable } from './SkeletonTable';
+import { SidePeekDrawer } from './SidePeekDrawer';
+import { CustomContextMenu } from './CustomContextMenu';
+import { DataFilterBar, ActiveViewMode, FilterChip } from './DataFilterBar';
+import { KanbanView } from './KanbanView';
+import { CompactListView } from './CompactListView';
 import { Button } from './Button';
 
 export type TableDensity = 'compact' | 'comfortable';
@@ -129,22 +135,54 @@ const INITIAL_RECORDS: TableRecord[] = [
 interface DataTableProps {
   initialData?: TableRecord[];
   isLoading?: boolean;
-  onRowClick?: (record: TableRecord) => void;
 }
 
 export const DataTable: React.FC<DataTableProps> = ({
   initialData = INITIAL_RECORDS,
   isLoading = false,
-  onRowClick,
 }) => {
   const [data, setData] = useState<TableRecord[]>(initialData);
+  const [viewMode, setViewMode] = useState<ActiveViewMode>('table');
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [filters, setFilters] = useState<FilterChip[]>([]);
   const [density, setDensity] = useState<TableDensity>('comfortable');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [selectedRecordForPeek, setSelectedRecordForPeek] = useState<TableRecord | null>(null);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [editingCell, setEditingCell] = useState<{ id: string; field: keyof TableRecord } | null>(null);
   const [editValue, setEditValue] = useState('');
+
+  // Column visibility state
+  const [columns, setColumns] = useState([
+    { key: 'code', label: 'رمز الجدول', visible: true },
+    { key: 'name', label: 'اسم السجل / المسؤول', visible: true },
+    { key: 'category', label: 'التصنيف', visible: true },
+    { key: 'status', label: 'الحالة', visible: true },
+    { key: 'progress', label: 'الإنجاز', visible: true },
+    { key: 'budget', label: 'الميزانية', visible: true },
+    { key: 'recordsCount', label: 'السجلات', visible: true },
+  ]);
+
+  // Context Menu State
+  const [contextMenu, setContextMenu] = useState<{
+    isOpen: boolean;
+    x: number;
+    y: number;
+    record: TableRecord | null;
+  }>({
+    isOpen: false,
+    x: 0,
+    y: 0,
+    record: null,
+  });
+
+  const handleToggleColumn = (key: string) => {
+    setColumns((prev) =>
+      prev.map((col) => (col.key === key ? { ...col, visible: !col.visible } : col))
+    );
+  };
+
+  const isColVisible = (key: string) => columns.find((c) => c.key === key)?.visible ?? true;
 
   // Density styling tokens
   const densityStyles = {
@@ -161,18 +199,31 @@ export const DataTable: React.FC<DataTableProps> = ({
   // Filtered dataset
   const filteredData = useMemo(() => {
     return data.filter((record) => {
+      // 1. Search Query
       const matchesSearch =
+        !searchQuery ||
         record.name.includes(searchQuery) ||
         record.code.toLowerCase().includes(searchQuery.toLowerCase()) ||
         record.category.includes(searchQuery) ||
         record.assignee.name.includes(searchQuery);
 
-      const matchesStatus =
-        statusFilter === 'all' || record.status === statusFilter;
+      if (!matchesSearch) return false;
 
-      return matchesSearch && matchesStatus;
+      // 2. Filter Chips
+      for (const filter of filters) {
+        let fieldVal = '';
+        if (filter.field === 'category') fieldVal = record.category;
+        else if (filter.field === 'status') fieldVal = record.status;
+        else if (filter.field === 'assignee') fieldVal = record.assignee.name;
+        else if (filter.field === 'name') fieldVal = record.name;
+
+        if (filter.operator === 'is' && fieldVal !== filter.value) return false;
+        if (filter.operator === 'contains' && !fieldVal.includes(filter.value)) return false;
+      }
+
+      return true;
     });
-  }, [data, searchQuery, statusFilter]);
+  }, [data, searchQuery, filters]);
 
   // Selection handlers
   const handleToggleSelect = (id: string) => {
@@ -210,7 +261,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     setData([newRecord, ...data]);
   };
 
-  // Delete single record
+  // Delete record
   const handleDeleteRecord = (id: string) => {
     setData((prev) => prev.filter((r) => r.id !== id));
     setSelectedIds((prev) => {
@@ -218,6 +269,21 @@ export const DataTable: React.FC<DataTableProps> = ({
       next.delete(id);
       return next;
     });
+    if (selectedRecordForPeek?.id === id) {
+      setSelectedRecordForPeek(null);
+    }
+  };
+
+  // Duplicate record
+  const handleDuplicateRecord = (rec: TableRecord) => {
+    const clone: TableRecord = {
+      ...rec,
+      id: String(Date.now()),
+      code: `${rec.code}-نسخة`,
+      name: `${rec.name} (نسخة مكررة)`,
+      lastUpdated: 'الآن',
+    };
+    setData([clone, ...data]);
   };
 
   // Batch delete
@@ -226,7 +292,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     setSelectedIds(new Set());
   };
 
-  // Batch status update
+  // Batch status
   const handleBatchStatus = (status: StatusVariant) => {
     setData((prev) =>
       prev.map((r) => (selectedIds.has(r.id) ? { ...r, status, lastUpdated: 'الآن' } : r))
@@ -245,6 +311,13 @@ export const DataTable: React.FC<DataTableProps> = ({
       lastUpdated: 'الآن',
     }));
     setData([...clones, ...data]);
+    setSelectedIds(new Set());
+  };
+
+  // Update record from side peek
+  const handleUpdateRecord = (updated: TableRecord) => {
+    setData((prev) => prev.map((r) => (r.id === updated.id ? updated : r)));
+    setSelectedRecordForPeek(updated);
   };
 
   // Inline edit
@@ -266,6 +339,24 @@ export const DataTable: React.FC<DataTableProps> = ({
     setEditingCell(null);
   };
 
+  // Right-click Context Menu
+  const handleContextMenu = (e: React.MouseEvent, record: TableRecord) => {
+    e.preventDefault();
+    setContextMenu({
+      isOpen: true,
+      x: e.clientX,
+      y: e.clientY,
+      record,
+    });
+  };
+
+  // Side Peek Navigation
+  const currentPeekIndex = selectedRecordForPeek
+    ? filteredData.findIndex((r) => r.id === selectedRecordForPeek.id)
+    : -1;
+  const hasNextPeek = currentPeekIndex >= 0 && currentPeekIndex < filteredData.length - 1;
+  const hasPrevPeek = currentPeekIndex > 0;
+
   // Command palette actions
   const commandActions: CommandAction[] = [
     {
@@ -277,21 +368,25 @@ export const DataTable: React.FC<DataTableProps> = ({
       perform: handleAddNewRecord,
     },
     {
-      id: 'filter-active',
-      title: 'عرض السجلات النشطة فقط',
-      category: 'الفلاتر والبحث',
-      icon: Filter,
-      perform: () => setStatusFilter('active'),
+      id: 'switch-table',
+      title: 'التحويل إلى عرض الجدول الشبكي',
+      category: 'عمليات سريعة',
+      icon: SlidersHorizontal,
+      perform: () => setViewMode('table'),
     },
     {
-      id: 'filter-all',
-      title: 'إعادة ضبط جميع الفلاتر وعرض الكل',
-      category: 'الفلاتر والبحث',
-      icon: Filter,
-      perform: () => {
-        setStatusFilter('all');
-        setSearchQuery('');
-      },
+      id: 'switch-kanban',
+      title: 'التحويل إلى عرض لوحة كانبان',
+      category: 'عمليات سريعة',
+      icon: SlidersHorizontal,
+      perform: () => setViewMode('kanban'),
+    },
+    {
+      id: 'switch-list',
+      title: 'التحويل إلى عرض القائمة المضغوطة',
+      category: 'عمليات سريعة',
+      icon: SlidersHorizontal,
+      perform: () => setViewMode('list'),
     },
     {
       id: 'toggle-density',
@@ -302,7 +397,7 @@ export const DataTable: React.FC<DataTableProps> = ({
     },
   ];
 
-  // Listen for Ctrl+K shortcut
+  // Listen for Ctrl+K
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
@@ -323,320 +418,347 @@ export const DataTable: React.FC<DataTableProps> = ({
 
   return (
     <div className="w-full bg-white dark:bg-zinc-900 border border-zinc-200/80 dark:border-zinc-800 rounded-3xl shadow-card-dark overflow-hidden flex flex-col transition-colors duration-200" dir="rtl">
-      {/* Top Toolbar */}
-      <div className="p-5 border-b border-zinc-200/80 dark:border-zinc-800 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 bg-zinc-50/50 dark:bg-zinc-950/40">
-        {/* Search & Filter Bar */}
-        <div className="flex flex-wrap items-center gap-3 flex-1">
-          <div className="relative flex-1 min-w-[240px] max-w-md">
-            <Search className="absolute right-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400 pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="البحث في الأسماء، الرموز، أو المسؤولين..."
-              className="w-full bg-white dark:bg-zinc-900 border border-zinc-300 dark:border-zinc-700/80 rounded-xl pr-10 pl-4 py-2 text-sm text-zinc-900 dark:text-zinc-100 placeholder:text-zinc-400 focus:outline-none focus:border-gold-500 focus:ring-2 focus:ring-gold-500/20 transition-all"
-            />
-            {searchQuery && (
-              <button
-                type="button"
-                onClick={() => setSearchQuery('')}
-                className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
+      {/* Top Filter Bar & Multi-View Switcher */}
+      <DataFilterBar
+        viewMode={viewMode}
+        onViewModeChange={setViewMode}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        filters={filters}
+        onAddFilter={(f) => setFilters([...filters, f])}
+        onRemoveFilter={(id) => setFilters(filters.filter((f) => f.id !== id))}
+        onClearAllFilters={() => setFilters([])}
+        totalRecordsCount={data.length}
+        filteredRecordsCount={filteredData.length}
+        columns={columns}
+        onToggleColumn={handleToggleColumn}
+        density={density}
+        onDensityChange={setDensity}
+      />
 
-          {/* Status Filter Pill Select */}
-          <div className="flex items-center gap-1 bg-zinc-200/60 dark:bg-zinc-800 p-1 rounded-xl">
-            {(['all', 'active', 'pending', 'failed'] as const).map((status) => (
-              <button
-                key={status}
-                type="button"
-                onClick={() => setStatusFilter(status)}
-                className={`px-3 py-1 text-xs rounded-lg font-medium transition-all select-none ${
-                  statusFilter === status
-                    ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                    : 'text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-200'
-                }`}
-              >
-                {status === 'all'
-                  ? 'الكل'
-                  : status === 'active'
-                  ? 'نشط'
-                  : status === 'pending'
-                  ? 'قيد التنفيذ'
-                  : 'ملغي'}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Action Controls & Density Switch */}
-        <div className="flex items-center gap-2.5 shrink-0">
-          {/* Density Toggle */}
-          <div className="flex items-center bg-zinc-200/60 dark:bg-zinc-800 p-1 rounded-xl">
-            <button
-              type="button"
-              onClick={() => setDensity('comfortable')}
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
-                density === 'comfortable'
-                  ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
-              title="عرض مريح"
-            >
-              مريح
-            </button>
-            <button
-              type="button"
-              onClick={() => setDensity('compact')}
-              className={`px-2.5 py-1 text-xs rounded-lg font-medium transition-all ${
-                density === 'compact'
-                  ? 'bg-white dark:bg-zinc-700 text-zinc-900 dark:text-zinc-100 shadow-sm'
-                  : 'text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-200'
-              }`}
-              title="عرض مضغوط عالي الكثافة"
-            >
-              مضغوط
-            </button>
-          </div>
-
-          {/* Command Palette Trigger Button */}
-          <button
-            type="button"
-            onClick={() => setIsCommandPaletteOpen(true)}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-medium bg-white dark:bg-zinc-800 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 hover:border-gold-500/50 transition-colors tactile-press"
-          >
-            <CommandIcon className="w-3.5 h-3.5 text-gold-500" />
-            <span className="font-mono text-[10px] text-zinc-400">Ctrl+K</span>
-          </button>
-
-          {/* Add Row Button */}
-          <Button
-            variant="coral"
-            size="sm"
-            onClick={handleAddNewRecord}
-            leftIcon={<Plus className="w-4 h-4" />}
-          >
-            إضافة سجل
-          </Button>
-        </div>
-      </div>
-
-      {/* Table Scrollable Container */}
-      <div className="relative overflow-x-auto max-h-[640px] overflow-y-auto">
-        <table className="w-full text-start border-collapse">
-          {/* Sticky Glassmorphic Header */}
-          <thead className="sticky top-0 z-20 backdrop-blur-md bg-white/90 dark:bg-zinc-900/90 border-b border-zinc-200/80 dark:border-zinc-800 shadow-sm">
-            <tr className="text-zinc-500 dark:text-zinc-400 font-medium text-xs">
-              {/* Checkbox Header */}
-              <th className={`${densityStyles[density].th} w-12 text-center`}>
-                <div className="flex items-center justify-center">
-                  <input
-                    type="checkbox"
-                    checked={isAllSelected}
-                    ref={(el) => {
-                      if (el) el.indeterminate = isIndeterminate;
-                    }}
-                    onChange={handleSelectAll}
-                    className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gold-500 focus:ring-gold-500/30 cursor-pointer accent-gold-500"
-                    aria-label="تحديد جميع السجلات"
-                  />
-                </div>
-              </th>
-
-              {/* Code */}
-              <th className={`${densityStyles[density].th} text-right font-medium`}>رمز الجدول</th>
-
-              {/* Name & Assignee */}
-              <th className={`${densityStyles[density].th} text-right font-medium`}>اسم السجل / المسؤول</th>
-
-              {/* Category */}
-              <th className={`${densityStyles[density].th} text-right font-medium`}>التصنيف</th>
-
-              {/* Status */}
-              <th className={`${densityStyles[density].th} text-center font-medium`}>الحالة</th>
-
-              {/* Progress */}
-              <th className={`${densityStyles[density].th} text-right font-medium min-w-[140px]`}>الإنجاز</th>
-
-              {/* Budget (Numeric Left Aligned) */}
-              <th className={`${densityStyles[density].th} text-left font-medium`}>الميزانية (ر.س)</th>
-
-              {/* Records Metric (Numeric Left Aligned) */}
-              <th className={`${densityStyles[density].th} text-left font-medium`}>السجلات</th>
-
-              {/* Actions Header */}
-              <th className={`${densityStyles[density].th} text-center font-medium w-24`}>إجراءات</th>
-            </tr>
-          </thead>
-
-          {/* Animated Table Body */}
-          <motion.tbody
-            variants={tableContainerVariants}
-            initial="hidden"
-            animate="visible"
-            className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 bg-transparent text-zinc-800 dark:text-zinc-200"
-          >
-            <AnimatePresence mode="popLayout" initial={false}>
-              {filteredData.map((record, index) => {
-                const isSelected = selectedIds.has(record.id);
-                const isEditingName = editingCell?.id === record.id && editingCell?.field === 'name';
-
-                return (
-                  <motion.tr
-                    key={record.id}
-                    layout
-                    variants={tableRowVariants}
-                    custom={index}
-                    onClick={() => onRowClick && onRowClick(record)}
-                    className={`group transition-colors duration-150 ${
-                      isSelected
-                        ? 'bg-gold-500/10 dark:bg-gold-500/15'
-                        : 'hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40'
-                    }`}
-                  >
-                    {/* Checkbox Cell */}
-                    <td className={`${densityStyles[density].td} text-center`}>
+      {/* Main View Area */}
+      <div className="relative">
+        {viewMode === 'table' && (
+          <div className="overflow-x-auto max-h-[620px] overflow-y-auto">
+            <table className="w-full text-start border-collapse">
+              {/* Sticky Glass Header */}
+              <thead className="sticky top-0 z-20 backdrop-blur-md bg-white/90 dark:bg-zinc-900/90 border-b border-zinc-200 dark:border-zinc-800 shadow-sm">
+                <tr className="text-zinc-500 dark:text-zinc-400 font-medium text-xs">
+                  {/* Checkbox Header */}
+                  <th className={`${densityStyles[density].th} w-12 text-center`}>
+                    <div className="flex items-center justify-center">
                       <input
                         type="checkbox"
-                        checked={isSelected}
-                        onChange={() => handleToggleSelect(record.id)}
-                        onClick={(e) => e.stopPropagation()}
+                        checked={isAllSelected}
+                        ref={(el) => {
+                          if (el) el.indeterminate = isIndeterminate;
+                        }}
+                        onChange={handleSelectAll}
                         className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gold-500 focus:ring-gold-500/30 cursor-pointer accent-gold-500"
+                        aria-label="تحديد الكل"
                       />
-                    </td>
+                    </div>
+                  </th>
 
-                    {/* Code (Tabular Font) */}
-                    <td className={`${densityStyles[density].td} font-mono tabular-nums text-gold-600 dark:text-gold-400 font-semibold text-xs whitespace-nowrap`}>
-                      {record.code}
-                    </td>
+                  {isColVisible('code') && (
+                    <th className={`${densityStyles[density].th} text-right font-medium`}>رمز الجدول</th>
+                  )}
 
-                    {/* Name with Avatar & Inline Edit */}
-                    <td className={`${densityStyles[density].td}`}>
-                      <div className="flex items-center gap-3">
-                        {/* Assignee Avatar */}
-                        <div
-                          className={`w-7 h-7 rounded-full ${record.assignee.avatarColor} text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm`}
-                          title={record.assignee.name}
-                        >
-                          {record.assignee.initials}
-                        </div>
+                  {isColVisible('name') && (
+                    <th className={`${densityStyles[density].th} text-right font-medium`}>اسم السجل / المسؤول</th>
+                  )}
 
-                        {/* Record Title */}
-                        <div className="flex-1 min-w-0">
-                          {isEditingName ? (
-                            <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
-                              <input
-                                type="text"
-                                autoFocus
-                                value={editValue}
-                                onChange={(e) => setEditValue(e.target.value)}
-                                onKeyDown={(e) => {
-                                  if (e.key === 'Enter') handleSaveEdit();
-                                  if (e.key === 'Escape') setEditingCell(null);
-                                }}
-                                className="bg-white dark:bg-zinc-800 border border-gold-500 rounded px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none w-full"
-                              />
-                              <button
-                                type="button"
-                                onClick={handleSaveEdit}
-                                className="p-1 rounded bg-gold-500 text-zinc-950 hover:bg-gold-400"
+                  {isColVisible('category') && (
+                    <th className={`${densityStyles[density].th} text-right font-medium`}>التصنيف</th>
+                  )}
+
+                  {isColVisible('status') && (
+                    <th className={`${densityStyles[density].th} text-center font-medium`}>الحالة</th>
+                  )}
+
+                  {isColVisible('progress') && (
+                    <th className={`${densityStyles[density].th} text-right font-medium min-w-[140px]`}>الإنجاز</th>
+                  )}
+
+                  {isColVisible('budget') && (
+                    <th className={`${densityStyles[density].th} text-left font-medium`}>الميزانية (ر.س)</th>
+                  )}
+
+                  {isColVisible('recordsCount') && (
+                    <th className={`${densityStyles[density].th} text-left font-medium`}>السجلات</th>
+                  )}
+
+                  <th className={`${densityStyles[density].th} text-center font-medium w-24`}>إجراءات</th>
+                </tr>
+              </thead>
+
+              {/* Animated Table Body */}
+              <motion.tbody
+                variants={tableContainerVariants}
+                initial="hidden"
+                animate="visible"
+                className="divide-y divide-zinc-200/60 dark:divide-zinc-800/60 bg-transparent text-zinc-800 dark:text-zinc-200"
+              >
+                <AnimatePresence mode="popLayout" initial={false}>
+                  {filteredData.map((record, index) => {
+                    const isSelected = selectedIds.has(record.id);
+                    const isEditingName = editingCell?.id === record.id && editingCell?.field === 'name';
+
+                    return (
+                      <motion.tr
+                        key={record.id}
+                        layout
+                        variants={tableRowVariants}
+                        custom={index}
+                        onContextMenu={(e) => handleContextMenu(e, record)}
+                        onClick={() => setSelectedRecordForPeek(record)}
+                        className={`group transition-colors duration-150 cursor-pointer ${
+                          isSelected
+                            ? 'bg-gold-500/10 dark:bg-gold-500/15'
+                            : 'hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40'
+                        }`}
+                      >
+                        {/* Checkbox */}
+                        <td className={`${densityStyles[density].td} text-center`}>
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleSelect(record.id)}
+                            onClick={(e) => e.stopPropagation()}
+                            className="w-4 h-4 rounded border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 text-gold-500 focus:ring-gold-500/30 cursor-pointer accent-gold-500"
+                          />
+                        </td>
+
+                        {/* Code (Tabular Font) */}
+                        {isColVisible('code') && (
+                          <td className={`${densityStyles[density].td} font-mono tabular-nums text-gold-600 dark:text-gold-400 font-semibold text-xs whitespace-nowrap`}>
+                            {record.code}
+                          </td>
+                        )}
+
+                        {/* Name & Assignee with Inset Inline Edit */}
+                        {isColVisible('name') && (
+                          <td className={`${densityStyles[density].td}`}>
+                            <div className="flex items-center gap-3">
+                              {/* Avatar */}
+                              <div
+                                className={`w-7 h-7 rounded-full ${record.assignee.avatarColor} text-white text-xs font-bold flex items-center justify-center shrink-0 shadow-sm`}
+                                title={record.assignee.name}
                               >
-                                <Check className="w-3.5 h-3.5" />
-                              </button>
+                                {record.assignee.initials}
+                              </div>
+
+                              {/* Title */}
+                              <div className="flex-1 min-w-0">
+                                {isEditingName ? (
+                                  <div className="flex items-center gap-1.5" onClick={(e) => e.stopPropagation()}>
+                                    <input
+                                      type="text"
+                                      autoFocus
+                                      value={editValue}
+                                      onChange={(e) => setEditValue(e.target.value)}
+                                      onKeyDown={(e) => {
+                                        if (e.key === 'Enter') handleSaveEdit();
+                                        if (e.key === 'Escape') setEditingCell(null);
+                                      }}
+                                      className="bg-white dark:bg-zinc-800 border border-gold-500 rounded px-2 py-1 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none w-full shadow-inner"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={handleSaveEdit}
+                                      className="p-1 rounded bg-gold-500 text-zinc-950 hover:bg-gold-400"
+                                    >
+                                      <Check className="w-3.5 h-3.5" />
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <div
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStartEdit(record, 'name');
+                                    }}
+                                    className="font-medium text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-2 group/edit py-0.5 rounded hover:text-gold-500"
+                                  >
+                                    <span className="truncate">{record.name}</span>
+                                    <Edit3 className="w-3 h-3 opacity-0 group-hover/edit:opacity-100 text-zinc-400 hover:text-gold-500 transition-opacity shrink-0" />
+                                  </div>
+                                )}
+                                <div className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
+                                  {record.assignee.name}
+                                </div>
+                              </div>
                             </div>
-                          ) : (
-                            <div
+                          </td>
+                        )}
+
+                        {/* Category */}
+                        {isColVisible('category') && (
+                          <td className={`${densityStyles[density].td} text-zinc-600 dark:text-zinc-400 whitespace-nowrap`}>
+                            {record.category}
+                          </td>
+                        )}
+
+                        {/* Status Badge */}
+                        {isColVisible('status') && (
+                          <td className={`${densityStyles[density].td} text-center whitespace-nowrap`}>
+                            <StatusBadge status={record.status} size="sm" />
+                          </td>
+                        )}
+
+                        {/* Progress */}
+                        {isColVisible('progress') && (
+                          <td className={`${densityStyles[density].td}`}>
+                            <ProgressBarCell value={record.progress} size={density === 'compact' ? 'sm' : 'md'} />
+                          </td>
+                        )}
+
+                        {/* Budget (Numeric Left Aligned) */}
+                        {isColVisible('budget') && (
+                          <td className={`${densityStyles[density].td} text-left font-mono tabular-nums font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap`}>
+                            {record.budget.toLocaleString('en-US')}
+                          </td>
+                        )}
+
+                        {/* Records Count (Numeric Left Aligned) */}
+                        {isColVisible('recordsCount') && (
+                          <td className={`${densityStyles[density].td} text-left font-mono tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap`}>
+                            {record.recordsCount.toLocaleString('en-US')}
+                          </td>
+                        )}
+
+                        {/* Hover Actions */}
+                        <td className={`${densityStyles[density].td} text-center whitespace-nowrap`}>
+                          <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
+                            <button
+                              type="button"
                               onClick={(e) => {
                                 e.stopPropagation();
-                                handleStartEdit(record, 'name');
+                                setSelectedRecordForPeek(record);
                               }}
-                              className="font-medium text-zinc-900 dark:text-zinc-100 truncate flex items-center gap-2 group/edit cursor-pointer py-0.5 rounded hover:text-gold-500"
+                              className="p-1.5 rounded-lg text-zinc-400 hover:text-gold-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors tactile-press"
+                              title="معاينة جانبية"
                             >
-                              <span className="truncate">{record.name}</span>
-                              <Edit3 className="w-3 h-3 opacity-0 group-hover/edit:opacity-100 text-zinc-400 hover:text-gold-500 transition-opacity shrink-0" />
-                            </div>
-                          )}
-                          <div className="text-[11px] text-zinc-400 dark:text-zinc-500 truncate">
-                            بواسطة: {record.assignee.name}
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDuplicateRecord(record);
+                              }}
+                              className="p-1.5 rounded-lg text-zinc-400 hover:text-sky-500 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors tactile-press"
+                              title="تكرار السجل"
+                            >
+                              <Copy className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteRecord(record.id);
+                              }}
+                              className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors tactile-press"
+                              title="حذف السجل"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
                           </div>
-                        </div>
-                      </div>
-                    </td>
+                        </td>
+                      </motion.tr>
+                    );
+                  })}
+                </AnimatePresence>
+              </motion.tbody>
+            </table>
+          </div>
+        )}
 
-                    {/* Category */}
-                    <td className={`${densityStyles[density].td} text-zinc-600 dark:text-zinc-400 whitespace-nowrap`}>
-                      {record.category}
-                    </td>
+        {viewMode === 'kanban' && (
+          <KanbanView
+            records={filteredData}
+            onSelectRecord={(rec) => setSelectedRecordForPeek(rec)}
+          />
+        )}
 
-                    {/* Status Badge */}
-                    <td className={`${densityStyles[density].td} text-center whitespace-nowrap`}>
-                      <StatusBadge status={record.status} size="sm" />
-                    </td>
+        {viewMode === 'list' && (
+          <CompactListView
+            records={filteredData}
+            selectedIds={selectedIds}
+            onToggleSelect={handleToggleSelect}
+            onSelectRecord={(rec) => setSelectedRecordForPeek(rec)}
+            onDeleteRecord={handleDeleteRecord}
+          />
+        )}
 
-                    {/* Progress Bar Cell */}
-                    <td className={`${densityStyles[density].td}`}>
-                      <ProgressBarCell value={record.progress} size={density === 'compact' ? 'sm' : 'md'} />
-                    </td>
-
-                    {/* Budget (Numeric Left Aligned with Tabular Numbers) */}
-                    <td className={`${densityStyles[density].td} text-left font-mono tabular-nums font-medium text-zinc-900 dark:text-zinc-100 whitespace-nowrap`}>
-                      {record.budget.toLocaleString('en-US')}
-                    </td>
-
-                    {/* Records Count (Numeric Left Aligned) */}
-                    <td className={`${densityStyles[density].td} text-left font-mono tabular-nums text-zinc-500 dark:text-zinc-400 whitespace-nowrap`}>
-                      {record.recordsCount.toLocaleString('en-US')}
-                    </td>
-
-                    {/* Contextual Row Actions (Reveal on Hover) */}
-                    <td className={`${densityStyles[density].td} text-center whitespace-nowrap`}>
-                      <div className="flex items-center justify-center gap-1 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleDeleteRecord(record.id);
-                          }}
-                          className="p-1.5 rounded-lg text-zinc-400 hover:text-rose-500 hover:bg-rose-500/10 transition-colors tactile-press"
-                          title="حذف السجل"
-                          aria-label="حذف السجل"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                );
-              })}
-            </AnimatePresence>
-          </motion.tbody>
-        </table>
-
-        {/* Empty State when zero results */}
+        {/* Empty State */}
         {filteredData.length === 0 && (
           <EmptyState
             searchTerm={searchQuery}
             onResetFilters={() => {
               setSearchQuery('');
-              setStatusFilter('all');
+              setFilters([]);
             }}
             onAddNew={handleAddNewRecord}
           />
         )}
       </div>
 
-      {/* Table Footer Summary */}
-      <div className="px-5 py-3 border-t border-zinc-200/80 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-950/40 flex items-center justify-between text-xs text-zinc-500 dark:text-zinc-400">
-        <div>
-          إجمالي السجلات: <span className="font-mono tabular-nums font-semibold text-zinc-800 dark:text-zinc-200">{filteredData.length}</span> من أصل <span className="font-mono tabular-nums">{data.length}</span>
-        </div>
+      {/* Footer Summary Bar */}
+      <div className="px-5 py-3 border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50/60 dark:bg-zinc-950/40 flex flex-wrap items-center justify-between text-xs text-zinc-500 gap-3">
         <div className="flex items-center gap-2">
-          <span>آخر مزامنة لقاعدة البيانات: منذ بضع دقائق</span>
+          <span>إجمالي السجلات المعروضة:</span>
+          <span className="font-mono tabular-nums font-semibold text-zinc-800 dark:text-zinc-200">
+            {filteredData.length}
+          </span>
+          <span>من أصل</span>
+          <span className="font-mono tabular-nums">{data.length}</span>
+        </div>
+
+        <div className="flex items-center gap-4">
+          <span className="hidden sm:inline font-mono text-[11px] text-zinc-400">
+            انقر بالزر الأيمن على الصف للخيارات المتقدمة
+          </span>
+          <Button
+            variant="coral"
+            size="sm"
+            onClick={handleAddNewRecord}
+            leftIcon={<Plus className="w-3.5 h-3.5" />}
+          >
+            إضافة سجل جديد
+          </Button>
         </div>
       </div>
+
+      {/* Side Peek Drawer (Notion style) */}
+      <SidePeekDrawer
+        record={selectedRecordForPeek}
+        isOpen={Boolean(selectedRecordForPeek)}
+        onClose={() => setSelectedRecordForPeek(null)}
+        onUpdateRecord={handleUpdateRecord}
+        onNextRecord={() => {
+          if (hasNextPeek) setSelectedRecordForPeek(filteredData[currentPeekIndex + 1]);
+        }}
+        onPrevRecord={() => {
+          if (hasPrevPeek) setSelectedRecordForPeek(filteredData[currentPeekIndex - 1]);
+        }}
+        hasNext={hasNextPeek}
+        hasPrev={hasPrevPeek}
+      />
+
+      {/* Custom Context Menu */}
+      <CustomContextMenu
+        isOpen={contextMenu.isOpen}
+        x={contextMenu.x}
+        y={contextMenu.y}
+        record={contextMenu.record}
+        onClose={() => setContextMenu({ ...contextMenu, isOpen: false })}
+        onInspect={(rec) => setSelectedRecordForPeek(rec)}
+        onDuplicate={handleDuplicateRecord}
+        onDelete={handleDeleteRecord}
+        onStatusChange={(id, st) => {
+          setData((prev) => prev.map((r) => (r.id === id ? { ...r, status: st } : r)));
+        }}
+      />
 
       {/* Floating Bulk Action Bar */}
       <FloatingActionBar
@@ -647,7 +769,7 @@ export const DataTable: React.FC<DataTableProps> = ({
         onBatchDuplicate={handleBatchDuplicate}
       />
 
-      {/* Command Palette Modal */}
+      {/* Command Palette */}
       <CommandPalette
         isOpen={isCommandPaletteOpen}
         onClose={() => setIsCommandPaletteOpen(false)}
