@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileNav } from '@/components/layout/MobileNav';
+import { JadawelKineticHero } from '@/components/hero/JadawelKineticHero';
 import { HeroSection } from '@/components/hero/HeroSection';
 import { SocialProofBar } from '@/components/home/SocialProofBar';
 import { BentoMoodGrid } from '@/components/home/BentoMoodGrid';
@@ -205,8 +206,8 @@ export const PageOrchestrator: React.FC = () => {
                 transition={{ duration: 0.25 }}
                 className="space-y-12"
               >
-                {/* 1. Cinematic Full-Bleed 3-Way Hero & Quick Planner Dock */}
-                <HeroSection />
+                {/* 1. Cinematic Luxury Kinetic Constellation Hero */}
+                <JadawelKineticHero />
 
                 {/* 2. Live Social Proof Bar */}
                 <SocialProofBar />
