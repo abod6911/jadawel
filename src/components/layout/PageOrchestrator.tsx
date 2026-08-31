@@ -6,7 +6,7 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { JadawelIntro } from '@/components/ui/JadawelIntro';
-import { JadawelKineticHero } from '@/components/hero/JadawelKineticHero';
+import { HeroSection } from '@/components/hero/HeroSection';
 import { SocialProofBar } from '@/components/home/SocialProofBar';
 import { BentoMoodGrid } from '@/components/home/BentoMoodGrid';
 import { CuratedReadyPlans } from '@/components/home/CuratedReadyPlans';
@@ -21,7 +21,7 @@ export const PageOrchestrator: React.FC = () => {
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-pearl selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
-      {/* 1. BULLETPROOF PRELOADER ENGINE (GPU-Accelerated 60fps & Failsafe Unlocked) */}
+      {/* 1. 1:1 OUTFIT LUXURY EDITORIAL INTRO */}
       <JadawelIntro onComplete={() => setIntroDone(true)} />
 
       {/* 2. PERSISTENT APP SHELL */}
@@ -35,7 +35,7 @@ export const PageOrchestrator: React.FC = () => {
         <Navbar />
 
         {/* Main Application Content Container */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-4 sm:py-8 mb-20 md:mb-10">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-6 mb-20 md:mb-10">
           <AnimatePresence mode="wait">
             {/* TAB 1: Home Screen */}
             {activeNavTab === 'home' && (
@@ -45,10 +45,10 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
-                className="space-y-12"
+                className="space-y-10 sm:space-y-14"
               >
-                {/* 1. Cinematic Luxury Kinetic Constellation Hero */}
-                <JadawelKineticHero />
+                {/* 1. Rich Full-Bleed Atmospheric Hero with 5-Pillar Smart Dock */}
+                <HeroSection />
 
                 {/* 2. Live Social Proof Bar */}
                 <SocialProofBar />

@@ -2,102 +2,101 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles, MapPin, Users, DollarSign, Clock, Compass, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
-import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
-import { Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
 import { getAssetUrl } from '@/utils/paths';
+import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 
 interface Destination {
-  id: 'obhur' | 'balad' | 'rawdah';
-  title: string;
-  titleEn: string;
+  id: string;
+  name: string;
+  nameEn: string;
   tagline: string;
   taglineEn: string;
   badge: string;
   badgeEn: string;
   weather: string;
   weatherEn: string;
-  budget: string;
-  budgetEn: string;
   bgImage: string;
   districtId: DistrictId | 'all_jeddah';
-  districtName: string;
+  district: string;
+  districtEn: string;
   vibe: VibeType;
   vibeName: string;
+  vibeNameEn: string;
   budgetTier: BudgetTier;
   duration: DurationOption;
 }
 
-const DESTINATIONS: Record<string, Destination> = {
-  obhur: {
+const DESTINATIONS: Destination[] = [
+  {
     id: 'obhur',
-    title: 'أبحر والواجهة البحرية',
-    titleEn: 'Obhur & Waterfront Marina',
+    name: 'أبحر والواجهة البحرية',
+    nameEn: 'Obhur & Waterfront Marina',
     tagline: 'روقان الغروب، نسيم البحر الأحمر، وأرقى شواطئ ونوادي اليخوت 🌊',
     taglineEn: 'Golden sunset breeze, Red Sea yachts, and serene private beach lounges 🌊',
     badge: '📍 عروس البحر الأحمر • الواجهة والنوادي الشاطئية',
     badgeEn: '📍 Red Sea Bride • Waterfront & Beach Clubs',
     weather: '🌊 28°C • نسيم البحر عليل • غروب ذهبي',
     weatherEn: '🌊 28°C • Gentle Sea Breeze • Golden Sunset',
-    budget: '~150 ر.س',
-    budgetEn: '~150 SAR',
     bgImage: getAssetUrl('/images/realms/obhur-marina.jpg'),
     districtId: 'obhur',
-    districtName: 'أبحر (الشمالية والجنوبية)',
+    district: 'أبحر (الشمالية والجنوبية)',
+    districtEn: 'Obhur (North & South)',
     vibe: 'beach_sunset',
     vibeName: 'بحر وغروب 🌊',
+    vibeNameEn: 'Beach & Sunset 🌊',
     budgetTier: 'moderate',
     duration: '4_to_6h',
   },
-  balad: {
+  {
     id: 'balad',
-    title: 'رواشين وتراث البلد',
-    titleEn: 'Historic Al-Balad & Rawashin',
+    name: 'رواشين وتراث البلد',
+    nameEn: 'Historic Al-Balad & Rawashin',
     tagline: 'أصالة الماضي، أزقة التاريخ العتيقة، وبسطات الشاي الحجازي 🏛️',
     taglineEn: 'Timeless Hijazi heritage, ancient coral stone alleys, and lantern tea nights 🏛️',
     badge: '📍 التراث العالمي • قلب جدة التاريخي',
     badgeEn: '📍 World Heritage • Historic Heart of Jeddah',
     weather: '🌙 26°C • أجواء مسائية ساحرة',
     weatherEn: '🌙 26°C • Magical Evening • Al-Balad Lanterns',
-    budget: '~75 ر.س',
-    budgetEn: '~75 SAR',
     bgImage: getAssetUrl('/images/realms/albalad-heritage.jpg'),
     districtId: 'al-balad',
-    districtName: 'البلد التاريخية',
+    district: 'البلد التاريخية',
+    districtEn: 'Historic Al-Balad',
     vibe: 'heritage_arts',
     vibeName: 'تراث وسهرات 🏛️',
+    vibeNameEn: 'Heritage & Culture 🏛️',
     budgetTier: 'economy',
     duration: '2_to_4h',
   },
-  rawdah: {
+  {
     id: 'rawdah',
-    title: 'كافيهات ومطاعم الروضة',
-    titleEn: 'Al-Rawdah Coffee & Fine Dining',
-    tagline: 'عاصمة الروقان، أحدث محامص القهوة المختصة، وأرقى المطابخ العالمية ☕',
+    name: 'كافيهات ومطاعم الروضة',
+    nameEn: 'Al-Rawdah Cafes & Dining',
+    tagline: 'عاصمة الروقان، أحدث محامص القهوة المختصة، وأرقى المطاعم العالمية ☕',
     taglineEn: 'Specialty coffee capital, artisanal roasters, and world-class culinary gems ☕',
-    badge: '📍 النبض العصري • أرقى كافيهات ومطاعم جدة',
+    badge: '📍 النبض العصري • أرقى مقاهي ومطاعم جدة',
     badgeEn: '📍 Urban Pulse • Premier Cafes & Dining Hub',
     weather: '✨ 27°C • أجواء حيوية ومنعشة',
     weatherEn: '✨ 27°C • Vibrant Atmosphere • Specialty Coffee Hub',
-    budget: '~220 ر.س',
-    budgetEn: '~220 SAR',
     bgImage: getAssetUrl('/images/realms/alrawdah-coffee.jpg'),
     districtId: 'al-rawdah',
-    districtName: 'حي الروضة',
+    district: 'حي الروضة',
+    districtEn: 'Al-Rawdah District',
     vibe: 'coffee_dessert',
-    vibeName: 'أكل ومطاعم 🍔',
+    vibeName: 'قهوة وحلى ☕',
+    vibeNameEn: 'Coffee & Dessert ☕',
     budgetTier: 'premium',
     duration: 'under_2h',
   },
-};
+];
 
 export const HeroSection: React.FC = () => {
   const { language, isRTL } = useLanguage();
-  const [activeKey, setActiveKey] = useState<'obhur' | 'balad' | 'rawdah'>('obhur');
-  const activeDest = DESTINATIONS[activeKey];
-  const otherDestinations = (['obhur', 'balad', 'rawdah'] as const).filter((k) => k !== activeKey);
+  const [activeIdx, setActiveIdx] = useState(0);
+  const activeDest = DESTINATIONS[activeIdx];
 
   // Store bindings
   const updateWizardPreferences = useItineraryStore((state) => state.updateWizardPreferences);
@@ -111,10 +110,10 @@ export const HeroSection: React.FC = () => {
   const [duration, setDuration] = useState<DurationOption>(activeDest.duration);
   const [vibe, setVibe] = useState<VibeType>(activeDest.vibe);
 
-  const handleSelectDestination = (key: 'obhur' | 'balad' | 'rawdah') => {
+  const handleSelectDestination = (idx: number) => {
     soundEngine.playClick();
-    setActiveKey(key);
-    const dest = DESTINATIONS[key];
+    setActiveIdx(idx);
+    const dest = DESTINATIONS[idx];
     setDistrict(dest.districtId);
     setVibe(dest.vibe);
     setBudget(dest.budgetTier);
@@ -122,7 +121,7 @@ export const HeroSection: React.FC = () => {
   };
 
   const handleBuildPlan = () => {
-    soundEngine.playClick();
+    soundEngine.playSuccess();
     updateWizardPreferences({
       startingDistrict: district,
       companions: companions,
@@ -134,119 +133,101 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-[92vh] w-full flex flex-col items-center justify-between overflow-hidden px-4 pt-8 pb-8 select-none">
-      {/* 1. SECURE BACKGROUND IMAGE & AMBIENT GLOW (z-0 to z-[2]) */}
+    <section className="relative min-h-[92dvh] w-full flex flex-col items-center justify-between px-4 pt-4 pb-8 select-none">
+      {/* 1. ATMOSPHERIC FULL-BLEED BACKGROUND */}
       <div className="absolute inset-0 z-0 bg-[#090B0E]">
         <AnimatePresence mode="wait">
           <motion.img
             key={activeDest.id}
             src={activeDest.bgImage}
-            alt={language === 'ar' ? activeDest.title : activeDest.titleEn}
-            initial={{ opacity: 0, scale: 1.06 }}
+            alt={language === 'ar' ? activeDest.name : activeDest.nameEn}
+            initial={{ opacity: 0, scale: 1.05 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full object-cover object-center brightness-[0.68] contrast-[1.12]"
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="w-full h-full object-cover brightness-[0.7] contrast-[1.12]"
           />
         </AnimatePresence>
-
-        {/* Ambient Overlay Masks */}
-        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#090B0E]/85 via-transparent to-[#090B0E]" />
-        <div className="absolute inset-0 z-[2] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(9,11,14,0.85)_80%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#090B0E]/80 via-transparent to-[#090B0E]" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,#090B0E_85%)]" />
       </div>
 
-      {/* 2. MAIN HERO CONTENT STACK (z-10) */}
-      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-4">
+      {/* 2. CENTER CONTENT STACK */}
+      <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-2">
         {/* Eyebrow Badge */}
-        <motion.div
-          key={`badge-${activeKey}`}
-          initial={{ opacity: 0, y: -12 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-white/10 border border-white/20 text-xs font-medium text-[#E5A962] mb-4 shadow-lg shadow-black/40"
-        >
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.06] border border-white/15 text-xs text-[#F3CA95] mb-4 shadow-lg">
           <span className="w-2 h-2 rounded-full bg-[#4E9F96] animate-pulse" />
           <span>{language === 'ar' ? activeDest.badge : activeDest.badgeEn}</span>
-        </motion.div>
+        </div>
 
-        {/* Monumental Headline */}
-        <motion.h1
-          key={`title-${activeKey}`}
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-4xl sm:text-6xl md:text-7xl font-black text-[#FBFBFA] tracking-tight leading-tight mb-3 drop-shadow-[0_12px_35px_rgba(0,0,0,0.85)]"
-        >
-          {language === 'ar' ? activeDest.title : activeDest.titleEn}
-        </motion.h1>
+        {/* Main Headline */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-[#FBFBFA] tracking-tight leading-[1.25] mb-3 drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
+          {language === 'ar' ? (
+            <>
+              المواقع تشتتك..{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E5A962] to-[#D48B38]">
+                وجداول
+              </span>{' '}
+              يرتّب لك الطلعة كاملة
+            </>
+          ) : (
+            <>
+              Endless options..{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E5A962] to-[#D48B38]">
+                Jadawel
+              </span>{' '}
+              curates your full outing
+            </>
+          )}
+        </h1>
 
         {/* Subtitle */}
-        <motion.p
-          key={`tagline-${activeKey}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-sm sm:text-lg text-[#9EA8B3] max-w-2xl font-normal leading-relaxed drop-shadow-md mb-5"
-        >
+        <p className="text-xs sm:text-base text-[#9EA8B3] max-w-2xl leading-relaxed mb-6">
           {language === 'ar' ? activeDest.tagline : activeDest.taglineEn}
-        </motion.p>
+        </p>
 
-        {/* Live Weather & Status Bar */}
-        <motion.div
-          key={`status-${activeKey}`}
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-wrap items-center justify-center gap-3 px-5 py-2 rounded-2xl backdrop-blur-2xl bg-black/60 border border-white/15 text-xs sm:text-sm text-white/95 shadow-xl mb-6"
-        >
-          <span>{language === 'ar' ? activeDest.weather : activeDest.weatherEn}</span>
-          <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block" />
-          <span className="text-[#E5A962] font-bold">
-            {language === 'ar' ? `الميزانية المقترحة: ${activeDest.budget}` : `Est Budget: ${activeDest.budgetEn}`}
-          </span>
-        </motion.div>
-
-        {/* Interactive Floating Destination Portals */}
-        <div className="flex items-center justify-center gap-3 sm:gap-4 w-full max-w-lg">
-          {otherDestinations.map((key) => {
-            const dest = DESTINATIONS[key];
+        {/* Interactive 3-Destination Portals */}
+        <div className="grid grid-cols-3 gap-2.5 sm:gap-4 w-full max-w-xl mb-4">
+          {DESTINATIONS.map((dest, idx) => {
+            const isActive = activeIdx === idx;
             return (
-              <motion.button
+              <button
                 key={dest.id}
-                onClick={() => handleSelectDestination(key)}
-                whileHover={{ scale: 1.04, y: -2 }}
-                whileTap={{ scale: 0.98 }}
-                className="flex-1 flex items-center gap-3 p-2.5 sm:px-4 sm:py-3 rounded-2xl backdrop-blur-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-[#E5A962]/60 text-start transition-all cursor-pointer shadow-xl group touch-manipulation"
+                onClick={() => handleSelectDestination(idx)}
+                className={`flex items-center gap-2 p-2 sm:px-3 sm:py-2 rounded-2xl border transition-all text-start cursor-pointer backdrop-blur-xl touch-manipulation ${
+                  isActive
+                    ? 'bg-[#E5A962]/15 border-[#E5A962] shadow-[0_0_20px_rgba(229,169,98,0.25)]'
+                    : 'bg-white/[0.04] border-white/10 hover:border-white/20 hover:bg-white/[0.08]'
+                }`}
               >
                 <img
                   src={dest.bgImage}
-                  alt={language === 'ar' ? dest.title : dest.titleEn}
-                  className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-white/25 shadow shrink-0"
+                  alt={dest.name}
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover border border-white/20"
                 />
-                <div className="overflow-hidden min-w-0">
-                  <span className="text-[10px] sm:text-xs text-[#E5A962] font-medium block">
-                    {language === 'ar' ? 'انتقل إلى' : 'Switch to'}
+                <div className="overflow-hidden">
+                  <span className="text-[9px] sm:text-[10px] text-[#F3CA95] block font-medium">
+                    {language === 'ar' ? `الوجهة ${idx + 1}` : `Portal ${idx + 1}`}
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-white block truncate group-hover:text-[#FBFBFA]">
-                    {language === 'ar' ? dest.title : dest.titleEn}
+                  <span className="text-[11px] sm:text-xs font-bold text-white block truncate">
+                    {language === 'ar' ? dest.name : dest.nameEn}
                   </span>
                 </div>
-              </motion.button>
+              </button>
             );
           })}
         </div>
       </div>
 
-      {/* 3. FLOATING 5-PILLAR SMART PLANNER DOCK (z-20) */}
-      <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25, duration: 0.7 }}
-        className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#090B0E]/90 border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.7)]"
-      >
+      {/* 3. THE 5-PILLAR SMART PLANNER DOCK */}
+      <div className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#090B0E]/90 border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2">
-            <span className="text-[#E5A962] text-sm">⚡</span>
+            <Sparkles className="w-4 h-4 text-[#E5A962]" />
             <span className="text-xs sm:text-sm font-bold text-white">
-              {language === 'ar' ? 'المحدد السريع • رتّب طلعة جدة بـ 5 خيارات:' : 'Quick Dock • Craft Jeddah Outing in 5 Steps:'}
+              {language === 'ar'
+                ? 'المحدد السريع • رتّب طلعة جدة بـ 5 خيارات:'
+                : 'Quick Dock • Craft Jeddah Outing in 5 Steps:'}
             </span>
           </div>
           <span className="text-[10px] sm:text-xs text-[#4E9F96] bg-[#4E9F96]/15 px-3 py-1 rounded-full border border-[#4E9F96]/30 font-medium hidden sm:inline-block">
@@ -254,10 +235,10 @@ export const HeroSection: React.FC = () => {
           </span>
         </div>
 
-        {/* 5-Column Input Selectors */}
-        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-4 text-start">
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
+        {/* 5 Selectors Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-4">
+          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-2.5">
+            <label className="text-[10px] text-[#9EA8B3] block mb-1">
               📍 {language === 'ar' ? '1. الحي / المنطقة' : '1. District'}
             </label>
             <select
@@ -283,8 +264,8 @@ export const HeroSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
+          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-2.5">
+            <label className="text-[10px] text-[#9EA8B3] block mb-1">
               👥 {language === 'ar' ? '2. مين معاك؟' : '2. Companions'}
             </label>
             <select
@@ -310,8 +291,8 @@ export const HeroSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
+          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-2.5">
+            <label className="text-[10px] text-[#9EA8B3] block mb-1">
               💰 {language === 'ar' ? '3. الميزانية' : '3. Budget'}
             </label>
             <select
@@ -323,10 +304,10 @@ export const HeroSection: React.FC = () => {
                 {language === 'ar' ? 'متوازن (~150 ر.س)' : 'Moderate (~150 SAR)'}
               </option>
               <option value="free" className="bg-[#090B0E]">
-                {language === 'ar' ? 'خطة مجانية 100% (0 ر.س)' : '100% Free Plan (0 SAR)'}
+                {language === 'ar' ? 'خطة مجانية 100% 🆓 (0 ر.س)' : '100% Free Plan 🆓 (0 SAR)'}
               </option>
               <option value="economy" className="bg-[#090B0E]">
-                {language === 'ar' ? 'على قد الجيب (≤60 ر.س)' : 'Budget (≤60 SAR)'}
+                {language === 'ar' ? 'على قد الجيب (≤60 ر.س)' : 'Budget Saver (≤60 SAR)'}
               </option>
               <option value="premium" className="bg-[#090B0E]">
                 {language === 'ar' ? 'دلع VIP (+350 ر.س)' : 'VIP Tier (+350 SAR)'}
@@ -334,8 +315,8 @@ export const HeroSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
+          <div className="bg-white/[0.04] border border-white/10 rounded-2xl p-2.5">
+            <label className="text-[10px] text-[#9EA8B3] block mb-1">
               ⏱️ {language === 'ar' ? '4. الوقت المتاح' : '4. Duration'}
             </label>
             <select
@@ -361,9 +342,9 @@ export const HeroSection: React.FC = () => {
             </select>
           </div>
 
-          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all col-span-2 sm:col-span-1">
-            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
-              ✨ {language === 'ar' ? '5. جو ومود الطلعة' : '5. Vibe & Mood'}
+          <div className="col-span-2 sm:col-span-1 bg-white/[0.04] border border-white/10 rounded-2xl p-2.5">
+            <label className="text-[10px] text-[#9EA8B3] block mb-1">
+              🎭 {language === 'ar' ? '5. جو ومود الطلعة' : '5. Vibe & Mood'}
             </label>
             <select
               value={vibe}
@@ -380,7 +361,7 @@ export const HeroSection: React.FC = () => {
                 {language === 'ar' ? 'قهوة مختصة وحلى ☕' : 'Coffee & Dessert ☕'}
               </option>
               <option value="heritage_arts" className="bg-[#090B0E]">
-                {language === 'ar' ? 'تراث وفنون وثقافة 🏛️' : 'Heritage & Culture 🏛️'}
+                {language === 'ar' ? 'تراث وفنون وثقافة 🏛️' : 'Heritage & Arts 🏛️'}
               </option>
               <option value="gaming_challenges" className="bg-[#090B0E]">
                 {language === 'ar' ? 'ألعاب وتحديات 🎯' : 'Gaming & Fun 🎯'}
@@ -392,31 +373,22 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Action Button Strip */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
-          <div className="text-start hidden sm:block">
-            <span className="text-xs text-[#9EA8B3] block">
-              {language === 'ar'
-                ? `الخطة الحالية: ${activeDest.districtName} • ${companions} • ${vibe}`
-                : `Active Preset: ${activeDest.titleEn}`}
-            </span>
-          </div>
-
-          <motion.button
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            onClick={handleBuildPlan}
-            disabled={isGeneratingPlan}
-            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#E5A962] to-[#D48B38] text-[#090B0E] font-bold text-sm shadow-lg shadow-[#E5A962]/20 flex items-center justify-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
-          >
-            <Sparkles className="w-4 h-4 text-[#090B0E]" />
-            <span>
-              {language === 'ar' ? '✨ ابتكر خطتي الذكية في جدة الحين' : '✨ Generate My Jeddah Plan Now'}
-            </span>
-            {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-          </motion.button>
-        </div>
-      </motion.div>
+        {/* Master Glowing CTA Button */}
+        <motion.button
+          whileHover={{ scale: 1.01, boxShadow: '0 0 35px rgba(229, 169, 98, 0.4)' }}
+          whileTap={{ scale: 0.99 }}
+          onClick={handleBuildPlan}
+          disabled={isGeneratingPlan}
+          className="w-full py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#E5A962] to-[#D48B38] text-[#090B0E] font-bold text-sm sm:text-base shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
+        >
+          <span>
+            {language === 'ar'
+              ? '✨ ابنِ خطتي في جدة بنقرة واحدة'
+              : '✨ Build My Jeddah Plan in One Click'}
+          </span>
+          {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+        </motion.button>
+      </div>
     </section>
   );
 };
