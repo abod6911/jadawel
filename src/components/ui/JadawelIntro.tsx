@@ -5,160 +5,169 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { getAssetUrl } from '@/utils/paths';
 
 const JEDDAH_SNAPS = [
-  { url: getAssetUrl('/images/realms/obhur-marina.jpg'), label: 'واجهة ومارينا أبحر 🌊' },
-  { url: getAssetUrl('/images/realms/albalad-heritage.jpg'), label: 'رواشين البلد العتيقة 🏛️' },
-  { url: getAssetUrl('/images/realms/alrawdah-coffee.jpg'), label: 'كافيهات الروضة المختصة ☕' }
+  getAssetUrl('/images/realms/obhur-marina.jpg'),
+  getAssetUrl('/images/realms/albalad-heritage.jpg'),
+  getAssetUrl('/images/realms/alrawdah-coffee.jpg'),
+  getAssetUrl('/images/places/north-corniche.jpg')
 ];
 
 export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete }) => {
   const [mounted, setMounted] = useState(false);
-  const [progress, setProgress] = useState(1);
-  const [activeCard, setActiveCard] = useState(0);
-  const [isRevealing, setIsRevealing] = useState(false);
-  const [isDone, setIsDone] = useState(false);
+  const [stage, setStage] = useState<'SHUFFLE' | 'SCATTER' | 'LOCK' | 'COMPLETE'>('SHUFFLE');
+  const [count, setCount] = useState(1);
+  const [cardIdx, setCardIdx] = useState(0);
 
   useEffect(() => {
     setMounted(true);
 
-    // Bypass if already seen in current session
     if (typeof window !== 'undefined' && sessionStorage.getItem('jadawel_intro_seen')) {
-      setIsDone(true);
+      setStage('COMPLETE');
       if (onComplete) onComplete();
       return;
     }
 
-    // Lock body scroll during intro
     document.body.style.overflow = 'hidden';
+    const duration = 1900;
+    const start = Date.now();
 
-    const duration = 2200; // 2.2s total count duration
-    const startTime = performance.now();
-    let frameId: number;
+    const ticker = setInterval(() => {
+      const elapsed = Date.now() - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const val = Math.floor(Math.pow(progress, 0.85) * 100);
+      setCount(Math.max(1, Math.min(100, val)));
+      setCardIdx((prev) => (prev + 1) % JEDDAH_SNAPS.length);
 
-    const tick = (now: number) => {
-      const elapsed = now - startTime;
-      const rawProgress = Math.min(elapsed / duration, 1);
-      
-      // Decelerating easing calculation
-      const easeProgress = 1 - Math.pow(1 - rawProgress, 2.2);
-      const easedProgress = Math.floor(easeProgress * 100);
-      setProgress(Math.max(1, Math.min(100, easedProgress)));
+      if (progress >= 1) {
+        clearInterval(ticker);
+        setCount(100);
+        setStage('SCATTER');
 
-      // Cycle card index based on elapsed progress
-      const cardIdx = Math.floor(rawProgress * JEDDAH_SNAPS.length) % JEDDAH_SNAPS.length;
-      setActiveCard(cardIdx);
-
-      if (rawProgress < 1) {
-        frameId = requestAnimationFrame(tick);
-      } else {
-        // Trigger reveal wipe
-        setIsRevealing(true);
         setTimeout(() => {
-          setIsDone(true);
-          document.body.style.overflow = '';
-          try {
-            sessionStorage.setItem('jadawel_intro_seen', 'true');
-          } catch (e) {
-            // Ignore sessionStorage restrictions if any
-          }
-          if (onComplete) onComplete();
-        }, 750);
+          setStage('LOCK');
+          setTimeout(() => {
+            setStage('COMPLETE');
+            document.body.style.overflow = '';
+            try {
+              sessionStorage.setItem('jadawel_intro_seen', 'true');
+            } catch (e) {
+              // Ignore session storage errors
+            }
+            if (onComplete) onComplete();
+          }, 650);
+        }, 450);
       }
-    };
+    }, 28);
 
-    frameId = requestAnimationFrame(tick);
-
-    // Hard Failsafe: Forces site unlock after 3.2s regardless of frame stalls
+    // Absolute failsafe to guarantee page unlock
     const failsafe = setTimeout(() => {
-      setIsDone(true);
+      setStage('COMPLETE');
       document.body.style.overflow = '';
       if (onComplete) onComplete();
-    }, 3200);
+    }, 3500);
 
     return () => {
-      cancelAnimationFrame(frameId);
+      clearInterval(ticker);
       clearTimeout(failsafe);
       document.body.style.overflow = '';
     };
   }, [onComplete]);
 
-  if (!mounted || isDone) return null;
+  if (!mounted) return null;
 
   return (
     <AnimatePresence>
-      {!isDone && (
+      {stage !== 'COMPLETE' && (
         <motion.div
-          className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#090B0E] select-none"
+          key="editorial-intro-curtain"
+          className={`fixed inset-0 z-[999999] flex items-center justify-center select-none overflow-hidden transition-colors duration-200 ${
+            stage === 'SCATTER' || stage === 'LOCK' ? 'bg-[#FAF8F3]' : 'bg-[#090B0E]'
+          }`}
           initial={{ opacity: 1 }}
           exit={{
             clipPath: 'polygon(0 0, 100% 0, 100% 0, 0 0)',
-            transition: { duration: 0.75, ease: [0.76, 0, 0.24, 1] }
+            transition: { duration: 0.7, ease: [0.76, 0, 0.24, 1] }
           }}
         >
-          {/* Ambient Background Mesh */}
-          <div className="absolute inset-0 bg-mesh-abyss opacity-70 pointer-events-none" />
+          {/* Phase 1: Card Stack + Counter */}
+          {stage === 'SHUFFLE' && (
+            <div className="relative flex items-center justify-center w-[280px] h-[360px]">
+              {JEDDAH_SNAPS.map((img, idx) => {
+                const isTop = cardIdx === idx;
+                return (
+                  <motion.div
+                    key={idx}
+                    className="absolute w-[170px] h-[230px] rounded-2xl overflow-hidden shadow-2xl border border-white/20 bg-black"
+                    animate={{
+                      scale: isTop ? 1.05 : 0.94,
+                      rotate: isTop ? 0 : idx % 2 === 0 ? -7 : 7,
+                      opacity: isTop ? 1 : 0.4,
+                      zIndex: isTop ? 10 : idx
+                    }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                  >
+                    <img src={img} alt="Jeddah" className="w-full h-full object-cover brightness-90" />
+                  </motion.div>
+                );
+              })}
 
-          {/* Expanding Morph Layer */}
-          {isRevealing && (
-            <motion.div
-              className="absolute inset-0 bg-[#E5A962] z-30 pointer-events-none"
-              initial={{ scaleY: 0, originY: 0.5 }}
-              animate={{ scaleY: 1 }}
-              transition={{ duration: 0.65, ease: [0.76, 0, 0.24, 1] }}
-            />
-          )}
-
-          {/* Central Card Stack */}
-          <motion.div
-            className="relative flex items-center justify-center w-[280px] h-[380px] sm:w-[320px] sm:h-[440px]"
-            animate={
-              isRevealing
-                ? { scale: 2, opacity: 0, filter: 'blur(10px)' }
-                : { scale: 1, opacity: 1 }
-            }
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-          >
-            {JEDDAH_SNAPS.map((snap, idx) => {
-              const isTop = activeCard === idx;
-              const rotation = idx % 2 === 0 ? -7 : 7;
-
-              return (
-                <motion.div
-                  key={idx}
-                  className="absolute inset-0 rounded-3xl overflow-hidden shadow-2xl border border-white/20 bg-[#0F141C]"
-                  animate={{
-                    scale: isTop ? 1.04 : 0.94,
-                    rotate: isTop ? 0 : rotation,
-                    zIndex: isTop ? 10 : idx,
-                    opacity: isTop ? 1 : 0.45
-                  }}
-                  transition={{ type: 'spring', stiffness: 280, damping: 22 }}
-                >
-                  <img
-                    src={snap.url}
-                    alt={snap.label}
-                    className="w-full h-full object-cover brightness-[0.85] contrast-[1.1]"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
-                  <span className="absolute bottom-4 inset-x-0 text-center text-xs sm:text-sm font-bold text-white drop-shadow-md">
-                    {snap.label}
-                  </span>
-                </motion.div>
-              );
-            })}
-
-            {/* Brand Logo & Smooth Counter Box */}
-            <div className="absolute z-20 flex flex-col items-center justify-center px-6 py-4 backdrop-blur-xl bg-black/70 border border-white/20 rounded-2xl shadow-2xl min-w-[210px]">
-              <span className="text-3xl sm:text-4xl font-black text-white tracking-wide">
-                جداول <span className="text-[#E5A962] text-[10px] font-bold tracking-widest uppercase">JADAWEL</span>
-              </span>
-              <div className="flex items-center justify-between w-full mt-3 pt-2.5 border-t border-white/15">
-                <span className="text-[10px] text-white/70 font-medium">جاري تجهيز المسار</span>
-                <span className="font-mono text-sm font-bold text-[#E5A962] tracking-wider">
-                  {String(progress).padStart(3, '0')}%
+              <div className="absolute z-20 flex items-center justify-center">
+                <span className="font-black text-4xl sm:text-5xl tracking-widest text-white drop-shadow-[0_10px_25px_rgba(0,0,0,0.9)]">
+                  JADAWEL<span className="text-[#F46F52] text-xs align-top ml-1">®</span>
+                </span>
+                <span className="absolute -top-7 -right-8 font-mono text-xs font-bold text-white bg-white/10 px-2 py-0.5 rounded backdrop-blur-md">
+                  {String(count).padStart(3, '0')}%
                 </span>
               </div>
             </div>
-          </motion.div>
+          )}
+
+          {/* Phase 2: Geometric Shapes Scatter (Ivory BG #FAF8F3) */}
+          {stage === 'SCATTER' && (
+            <motion.div className="absolute inset-0 flex items-center justify-center">
+              <motion.div
+                className="absolute w-20 h-10 bg-[#F46F52] rounded-t-full"
+                initial={{ x: 0, scale: 0.5 }}
+                animate={{ x: -200, scale: 1.1 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              />
+              <motion.div
+                className="absolute flex flex-col items-center"
+                initial={{ y: 0, scale: 0.5 }}
+                animate={{ y: -90, scale: 1.1 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <div className="w-24 h-6 bg-[#F46F52] rounded-sm" />
+                <div className="w-6 h-10 bg-[#F46F52] rounded-sm" />
+              </motion.div>
+              <motion.div
+                className="absolute w-6 h-24 bg-[#F46F52] rounded-sm"
+                initial={{ x: 0, scale: 0.5 }}
+                animate={{ x: 200, scale: 1.1 }}
+                transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+              />
+            </motion.div>
+          )}
+
+          {/* Phase 3: Brand Lock (Editorial Ivory) */}
+          {stage === 'LOCK' && (
+            <motion.div
+              className="absolute inset-0 flex flex-col justify-between p-6 sm:p-10 bg-[#FAF8F3]"
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.35 }}
+            >
+              <div className="w-full text-center border-b border-black/10 pb-4">
+                <h1 className="text-[13vw] font-black text-[#F46F52] tracking-tighter leading-none">
+                  JADAWEL<span className="text-black text-2xl align-top">®</span>
+                </h1>
+              </div>
+              <div className="flex justify-between font-mono text-[10px] sm:text-xs text-black/60 uppercase">
+                <span>// OUTING PLANNER</span>
+                <span>// JEDDAH, KSA</span>
+                <span>// 2026 EDITION</span>
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       )}
     </AnimatePresence>

@@ -134,9 +134,9 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-[94vh] w-full flex flex-col items-center justify-between overflow-hidden px-4 pt-10 pb-8 select-none">
+    <section className="relative min-h-[92vh] w-full flex flex-col items-center justify-between overflow-hidden px-4 pt-8 pb-8 select-none">
       {/* 1. SECURE BACKGROUND IMAGE & AMBIENT GLOW (z-0 to z-[2]) */}
-      <div className="absolute inset-0 z-0 bg-[#081B26]">
+      <div className="absolute inset-0 z-0 bg-[#090B0E]">
         <AnimatePresence mode="wait">
           <motion.img
             key={activeDest.id}
@@ -146,14 +146,13 @@ export const HeroSection: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full object-cover object-center brightness-[0.72] contrast-[1.12]"
+            className="w-full h-full object-cover object-center brightness-[0.68] contrast-[1.12]"
           />
         </AnimatePresence>
 
         {/* Ambient Overlay Masks */}
-        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#081B26]/85 via-transparent to-[#081B26]" />
-        <div className="absolute inset-0 z-[2] bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(8,27,38,0.85)_80%)]" />
-        <div className="absolute inset-0 z-[2] rawashin-lattice opacity-[0.03] pointer-events-none" />
+        <div className="absolute inset-0 z-[1] bg-gradient-to-b from-[#090B0E]/85 via-transparent to-[#090B0E]" />
+        <div className="absolute inset-0 z-[2] bg-[radial-gradient(circle_at_center,transparent_0%,rgba(9,11,14,0.85)_80%)]" />
       </div>
 
       {/* 2. MAIN HERO CONTENT STACK (z-10) */}
@@ -163,9 +162,9 @@ export const HeroSection: React.FC = () => {
           key={`badge-${activeKey}`}
           initial={{ opacity: 0, y: -12 }}
           animate={{ opacity: 1, y: 0 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-white/10 border border-white/20 text-xs font-medium text-[#F6C77A] mb-5 shadow-lg shadow-black/30"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-white/10 border border-white/20 text-xs font-medium text-[#E5A962] mb-4 shadow-lg shadow-black/40"
         >
-          <span className="w-2 h-2 rounded-full bg-[#22C55E] animate-pulse" />
+          <span className="w-2 h-2 rounded-full bg-[#4E9F96] animate-pulse" />
           <span>{language === 'ar' ? activeDest.badge : activeDest.badgeEn}</span>
         </motion.div>
 
@@ -175,7 +174,7 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-          className="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tight leading-tight mb-4 drop-shadow-[0_12px_35px_rgba(0,0,0,0.85)]"
+          className="text-4xl sm:text-6xl md:text-7xl font-black text-[#FBFBFA] tracking-tight leading-tight mb-3 drop-shadow-[0_12px_35px_rgba(0,0,0,0.85)]"
         >
           {language === 'ar' ? activeDest.title : activeDest.titleEn}
         </motion.h1>
@@ -186,7 +185,7 @@ export const HeroSection: React.FC = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-base sm:text-xl text-[#F8F7F3] max-w-2xl font-normal leading-relaxed drop-shadow-md mb-6"
+          className="text-sm sm:text-lg text-[#9EA8B3] max-w-2xl font-normal leading-relaxed drop-shadow-md mb-5"
         >
           {language === 'ar' ? activeDest.tagline : activeDest.taglineEn}
         </motion.p>
@@ -196,11 +195,11 @@ export const HeroSection: React.FC = () => {
           key={`status-${activeKey}`}
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="flex flex-wrap items-center justify-center gap-3 px-6 py-2.5 rounded-2xl backdrop-blur-2xl bg-black/45 border border-white/20 text-xs sm:text-sm text-white/95 shadow-xl mb-7"
+          className="flex flex-wrap items-center justify-center gap-3 px-5 py-2 rounded-2xl backdrop-blur-2xl bg-black/60 border border-white/15 text-xs sm:text-sm text-white/95 shadow-xl mb-6"
         >
           <span>{language === 'ar' ? activeDest.weather : activeDest.weatherEn}</span>
           <span className="w-1.5 h-1.5 rounded-full bg-white/30 hidden sm:block" />
-          <span className="text-[#F6C77A] font-bold">
+          <span className="text-[#E5A962] font-bold">
             {language === 'ar' ? `الميزانية المقترحة: ${activeDest.budget}` : `Est Budget: ${activeDest.budgetEn}`}
           </span>
         </motion.div>
@@ -215,7 +214,7 @@ export const HeroSection: React.FC = () => {
                 onClick={() => handleSelectDestination(key)}
                 whileHover={{ scale: 1.04, y: -2 }}
                 whileTap={{ scale: 0.98 }}
-                className="flex-1 flex items-center gap-3 p-2.5 sm:px-4 sm:py-3 rounded-2xl backdrop-blur-xl bg-white/10 hover:bg-white/15 border border-white/20 hover:border-[#F6C77A]/60 text-start transition-all cursor-pointer shadow-xl group touch-manipulation"
+                className="flex-1 flex items-center gap-3 p-2.5 sm:px-4 sm:py-3 rounded-2xl backdrop-blur-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 hover:border-[#E5A962]/60 text-start transition-all cursor-pointer shadow-xl group touch-manipulation"
               >
                 <img
                   src={dest.bgImage}
@@ -223,10 +222,10 @@ export const HeroSection: React.FC = () => {
                   className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl object-cover border border-white/25 shadow shrink-0"
                 />
                 <div className="overflow-hidden min-w-0">
-                  <span className="text-[10px] sm:text-xs text-[#F6C77A] font-medium block">
+                  <span className="text-[10px] sm:text-xs text-[#E5A962] font-medium block">
                     {language === 'ar' ? 'انتقل إلى' : 'Switch to'}
                   </span>
-                  <span className="text-xs sm:text-sm font-bold text-white block truncate group-hover:text-[#FAF8F3]">
+                  <span className="text-xs sm:text-sm font-bold text-white block truncate group-hover:text-[#FBFBFA]">
                     {language === 'ar' ? dest.title : dest.titleEn}
                   </span>
                 </div>
@@ -241,16 +240,16 @@ export const HeroSection: React.FC = () => {
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.25, duration: 0.7 }}
-        className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#081B26]/90 border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_20px_50px_rgba(0,0,0,0.6)]"
+        className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#090B0E]/90 border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_25px_60px_rgba(0,0,0,0.7)]"
       >
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2">
-            <span className="text-[#F6C77A] text-sm">⚡</span>
+            <span className="text-[#E5A962] text-sm">⚡</span>
             <span className="text-xs sm:text-sm font-bold text-white">
               {language === 'ar' ? 'المحدد السريع • رتّب طلعة جدة بـ 5 خيارات:' : 'Quick Dock • Craft Jeddah Outing in 5 Steps:'}
             </span>
           </div>
-          <span className="text-[10px] sm:text-xs text-[#1D8C88] bg-[#1D8C88]/15 px-3 py-1 rounded-full border border-[#1D8C88]/30 font-medium hidden sm:inline-block">
+          <span className="text-[10px] sm:text-xs text-[#4E9F96] bg-[#4E9F96]/15 px-3 py-1 rounded-full border border-[#4E9F96]/30 font-medium hidden sm:inline-block">
             {language === 'ar' ? 'مسار فوري مدعوم بالذكاء الاصطناعي ⚡' : 'Instant AI Route ⚡'}
           </span>
         </div>
@@ -258,147 +257,165 @@ export const HeroSection: React.FC = () => {
         {/* 5-Column Input Selectors */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-4 text-start">
           <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#AFC1C6] font-bold block mb-1">
+            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
               📍 {language === 'ar' ? '1. الحي / المنطقة' : '1. District'}
             </label>
             <select
               value={district}
               onChange={(e) => setDistrict(e.target.value as any)}
-              className="w-full bg-transparent text-white text-base sm:text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
+              className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="obhur" className="bg-[#081B26]">
+              <option value="obhur" className="bg-[#090B0E]">
                 {language === 'ar' ? 'أبحر (الشمالية والجنوبية)' : 'Obhur (North & South)'}
               </option>
-              <option value="al-rawdah" className="bg-[#081B26]">
+              <option value="al-rawdah" className="bg-[#090B0E]">
                 {language === 'ar' ? 'حي الروضة' : 'Al-Rawdah District'}
               </option>
-              <option value="al-balad" className="bg-[#081B26]">
+              <option value="al-balad" className="bg-[#090B0E]">
                 {language === 'ar' ? 'البلد التاريخية' : 'Historic Al-Balad'}
               </option>
-              <option value="al-shati" className="bg-[#081B26]">
+              <option value="al-shati" className="bg-[#090B0E]">
                 {language === 'ar' ? 'حي الشاطئ والكورنيش' : 'Al-Shati & Corniche'}
               </option>
-              <option value="all_jeddah" className="bg-[#081B26]">
+              <option value="all_jeddah" className="bg-[#090B0E]">
                 {language === 'ar' ? 'جدة كلها 🌊' : 'All Jeddah 🌊'}
               </option>
             </select>
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#AFC1C6] font-bold block mb-1">
+            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
               👥 {language === 'ar' ? '2. مين معاك؟' : '2. Companions'}
             </label>
             <select
               value={companions}
               onChange={(e) => setCompanions(e.target.value as any)}
-              className="w-full bg-transparent text-white text-base sm:text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
+              className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="friends" className="bg-[#081B26]">
+              <option value="friends" className="bg-[#090B0E]">
                 {language === 'ar' ? 'مع الشلة 🥳' : 'Friends 🥳'}
               </option>
-              <option value="solo" className="bg-[#081B26]">
+              <option value="solo" className="bg-[#090B0E]">
                 {language === 'ar' ? 'لحالي أروّق 🚶' : 'Solo 🚶'}
               </option>
-              <option value="couples" className="bg-[#081B26]">
+              <option value="couples" className="bg-[#090B0E]">
                 {language === 'ar' ? 'شخصين / كوبل 👩‍❤️‍👨' : 'Couples 👩‍❤️‍👨'}
               </option>
-              <option value="family" className="bg-[#081B26]">
+              <option value="family" className="bg-[#090B0E]">
                 {language === 'ar' ? 'جمعة عائلة 👨‍👩‍👧‍👦' : 'Family 👨‍👩‍👧‍👦'}
               </option>
-              <option value="kids" className="bg-[#081B26]">
+              <option value="kids" className="bg-[#090B0E]">
                 {language === 'ar' ? 'مع أطفال 👶' : 'With Kids 👶'}
               </option>
             </select>
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#AFC1C6] font-bold block mb-1">
+            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
               💰 {language === 'ar' ? '3. الميزانية' : '3. Budget'}
             </label>
             <select
               value={budget}
               onChange={(e) => setBudget(e.target.value as any)}
-              className="w-full bg-transparent text-white text-base sm:text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
+              className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="moderate" className="bg-[#081B26]">
+              <option value="moderate" className="bg-[#090B0E]">
                 {language === 'ar' ? 'متوازن (~150 ر.س)' : 'Moderate (~150 SAR)'}
               </option>
-              <option value="economy" className="bg-[#081B26]">
-                {language === 'ar' ? 'اقتصادي (≤60 ر.س)' : 'Budget (≤60 SAR)'}
+              <option value="free" className="bg-[#090B0E]">
+                {language === 'ar' ? 'خطة مجانية 100% (0 ر.س)' : '100% Free Plan (0 SAR)'}
               </option>
-              <option value="premium" className="bg-[#081B26]">
-                {language === 'ar' ? 'فاخر ومميز (+350 ر.س)' : 'Premium (+350 SAR)'}
+              <option value="economy" className="bg-[#090B0E]">
+                {language === 'ar' ? 'على قد الجيب (≤60 ر.س)' : 'Budget (≤60 SAR)'}
+              </option>
+              <option value="premium" className="bg-[#090B0E]">
+                {language === 'ar' ? 'دلع VIP (+350 ر.س)' : 'VIP Tier (+350 SAR)'}
               </option>
             </select>
           </div>
 
           <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#AFC1C6] font-bold block mb-1">
+            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
               ⏱️ {language === 'ar' ? '4. الوقت المتاح' : '4. Duration'}
             </label>
             <select
               value={duration}
               onChange={(e) => setDuration(e.target.value as any)}
-              className="w-full bg-transparent text-white text-base sm:text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
+              className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="4_to_6h" className="bg-[#081B26]">
+              <option value="4_to_6h" className="bg-[#090B0E]">
                 {language === 'ar' ? '4 إلى 6 ساعات 🌆' : '4 - 6 Hours 🌆'}
               </option>
-              <option value="under_2h" className="bg-[#081B26]">
+              <option value="under_2h" className="bg-[#090B0E]">
                 {language === 'ar' ? 'أقل من ساعتين ⚡' : '< 2 Hours ⚡'}
               </option>
-              <option value="2_to_4h" className="bg-[#081B26]">
+              <option value="2_to_4h" className="bg-[#090B0E]">
                 {language === 'ar' ? '2 إلى 4 ساعات ☕' : '2 - 4 Hours ☕'}
               </option>
-              <option value="full_day" className="bg-[#081B26]">
+              <option value="half_day_night" className="bg-[#090B0E]">
+                {language === 'ar' ? 'سهرة ليلية 🌙' : 'Night Out 🌙'}
+              </option>
+              <option value="full_day" className="bg-[#090B0E]">
                 {language === 'ar' ? 'يوم كامل 🚀' : 'Full Day 🚀'}
               </option>
             </select>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
-            <label className="text-[10px] text-[#AFC1C6] font-bold block mb-1">
-              🎭 {language === 'ar' ? '5. جو الطلعة' : '5. Vibe'}
+          <div className="bg-white/5 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all col-span-2 sm:col-span-1">
+            <label className="text-[10px] text-[#9EA8B3] font-bold block mb-1">
+              ✨ {language === 'ar' ? '5. جو ومود الطلعة' : '5. Vibe & Mood'}
             </label>
             <select
               value={vibe}
               onChange={(e) => setVibe(e.target.value as any)}
-              className="w-full bg-transparent text-white text-base sm:text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
+              className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="beach_sunset" className="bg-[#081B26]">
+              <option value="beach_sunset" className="bg-[#090B0E]">
                 {language === 'ar' ? 'بحر وغروب 🌊' : 'Beach & Sunset 🌊'}
               </option>
-              <option value="food" className="bg-[#081B26]">
+              <option value="food" className="bg-[#090B0E]">
                 {language === 'ar' ? 'أكل ومطاعم 🍔' : 'Food & Dining 🍔'}
               </option>
-              <option value="heritage_arts" className="bg-[#081B26]">
-                {language === 'ar' ? 'تراث وسهرات 🏛️' : 'Heritage & Arts 🏛️'}
+              <option value="coffee_dessert" className="bg-[#090B0E]">
+                {language === 'ar' ? 'قهوة مختصة وحلى ☕' : 'Coffee & Dessert ☕'}
               </option>
-              <option value="coffee_dessert" className="bg-[#081B26]">
-                {language === 'ar' ? 'قهوة وحلى ☕' : 'Coffee & Dessert ☕'}
+              <option value="heritage_arts" className="bg-[#090B0E]">
+                {language === 'ar' ? 'تراث وفنون وثقافة 🏛️' : 'Heritage & Culture 🏛️'}
+              </option>
+              <option value="gaming_challenges" className="bg-[#090B0E]">
+                {language === 'ar' ? 'ألعاب وتحديات 🎯' : 'Gaming & Fun 🎯'}
+              </option>
+              <option value="free_walk" className="bg-[#090B0E]">
+                {language === 'ar' ? 'تمشية مجانية 🆓' : 'Free Walk 🆓'}
               </option>
             </select>
           </div>
         </div>
 
-        {/* Master Glowing CTA */}
-        <motion.button
-          whileHover={{ scale: 1.01, boxShadow: '0 0 35px rgba(244, 111, 82, 0.55)' }}
-          whileTap={{ scale: 0.99 }}
-          onClick={handleBuildPlan}
-          disabled={isGeneratingPlan}
-          className="w-full min-h-[54px] py-4 rounded-2xl bg-[#F46F52] hover:bg-[#E95E43] text-white font-black text-sm sm:text-base shadow-xl shadow-[#F46F52]/25 transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation"
-        >
-          {isGeneratingPlan ? (
-            <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-          ) : (
-            <>
-              <Sparkles className="w-5 h-5 text-[#F6C77A] animate-pulse" />
-              <span>{language === 'ar' ? '✨ ابنِ خطتي في جدة بنقرة واحدة' : '✨ Build My Jeddah Plan in 1 Click'}</span>
-              {isRTL ? <ArrowLeft className="w-5 h-5" /> : <ArrowRight className="w-5 h-5" />}
-            </>
-          )}
-        </motion.button>
+        {/* Action Button Strip */}
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-2">
+          <div className="text-start hidden sm:block">
+            <span className="text-xs text-[#9EA8B3] block">
+              {language === 'ar'
+                ? `الخطة الحالية: ${activeDest.districtName} • ${companions} • ${vibe}`
+                : `Active Preset: ${activeDest.titleEn}`}
+            </span>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={handleBuildPlan}
+            disabled={isGeneratingPlan}
+            className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#E5A962] to-[#D48B38] text-[#090B0E] font-bold text-sm shadow-lg shadow-[#E5A962]/20 flex items-center justify-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
+          >
+            <Sparkles className="w-4 h-4 text-[#090B0E]" />
+            <span>
+              {language === 'ar' ? '✨ ابتكر خطتي الذكية في جدة الحين' : '✨ Generate My Jeddah Plan Now'}
+            </span>
+            {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+          </motion.button>
+        </div>
       </motion.div>
     </section>
   );
