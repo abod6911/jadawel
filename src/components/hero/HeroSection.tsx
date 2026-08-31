@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, MapPin, Users, DollarSign, Clock, Compass, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Sparkles, ArrowLeft, ArrowRight } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
@@ -133,8 +133,8 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative min-h-[92dvh] w-full flex flex-col items-center justify-between px-3 sm:px-6 pt-3 sm:pt-6 pb-8 select-none">
-      {/* 1. ATMOSPHERIC FULL-BLEED BACKGROUND */}
+    <section className="relative min-h-[92dvh] w-full flex flex-col items-center justify-between px-3 sm:px-6 pt-4 sm:pt-6 pb-8 select-none">
+      {/* 1. ATMOSPHERIC BACKGROUND WITH VIGNETTE */}
       <div className="absolute inset-0 z-0 bg-[#090B0E]">
         <AnimatePresence mode="wait">
           <motion.img
@@ -145,7 +145,7 @@ export const HeroSection: React.FC = () => {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full object-cover brightness-[0.7] contrast-[1.12]"
+            className="w-full h-full object-cover brightness-[0.65] contrast-[1.15]"
           />
         </AnimatePresence>
         <div className="absolute inset-0 bg-gradient-to-b from-[#090B0E]/80 via-transparent to-[#090B0E]" />
@@ -155,12 +155,12 @@ export const HeroSection: React.FC = () => {
       {/* 2. CENTER CONTENT STACK */}
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto my-auto py-2">
         {/* Eyebrow Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-[#121820]/70 border border-white/10 text-xs text-[#F3CA95] mb-4 shadow-lg">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-xl bg-white/[0.06] border border-white/15 text-xs text-[#F3CA95] mb-4 shadow-lg">
           <span className="w-2 h-2 rounded-full bg-[#4E9F96] animate-pulse" />
           <span>{language === 'ar' ? activeDest.badge : activeDest.badgeEn}</span>
         </div>
 
-        {/* Main Headline */}
+        {/* Master Headline */}
         <h1 className="text-4xl sm:text-6xl md:text-7xl font-black text-[#FBFBFA] tracking-tight leading-[1.25] mb-3 drop-shadow-[0_10px_30px_rgba(0,0,0,0.9)]">
           {language === 'ar' ? (
             <>
@@ -186,7 +186,7 @@ export const HeroSection: React.FC = () => {
           {language === 'ar' ? activeDest.tagline : activeDest.taglineEn}
         </p>
 
-        {/* Interactive 3-Destination Portals */}
+        {/* 3-Destination Switcher Cards */}
         <div className="grid grid-cols-3 gap-2.5 sm:gap-4 w-full max-w-xl mb-4">
           {DESTINATIONS.map((dest, idx) => {
             const isActive = activeIdx === idx;
@@ -194,16 +194,16 @@ export const HeroSection: React.FC = () => {
               <button
                 key={dest.id}
                 onClick={() => handleSelectDestination(idx)}
-                className={`flex items-center gap-2 p-2 sm:px-3 sm:py-2.5 rounded-2xl border transition-all text-start cursor-pointer backdrop-blur-xl touch-manipulation ${
+                className={`flex items-center gap-2.5 p-2 sm:px-3 sm:py-2.5 rounded-2xl border transition-all text-start cursor-pointer backdrop-blur-xl touch-manipulation ${
                   isActive
                     ? 'bg-[#E5A962]/15 border-[#E5A962] shadow-[0_0_20px_rgba(229,169,98,0.25)]'
-                    : 'bg-[#121820]/75 border-white/10 hover:border-white/20 hover:bg-[#161C24]/85'
+                    : 'bg-white/[0.04] border-white/10 hover:border-white/20 hover:bg-white/[0.08]'
                 }`}
               >
                 <img
                   src={dest.bgImage}
-                  alt={dest.name}
-                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover border border-white/20 shrink-0"
+                  alt=""
+                  className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl object-cover border border-white/20 shadow shrink-0"
                 />
                 <div className="overflow-hidden min-w-0">
                   <span className="text-[9px] sm:text-[10px] text-[#F3CA95] block font-medium">
@@ -219,8 +219,8 @@ export const HeroSection: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. THE 5-PILLAR SMART PLANNER DOCK */}
-      <div className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#090B0E]/92 border border-white/10 rounded-3xl p-4 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
+      {/* 3. FLOATING 5-PILLAR SMART PLANNER DOCK */}
+      <div className="relative z-20 w-full max-w-5xl backdrop-blur-2xl bg-[#090B0E]/90 border border-white/15 rounded-3xl p-4 sm:p-6 shadow-[0_20px_60px_rgba(0,0,0,0.8)]">
         <div className="flex items-center justify-between mb-3 px-1">
           <div className="flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-[#E5A962]" />
@@ -230,14 +230,14 @@ export const HeroSection: React.FC = () => {
                 : 'Quick Dock • Craft Jeddah Outing in 5 Steps:'}
             </span>
           </div>
-          <span className="text-[10px] sm:text-xs text-[#4E9F96] bg-[#4E9F96]/15 px-3 py-1 rounded-full border border-[#4E9F96]/25 font-medium hidden sm:inline-block">
+          <span className="text-[10px] sm:text-xs text-[#4E9F96] bg-[#4E9F96]/15 px-3 py-1 rounded-full border border-[#4E9F96]/30 font-medium hidden sm:inline-block">
             {language === 'ar' ? 'مسار فوري مدعوم بالذكاء الاصطناعي ⚡' : 'Instant AI Route ⚡'}
           </span>
         </div>
 
-        {/* 5 Selectors Grid */}
+        {/* 5 Selectors Grid (Calm & Subtle Borders) */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-2.5 sm:gap-3 mb-4">
-          <div className="bg-[#121820]/80 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
+          <div className="bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 transition-colors">
             <label className="text-[10px] text-[#9EA8B3] block mb-1">
               📍 {language === 'ar' ? '1. الحي / المنطقة' : '1. District'}
             </label>
@@ -246,25 +246,25 @@ export const HeroSection: React.FC = () => {
               onChange={(e) => setDistrict(e.target.value as any)}
               className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="obhur" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="obhur" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'أبحر (الشمالية والجنوبية)' : 'Obhur (North & South)'}
               </option>
-              <option value="al-rawdah" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="al-rawdah" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'حي الروضة' : 'Al-Rawdah District'}
               </option>
-              <option value="al-balad" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="al-balad" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'البلد التاريخية' : 'Historic Al-Balad'}
               </option>
-              <option value="al-shati" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="al-shati" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'حي الشاطئ والكورنيش' : 'Al-Shati & Corniche'}
               </option>
-              <option value="all_jeddah" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="all_jeddah" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'جدة كلها 🌊' : 'All Jeddah 🌊'}
               </option>
             </select>
           </div>
 
-          <div className="bg-[#121820]/80 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
+          <div className="bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 transition-colors">
             <label className="text-[10px] text-[#9EA8B3] block mb-1">
               👥 {language === 'ar' ? '2. مين معاك؟' : '2. Companions'}
             </label>
@@ -273,25 +273,25 @@ export const HeroSection: React.FC = () => {
               onChange={(e) => setCompanions(e.target.value as any)}
               className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="friends" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="friends" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'مع الشلة 🥳' : 'Friends 🥳'}
               </option>
-              <option value="solo" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="solo" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'لحالي أروّق 🚶' : 'Solo 🚶'}
               </option>
-              <option value="couples" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="couples" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'شخصين / كوبل 👩‍❤️‍👨' : 'Couples 👩‍❤️‍👨'}
               </option>
-              <option value="family" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="family" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'جمعة عائلة 👨‍👩‍👧‍👦' : 'Family 👨‍👩‍👧‍👦'}
               </option>
-              <option value="kids" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="kids" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'مع أطفال 👶' : 'With Kids 👶'}
               </option>
             </select>
           </div>
 
-          <div className="bg-[#121820]/80 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
+          <div className="bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 transition-colors">
             <label className="text-[10px] text-[#9EA8B3] block mb-1">
               💰 {language === 'ar' ? '3. الميزانية' : '3. Budget'}
             </label>
@@ -300,22 +300,22 @@ export const HeroSection: React.FC = () => {
               onChange={(e) => setBudget(e.target.value as any)}
               className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="moderate" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="moderate" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'متوازن (~150 ر.س)' : 'Moderate (~150 SAR)'}
               </option>
-              <option value="free" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="free" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'خطة مجانية 100% 🆓 (0 ر.س)' : '100% Free Plan 🆓 (0 SAR)'}
               </option>
-              <option value="economy" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="economy" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'على قد الجيب (≤60 ر.س)' : 'Budget Saver (≤60 SAR)'}
               </option>
-              <option value="premium" className="bg-[#0F141C] text-[#FBFBFA]">
-                {language === 'ar' ? 'دلع VIP (+350 ر.س)' : 'VIP Tier (+350 SAR)'}
+              <option value="premium" className="bg-[#090B0E] text-white">
+                {language === 'ar' ? 'فاخر VIP (+350 ر.س)' : 'VIP Tier (+350 SAR)'}
               </option>
             </select>
           </div>
 
-          <div className="bg-[#121820]/80 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
+          <div className="bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 transition-colors">
             <label className="text-[10px] text-[#9EA8B3] block mb-1">
               ⏱️ {language === 'ar' ? '4. الوقت المتاح' : '4. Duration'}
             </label>
@@ -324,49 +324,49 @@ export const HeroSection: React.FC = () => {
               onChange={(e) => setDuration(e.target.value as any)}
               className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="4_to_6h" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="4_to_6h" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? '4 إلى 6 ساعات 🌆' : '4 - 6 Hours 🌆'}
               </option>
-              <option value="under_2h" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="under_2h" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'أقل من ساعتين ⚡' : '< 2 Hours ⚡'}
               </option>
-              <option value="2_to_4h" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="2_to_4h" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? '2 إلى 4 ساعات ☕' : '2 - 4 Hours ☕'}
               </option>
-              <option value="half_day_night" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="half_day_night" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'سهرة ليلية 🌙' : 'Night Out 🌙'}
               </option>
-              <option value="full_day" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="full_day" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'يوم كامل 🚀' : 'Full Day 🚀'}
               </option>
             </select>
           </div>
 
-          <div className="col-span-2 sm:col-span-1 bg-[#121820]/80 border border-white/10 rounded-2xl p-2.5 hover:border-white/20 transition-all">
+          <div className="col-span-2 sm:col-span-1 bg-white/[0.04] border border-white/10 hover:border-white/20 rounded-2xl p-2.5 transition-colors">
             <label className="text-[10px] text-[#9EA8B3] block mb-1">
-              🎭 {language === 'ar' ? '5. جو ومود الطلعة' : '5. Vibe & Mood'}
+              🎭 {language === 'ar' ? '5. جو الطلعة' : '5. Vibe & Mood'}
             </label>
             <select
               value={vibe}
               onChange={(e) => setVibe(e.target.value as any)}
               className="w-full bg-transparent text-white text-xs font-semibold focus:outline-none cursor-pointer touch-manipulation"
             >
-              <option value="beach_sunset" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="beach_sunset" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'بحر وغروب 🌊' : 'Beach & Sunset 🌊'}
               </option>
-              <option value="food" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="food" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'أكل ومطاعم 🍔' : 'Food & Dining 🍔'}
               </option>
-              <option value="coffee_dessert" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="coffee_dessert" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'قهوة مختصة وحلى ☕' : 'Coffee & Dessert ☕'}
               </option>
-              <option value="heritage_arts" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="heritage_arts" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'تراث وفنون وثقافة 🏛️' : 'Heritage & Arts 🏛️'}
               </option>
-              <option value="gaming_challenges" className="bg-[#0F141C] text-[#FBFBFA]">
-                {language === 'ar' ? 'ألعاب وتحديات 🎯' : 'Gaming & Fun 🎯'}
+              <option value="gaming_challenges" className="bg-[#090B0E] text-white">
+                {language === 'ar' ? 'ألعاب وحماس 🎯' : 'Gaming & Fun 🎯'}
               </option>
-              <option value="free_walk" className="bg-[#0F141C] text-[#FBFBFA]">
+              <option value="free_walk" className="bg-[#090B0E] text-white">
                 {language === 'ar' ? 'تمشية مجانية 🆓' : 'Free Walk 🆓'}
               </option>
             </select>
@@ -375,11 +375,11 @@ export const HeroSection: React.FC = () => {
 
         {/* Master Glowing CTA Button */}
         <motion.button
-          whileHover={{ scale: 1.01, boxShadow: '0 0 35px rgba(229, 169, 98, 0.35)' }}
+          whileHover={{ scale: 1.01, boxShadow: '0 0 35px rgba(229, 169, 98, 0.4)' }}
           whileTap={{ scale: 0.99 }}
           onClick={handleBuildPlan}
           disabled={isGeneratingPlan}
-          className="w-full py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-[#E5A962] to-[#D48B38] text-[#090B0E] font-bold text-sm sm:text-base shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
+          className="w-full py-4 rounded-2xl bg-gradient-to-r from-[#E5A962] to-[#D48B38] text-[#090B0E] font-bold text-sm sm:text-base shadow-xl transition-all flex items-center justify-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
         >
           <span>
             {language === 'ar'
