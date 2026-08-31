@@ -11,28 +11,31 @@
   --vshift: calc(max(0px, (100vh - var(--dh-px))) * 0.4);
 
   /* Canvas & Base Surfaces */
-  --bg-obsidian: #090B0E;        /* Deep Obsidian Black (No muddy tint) */
+  --bg-obsidian: #090B0E;        /* Deep Obsidian Base */
   --bg-surface: #0F141C;         /* Red Sea Twilight Surface */
   --bg-card: rgba(22, 28, 36, 0.75); /* Smoked Frosted Glass */
   --bg-card-hover: rgba(30, 38, 48, 0.85);
+  --bg-editorial-light: #FAF8F3; /* Warm Editorial Ivory */
 
-  /* Primary Brand: Champagne Gold & Sunset Amber */
-  --gold-primary: #E5A962;       /* Champagne Gold */
+  /* Brand Accents */
+  --gold-primary: #E5A962;       /* Champagne Gold (Primary Brand Accent) */
   --gold-hover: #D48B38;         /* Saffron Amber */
   --gold-gradient: linear-gradient(135deg, #E5A962 0%, #D48B38 100%);
   --gold-glow: rgba(229, 169, 98, 0.25);
-
-  /* Secondary Accents */
+  --coral-accent: #F46F52;       /* Sunset Coral (High-Impact Elements) */
+  --teal-marine: #4E9F96;        /* Red Sea Muted Teal (Badges & Discoveries) */
   --teal-mist: #4E9F96;          /* Muted Marine Teal */
   --teal-soft-bg: rgba(78, 159, 150, 0.12);
 
   /* Typography */
-  --text-pure: #FBFBFA;          /* Crisp Luminescent White */
+  --text-pure: #FBFBFA;          /* Luminescent Pearl White */
   --text-subtle: #9EA8B3;        /* Soft Slate */
   --text-gold: #F3CA95;
+  --text-dark: #090B0E;
 
   /* Borders & Dividers */
   --border-glass: rgba(255, 255, 255, 0.08);
+  --border-gold: rgba(229, 169, 98, 0.35);
   --border-gold-subtle: rgba(229, 169, 98, 0.3);
 
   /* Legacy & Architectural Mappings for Backwards-Compatibility */
