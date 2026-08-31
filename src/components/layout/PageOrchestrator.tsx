@@ -84,13 +84,13 @@ export const PageOrchestrator: React.FC = () => {
   const isHeroVisible = stage === 'REVEALING' || stage === 'COMPLETE';
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#081B26] text-pearl selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-pearl selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
       {/* 1. CINEMATIC SYNCHRONIZED PRELOADER OVERLAY */}
       <AnimatePresence>
         {stage !== 'COMPLETE' && (
           <motion.div
             key="preloader-curtain"
-            className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#081B26] select-none"
+            className="fixed inset-0 z-[99999] flex items-center justify-center bg-[#090B0E] select-none"
             initial={{ clipPath: 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)' }}
             exit={{
               clipPath: 'polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%)',
