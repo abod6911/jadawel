@@ -376,7 +376,7 @@ export const HeroSection: React.FC = () => {
       {/* 1. ATMOSPHERIC CANVAS: RED SEA TWILIGHT & VIDEO OVERLAY  */}
       {/* ======================================================== */}
       <div className="absolute inset-0 z-0 bg-[#0B0F15] overflow-hidden">
-        {/* Native Looping Jeddah Sunset Video */}
+        {/* Native Looping Jeddah Video */}
         <video
           ref={videoRef}
           autoPlay
@@ -384,23 +384,18 @@ export const HeroSection: React.FC = () => {
           muted
           playsInline
           preload="auto"
-          poster={activeDest.bgImage}
-          className={`w-full h-full object-cover transition-all duration-1000 ${
-            cinemaIntroActive || cinemaManualMode
-              ? 'brightness-[0.78] contrast-[1.1] scale-[1.04]'
-              : 'brightness-[0.46] contrast-[1.12] scale-[1.02]'
-          }`}
+          className="w-full h-full object-cover"
         >
           <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
           <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
           <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
         </video>
 
-        {/* Deep Obsidian & Luminous Golden Amber Ambient Glows */}
+        {/* Deep Obsidian & Luminous Golden Amber Ambient Glows (Smooth 60fps GPU Crossfade) */}
         <div
-          className={`absolute inset-0 transition-opacity duration-1000 ${
-            cinemaIntroActive || cinemaManualMode ? 'opacity-20' : 'opacity-100'
-          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/65 to-[#0B0F15]/85`}
+          className={`absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none ${
+            cinemaIntroActive || cinemaManualMode ? 'opacity-20' : 'opacity-85'
+          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90`}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.18)_0%,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
@@ -526,15 +521,15 @@ export const HeroSection: React.FC = () => {
             key="cinema-intro-view"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.6 } }}
-            className="relative z-30 flex flex-col items-center justify-center min-h-[440px] sm:min-h-[520px] text-center px-4 py-8 space-y-6 select-none"
+            exit={{ opacity: 0, transition: { duration: 0.5 } }}
+            className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4 py-8 space-y-6 select-none bg-black/25 backdrop-blur-[1px] pointer-events-auto"
           >
             {/* Ambient Pulsing Cinema Tag */}
             <motion.div
               initial={{ opacity: 0, y: -12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.15, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-black/50 border border-white/15 text-xs text-white/90 font-medium shadow-[0_8px_25px_rgba(0,0,0,0.6)]"
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-black/60 border border-white/15 text-xs text-white/90 font-medium shadow-[0_8px_25px_rgba(0,0,0,0.6)]"
             >
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
@@ -584,7 +579,7 @@ export const HeroSection: React.FC = () => {
               <button
                 type="button"
                 onClick={handleToggleSound}
-                className="px-4 py-3 rounded-full backdrop-blur-2xl bg-black/50 hover:bg-black/70 border border-white/20 text-white/90 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg"
+                className="px-4 py-3 rounded-full backdrop-blur-2xl bg-black/60 hover:bg-black/80 border border-white/20 text-white/90 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg"
               >
                 {isVideoMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-gold-400 animate-pulse" />}
                 <span>{language === 'ar' ? (isVideoMuted ? 'تشغيل الصوت' : 'كتم الصوت') : (isVideoMuted ? 'Sound On' : 'Mute')}</span>
@@ -597,18 +592,18 @@ export const HeroSection: React.FC = () => {
       {/* ======================================================== */}
       {/* 3. INTERACTIVE HERO EXPERIENCE (STAGGERED REVEAL)         */}
       {/* ======================================================== */}
-      <AnimatePresence>
-        {(!cinemaIntroActive && !cinemaManualMode) && (
-          <motion.div
-            key="hero-interactive-content"
-            initial={{ opacity: 0, y: 35 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            transition={{ duration: 0.85, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full flex flex-col items-center"
-          >
-            {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
-            <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
+      <motion.div
+        key="hero-interactive-content"
+        animate={{
+          opacity: (cinemaIntroActive || cinemaManualMode) ? 0 : 1,
+          y: (cinemaIntroActive || cinemaManualMode) ? 24 : 0,
+          pointerEvents: (cinemaIntroActive || cinemaManualMode) ? 'none' : 'auto',
+        }}
+        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+        className="relative z-10 w-full flex flex-col items-center"
+      >
+        {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
+        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
         
         {/* Luxury Micro-Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/30 text-xs font-bold text-gold-300 shadow-[0_0_20px_rgba(229,169,98,0.2)]">
@@ -1123,9 +1118,7 @@ export const HeroSection: React.FC = () => {
         </div>
       </div>
 
-          </motion.div>
-        )}
-      </AnimatePresence>
+      </motion.div>
 
     </section>
   );
