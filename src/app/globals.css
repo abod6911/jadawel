@@ -121,3 +121,60 @@ input, select, textarea {
 .luxury-glow:hover::after {
   opacity: 1;
 }
+
+/* Metallic Golden Shimmer Animation */
+@keyframes metallicShimmer {
+  0% {
+    background-position: -200% center;
+  }
+  100% {
+    background-position: 200% center;
+  }
+}
+
+.text-shimmer-gold {
+  background: linear-gradient(
+    90deg,
+    #E5A962 0%,
+    #FFF4DA 25%,
+    #FFFFFF 50%,
+    #FFF4DA 75%,
+    #E5A962 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: metallicShimmer 6s linear infinite;
+  display: inline-block;
+}
+
+/* Conic Spin Keyframe */
+@keyframes conicSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-conic-spin {
+  animation: conicSpin 6s linear infinite;
+}
+
+/* Glass Specular Top Highlight */
+.glass-specular {
+  position: relative;
+}
+.glass-specular::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.22), transparent);
+  pointer-events: none;
+}
+
