@@ -99,8 +99,8 @@ const DESTINATIONS: Destination[] = [
 const QUICK_MOODS = [
   {
     id: 'sunset_beach',
-    labelAr: '🌅 بحر وغروب',
-    labelEn: '🌅 Beach & Sunset',
+    labelAr: 'بحر وغروب 🌅',
+    labelEn: 'Beach & Sunset 🌅',
     district: 'obhur' as const,
     vibe: 'beach_sunset' as const,
     budget: 'moderate' as const,
@@ -109,8 +109,8 @@ const QUICK_MOODS = [
   },
   {
     id: 'specialty_coffee',
-    labelAr: '☕ قهوة وروقان',
-    labelEn: '☕ Coffee & Chill',
+    labelAr: 'قهوة وروقان ☕',
+    labelEn: 'Coffee & Chill ☕',
     district: 'al-rawdah' as const,
     vibe: 'coffee_dessert' as const,
     budget: 'moderate' as const,
@@ -119,8 +119,8 @@ const QUICK_MOODS = [
   },
   {
     id: 'balad_night',
-    labelAr: '🏛️ جولة البلد التاريخية',
-    labelEn: '🏛️ Historic Al-Balad',
+    labelAr: 'جولة البلد التاريخية 🏛️',
+    labelEn: 'Historic Al-Balad 🏛️',
     district: 'al-balad' as const,
     vibe: 'heritage_arts' as const,
     budget: 'economy' as const,
@@ -129,8 +129,8 @@ const QUICK_MOODS = [
   },
   {
     id: 'luxury_vip',
-    labelAr: '👑 سهرة فاخرة VIP',
-    labelEn: 'VIP Night Out',
+    labelAr: 'سهرة فاخرة VIP 👑',
+    labelEn: 'Luxury VIP Night 👑',
     district: 'al-shati' as const,
     vibe: 'food' as const,
     budget: 'premium' as const,
@@ -139,8 +139,8 @@ const QUICK_MOODS = [
   },
   {
     id: 'free_outing',
-    labelAr: '🆓 خطة مجانية 100%',
-    labelEn: '100% Free Plan',
+    labelAr: 'خطة مجانية 100% 🎫',
+    labelEn: '100% Free Plan 🎫',
     district: 'al-shati' as const,
     vibe: 'free_walk' as const,
     budget: 'free' as const,
@@ -611,26 +611,26 @@ export const HeroSection: React.FC = () => {
           <span>{language === 'ar' ? 'عروس البحر الأحمر • تجارب استثنائية' : 'Bride of the Red Sea • Exceptional Experiences'}</span>
         </div>
 
-        {/* Master Headline with Metallic Shimmer */}
-        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.65] sm:leading-[1.55] tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-1 sm:gap-2">
+        {/* Master Headline with Luxury Arabic Typography */}
+        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-3 sm:gap-5">
           {language === 'ar' ? (
             <>
-              <span className="block">
-                عروس البحر الأحمر بين يديك..
+              <span className="block text-white tracking-wide">
+                عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
               </span>
-              <span className="block">
+              <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
                   جداول
                 </span>{' '}
-                يرتّب طلعتك من وإلى
+                ترتب طلعتك من وإلى
               </span>
             </>
           ) : (
             <>
-              <span className="block">
+              <span className="block text-white">
                 Bride of the Red Sea in Your Hands..
               </span>
-              <span className="block">
+              <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
                   Jadawel
                 </span>{' '}
@@ -641,14 +641,14 @@ export const HeroSection: React.FC = () => {
         </h1>
 
         {/* Generous Subheading */}
-        <p className="text-sm sm:text-lg md:text-xl text-white/80 max-w-2xl mx-auto font-medium leading-relaxed">
+        <p className="text-xs sm:text-sm md:text-base text-white/75 max-w-2xl mx-auto font-normal leading-relaxed">
           {language === 'ar'
             ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية — اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
             : 'From Obhur beach clubs to historic Al-Balad alleys — choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
         </p>
 
         {/* Quick Mood Chips (Linear / Apple Tier) */}
-        <div className="w-full flex flex-wrap items-center justify-center gap-2 pt-2">
+        <div className="w-full flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-2">
           {QUICK_MOODS.map((mood) => {
             const isActive = activeMoodId === mood.id;
             return (
@@ -656,10 +656,10 @@ export const HeroSection: React.FC = () => {
                 key={mood.id}
                 type="button"
                 onClick={() => handleApplyMood(mood)}
-                className={`px-3.5 py-1.5 rounded-full text-xs font-black transition-all cursor-pointer flex items-center gap-1.5 touch-manipulation ${
+                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center whitespace-nowrap shadow-sm touch-manipulation ${
                   isActive
-                    ? 'bg-gradient-to-r from-gold-500 to-amber-500 text-[#090B0E] font-black shadow-[0_0_20px_rgba(229,169,98,0.4)] scale-105'
-                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-white/80 hover:text-white border border-white/[0.08]'
+                    ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-stone-950 font-bold shadow-[0_0_22px_rgba(245,158,11,0.4)] border border-amber-400/40 scale-[1.02]'
+                    : 'bg-[#12161f]/80 hover:bg-[#1a202c]/90 text-white/85 hover:text-white border border-white/[0.12] backdrop-blur-md hover:border-white/25'
                 }`}
               >
                 <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
