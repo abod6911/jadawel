@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
@@ -19,6 +19,7 @@ import {
   Check,
   ChevronDown,
   Navigation,
+  Film,
 } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -158,6 +159,8 @@ export const HeroSection: React.FC = () => {
   const [vibe, setVibe] = useState<VibeType>(activeDest.vibe);
   const [atmosphere] = useState(getJeddahAtmosphere());
   const [isMuted, setIsMuted] = useState(soundEngine.isSoundMuted());
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleSelectDestination = (idx: number) => {
     soundEngine.playClick();
@@ -184,6 +187,18 @@ export const HeroSection: React.FC = () => {
     if (!muted) soundEngine.playClick();
   };
 
+  const handleToggleVideo = () => {
+    if (videoRef.current) {
+      if (isVideoPlaying) {
+        videoRef.current.pause();
+        setIsVideoPlaying(false);
+      } else {
+        videoRef.current.play();
+        setIsVideoPlaying(true);
+      }
+    }
+  };
+
   const handleBuildPlan = () => {
     soundEngine.playSuccess();
     updateWizardPreferences({
@@ -198,22 +213,27 @@ export const HeroSection: React.FC = () => {
 
   return (
     <section className="relative w-full rounded-[2.5rem] overflow-hidden px-4 sm:px-8 py-8 sm:py-12 select-none border border-gold-500/20 shadow-cinematic">
-      {/* 1. ATMOSPHERIC BACKGROUND WITH CINEMATIC LIGHTING */}
-      <div className="absolute inset-0 z-0 bg-[#090B0E]">
-        <AnimatePresence mode="wait">
-          <motion.img
-            key={activeDest.id}
-            src={activeDest.bgImage}
-            alt={language === 'ar' ? activeDest.name : activeDest.nameEn}
-            initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-            className="w-full h-full object-cover brightness-[0.45] contrast-[1.2]"
-          />
-        </AnimatePresence>
-        <div className="absolute inset-0 bg-gradient-to-t from-[#090B0E] via-[#090B0E]/60 to-[#090B0E]/80" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(229,169,98,0.15)_0%,transparent_70%)]" />
+      {/* 1. CINEMATIC BACKGROUND VIDEO & ATMOSPHERE */}
+      <div className="absolute inset-0 z-0 bg-[#090B0E] overflow-hidden">
+        {/* Seamless looping cinematic video of coastal sunset & sea */}
+        <video
+          ref={videoRef}
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          poster={activeDest.bgImage}
+          className="w-full h-full object-cover brightness-[0.40] contrast-[1.25] scale-[1.03] transition-transform duration-1000"
+        >
+          <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
+          <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
+        </video>
+
+        {/* Cinematic Vignette & Warm Twilight Overlays */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#090B0E] via-[#090B0E]/50 to-[#090B0E]/75" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_center,rgba(229,169,98,0.18)_0%,transparent_65%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom,rgba(78,159,150,0.12)_0%,transparent_70%)]" />
       </div>
 
       {/* 2. REAL-TIME ATMOSPHERE & AUDIO FLOATING STATUS PILL */}
@@ -235,16 +255,35 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Sound Effect Toggle */}
-          <button
-            type="button"
-            onClick={handleToggleSound}
-            className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-pearl-muted hover:text-gold-400 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-            title={language === 'ar' ? 'تشغيل/كتم المؤثرات الصوتية' : 'Toggle Audio FX'}
-          >
-            {isMuted ? <VolumeX className="w-3.5 h-3.5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5 text-gold-400" />}
-            <span className="text-[11px]">{isMuted ? (language === 'ar' ? 'صامت' : 'Muted') : (language === 'ar' ? 'صوتيات' : 'Audio On')}</span>
-          </button>
+          <div className="flex items-center gap-2">
+            {/* Video Background Toggle */}
+            <button
+              type="button"
+              onClick={handleToggleVideo}
+              className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-pearl-muted hover:text-teal-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              title={language === 'ar' ? 'تشغيل / إيقاف الفيديو السينمائي' : 'Toggle Cinematic Video'}
+            >
+              <span className="relative flex h-2 w-2">
+                {isVideoPlaying && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />}
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${isVideoPlaying ? 'bg-teal-400' : 'bg-slate-500'}`} />
+              </span>
+              <Film className="w-3.5 h-3.5 text-teal-400" />
+              <span className="text-[11px] hidden sm:inline-block">
+                {language === 'ar' ? (isVideoPlaying ? 'فيديو سينمائي حي' : 'فيديو متوقف') : (isVideoPlaying ? 'Live Scene' : 'Paused')}
+              </span>
+            </button>
+
+            {/* Sound Effect Toggle */}
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-pearl-muted hover:text-gold-400 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
+              title={language === 'ar' ? 'تشغيل/كتم المؤثرات الصوتية' : 'Toggle Audio FX'}
+            >
+              {isMuted ? <VolumeX className="w-3.5 h-3.5 text-red-400" /> : <Volume2 className="w-3.5 h-3.5 text-gold-400" />}
+              <span className="text-[11px]">{isMuted ? (language === 'ar' ? 'صامت' : 'Muted') : (language === 'ar' ? 'صوتيات' : 'Audio On')}</span>
+            </button>
+          </div>
         </div>
       </div>
 
