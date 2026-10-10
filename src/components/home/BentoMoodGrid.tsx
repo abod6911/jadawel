@@ -28,11 +28,11 @@ export const BentoMoodGrid: React.FC = () => {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black mb-2">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-bold mb-2">
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'مود اليوم وش جوك؟' : 'What is your vibe today?'}</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-pearl tracking-tight">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pearl">
             {language === 'ar' ? 'استكشف حسب المزاج والطلعة' : 'Explore by Mood & Vibe'}
           </h2>
         </div>

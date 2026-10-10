@@ -443,28 +443,30 @@ export const HeroSection: React.FC = () => {
       <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
         
         {/* Luxury Micro-Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/30 text-xs font-black text-gold-300 shadow-[0_0_20px_rgba(229,169,98,0.2)]">
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/30 text-xs font-bold text-gold-300 shadow-[0_0_20px_rgba(229,169,98,0.2)]">
           <Compass className="w-3.5 h-3.5 text-gold-400" />
           <span>{language === 'ar' ? 'عروس البحر الأحمر • تجارب استثنائية' : 'Bride of the Red Sea • Exceptional Experiences'}</span>
         </div>
 
         {/* Master Headline with Metallic Shimmer */}
-        <h1 className="text-3xl sm:text-6xl md:text-7xl font-black text-white tracking-tight leading-[1.22] drop-shadow-[0_12px_36px_rgba(0,0,0,0.9)]">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.3] text-balance max-w-4xl mx-auto">
           {language === 'ar' ? (
             <>
-              المواقع تشتتك..{' '}
+              عروس البحر الأحمر بين يديك..{' '}
+              <br className="hidden sm:inline" />
               <span className="text-shimmer-gold">
-                وجداول
+                جداول
               </span>{' '}
-              يرتّب لك الطلعة كاملة
+              يرتّب طلعتك من وإلى
             </>
           ) : (
             <>
-              Endless places..{' '}
+              Bride of the Red Sea in Your Hands..{' '}
+              <br className="hidden sm:inline" />
               <span className="text-shimmer-gold">
                 Jadawel
               </span>{' '}
-              curates your entire Jeddah night.
+              crafts your outing from start to finish
             </>
           )}
         </h1>
@@ -931,7 +933,7 @@ export const HeroSection: React.FC = () => {
               disabled={isGeneratingPlan}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="relative w-full sm:w-auto px-6 sm:px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-black text-sm sm:text-base tracking-wide flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_50px_rgba(229,169,98,0.7)] cursor-pointer overflow-hidden transition-all duration-300 group touch-manipulation"
+              className="relative w-full sm:w-auto px-6 sm:px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_50px_rgba(229,169,98,0.7)] cursor-pointer overflow-hidden transition-all duration-300 group touch-manipulation"
             >
               {/* Conic Glow Shimmer Layer */}
               <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />

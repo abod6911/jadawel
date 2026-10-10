@@ -71,11 +71,11 @@ export const ExploreDirectory: React.FC = () => {
       {/* Header Container with Velvet Twilight Surface */}
       <div className="bg-abyss-900/90 backdrop-blur-2xl rounded-3xl p-5 sm:p-8 border border-gold-500/30 shadow-cinematic space-y-6">
         <div className="space-y-1.5 text-start">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-bold">
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'أفضل وجهات عروس البحر الأحمر' : 'Curated Destinations in Jeddah'}</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-black text-pearl tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-bold text-pearl">
             {language === 'ar' ? 'دليل معالم ووجهات جدة' : 'Jeddah Destination Guide'}
           </h1>
           <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-2xl">

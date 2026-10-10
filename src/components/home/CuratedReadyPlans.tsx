@@ -66,11 +66,11 @@ export const CuratedReadyPlans: React.FC = () => {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div className="space-y-1">
-            <span className="text-xs font-black text-gold-400 uppercase tracking-wider flex items-center gap-1.5">
+            <span className="text-xs font-bold text-gold-400 uppercase flex items-center gap-1.5">
               <Compass className="w-3.5 h-3.5 text-coral-400" />
               <span>{language === 'ar' ? 'مسارات جاهزة ومجربة' : 'Curated Ready Tracks'}</span>
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-pearl tracking-tight">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pearl">
               {language === 'ar' ? 'جداول عطلة نهاية الأسبوع الجاهزة' : 'Pre-Crafted Weekend Itineraries'}
             </h2>
           </div>

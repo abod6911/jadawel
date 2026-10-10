@@ -68,10 +68,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <span className="text-base sm:text-xl font-black tracking-tight text-white group-hover:text-gold-300 transition-colors">
+            <span className="text-base sm:text-xl font-bold text-white group-hover:text-gold-300 transition-colors">
               {language === 'ar' ? 'جداول' : 'Jadawel'}
             </span>
-            <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-400 font-black border border-gold-500/30 shadow-[0_0_10px_rgba(229,169,98,0.2)]">
+            <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-400 font-bold border border-gold-500/30 shadow-[0_0_10px_rgba(229,169,98,0.2)]">
               {language === 'ar' ? 'جدة' : 'Jeddah'}
             </span>
           </div>

@@ -32,7 +32,7 @@ button, a, select, input, [role="button"] {
 /* Typography Guardrails (Zero Text Overlap & Zero Clipping) */
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
-  letter-spacing: -0.015em;
+  letter-spacing: normal;
   color: #FBFBFA;
 }
 

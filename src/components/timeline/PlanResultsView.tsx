@@ -143,11 +143,11 @@ export const PlanResultsView: React.FC = () => {
       <div className="space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] sm:text-xs font-black text-gold-400 uppercase tracking-wider flex items-center gap-2">
+            <span className="text-[11px] sm:text-xs font-bold text-gold-400 uppercase flex items-center gap-2">
               <Compass className="w-3.5 h-3.5 text-coral-400" />
               <span>{language === 'ar' ? '3 خطط ذكية جاهزة لطلعتكم' : '3 Generated Outing Plans'}</span>
             </span>
-            <h2 className="text-xl sm:text-3xl font-black text-pearl tracking-tight mt-1">
+            <h2 className="text-xl sm:text-3xl font-bold text-pearl mt-1">
               {language === 'ar' ? currentItinerary.titleAr : currentItinerary.titleEn}
             </h2>
           </div>
