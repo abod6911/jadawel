@@ -612,24 +612,30 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Master Headline with Metallic Shimmer */}
-        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-[1.3] text-balance max-w-4xl mx-auto">
+        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-[1.65] sm:leading-[1.55] tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-1 sm:gap-2">
           {language === 'ar' ? (
             <>
-              عروس البحر الأحمر بين يديك..{' '}
-              <br className="hidden sm:inline" />
-              <span className="text-shimmer-gold">
-                جداول
-              </span>{' '}
-              يرتّب طلعتك من وإلى
+              <span className="block">
+                عروس البحر الأحمر بين يديك..
+              </span>
+              <span className="block">
+                <span className="text-shimmer-gold font-bold">
+                  جداول
+                </span>{' '}
+                يرتّب طلعتك من وإلى
+              </span>
             </>
           ) : (
             <>
-              Bride of the Red Sea in Your Hands..{' '}
-              <br className="hidden sm:inline" />
-              <span className="text-shimmer-gold">
-                Jadawel
-              </span>{' '}
-              crafts your outing from start to finish
+              <span className="block">
+                Bride of the Red Sea in Your Hands..
+              </span>
+              <span className="block">
+                <span className="text-shimmer-gold font-bold">
+                  Jadawel
+                </span>{' '}
+                curates your outing from start to finish
+              </span>
             </>
           )}
         </h1>

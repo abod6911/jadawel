@@ -134,19 +134,20 @@ input, select, textarea {
 
 .text-shimmer-gold {
   background: linear-gradient(
-    90deg,
-    #E5A962 0%,
-    #FFF4DA 25%,
-    #FFFFFF 50%,
-    #FFF4DA 75%,
-    #E5A962 100%
+    135deg,
+    #F59E0B 0%,
+    #FCD34D 25%,
+    #E5A962 50%,
+    #F3CA95 75%,
+    #D97706 100%
   );
   background-size: 200% auto;
-  color: transparent;
+  color: #E5A962;
+  -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   animation: metallicShimmer 6s linear infinite;
-  display: inline-block;
+  display: inline;
 }
 
 /* Conic Spin Keyframe */
