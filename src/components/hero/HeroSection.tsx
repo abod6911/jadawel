@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Sparkles,
+  ArrowLeft,
   MapPin,
   Users,
   Coins,
@@ -126,8 +126,8 @@ const QUICK_MOODS = [
   },
   {
     id: 'luxury_vip',
-    labelAr: '✨ سهرة فاخرة VIP',
-    labelEn: '✨ VIP Night Out',
+    labelAr: '👑 سهرة فاخرة VIP',
+    labelEn: 'VIP Night Out',
     district: 'al-shati' as const,
     vibe: 'food' as const,
     budget: 'premium' as const,
@@ -137,7 +137,7 @@ const QUICK_MOODS = [
   {
     id: 'free_outing',
     labelAr: '🆓 خطة مجانية 100%',
-    labelEn: '🆓 100% Free Plan',
+    labelEn: '100% Free Plan',
     district: 'al-shati' as const,
     vibe: 'free_walk' as const,
     budget: 'free' as const,
@@ -147,7 +147,7 @@ const QUICK_MOODS = [
 ];
 
 const DISTRICT_OPTIONS: { id: DistrictId | 'all_jeddah'; nameAr: string; nameEn: string; icon: string; subAr: string }[] = [
-  { id: 'all_jeddah', nameAr: 'كل جدة (الأفضل)', nameEn: 'All Jeddah (Best)', icon: '✨', subAr: 'أذكى مسار متوازن عبر عروس البحر' },
+  { id: 'all_jeddah', nameAr: 'كل جدة (الأفضل)', nameEn: 'All Jeddah (Best)', icon: '🏙️', subAr: 'أذكى مسار متوازن عبر عروس البحر' },
   { id: 'obhur', nameAr: 'أبحر والواجهة البحرية', nameEn: 'Obhur & Waterfront', icon: '🌊', subAr: 'شواطئ ونوادي يخوت وروقان بحري' },
   { id: 'al-shati', nameAr: 'الشاطئ والكورنيش', nameEn: 'Al-Shati & Corniche', icon: '🌴', subAr: 'الواجهة البحرية والفعاليات العالمية' },
   { id: 'al-balad', nameAr: 'البلد التاريخية', nameEn: 'Historic Al-Balad', icon: '🏛️', subAr: 'رواشين التراث وبسطات الشاي العتيقة' },
@@ -444,7 +444,7 @@ export const HeroSection: React.FC = () => {
         
         {/* Luxury Micro-Badge */}
         <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/30 text-xs font-black text-gold-300 shadow-[0_0_20px_rgba(229,169,98,0.2)]">
-          <Sparkles className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+          <Compass className="w-3.5 h-3.5 text-gold-400" />
           <span>{language === 'ar' ? 'عروس البحر الأحمر • تجارب استثنائية' : 'Bride of the Red Sea • Exceptional Experiences'}</span>
         </div>
 
@@ -863,7 +863,7 @@ export const HeroSection: React.FC = () => {
                 }`}
               >
                 <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
-                  <Sparkles className="w-5 h-5" />
+                  <Compass className="w-5 h-5" />
                 </div>
                 <div className="overflow-hidden">
                   <span className="text-[11px] font-bold text-white/50 block">المود</span>
@@ -943,8 +943,8 @@ export const HeroSection: React.FC = () => {
                 </>
               ) : (
                 <>
-                  <Sparkles className="w-5 h-5 fill-[#090B0E] animate-bounce" />
-                  <span>ابنِ خطتي لجدة بنقرة واحدة ✨</span>
+                  <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1 transition-transform" />
+                  <span>ابنِ خطتي لجدة بنقرة واحدة</span>
                 </>
               )}
             </motion.button>

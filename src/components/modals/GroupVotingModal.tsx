@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Vote, MessageCircle, Check, Copy, Sparkles, Zap, Scale, Crown } from 'lucide-react';
+import { Vote, MessageCircle, Check, Copy, Compass, Zap, Scale, Crown } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
@@ -40,7 +40,7 @@ export const GroupVotingModal: React.FC = () => {
         `3️⃣ *الخيار 3: ${isThirdFree ? 'خطة الروقان المجانية (0 ر.س) 🆓' : 'التجربة الفخمة 💎'}*\n` +
         `   المسار: ${thirdVariant.stops.map((s) => s.place.nameAr).join(' ➔ ')}\n` +
         `   💰 التكلفة: ~${thirdVariant.financials.totalPerPersonSAR} ر.س | 🚗 وقت المشوار: ${thirdVariant.totalTransitMinutes} دقيقة\n\n` +
-        `رد برقم الخيار اللي يناسبك! 👇✨\n` +
+        `رد برقم الخيار اللي يناسبك! 👇\n` +
         `🌐 التفاصيل كاملة عبر جداول: https://jadawel.app`
       );
     }
@@ -149,7 +149,7 @@ export const GroupVotingModal: React.FC = () => {
               </div>
             </div>
             {isThirdFree ? (
-              <Sparkles className="w-4 h-4 text-teal-300 shrink-0" />
+              <Compass className="w-4 h-4 text-teal-300 shrink-0" />
             ) : (
               <Crown className="w-4 h-4 text-coral-400 shrink-0" />
             )}

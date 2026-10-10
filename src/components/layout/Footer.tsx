@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Waves, Heart, MapPin, Sparkles, Coffee, Navigation } from 'lucide-react';
+import { Waves, Heart, MapPin, Compass, Coffee, Navigation } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
@@ -48,7 +48,7 @@ export const Footer: React.FC = () => {
                 : 'The premier smart platform for crafting instant, realistic day itineraries in Jeddah.'}
             </p>
             <div className="flex items-center gap-2 text-xs font-bold text-gold-400">
-              <Sparkles className="w-4 h-4" />
+              <Compass className="w-4 h-4" />
               <span>{isRTL ? 'عروس البحر الأحمر - 2026' : 'Bride of the Red Sea - 2026'}</span>
             </div>
           </div>
@@ -82,7 +82,7 @@ export const Footer: React.FC = () => {
                   }}
                   className="text-pearl-muted hover:text-gold-400 transition-colors flex items-center gap-1.5 cursor-pointer font-bold"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                  <Compass className="w-3.5 h-3.5 text-teal-400" />
                   <span>{language === 'ar' ? 'جداول جاهزة ومقترحة' : 'Curated Ready Plans'}</span>
                 </button>
               </li>

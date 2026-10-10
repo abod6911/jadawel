@@ -7,7 +7,7 @@ import {
   MapPin,
   Users,
   Clock,
-  Sparkles,
+  Flame,
   DollarSign,
   SlidersHorizontal,
   ArrowRight,
@@ -53,9 +53,9 @@ const STEP_DEFINITIONS = [
   },
   {
     id: 4,
-    icon: Sparkles,
-    titleAr: 'وش جو ومود الطلعة اليوم؟ ✨',
-    titleEn: 'What is the vibe for today? ✨',
+    icon: Flame,
+    titleAr: 'وش جو ومود الطلعة اليوم؟ 🔥',
+    titleEn: 'What is the vibe for today? 🔥',
     subtitleAr: 'اختر التجربة الأساسية اللي ودك تعيشها في جدة.',
     subtitleEn: 'Select the primary mood and experience you seek in Jeddah.',
   },
@@ -450,7 +450,7 @@ export const QuickPlanWizard: React.FC = () => {
               {[
                 { id: 'free' as const, titleAr: 'مجانية 100% 🆓', titleEn: '100% Free 🆓', descAr: '0 ر.س (بدون أي تكاليف دخول)', descEn: '0 SAR zero-cost outing' },
                 { id: 'economy' as const, titleAr: 'على قد الجيب 💰', titleEn: 'Budget Saver 💰', descAr: '≤ 60 ر.س للشخص', descEn: '≤ 60 SAR per person' },
-                { id: 'moderate' as const, titleAr: 'موزونة وممتازة ✨', titleEn: 'Balanced Value ✨', descAr: '~ 150 ر.س للشخص', descEn: '~ 150 SAR per person' },
+                { id: 'moderate' as const, titleAr: 'موزونة وممتازة ⚖️', titleEn: 'Balanced Value ⚖️', descAr: '~ 150 ر.س للشخص', descEn: '~ 150 SAR per person' },
                 { id: 'luxury' as const, titleAr: 'دلع وفخامة VIP 💎', titleEn: 'Signature VIP 💎', descAr: '+ 350 ر.س للشخص', descEn: '+ 350 SAR luxury tier' },
               ].map((item) => {
                 const isSelected = wizardPreferences.budgetTier === item.id;
@@ -566,8 +566,8 @@ export const QuickPlanWizard: React.FC = () => {
               <span>
                 {currentStep === 7
                   ? language === 'ar'
-                    ? '✨ ابتكر الخطة الحين'
-                    : '✨ Generate My Plan'
+                    ? 'ابتكر الخطة الآن'
+                    : 'Generate My Plan'
                   : language === 'ar'
                   ? 'التالي'
                   : 'Next'}

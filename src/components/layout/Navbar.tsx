@@ -5,7 +5,7 @@ import { motion } from 'framer-motion';
 import {
   Compass,
   Calendar,
-  Sparkles,
+  Navigation,
   Globe,
   Bookmark,
   Flame,
@@ -30,7 +30,7 @@ export const Navbar: React.FC = () => {
 
   const navItems = [
     { id: 'home' as const, labelAr: 'الرئيسية', labelEn: 'Home', icon: Flame },
-    { id: 'quick-plan' as const, labelAr: 'صانع الجداول', labelEn: 'Smart Wizard', icon: Sparkles },
+    { id: 'quick-plan' as const, labelAr: 'صانع الجداول', labelEn: 'Planner', icon: Navigation },
     {
       id: 'timeline' as const,
       labelAr: 'مسار الخطة',

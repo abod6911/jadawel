@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useRef, useState } from 'react';
-import { Download, Share2, Sparkles, Clock, Coins, MapPin, Check, Copy, Printer, QrCode, Ticket, Compass } from 'lucide-react';
+import { Download, Share2, Clock, Coins, MapPin, Check, Copy, Printer, QrCode, Ticket, Compass } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Itinerary, PlanVariantKey } from '@/types';
 import { Modal } from '@/components/ui/Modal';

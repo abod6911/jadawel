@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Flame, Compass, Sparkles, Bookmark, Calendar } from 'lucide-react';
+import { Flame, Compass, Navigation, Bookmark, Calendar } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
@@ -75,7 +75,7 @@ export const MobileTabBar: React.FC = () => {
             title="اصنع خطتك أو افتح الجدول"
           >
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral-400 opacity-25 pointer-events-none" />
-            <Sparkles className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
+            <Navigation className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
           </button>
         </div>
 

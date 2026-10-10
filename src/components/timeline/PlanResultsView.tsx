@@ -18,7 +18,6 @@ import {
   Utensils,
   Ticket,
   Map as MapIcon,
-  Sparkles,
   Coins,
   ShieldCheck,
   Split,
@@ -121,7 +120,7 @@ export const PlanResultsView: React.FC = () => {
       titleEn: thirdVariantObj?.titleEn || '💎 VIP Luxury Signature',
       badge: thirdVariantObj?.badgeAr || 'VIP',
       badgeEn: thirdVariantObj?.badgeEn || 'VIP',
-      icon: isThirdFree ? Sparkles : Crown,
+      icon: isThirdFree ? Compass : Crown,
       color: isThirdFree ? 'text-teal-300' : 'text-coral-400',
       activeBorder: isThirdFree
         ? 'border-teal-400 ring-2 ring-teal-400/40 bg-abyss-800'
@@ -145,7 +144,7 @@ export const PlanResultsView: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <span className="text-[11px] sm:text-xs font-black text-gold-400 uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="w-3.5 h-3.5 text-coral-400" />
+              <Compass className="w-3.5 h-3.5 text-coral-400" />
               <span>{language === 'ar' ? '3 خطط ذكية جاهزة لطلعتكم' : '3 Generated Outing Plans'}</span>
             </span>
             <h2 className="text-xl sm:text-3xl font-black text-pearl tracking-tight mt-1">
@@ -233,7 +232,7 @@ export const PlanResultsView: React.FC = () => {
             }}
             className="min-h-[48px] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-gold-500/40 text-gold-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 shrink-0"
           >
-            <Sparkles className="w-4 h-4" />
+            <Ticket className="w-4 h-4" />
             <span>{language === 'ar' ? 'بطاقة 9:16' : 'Pass 9:16'}</span>
           </button>
         </div>

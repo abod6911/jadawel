@@ -12,7 +12,7 @@ import {
   Info,
   ExternalLink,
   Sun,
-  Sparkles,
+  Compass,
   CheckCircle2,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -186,7 +186,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
 
             {/* "لماذا اقترحنا هذا المكان؟" (AI Rationale) */}
             <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-400/20 text-xs font-semibold text-teal-300 flex items-start gap-2">
-              <Sparkles className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
+              <Compass className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
               <div className="space-y-0.5">
                 <span className="text-[11px] font-black text-gold-400 block">
                   {language === 'ar' ? 'لماذا اقترحنا هذا المكان؟' : 'Why this spot?'}

@@ -8,7 +8,6 @@ import {
   ExternalLink,
   Plus,
   Check,
-  Sparkles,
   Lightbulb,
   DollarSign,
   Shield,
@@ -170,7 +169,7 @@ export const PlaceDetailModal: React.FC = () => {
             ) : (
               <>
                 <Plus className="w-4 h-4" />
-                <span>{language === 'ar' ? '✨ أضف المكان إلى خطتك' : '✨ Add to Itinerary'}</span>
+                <span>{language === 'ar' ? 'أضف المكان إلى خطتك' : 'Add to Itinerary'}</span>
               </>
             )}
           </button>

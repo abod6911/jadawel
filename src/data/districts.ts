@@ -43,7 +43,7 @@ export const JEDDAH_DISTRICTS: District[] = [
     coordinates: { lat: 21.5880, lng: 39.1410 },
     vibeAr: 'أناقة عصرية وهدوء راقٍ',
     vibeEn: 'Modern Elegance & Chic Boutiques',
-    iconName: 'Sparkles',
+    iconName: 'Compass',
   },
   {
     id: 'obhur',

@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import L from 'leaflet';
 import { Place } from '@/types';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Navigation, Sparkles, MapPin, ExternalLink } from 'lucide-react';
+import { Navigation, MapPin, ExternalLink } from 'lucide-react';
 import { soundEngine } from '@/utils/audioEngine';
 
 interface MapStop {

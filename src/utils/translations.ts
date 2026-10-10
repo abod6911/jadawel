@@ -105,7 +105,7 @@ export const TRANSLATIONS = {
 
     btnBack: 'السابق',
     btnNext: 'التالي',
-    btnGeneratePlan: 'توليد الجدول الذكي ✨',
+    btnGeneratePlan: 'توليد الجدول الذكي',
     btnRegeneratePlan: 'إعادة توليد خطة جديدة 🔄',
 
     // Timeline View
@@ -310,7 +310,7 @@ export const TRANSLATIONS = {
 
     btnBack: 'Back',
     btnNext: 'Next',
-    btnGeneratePlan: 'Generate Smart Plan ✨',
+    btnGeneratePlan: 'Generate Smart Plan',
     btnRegeneratePlan: 'Regenerate New Plan 🔄',
 
     // Timeline View

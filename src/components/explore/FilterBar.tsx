@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Search, MapPin, LayoutGrid, Map as MapIcon, X, Sparkles, Filter } from 'lucide-react';
+import { Search, MapPin, LayoutGrid, Map as MapIcon, X, Compass, Filter } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { PlaceCategory, DistrictId } from '@/types';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
@@ -42,7 +42,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   const { language, isRTL } = useLanguage();
 
   const categories: { id: PlaceCategory | 'all'; labelAr: string; labelEn: string; emoji: string }[] = [
-    { id: 'all', labelAr: 'الكل', labelEn: 'All', emoji: '✨' },
+    { id: 'all', labelAr: 'الكل', labelEn: 'All', emoji: '📍' },
     { id: 'culinary', labelAr: 'مطاعم ومقاهي', labelEn: 'Dining & Cafes', emoji: '☕' },
     { id: 'waterfront', labelAr: 'واجهات بحرية', labelEn: 'Waterfront', emoji: '🌊' },
     { id: 'heritage', labelAr: 'تراث وتاريخ', labelEn: 'Heritage', emoji: '🏛️' },
@@ -201,7 +201,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
         {/* Live Result Counter */}
         <div className="text-xs text-pearl-muted font-medium flex items-center gap-1.5">
-          <Sparkles className="w-3.5 h-3.5 text-gold-400" />
+          <Compass className="w-3.5 h-3.5 text-gold-400" />
           <span>
             {language === 'ar'
               ? `${resultsCount} وجهة مطابقة`

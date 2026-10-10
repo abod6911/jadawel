@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Users, Plus, Minus, Calculator, MessageCircle, Sparkles, Utensils, Ticket, Car, Coins } from 'lucide-react';
+import { Users, Plus, Minus, Calculator, MessageCircle, Utensils, Ticket, Car, Coins } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
@@ -49,7 +49,7 @@ export const SplitBillModal: React.FC = () => {
       msg += `▫️ مشاوير أوبر: ~${transitBase} ر.س\n`;
       if (includeBuffer) msg += `▫️ احتياطي طوارئ (10%): ~${bufferTotal} ر.س\n`;
       msg += `▫️ المجموع الكلي: *${grandTotal} ر.س*\n\n`;
-      msg += `✨ تم الترتيب والحساب تلقائياً عبر منصة جداول 🌊\n`;
+      msg += `تم الترتيب والحساب تلقائياً عبر منصة جداول 🌊\n`;
       msg += `🌐 https://jadawel.app`;
     } else {
       msg = `💳 *Jadawel Jeddah Outing Split Bill*\n`;
@@ -62,7 +62,7 @@ export const SplitBillModal: React.FC = () => {
       msg += `▫️ Uber Rideshare: ~${transitBase} SAR\n`;
       if (includeBuffer) msg += `▫️ Emergency Buffer (10%): ~${bufferTotal} SAR\n`;
       msg += `▫️ Grand Total: *${grandTotal} SAR*\n\n`;
-      msg += `✨ Calculated with Jadawel 🌊`;
+      msg += `Calculated with Jadawel 🌊`;
     }
 
     openWhatsAppShare(msg);
@@ -189,7 +189,7 @@ export const SplitBillModal: React.FC = () => {
           {includeBuffer && (
             <div className="flex items-center justify-between text-gold-400 py-1 border-b border-white/5">
               <span className="flex items-center gap-1.5">
-                <Sparkles className="w-3.5 h-3.5" />
+                <Coins className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'احتياطي الطوارئ (10%)' : 'Emergency Buffer (10%)'}</span>
               </span>
               <span className="font-bold">~{bufferTotal} ر.س</span>

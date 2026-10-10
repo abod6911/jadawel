@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { MapPin, Navigation } from 'lucide-react';
 import { Place } from '@/types';
-import { MapPin, Navigation, Sparkles } from 'lucide-react';
 
 interface MapStop {
   place: Place;

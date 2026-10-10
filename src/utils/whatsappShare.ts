@@ -46,7 +46,7 @@ export function buildWhatsAppShareUrl(itinerary: Itinerary, language: 'ar' | 'en
       message += `\n`;
     });
 
-    message += `\n✨ صُمم عبر *جداول* - المخطط الذكي لرحلات جدة 🇸🇦\n`;
+    message += `\n🌊 صُمم عبر *جداول* - المخطط الذكي لرحلات جدة 🇸🇦\n`;
     message += `🌐 افتح الخطة التفاعلية: https://jadawel.app/p/${itinerary.id.slice(-8)}`;
   } else {
     message += `🌊 *Our Jeddah Itinerary via Jadawel* 🌊\n`;
@@ -73,7 +73,7 @@ export function buildWhatsAppShareUrl(itinerary: Itinerary, language: 'ar' | 'en
       message += `\n`;
     });
 
-    message += `\n✨ Generated with *Jadawel* - Smart Jeddah Itinerary Planner 🇸🇦\n`;
+    message += `\n🌊 Crafted with *Jadawel* - Smart Jeddah Itinerary Planner 🇸🇦\n`;
     message += `🌐 View interactive plan: https://jadawel.app/p/${itinerary.id.slice(-8)}`;
   }
 

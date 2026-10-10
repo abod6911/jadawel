@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Compass, MapPin, Sparkles, Navigation } from 'lucide-react';
+import { Search, Compass, MapPin, Navigation } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { PlaceCategory, DistrictId, Place } from '@/types';
@@ -72,7 +72,7 @@ export const ExploreDirectory: React.FC = () => {
       <div className="bg-abyss-900/90 backdrop-blur-2xl rounded-3xl p-5 sm:p-8 border border-gold-500/30 shadow-cinematic space-y-6">
         <div className="space-y-1.5 text-start">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'أفضل وجهات عروس البحر الأحمر' : 'Curated Destinations in Jeddah'}</span>
           </div>
           <h1 className="text-2xl sm:text-4xl font-black text-pearl tracking-tight">

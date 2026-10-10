@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Waves, Flame, Sparkles, Coffee, Landmark, Gamepad2, ArrowLeft, ArrowRight, Wind, Star } from 'lucide-react';
+import { Waves, Flame, Compass, Coffee, Landmark, Gamepad2, ArrowLeft, ArrowRight, Wind, Star } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
@@ -29,7 +29,7 @@ export const BentoMoodGrid: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black mb-2">
-            <Sparkles className="w-3.5 h-3.5" />
+            <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'مود اليوم وش جوك؟' : 'What is your vibe today?'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-pearl tracking-tight">

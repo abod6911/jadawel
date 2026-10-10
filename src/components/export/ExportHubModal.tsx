@@ -10,7 +10,6 @@ import {
   Share2,
   Download,
   Printer,
-  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { Itinerary } from '@/types';

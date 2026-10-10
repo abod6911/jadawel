@@ -9,7 +9,6 @@ import {
   ExternalLink,
   MapPin,
   Clock,
-  Sparkles,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
