@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { Flame, Compass, Sparkles, Bookmark, Vote, Calendar } from 'lucide-react';
+import { Flame, Compass, Sparkles, Bookmark, Calendar } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
@@ -18,7 +18,7 @@ export const MobileTabBar: React.FC = () => {
     if (currentItinerary) {
       setActiveNavTab('timeline');
     } else {
-      setWizardStep(0);
+      setWizardStep(1);
       setActiveNavTab('quick-plan');
     }
   };
@@ -66,7 +66,7 @@ export const MobileTabBar: React.FC = () => {
           )}
         </button>
 
-        {/* 3. Center Elevated Action Button: Plan (Glowing Coral Pulse) */}
+        {/* 3. Center Elevated Action Button: Plan */}
         <div className="relative flex items-center justify-center -top-3">
           <button
             type="button"
@@ -74,8 +74,7 @@ export const MobileTabBar: React.FC = () => {
             className="w-14 h-14 rounded-full bg-gradient-to-tr from-coral-600 via-coral-500 to-gold-400 text-white flex items-center justify-center shadow-glow-coral border-2 border-abyss-950 hover:scale-105 active:scale-95 transition-all cursor-pointer relative group"
             title="اصنع خطتك أو افتح الجدول"
           >
-            {/* Ambient Pulse Ring */}
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral-400 opacity-30 pointer-events-none" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral-400 opacity-25 pointer-events-none" />
             <Sparkles className="w-6 h-6 text-white group-hover:rotate-12 transition-transform" />
           </button>
         </div>
@@ -93,7 +92,7 @@ export const MobileTabBar: React.FC = () => {
         >
           <Bookmark className={`w-5 h-5 transition-transform ${activeNavTab === 'curated' ? 'scale-110 text-gold-400' : 'text-pearl-muted'}`} />
           <span className="text-[10px] mt-1 font-bold truncate">
-            {language === 'ar' ? 'المقترحة' : 'Saved'}
+            {language === 'ar' ? 'المقترحة' : 'Curated'}
           </span>
           {activeNavTab === 'curated' && (
             <span className="absolute bottom-1 w-6 h-0.5 rounded-full bg-gold-400 shadow-glow-gold" />
@@ -132,3 +131,4 @@ export const MobileTabBar: React.FC = () => {
 };
 
 export const MobileNav = MobileTabBar;
+export default MobileTabBar;

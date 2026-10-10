@@ -13,13 +13,10 @@ import {
   Compass,
   Play,
   RotateCcw,
-  Plus,
   Clock,
   Car,
   Utensils,
   Ticket,
-  Smartphone,
-  LayoutList,
   Map as MapIcon,
   Sparkles,
   Coins,
@@ -40,7 +37,6 @@ import { GroupVotingModal } from '@/components/modals/GroupVotingModal';
 import { StoryPassModal } from '@/components/modals/StoryPassModal';
 import { InteractiveMap } from '@/components/map/InteractiveMap';
 import { soundEngine } from '@/utils/audioEngine';
-
 import { PlanVariant, ItineraryStop } from '@/types';
 
 export const PlanResultsView: React.FC = () => {
@@ -61,8 +57,8 @@ export const PlanResultsView: React.FC = () => {
 
   if (!currentItinerary) {
     return (
-      <div className="max-w-md mx-auto text-center py-20 space-y-5">
-        <div className="w-20 h-20 rounded-3xl bg-gold-500/20 text-gold-400 mx-auto flex items-center justify-center border border-gold-500/30 shadow-glow-gold">
+      <div className="max-w-md mx-auto text-center py-20 space-y-5 select-none">
+        <div className="w-20 h-20 rounded-3xl bg-gold-500/15 text-gold-400 mx-auto flex items-center justify-center border border-gold-500/30 shadow-glow-gold">
           <Compass className="w-10 h-10" />
         </div>
         <h3 className="text-2xl font-black text-pearl">
@@ -77,10 +73,10 @@ export const PlanResultsView: React.FC = () => {
           type="button"
           onClick={() => {
             soundEngine.playClick();
-            setWizardStep(0);
+            setWizardStep(1);
             setActiveNavTab('quick-plan');
           }}
-          className="min-h-[48px] px-8 py-4 rounded-2xl bg-coral-500 hover:bg-coral-600 text-white font-black text-sm shadow-glow-coral cursor-pointer transition-all"
+          className="min-h-[48px] px-8 py-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-black text-sm shadow-glow-coral cursor-pointer transition-all active:scale-95"
         >
           {language === 'ar' ? '🚀 اصنع خطتك الآن' : 'Create Your Plan'}
         </button>
@@ -89,9 +85,14 @@ export const PlanResultsView: React.FC = () => {
   }
 
   const { variants } = currentItinerary;
-  const currentVariantData: PlanVariant = (variants as any)[activeVariant] || variants.balanced;
-  const thirdVariantObj = variants.free || variants.luxury;
+  const currentVariantData: PlanVariant =
+    (variants as any)[activeVariant] ||
+    (activeVariant === 'free' ? variants.free : undefined) ||
+    variants.balanced ||
+    variants.fastest;
+
   const isThirdFree = !!variants.free;
+  const thirdVariantObj = variants.free || variants.luxury;
 
   const variantTabs = [
     {
@@ -116,10 +117,10 @@ export const PlanResultsView: React.FC = () => {
     },
     {
       id: (isThirdFree ? 'free' : 'luxury') as any,
-      title: thirdVariantObj.titleAr,
-      titleEn: thirdVariantObj.titleEn,
-      badge: thirdVariantObj.badgeAr,
-      badgeEn: thirdVariantObj.badgeEn,
+      title: thirdVariantObj?.titleAr || '💎 التجربة الفخمة VIP',
+      titleEn: thirdVariantObj?.titleEn || '💎 VIP Luxury Signature',
+      badge: thirdVariantObj?.badgeAr || 'VIP',
+      badgeEn: thirdVariantObj?.badgeEn || 'VIP',
       icon: isThirdFree ? Sparkles : Crown,
       color: isThirdFree ? 'text-teal-300' : 'text-coral-400',
       activeBorder: isThirdFree
@@ -138,10 +139,10 @@ export const PlanResultsView: React.FC = () => {
     : Math.max(15, totalPerPerson - foodShare - ticketsShare);
 
   return (
-    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-20 lg:pb-8">
+    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-20 lg:pb-8 text-start select-none">
       {/* 1. Header & 3-Variant Switcher */}
       <div className="space-y-3 sm:space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-start">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <span className="text-[11px] sm:text-xs font-black text-gold-400 uppercase tracking-wider flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-coral-400" />
@@ -154,9 +155,10 @@ export const PlanResultsView: React.FC = () => {
 
           {/* Quick Reconfigure Button */}
           <button
+            type="button"
             onClick={() => {
               soundEngine.playClick();
-              setWizardStep(0);
+              setWizardStep(1);
               setActiveNavTab('quick-plan');
             }}
             className="min-h-[44px] px-4 py-2 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-xs font-bold text-pearl-muted hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 touch-manipulation self-start sm:self-auto"
@@ -171,6 +173,7 @@ export const PlanResultsView: React.FC = () => {
           {variantTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeVariant === tab.id;
+            const variantData = (variants as any)[tab.id];
 
             return (
               <div
@@ -197,8 +200,8 @@ export const PlanResultsView: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] sm:text-xs text-pearl-muted font-medium pt-0.5 sm:pt-1">
-                  <span>~{(variants as any)[tab.id]?.financials?.totalPerPersonSAR ?? 0} ر.س / شخص</span>
-                  <span>~{(variants as any)[tab.id]?.totalTransitMinutes ?? 15} د مشاوير</span>
+                  <span>~{variantData?.financials?.totalPerPersonSAR ?? 0} ر.س / شخص</span>
+                  <span>~{variantData?.totalTransitMinutes ?? 15} د مشاوير</span>
                 </div>
               </div>
             );
@@ -216,7 +219,7 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               openLiveOuting();
             }}
-            className="flex-1 sm:flex-initial min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-coral-500 hover:bg-coral-600 active:bg-coral-700 text-white font-black text-xs sm:text-sm shadow-glow-coral flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
+            className="flex-1 sm:flex-initial min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-black text-xs sm:text-sm shadow-glow-coral flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
           >
             <Play className="w-4 h-4 fill-white" />
             <span>{language === 'ar' ? 'بدء الطلعة (Live Mode)' : 'Start Live Outing'}</span>
@@ -280,7 +283,7 @@ export const PlanResultsView: React.FC = () => {
 
       {/* 3. Financial Summary Bar */}
       <div className="p-3.5 sm:p-5 rounded-2xl bg-abyss-900/90 border border-white/10 shadow-md">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3 text-start">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
           <div className="p-2.5 sm:p-3 rounded-xl bg-abyss-950/80 border border-white/5 space-y-0.5 sm:space-y-1">
             <span className="text-[10px] sm:text-[11px] text-pearl-muted font-bold flex items-center gap-1">
               <Utensils className="w-3.5 h-3.5 text-gold-400" />
@@ -315,7 +318,7 @@ export const PlanResultsView: React.FC = () => {
         </div>
       </div>
 
-      {/* 4. Mobile Segmented Control: [ ⏱️ الجدول الزمني | 🗺️ الخريطة التفاعلية ] */}
+      {/* 4. Mobile Segmented Control */}
       <div className="lg:hidden flex items-center p-1.5 rounded-2xl bg-abyss-950 border border-white/10 shadow-inner">
         <button
           type="button"
@@ -352,14 +355,14 @@ export const PlanResultsView: React.FC = () => {
 
       {/* 5. Desktop 50/50 Map-Split Screen Layout & Mobile Segment Views */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
-        {/* Timeline Column (Visible on desktop or when mobileViewMode === 'timeline') */}
+        {/* Timeline Column */}
         <div className={`lg:col-span-7 space-y-6 ${mobileViewMode === 'map' ? 'hidden lg:block' : 'block'}`}>
           <div className="relative">
             {/* Vertical Glowing Timeline Line */}
             <div className="absolute top-6 bottom-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-0.5 bg-gradient-to-b from-teal-400 via-gold-400 to-coral-400 z-0 opacity-70" />
 
             <div className="space-y-6 relative z-10">
-              {currentVariantData.stops.map((stop, index) => {
+              {currentVariantData?.stops?.map((stop, index) => {
                 const isFirst = index === 0;
                 const isLast = index === currentVariantData.stops.length - 1;
 
@@ -370,7 +373,7 @@ export const PlanResultsView: React.FC = () => {
                       <TransitConnector transit={stop.transitFromPrevious} />
                     )}
 
-                    {/* The Timeline Card */}
+                    {/* Timeline Card */}
                     <TimelineCard
                       stop={stop}
                       isFirst={isFirst}
@@ -383,18 +386,18 @@ export const PlanResultsView: React.FC = () => {
           </div>
         </div>
 
-        {/* Interactive Map Column (Visible on desktop or when mobileViewMode === 'map') */}
+        {/* Interactive Map Column */}
         <div className={`lg:col-span-5 lg:sticky lg:top-24 space-y-4 ${mobileViewMode === 'timeline' ? 'hidden lg:block' : 'block'}`}>
           <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-gold-500/30 shadow-cinematic bg-abyss-950 min-h-[420px] sm:min-h-[480px] lg:min-h-[580px]">
             <InteractiveMap
-              stops={currentVariantData.stops}
+              stops={currentVariantData?.stops || []}
               className="w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px]"
             />
           </div>
 
           {/* Mobile Swipeable Stop Cards below map in map mode */}
           <div className="lg:hidden snap-x snap-mandatory flex overflow-x-auto gap-3 pb-2 scrollbar-none">
-            {currentVariantData.stops.map((stop, idx) => (
+            {currentVariantData?.stops?.map((stop, idx) => (
               <div
                 key={stop.id}
                 onClick={() => {
@@ -408,7 +411,11 @@ export const PlanResultsView: React.FC = () => {
                     #{idx + 1} • {stop.timeSlot}
                   </span>
                   <span className="text-teal-300 font-bold">
-                    {stop.place.averageCostSAR > 0 ? `${stop.place.averageCostSAR} ر.س` : (language === 'ar' ? 'مجاني' : 'Free')}
+                    {stop.place.averageCostSAR > 0
+                      ? `${stop.place.averageCostSAR} ر.س`
+                      : language === 'ar'
+                      ? 'مجاني'
+                      : 'Free'}
                   </span>
                 </div>
                 <h4 className="text-sm font-black text-pearl truncate">
@@ -442,3 +449,5 @@ export const PlanResultsView: React.FC = () => {
     </div>
   );
 };
+
+export default PlanResultsView;

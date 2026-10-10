@@ -6,7 +6,6 @@ import {
   Language,
   Theme,
   WizardPreferences,
-  PlanVariant,
   PlanVariantKey,
 } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
@@ -14,23 +13,18 @@ import { CURATED_PLANS } from '@/data/curated-plans';
 import {
   generateMultiPlanVariants,
   calculateFinancials,
+  normalizeDistrictId,
 } from '@/utils/plannerEngine';
-import {
-  calculateHaversineDistanceKm,
-  estimateDrivingMinutes,
-  estimateUberCostSAR,
-} from '@/utils/distanceCalculator';
 
 interface ItineraryState {
-  // App state
+  // Global App State
   language: Language;
   theme: Theme;
   activeNavTab: 'home' | 'quick-plan' | 'timeline' | 'explore' | 'curated';
 
-  // Itinerary & Variants
+  // Itinerary & Plan Variants
   currentItinerary: Itinerary | null;
   activeVariant: PlanVariantKey;
-  savedItineraries: [];
   favoritePlaceIds: string[];
 
   // Wizard state (7 steps)
@@ -102,10 +96,9 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
 
   currentItinerary: null,
   activeVariant: 'balanced',
-  savedItineraries: [],
   favoritePlaceIds: ['historic-al-balad', 'jeddah-yacht-club', 'twina-seafood-lounge'],
 
-  wizardStep: 0,
+  wizardStep: 1,
   wizardPreferences: defaultPreferences,
   isGeneratingPlan: false,
 
@@ -145,21 +138,34 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
   generatePlanFromPreferences: () => {
     set({ isGeneratingPlan: true });
     setTimeout(() => {
-      const plan = generateMultiPlanVariants(get().wizardPreferences);
-      set({
-        currentItinerary: plan,
-        activeVariant: plan.activeVariant,
-        isGeneratingPlan: false,
-        activeNavTab: 'timeline',
-      });
-    }, 600);
+      try {
+        const plan = generateMultiPlanVariants(get().wizardPreferences);
+        set({
+          currentItinerary: plan,
+          activeVariant: plan.activeVariant,
+          isGeneratingPlan: false,
+          activeNavTab: 'timeline',
+        });
+      } catch (err) {
+        console.error('Plan generation error:', err);
+        set({ isGeneratingPlan: false });
+      }
+    }, 450);
   },
 
   setActiveVariant: (variantKey) => {
     const current = get().currentItinerary;
     if (!current) return;
-    const variantObj = current.variants[variantKey] || current.variants.balanced;
+
+    const variantObj =
+      (current.variants as any)[variantKey] ||
+      (variantKey === 'free' ? current.variants.free : undefined) ||
+      (variantKey === 'luxury' ? current.variants.luxury : undefined) ||
+      current.variants.balanced ||
+      current.variants.fastest;
+
     if (!variantObj) return;
+
     set({
       activeVariant: variantKey,
       currentItinerary: {
@@ -212,7 +218,7 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
     const current = get().currentItinerary;
     if (!current) return;
     const newStops = current.stops.map((s) => (s.id === oldStopId ? { ...s, place: newPlace } : s));
-    const financials = calculateFinancials(newStops, current.financials.groupSize);
+    const financials = calculateFinancials(newStops, current.financials?.groupSize || 2);
     set({
       currentItinerary: {
         ...current,
@@ -257,7 +263,7 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
       currentItinerary: {
         ...it,
         stops: remaining,
-        financials: calculateFinancials(remaining, it.financials.groupSize),
+        financials: calculateFinancials(remaining, it.financials?.groupSize || 2),
       },
     });
   },
@@ -267,7 +273,7 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
     if (!it) {
       const plan = generateMultiPlanVariants({
         ...defaultPreferences,
-        startingDistrict: place.district as any,
+        startingDistrict: normalizeDistrictId(place.district as string),
       });
       set({ currentItinerary: plan, activeNavTab: 'timeline' });
       return;
@@ -287,7 +293,7 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
       currentItinerary: {
         ...it,
         stops: newStops,
-        financials: calculateFinancials(newStops, it.financials.groupSize),
+        financials: calculateFinancials(newStops, it.financials?.groupSize || 2),
       },
     });
   },

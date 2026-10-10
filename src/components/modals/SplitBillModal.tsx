@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Users, Plus, Minus, Calculator, MessageCircle, DollarSign, Sparkles, Utensils, Ticket, Car, ShieldAlert, Coins } from 'lucide-react';
+import { Users, Plus, Minus, Calculator, MessageCircle, Sparkles, Utensils, Ticket, Car, Coins } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
@@ -9,7 +9,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 
 export const SplitBillModal: React.FC = () => {
-  const { language, isRTL } = useLanguage();
+  const { language } = useLanguage();
   const isSplitBillOpen = useItineraryStore((state) => state.isSplitBillOpen);
   const setIsSplitBillOpen = useItineraryStore((state) => state.setIsSplitBillOpen);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
@@ -19,18 +19,20 @@ export const SplitBillModal: React.FC = () => {
 
   if (!isSplitBillOpen || !currentItinerary) return null;
 
-  const currentVariant = currentItinerary.variants[currentItinerary.activeVariant] || currentItinerary.variants.balanced;
+  const currentVariant =
+    (currentItinerary.variants as any)[currentItinerary.activeVariant] ||
+    currentItinerary.variants.balanced;
   const financials = currentVariant?.financials || currentItinerary.financials;
 
-  const safeTotalSAR = financials.totalSAR ?? (financials.totalPerPersonSAR * 2);
-  const foodBase = financials.foodAndBeverageSAR || Math.round(safeTotalSAR * 0.65);
-  const activitiesBase = financials.activitiesAndTicketsSAR || Math.round(safeTotalSAR * 0.22);
-  const transitBase = financials.estimatedTransitSAR || financials.transitEstimatedSAR || Math.max(30, Math.round(safeTotalSAR * 0.13));
+  const safeTotalSAR = financials?.totalSAR ?? (financials?.totalPerPersonSAR * 2);
+  const foodBase = financials?.foodAndBeverageSAR || Math.round(safeTotalSAR * 0.65);
+  const activitiesBase = financials?.activitiesAndTicketsSAR || Math.round(safeTotalSAR * 0.22);
+  const transitBase = financials?.estimatedTransitSAR || financials?.transitEstimatedSAR || Math.max(30, Math.round(safeTotalSAR * 0.13));
 
   const subTotal = foodBase + activitiesBase + transitBase;
   const bufferTotal = includeBuffer ? Math.round(subTotal * 0.1) : 0;
   const grandTotal = subTotal + bufferTotal;
-  const perPerson = Math.round(grandTotal / headcount);
+  const perPerson = Math.round(grandTotal / Math.max(1, headcount));
 
   const handleShareWhatsApp = () => {
     soundEngine.playClick();
@@ -101,25 +103,27 @@ export const SplitBillModal: React.FC = () => {
               <span>{headcount} {language === 'ar' ? 'أشخاص' : 'people'}</span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 bg-abyss-900 p-1 rounded-xl border border-white/10">
               <button
                 type="button"
                 onClick={() => {
                   soundEngine.playClick();
                   setHeadcount((prev) => Math.max(1, prev - 1));
                 }}
-                disabled={headcount <= 1}
-                className="w-10 h-10 rounded-xl bg-abyss-800 hover:bg-abyss-700 disabled:opacity-30 border border-white/10 text-pearl font-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-lg bg-abyss-800 hover:bg-abyss-700 text-pearl flex items-center justify-center cursor-pointer transition-colors"
+                aria-label="Decrease headcount"
               >
                 <Minus className="w-4 h-4" />
               </button>
+              <span className="font-mono font-bold text-sm text-gold-400 px-2">{headcount}</span>
               <button
                 type="button"
                 onClick={() => {
                   soundEngine.playClick();
-                  setHeadcount((prev) => prev + 1);
+                  setHeadcount((prev) => Math.min(25, prev + 1));
                 }}
-                className="w-10 h-10 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-pearl font-black flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-lg bg-abyss-800 hover:bg-abyss-700 text-pearl flex items-center justify-center cursor-pointer transition-colors"
+                aria-label="Increase headcount"
               >
                 <Plus className="w-4 h-4" />
               </button>
@@ -127,76 +131,99 @@ export const SplitBillModal: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Breakdown */}
-        <div className="space-y-2 text-xs">
-          <div className="flex items-center justify-between p-3 rounded-xl bg-abyss-900 border border-white/5">
-            <div className="flex items-center gap-2 text-pearl font-medium">
-              <Utensils className="w-4 h-4 text-gold-400" />
-              <span>{language === 'ar' ? 'الأكل والمشروبات المقدرة' : 'Estimated Food & Coffee'}</span>
-            </div>
-            <span className="font-bold text-pearl">~{foodBase} ر.س</span>
+        {/* Emergency Buffer Toggle */}
+        <div className="p-4 rounded-2xl bg-abyss-950/60 border border-white/10 flex items-center justify-between gap-3">
+          <div>
+            <h4 className="text-xs font-bold text-pearl">
+              {language === 'ar' ? 'إضافة 10% احتياطي طوارئ وحلى إضافي' : 'Add 10% buffer for unexpected treats'}
+            </h4>
+            <span className="text-[11px] text-pearl-muted">
+              {language === 'ar' ? `(~${bufferTotal} ر.س إجمالي)` : `(~${bufferTotal} SAR total)`}
+            </span>
           </div>
-
-          <div className="flex items-center justify-between p-3 rounded-xl bg-abyss-900 border border-white/5">
-            <div className="flex items-center gap-2 text-pearl font-medium">
-              <Ticket className="w-4 h-4 text-coral-400" />
-              <span>{language === 'ar' ? 'رسوم التذاكر والفعاليات' : 'Tickets & Activities'}</span>
-            </div>
-            <span className="font-bold text-pearl">~{activitiesBase} ر.س</span>
-          </div>
-
-          <div className="flex items-center justify-between p-3 rounded-xl bg-abyss-900 border border-white/5">
-            <div className="flex items-center gap-2 text-pearl font-medium">
-              <Car className="w-4 h-4 text-teal-400" />
-              <span>{language === 'ar' ? 'مشاوير أوبر التقديرية' : 'Estimated Uber Rides'}</span>
-            </div>
-            <span className="font-bold text-pearl">~{transitBase} ر.س</span>
-          </div>
-
-          {/* Buffer Toggle */}
-          <div
+          <button
+            type="button"
             onClick={() => {
               soundEngine.playClick();
               setIncludeBuffer((prev) => !prev);
             }}
-            className="flex items-center justify-between p-3 rounded-xl bg-abyss-900 border border-white/5 cursor-pointer hover:border-gold-500/30 transition-colors"
+            className={`w-12 h-6 rounded-full p-0.5 transition-colors cursor-pointer ${
+              includeBuffer ? 'bg-gold-500' : 'bg-abyss-800'
+            }`}
+            aria-label="Toggle Buffer"
           >
-            <div className="flex items-center gap-2 text-pearl font-medium">
-              <input
-                type="checkbox"
-                checked={includeBuffer}
-                onChange={() => {}}
-                className="w-4 h-4 rounded text-gold-500 focus:ring-gold-400 bg-abyss-950 border-white/20"
-              />
-              <span>{language === 'ar' ? 'إضافة 10% احتياطي طوارئ' : 'Include 10% Emergency Buffer'}</span>
+            <div
+              className={`w-5 h-5 rounded-full bg-white transition-transform ${
+                includeBuffer ? 'translate-x-6 rtl:-translate-x-6' : 'translate-x-0'
+              }`}
+            />
+          </button>
+        </div>
+
+        {/* Cost Breakdown Matrix */}
+        <div className="space-y-2 p-4 rounded-2xl bg-abyss-950/80 border border-white/10 text-xs">
+          <div className="flex items-center justify-between text-pearl-muted py-1 border-b border-white/5">
+            <span className="flex items-center gap-1.5">
+              <Utensils className="w-3.5 h-3.5 text-gold-400" />
+              <span>{language === 'ar' ? 'الأكل والمقاهي' : 'Dining & Coffee'}</span>
+            </span>
+            <span className="font-bold text-pearl">~{foodBase} ر.س</span>
+          </div>
+
+          <div className="flex items-center justify-between text-pearl-muted py-1 border-b border-white/5">
+            <span className="flex items-center gap-1.5">
+              <Ticket className="w-3.5 h-3.5 text-coral-400" />
+              <span>{language === 'ar' ? 'التذاكر والأنشطة' : 'Tickets & Activities'}</span>
+            </span>
+            <span className="font-bold text-pearl">~{activitiesBase} ر.س</span>
+          </div>
+
+          <div className="flex items-center justify-between text-pearl-muted py-1 border-b border-white/5">
+            <span className="flex items-center gap-1.5">
+              <Car className="w-3.5 h-3.5 text-teal-400" />
+              <span>{language === 'ar' ? 'مشاوير أوبر المقدرة' : 'Uber Transit'}</span>
+            </span>
+            <span className="font-bold text-pearl">~{transitBase} ر.س</span>
+          </div>
+
+          {includeBuffer && (
+            <div className="flex items-center justify-between text-gold-400 py-1 border-b border-white/5">
+              <span className="flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{language === 'ar' ? 'احتياطي الطوارئ (10%)' : 'Emergency Buffer (10%)'}</span>
+              </span>
+              <span className="font-bold">~{bufferTotal} ر.س</span>
             </div>
-            <span className="font-bold text-gold-400">~{bufferTotal} ر.س</span>
+          )}
+
+          <div className="flex items-center justify-between text-pearl font-black pt-2 text-sm">
+            <span>{language === 'ar' ? 'المجموع الكلي للطلعة' : 'Grand Total'}</span>
+            <span className="text-gold-400 text-base font-black">~{grandTotal} ر.س</span>
           </div>
         </div>
 
-        {/* Per Person Result Highlight */}
-        <div className="p-5 rounded-2xl bg-gradient-to-r from-gold-500/20 via-coral-500/20 to-teal-500/20 border border-gold-500/40 text-center space-y-1 shadow-glow-gold">
-          <span className="text-xs text-gold-300 font-bold uppercase tracking-wider block">
-            {language === 'ar' ? 'القطة المقدرة للشخص الواحد' : 'Estimated Share per Person'}
+        {/* Big Per-Person Result Banner */}
+        <div className="p-5 rounded-2xl bg-gradient-to-r from-gold-500/20 via-gold-500/10 to-coral-500/20 border border-gold-500/40 text-center space-y-1 shadow-glow-gold">
+          <span className="text-xs font-bold text-gold-400 uppercase tracking-wider block">
+            {language === 'ar' ? 'قطة الشخص الواحد المطلوبة' : 'Individual Share'}
           </span>
-          <div className="text-3xl sm:text-4xl font-black text-pearl font-sans">
-            ~{perPerson} <span className="text-lg text-gold-400 font-normal">ر.س</span>
+          <div className="text-3xl sm:text-4xl font-black text-pearl font-mono">
+            ~{perPerson} <span className="text-base font-sans font-bold text-gold-400">{language === 'ar' ? 'ر.س' : 'SAR'}</span>
           </div>
-          <span className="text-[11px] text-pearl-muted block">
-            {language === 'ar' ? `المجموع الكلي: ~${grandTotal} ر.س` : `Grand Total: ~${grandTotal} SAR`}
-          </span>
         </div>
 
-        {/* WhatsApp Share Button */}
+        {/* WhatsApp Share CTA */}
         <button
           type="button"
           onClick={handleShareWhatsApp}
-          className="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-abyss-950 font-black text-sm shadow-lg flex items-center justify-center gap-2 transition-all cursor-pointer hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full py-3.5 px-4 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-[0.98]"
         >
-          <MessageCircle className="w-5 h-5" />
-          <span>{language === 'ar' ? 'مشاركة الحسبة للشلة عبر واتساب' : 'Share Breakdown to WhatsApp'}</span>
+          <MessageCircle className="w-4 h-4 fill-white" />
+          <span>{language === 'ar' ? 'إرسال الحسبة في قروب الواتساب' : 'Share Bill to WhatsApp'}</span>
         </button>
       </div>
     </Modal>
   );
 };
+
+export default SplitBillModal;

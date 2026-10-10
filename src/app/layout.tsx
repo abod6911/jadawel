@@ -1,5 +1,27 @@
 import type { Metadata, Viewport } from 'next';
+import { Readex_Pro, IBM_Plex_Sans_Arabic, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
+
+const readexPro = Readex_Pro({
+  subsets: ['arabic', 'latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-readex-pro',
+  display: 'swap',
+});
+
+const ibmPlexArabic = IBM_Plex_Sans_Arabic({
+  subsets: ['arabic'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-ibm-plex-sans-arabic',
+  display: 'swap',
+});
+
+const plusJakarta = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-jakarta',
+  display: 'swap',
+});
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -7,7 +29,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   viewportFit: 'cover',
-  themeColor: '#07151E',
+  themeColor: '#090B0E',
 };
 
 export const metadata: Metadata = {
@@ -47,14 +69,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ar" dir="rtl" className="dark h-full">
+    <html
+      lang="ar"
+      dir="rtl"
+      className={`dark h-full ${readexPro.variable} ${ibmPlexArabic.variable} ${plusJakarta.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
       </head>
-      <body className="min-h-[100dvh] flex flex-col bg-abyss text-pearl antialiased selection:bg-coral-500 selection:text-white overflow-x-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+      <body className="min-h-[100dvh] flex flex-col bg-obsidian text-pearl font-arabic antialiased selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         {children}
       </body>
     </html>

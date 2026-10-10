@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useMemo } from 'react';
-import { Search, Compass, MapPin, Sparkles } from 'lucide-react';
+import { Search, Compass, MapPin, Sparkles, Navigation } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { PlaceCategory, DistrictId, Place } from '@/types';
@@ -9,9 +9,10 @@ import { FilterBar } from './FilterBar';
 import { PlaceCard } from './PlaceCard';
 import { PlaceDetailModal } from './PlaceDetailModal';
 import { InteractiveMap } from '@/components/map/InteractiveMap';
+import { doesPlaceMatchDistrict, doesPlaceMatchCategory } from '@/utils/plannerEngine';
 
 export const ExploreDirectory: React.FC = () => {
-  const { language, t } = useLanguage();
+  const { language } = useLanguage();
 
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | 'all'>('all');
@@ -29,57 +30,58 @@ export const ExploreDirectory: React.FC = () => {
     setFeatures((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Filter logic
+  // Robust Filter Logic with fuzzy normalization
   const filteredPlaces = useMemo(() => {
     return JEDDAH_PLACES.filter((place) => {
-      // Search
+      // 1. Text Search across Arabic & English names, district, and tags
       if (searchQuery.trim()) {
         const q = searchQuery.toLowerCase().trim();
-        const matchNameAr = place.nameAr.toLowerCase().includes(q);
-        const matchNameEn = place.nameEn.toLowerCase().includes(q);
-        const matchDistrictAr = place.districtNameAr.toLowerCase().includes(q);
-        const matchDistrictEn = place.districtNameEn.toLowerCase().includes(q);
-        const matchTags = place.tags.some((tag) => tag.toLowerCase().includes(q));
+        const matchNameAr = place.nameAr?.toLowerCase().includes(q);
+        const matchNameEn = place.nameEn?.toLowerCase().includes(q);
+        const matchDistrictAr = place.districtNameAr?.toLowerCase().includes(q);
+        const matchDistrictEn = place.districtNameEn?.toLowerCase().includes(q);
+        const matchTags = place.tags?.some((tag) => tag.toLowerCase().includes(q));
         if (!matchNameAr && !matchNameEn && !matchDistrictAr && !matchDistrictEn && !matchTags) {
           return false;
         }
       }
 
-      // Category
-      if (selectedCategory !== 'all' && place.category !== selectedCategory) {
+      // 2. Normalized Category matching
+      if (!doesPlaceMatchCategory(place.category, selectedCategory)) {
         return false;
       }
 
-      // District
-      if (selectedDistrict !== 'all' && place.district !== selectedDistrict) {
+      // 3. Normalized District matching
+      if (!doesPlaceMatchDistrict(place.district as string, selectedDistrict)) {
         return false;
       }
 
-      // Feature toggles
+      // 4. Feature toggles
       if (features.freeOnly && place.averageCostSAR > 0) return false;
-      if (features.familyOnly && !place.features.familyFriendly) return false;
-      if (features.seaViewOnly && !place.features.seaView) return false;
-      if (features.indoorOnly && !place.features.indoorAC) return false;
+      if (features.familyOnly && !place.features?.familyFriendly) return false;
+      if (features.seaViewOnly && !place.features?.seaView) return false;
+      if (features.indoorOnly && !place.features?.indoorAC) return false;
 
       return true;
     });
   }, [searchQuery, selectedCategory, selectedDistrict, features]);
 
   return (
-    <div className="max-w-7xl mx-auto space-y-8">
-      {/* Header Container in Velvet Midnight Blue */}
-      <div className="bg-navy-900 rounded-3xl p-6 sm:p-8 border border-gold-500/30 shadow-card-dark space-y-6">
+    <div className="max-w-7xl w-full mx-auto space-y-6 sm:space-y-8 pb-12">
+      {/* Header Container with Velvet Twilight Surface */}
+      <div className="bg-abyss-900/90 backdrop-blur-2xl rounded-3xl p-5 sm:p-8 border border-gold-500/30 shadow-cinematic space-y-6">
         <div className="space-y-1.5 text-start">
-          <span className="text-xs font-black text-gold-400 uppercase tracking-wider block">
-            {language === 'ar' ? 'أفضل وجهات عروس البحر الأحمر' : 'Curated Destinations in Jeddah'}
-          </span>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black">
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{language === 'ar' ? 'أفضل وجهات عروس البحر الأحمر' : 'Curated Destinations in Jeddah'}</span>
+          </div>
+          <h1 className="text-2xl sm:text-4xl font-black text-pearl tracking-tight">
             {language === 'ar' ? 'دليل معالم ووجهات جدة' : 'Jeddah Destination Guide'}
           </h1>
-          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+          <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-2xl">
             {language === 'ar'
-              ? 'استكشف أكثر من 35 وجهة منتقاة بعناية في كافة أرجاء المدينة، مع تفاصيل الأسعار، ساعات العمل، وأفضل الأوقات للزيارة.'
-              : 'Explore 35+ handpicked destinations across Jeddah with verified pricing, hours, and prime visiting times.'}
+              ? 'استكشف وجهات منتقاة بعناية في كافة أرجاء المدينة، مع تفاصيل الأسعار، ساعات العمل، ومستوى التقييم.'
+              : 'Explore handpicked destinations across Jeddah with verified pricing, hours, and insider local tips.'}
           </p>
         </div>
 
@@ -101,24 +103,40 @@ export const ExploreDirectory: React.FC = () => {
 
       {/* Main Content: Grid vs Map */}
       {viewMode === 'map' ? (
-        <div className="space-y-4">
+        <div className="rounded-[2.5rem] overflow-hidden border border-gold-500/30 shadow-cinematic bg-abyss-950 min-h-[500px]">
           <InteractiveMap
             stops={filteredPlaces.map((p, idx) => ({ place: p, order: idx + 1 }))}
-            className="h-[600px]"
+            className="h-[600px] w-full"
             showPolyline={false}
           />
         </div>
       ) : (
         <div>
           {filteredPlaces.length === 0 ? (
-            <div className="p-12 text-center bg-navy-900 rounded-3xl border border-white/10 space-y-3 shadow-card-dark">
-              <Compass className="w-12 h-12 mx-auto text-gold-400" />
-              <h3 className="text-lg font-black text-white">
+            <div className="p-12 sm:p-16 text-center bg-abyss-900/90 rounded-3xl border border-white/10 space-y-4 shadow-cinematic">
+              <div className="w-16 h-16 rounded-2xl bg-gold-500/15 text-gold-400 flex items-center justify-center mx-auto border border-gold-500/30">
+                <Compass className="w-8 h-8" />
+              </div>
+              <h3 className="text-lg sm:text-xl font-black text-pearl">
                 {language === 'ar' ? 'لم نجد أي وجهة مطابقة للبحث' : 'No destinations match your criteria'}
               </h3>
-              <p className="text-xs text-slate-300 font-medium">
-                {language === 'ar' ? 'جرب تعديل خيارات التصفية أو البحث عن كلمة أخرى.' : 'Try adjusting your filters or search query.'}
+              <p className="text-xs sm:text-sm text-pearl-muted font-medium max-w-md mx-auto">
+                {language === 'ar'
+                  ? 'جرب تعديل خيارات التصفية أو البحث عن كلمة أخرى أو مسح فلتر الحي.'
+                  : 'Try adjusting your filters, searching for another keyword, or resetting the district filter.'}
               </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('all');
+                  setSelectedDistrict('all');
+                  setFeatures({ freeOnly: false, familyOnly: false, seaViewOnly: false, indoorOnly: false });
+                }}
+                className="px-6 py-2.5 rounded-xl bg-gold-500 text-abyss-950 font-black text-xs hover:bg-gold-400 transition-colors cursor-pointer"
+              >
+                {language === 'ar' ? 'إعادة ضبط عوامل التصفية' : 'Reset Filters'}
+              </button>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
@@ -135,3 +153,5 @@ export const ExploreDirectory: React.FC = () => {
     </div>
   );
 };
+
+export default ExploreDirectory;

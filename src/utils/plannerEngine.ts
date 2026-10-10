@@ -6,6 +6,8 @@ import {
   FinancialBreakdown,
   PlanVariant,
   PlanVariantKey,
+  DistrictId,
+  PlaceCategory,
 } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
@@ -16,8 +18,90 @@ import {
 } from './distanceCalculator';
 
 /**
- * Heuristic Itinerary Scoring Function
- * Score(v) = w_vibe * M(v) + w_budget * B(v) + w_companion * C(v) - w_dist * Dist(v, prev) + Rating(v) - Penalties
+ * Normalizes any string representation of a Jeddah district into a standard DistrictId
+ */
+export function normalizeDistrictId(raw?: string): DistrictId | 'all_jeddah' {
+  if (!raw) return 'all_jeddah';
+  const lower = raw.toLowerCase().trim();
+  if (lower === 'all' || lower === 'all_jeddah' || lower === 'all-jeddah' || lower === 'current_location') {
+    return 'all_jeddah';
+  }
+  if (lower.includes('balad')) return 'al-balad';
+  if (lower.includes('shati') || lower.includes('waterfront') || lower.includes('corniche')) return 'al-shati';
+  if (lower.includes('rawdah') || lower.includes('rawdha')) return 'al-rawdah';
+  if (lower.includes('zahra')) return 'al-zahra';
+  if (lower.includes('obhur') || lower.includes('abhor')) return 'obhur';
+  if (lower.includes('hamra')) return 'al-hamra';
+  if (lower.includes('salamah') || lower.includes('naeem')) return 'al-salamah';
+  if (lower.includes('andalus')) return 'al-andalus';
+  return 'all_jeddah';
+}
+
+/**
+ * Determines whether a place matches a given filter district with fuzzy alias mapping
+ */
+export function doesPlaceMatchDistrict(
+  placeDistrict: string,
+  filterDistrict: DistrictId | 'all' | 'all_jeddah'
+): boolean {
+  if (filterDistrict === 'all' || filterDistrict === 'all_jeddah') return true;
+  const pNorm = normalizeDistrictId(placeDistrict);
+  const fNorm = normalizeDistrictId(filterDistrict);
+  return pNorm === fNorm;
+}
+
+/**
+ * Robust category matching that unifies frontend filter IDs with dataset place categories
+ */
+export function doesPlaceMatchCategory(
+  placeCategory: string,
+  filterCategory: PlaceCategory | 'all'
+): boolean {
+  if (filterCategory === 'all') return true;
+  if (placeCategory === filterCategory) return true;
+
+  if (filterCategory === 'culinary') {
+    return placeCategory === 'restaurant' || placeCategory === 'cafe' || placeCategory === 'culinary';
+  }
+  if (filterCategory === 'heritage') {
+    return placeCategory === 'heritage' || placeCategory === 'cultural';
+  }
+  if (filterCategory === 'waterfront') {
+    return placeCategory === 'waterfront' || placeCategory === 'beach';
+  }
+  if (filterCategory === 'beach_resorts' || filterCategory === 'beach') {
+    return placeCategory === 'beach' || placeCategory === 'beach_resorts';
+  }
+  if (filterCategory === 'arts_entertainment') {
+    return (
+      placeCategory === 'arts_entertainment' ||
+      placeCategory === 'cultural' ||
+      placeCategory === 'activity' ||
+      placeCategory === 'entertainment'
+    );
+  }
+  if (filterCategory === 'nature_parks') {
+    return (
+      placeCategory === 'nature_parks' ||
+      placeCategory === 'entertainment' ||
+      placeCategory === 'activity'
+    );
+  }
+  return false;
+}
+
+/**
+ * Retrieves human-readable Arabic district label for headers
+ */
+export function getDistrictLabel(districtId: string): string {
+  const norm = normalizeDistrictId(districtId);
+  if (norm === 'all_jeddah') return 'عروس البحر الأحمر';
+  const found = JEDDAH_DISTRICTS.find((d) => d.id === norm);
+  return found ? found.nameAr : 'جدة';
+}
+
+/**
+ * Heuristic scoring engine for places based on user preferences and current route archetype
  */
 function computeVenueScore(
   venue: Place,
@@ -34,19 +118,31 @@ function computeVenueScore(
   const isFreeRequired = archetype === 'free' || prefs.budgetTier === 'free';
   if (isFreeRequired) {
     if (venue.averageCostSAR > 0 || venue.isFree === false) {
-      return -99999; // Strict exclusion of paid venues
+      return -99999;
     }
   }
 
   let penalties = 0;
 
-  // 2. Category Anti-Collision Guardrail
+  // 2. Anti-collision: avoid repeating identical category back-to-back
   if (lastCategory && venue.category === lastCategory) {
-    penalties += 50;
+    penalties += 40;
   }
 
-  // 3. Vibe & Role Fit Score (w_vibe = 35)
-  let vibeScore = 0;
+  // 3. District Affinity Score
+  const userDistrict = normalizeDistrictId(prefs.startingDistrict);
+  const venueDistrict = normalizeDistrictId(venue.district as string);
+  let districtScore = 0;
+  if (userDistrict !== 'all_jeddah') {
+    if (userDistrict === venueDistrict) {
+      districtScore = 30;
+    } else {
+      penalties += 15;
+    }
+  }
+
+  // 4. Role & Timing Fit Score
+  let roleScore = 0;
   if (targetRole === 'sunset_activity') {
     if (
       venue.category === 'waterfront' ||
@@ -55,15 +151,15 @@ function computeVenueScore(
       venue.tags.includes('sea_sunset') ||
       venue.tags.includes('free_walk')
     ) {
-      vibeScore += 35;
+      roleScore = 35;
     } else if (
       venue.category === 'cultural' ||
       venue.category === 'heritage' ||
       venue.category === 'nature_parks'
     ) {
-      vibeScore += 26;
+      roleScore = 25;
     } else {
-      vibeScore += 10;
+      roleScore = 10;
     }
   } else if (targetRole === 'coffee_snack') {
     if (
@@ -72,66 +168,67 @@ function computeVenueScore(
       venue.tags.includes('bakery') ||
       venue.tags.includes('coffee_dessert')
     ) {
-      vibeScore += 35;
+      roleScore = 35;
     } else if (venue.category === 'cultural' || venue.category === 'waterfront') {
-      vibeScore += 20;
+      roleScore = 20;
     }
   } else {
-    // dinner_experience / night activity
+    // Dinner & Evening
     if (venue.category === 'restaurant' || venue.category === 'culinary') {
-      vibeScore += 35;
+      roleScore = 35;
     } else if (
       venue.category === 'entertainment' ||
       venue.category === 'arts_entertainment' ||
       venue.category === 'activity'
     ) {
-      vibeScore += 30;
+      roleScore = 30;
     } else if (venue.category === 'heritage' || venue.category === 'waterfront') {
-      vibeScore += 22;
+      roleScore = 22;
     }
   }
 
-  // User Vibe Preference Affinity
+  // 5. User Vibe Fit
+  let vibeScore = 0;
   if (prefs.vibe) {
     if (venue.vibe && venue.vibe.includes(prefs.vibe as any)) {
-      vibeScore += 15;
+      vibeScore += 20;
     }
     if (prefs.vibe === 'food' && (venue.category === 'restaurant' || venue.category === 'culinary')) {
-      vibeScore += 10;
+      vibeScore += 15;
     }
     if (prefs.vibe === 'coffee_dessert' && venue.category === 'cafe') {
-      vibeScore += 10;
+      vibeScore += 15;
     }
     if (prefs.vibe === 'beach_sunset' && (venue.category === 'waterfront' || venue.category === 'beach')) {
-      vibeScore += 10;
+      vibeScore += 15;
     }
     if (prefs.vibe === 'heritage_arts' && (venue.category === 'heritage' || venue.category === 'cultural')) {
-      vibeScore += 10;
+      vibeScore += 15;
     }
     if (prefs.vibe === 'gaming_challenges' && (venue.category === 'entertainment' || venue.category === 'activity')) {
-      vibeScore += 10;
+      vibeScore += 15;
     }
   }
 
-  // 4. Budget Fit Score (w_budget = 25)
+  // 6. Budget Fit
   let budgetScore = 0;
   if (isFreeRequired) {
-    budgetScore = 25;
+    budgetScore = 30;
   } else if (archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium') {
-    if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 200) {
-      budgetScore = 25;
-    } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 100) {
-      budgetScore = 18;
-    } else {
-      penalties += 10;
-    }
-  } else if (prefs.budgetTier === 'economy') {
-    if (venue.averageCostSAR === 0 || venue.priceTier === 'free') {
-      budgetScore = 25;
-    } else if (venue.averageCostSAR <= 60) {
+    if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 180) {
+      budgetScore = 30;
+    } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 90) {
       budgetScore = 20;
     } else {
-      penalties += 20;
+      penalties += 15;
+    }
+  } else if (prefs.budgetTier === 'economy') {
+    if (venue.averageCostSAR === 0 || venue.averageCostSAR <= 50) {
+      budgetScore = 30;
+    } else if (venue.averageCostSAR <= 90) {
+      budgetScore = 18;
+    } else {
+      penalties += 25;
     }
   } else {
     // Moderate (~150 SAR)
@@ -144,17 +241,7 @@ function computeVenueScore(
     }
   }
 
-  // 5. Companion Compatibility Score (w_companion = 20)
-  let companionScore = 0;
-  if (prefs.companions && venue.bestFor) {
-    if (venue.bestFor.includes(prefs.companions as any)) {
-      companionScore = 20;
-    } else {
-      companionScore = 8;
-    }
-  }
-
-  // 6. Geographic Proximity & Linear Path (w_dist = 2.5 to 5.0)
+  // 7. Geographic Distance & Route Flow
   const distKm = calculateHaversineDistanceKm(
     prevCoords.lat,
     prevCoords.lng,
@@ -162,155 +249,30 @@ function computeVenueScore(
     venue.coordinates.lng
   );
 
-  const distWeight = archetype === 'fastest' ? 5.0 : 2.5;
-  let geoScore = Math.max(0, 30 - distKm * distWeight);
+  const distWeight = archetype === 'fastest' ? 6.0 : 2.5;
+  const geoScore = Math.max(0, 30 - distKm * distWeight);
 
-  // Severe Backtracking / Extreme Leap Penalty (> 18km leap between North/South)
   if (distKm > 18) {
     penalties += (distKm - 18) * 8;
   }
 
-  // 7. Rating & Popularity (w_rating = 10)
+  // 8. Rating
   const ratingScore = (venue.rating / 5) * 10;
 
-  return vibeScore + budgetScore + companionScore + geoScore + ratingScore - penalties;
+  return (
+    roleScore +
+    districtScore +
+    vibeScore +
+    budgetScore +
+    geoScore +
+    ratingScore -
+    penalties
+  );
 }
 
-export function generateMultiPlanVariants(preferences: WizardPreferences): Itinerary {
-  const { startingDistrict, budgetTier } = preferences;
-
-  // Determine starting coordinate centroid
-  let startLat = 21.6080; // Default Al-Shati / Jeddah Waterfront
-  let startLng = 39.1105;
-
-  if (startingDistrict && startingDistrict !== 'current_location' && startingDistrict !== 'all_jeddah') {
-    const distObj = JEDDAH_DISTRICTS.find((d) => d.id === startingDistrict);
-    if (distObj) {
-      startLat = distObj.coordinates.lat;
-      startLng = distObj.coordinates.lng;
-    }
-  } else if (preferences.userCoords) {
-    startLat = preferences.userCoords.lat;
-    startLng = preferences.userCoords.lng;
-  }
-
-  const startCoords = { lat: startLat, lng: startLng };
-
-  // 1. Generate Archetype 1: Fastest & Closest (⚡ الأقرب والأسرع)
-  const fastestStops = generateVariantStops('fastest', preferences, startCoords);
-  const fastestFinancials = calculateFinancials(fastestStops, 2);
-  const fastestTransitTotals = calculateTransitTotals(fastestStops);
-
-  const fastestVariant: PlanVariant = {
-    id: 'fastest',
-    titleAr: '⚡ الأقرب والأسرع',
-    titleEn: '⚡ Shortest Transit & Proximity',
-    taglineAr: 'مسار متقارب جغرافياً يوفّر وقت المشاوير وزحام الطرق',
-    taglineEn: 'Optimized to minimize driving time with tightly clustered venues',
-    badgeAr: 'أقل وقت تنقل (~15 دقيقة)',
-    badgeEn: 'Lowest Transit (~15 mins)',
-    icon: 'Zap',
-    stops: fastestStops,
-    financials: fastestFinancials,
-    totalTransitMinutes: fastestTransitTotals.minutes,
-    totalDistanceKm: fastestTransitTotals.km,
-  };
-
-  // 2. Generate Archetype 2: Balanced Masterpiece (⚖️ الخطة الموزونة)
-  const balancedStops = generateVariantStops('balanced', preferences, startCoords);
-  const balancedFinancials = calculateFinancials(balancedStops, 2);
-  const balancedTransitTotals = calculateTransitTotals(balancedStops);
-
-  const balancedVariant: PlanVariant = {
-    id: 'balanced',
-    titleAr: '⚖️ الخطة الموزونة',
-    titleEn: '⚖️ The Balanced Experience',
-    taglineAr: 'المزيج المثالي بين المشي، القهوة، وأجواء العشاء والغروب',
-    taglineEn: 'The ideal mix of scenic strolls, specialty coffee, and signature dining',
-    badgeAr: 'الخيار الموصى به ⭐',
-    badgeEn: 'Recommended Choice ⭐',
-    icon: 'Scale',
-    stops: balancedStops,
-    financials: balancedFinancials,
-    totalTransitMinutes: balancedTransitTotals.minutes,
-    totalDistanceKm: balancedTransitTotals.km,
-  };
-
-  // 3. Generate Archetype 3: Free Outing (0 SAR) OR VIP Luxury
-  const isFreePlanMode = budgetTier === 'free' || budgetTier === 'economy' || budgetTier === 'moderate';
-  const thirdVariantKey: PlanVariantKey = isFreePlanMode ? 'free' : 'luxury';
-
-  const thirdStops = generateVariantStops(thirdVariantKey, preferences, startCoords);
-  const thirdFinancials = calculateFinancials(thirdStops, 2);
-  const thirdTransitTotals = calculateTransitTotals(thirdStops);
-
-  const thirdVariant: PlanVariant = isFreePlanMode
-    ? {
-        id: 'free',
-        titleAr: '🆓 خطة الروقان المجانية (0 ر.س)',
-        titleEn: '🆓 100% Free Outing (0 SAR)',
-        taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
-        taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
-        badgeAr: 'مجانية 100% (0 ر.س) 🆓',
-        badgeEn: '100% Free (0 SAR) 🆓',
-        icon: 'Sparkles',
-        stops: thirdStops,
-        financials: thirdFinancials,
-        totalTransitMinutes: thirdTransitTotals.minutes,
-        totalDistanceKm: thirdTransitTotals.km,
-      }
-    : {
-        id: 'luxury',
-        titleAr: '💎 التجربة الفخمة VIP',
-        titleEn: '💎 VIP Luxury Signature',
-        taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
-        taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
-        badgeAr: 'فخامة VIP ✨',
-        badgeEn: 'VIP Luxury ✨',
-        icon: 'Crown',
-        stops: thirdStops,
-        financials: thirdFinancials,
-        totalTransitMinutes: thirdTransitTotals.minutes,
-        totalDistanceKm: thirdTransitTotals.km,
-      };
-
-  const activeVariantKey: PlanVariantKey = budgetTier === 'free' ? 'free' : 'balanced';
-  const activeVariantObj: PlanVariant =
-    activeVariantKey === 'free' ? thirdVariant : balancedVariant;
-
-  const districtName = getDistrictLabel(startingDistrict);
-
-  return {
-    id: `jadawel-plan-${Date.now()}`,
-    titleAr: `طلعة جدة الذكية • ${districtName}`,
-    titleEn: `Jeddah Smart Outing • ${districtName}`,
-    descriptionAr: 'تم توليد 3 خطط متكاملة بدقة ومسار جغرافي متصل مع حساب الميزانية والتنقلات.',
-    descriptionEn: 'Generated 3 distinct plans with linear geographic routing & exact SAR budget calculations.',
-    createdAt: new Date().toISOString(),
-    preferences,
-    daysCount: 1,
-    activeVariant: activeVariantKey,
-    variants: {
-      fastest: fastestVariant,
-      balanced: balancedVariant,
-      luxury: thirdVariantKey === 'luxury' ? thirdVariant : {
-        ...balancedVariant,
-        id: 'luxury',
-        titleAr: '💎 النسخة الفخمة',
-        titleEn: '💎 Luxury Edition',
-        badgeAr: 'VIP',
-        badgeEn: 'VIP',
-        icon: 'Crown',
-      },
-      free: thirdVariantKey === 'free' ? thirdVariant : undefined,
-    },
-    stops: activeVariantObj.stops,
-    financials: activeVariantObj.financials,
-    summaryAr: 'اختر الخطة المناسبة لك وشاركها مع الشلة بنقرة واحدة.',
-    summaryEn: 'Pick your preferred plan variant and share with friends in one click.',
-  };
-}
-
+/**
+ * Builds stops for an individual archetype variant
+ */
 function generateVariantStops(
   archetype: 'fastest' | 'balanced' | 'luxury' | 'free',
   prefs: WizardPreferences,
@@ -319,30 +281,30 @@ function generateVariantStops(
   const timeBlocks = [
     {
       start: '16:45',
-      end: '18:00',
-      slotAr: '4:45 م - 6:00 م',
-      slotEn: '04:45 PM - 06:00 PM',
+      end: '18:15',
+      slotAr: '4:45 م - 6:15 م',
+      slotEn: '04:45 PM - 06:15 PM',
       role: 'sunset_activity' as const,
       weatherAr: '🌅 وقت الغروب: أفضل توقيت لنسيم البحر والتقاط الصور التذكارية.',
-      weatherEn: '🌅 Golden Hour: Perfect for coastal breeze and sunset photography.',
+      weatherEn: '🌅 Golden Hour: Ideal coastal breeze and sunset photography.',
     },
     {
-      start: '18:15',
-      end: '19:30',
-      slotAr: '6:15 م - 7:30 م',
-      slotEn: '06:15 PM - 07:30 PM',
+      start: '18:30',
+      end: '19:45',
+      slotAr: '6:30 م - 7:45 م',
+      slotEn: '06:30 PM - 07:45 PM',
       role: 'coffee_snack' as const,
       weatherAr: '☕ استراحة الروقان: جلسة مريحة لتناول القهوة والمشروبات المنعشة.',
-      weatherEn: '☕ Chill Break: Relaxing pitstop for specialty brews and treats.',
+      weatherEn: '☕ Chill Break: Specialty brews and artisan treats.',
     },
     {
-      start: '19:45',
-      end: '22:00',
-      slotAr: '7:45 م - 10:00 م',
-      slotEn: '07:45 PM - 10:00 PM',
+      start: '20:00',
+      end: '22:30',
+      slotAr: '8:00 م - 10:30 م',
+      slotEn: '08:00 PM - 10:30 PM',
       role: 'dinner_experience' as const,
       weatherAr: '🌙 أجواء السهرة: نسمة ليلية عليلة وجلسات خارجية مضيئة.',
-      weatherEn: '🌙 Night Atmosphere: Vibrant evening breeze and ambient dining.',
+      weatherEn: '🌙 Evening Vibe: Ambient dining and Red Sea twilight breeze.',
     },
   ];
 
@@ -354,18 +316,27 @@ function generateVariantStops(
   for (let idx = 0; idx < timeBlocks.length; idx++) {
     const block = timeBlocks[idx];
 
-    // Score all available venues using heuristic scoring algorithm
+    // Score all available venues
     const scoredVenues = JEDDAH_PLACES.map((venue) => ({
       venue,
-      score: computeVenueScore(venue, block.role, prefs, prevCoords, archetype, usedIds, lastCategory),
+      score: computeVenueScore(
+        venue,
+        block.role,
+        prefs,
+        prevCoords,
+        archetype,
+        usedIds,
+        lastCategory
+      ),
     })).sort((a, b) => b.score - a.score);
 
-    // Filter candidate best place
     let bestPlace = scoredVenues[0]?.venue;
 
-    // Fallback if strictly free
+    // Strict free fallback
     if (archetype === 'free' || prefs.budgetTier === 'free') {
-      const freeCandidates = JEDDAH_PLACES.filter((p) => p.averageCostSAR === 0 && !usedIds.has(p.id));
+      const freeCandidates = JEDDAH_PLACES.filter(
+        (p) => p.averageCostSAR === 0 && !usedIds.has(p.id)
+      );
       if (freeCandidates.length > 0) {
         bestPlace = freeCandidates[0];
       }
@@ -390,7 +361,7 @@ function generateVariantStops(
     const uberSAR = estimateUberCostSAR(distKm, drivingMins);
 
     const stop: ItineraryStop = {
-      id: `stop-${idx}-${Date.now()}-${bestPlace.id}`,
+      id: `stop-${archetype}-${idx}-${Date.now()}-${bestPlace.id}`,
       order: idx + 1,
       place: bestPlace,
       startTime: block.start,
@@ -425,7 +396,13 @@ function generateVariantStops(
   return stops;
 }
 
-export function calculateFinancials(stops: ItineraryStop[], groupSize: number = 2): FinancialBreakdown {
+/**
+ * Calculates itemized financial breakdown for stops
+ */
+export function calculateFinancials(
+  stops: ItineraryStop[],
+  groupSize: number = 2
+): FinancialBreakdown {
   let placesCost = 0;
   let transitCost = 0;
 
@@ -483,7 +460,12 @@ export function calculateFinancials(stops: ItineraryStop[], groupSize: number = 
   };
 }
 
-export function calculateTransitTotals(stops: ItineraryStop[]): { minutes: number; km: number } {
+/**
+ * Calculates total transit minutes and kilometers
+ */
+export function calculateTransitTotals(
+  stops: ItineraryStop[]
+): { minutes: number; km: number } {
   let minutes = 0;
   let km = 0;
 
@@ -500,193 +482,133 @@ export function calculateTransitTotals(stops: ItineraryStop[]): { minutes: numbe
   };
 }
 
-function getDistrictLabel(districtId: string): string {
-  if (districtId === 'all_jeddah') return 'عروس البحر الأحمر';
-  if (districtId === 'current_location') return 'موقعي الحالي';
-  const found = JEDDAH_DISTRICTS.find((d) => d.id === districtId);
-  return found ? found.nameAr : 'جدة';
-}
-
-// =========================================================================
-// JADAWEL V2 MASTER GENERATOR & TYPES
-// =========================================================================
-
-export interface PlanStop {
-  stopOrder: number;
-  timeSlot: string;
-  place: Place;
-  transitMinutesToNext: number;
-  transitKmToNext: number;
-  estimatedCostSAR: number;
-}
-
-export interface GeneratedPlan {
-  id: string;
-  title: { ar: string; en: string };
-  tagline: { ar: string; en: string };
-  archetype: 'fast_local' | 'balanced_master' | 'free_route' | 'luxury_vip';
-  totalDurationHours: string;
-  totalCostSAR: number;
-  totalTransitMinutes: number;
-  totalKm: number;
-  isFreePlan: boolean;
-  stops: PlanStop[];
-}
-
-export interface UserPreferences {
-  district: string;
-  companion: string;
-  budgetTier: 'free_0' | 'economy_60' | 'balanced_150' | 'luxury_350' | string;
-  durationHours: number; // e.g., 2, 4, 6
-  vibe: string;
-  startTime?: string; // "17:00"
-}
-
 /**
- * Haversine Distance in Kilometers
+ * Master multi-plan generator producing 3 synchronized, distinct itinerary variants
  */
-export function calculateDistanceKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
-  const R = 6371;
-  const dLat = ((lat2 - lat1) * Math.PI) / 180;
-  const dLon = ((lon2 - lon1) * Math.PI) / 180;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Number((R * c).toFixed(1));
-}
+export function generateMultiPlanVariants(preferences: WizardPreferences): Itinerary {
+  const { startingDistrict, budgetTier } = preferences;
 
-/**
- * Master Plan Generator
- */
-export function generateJadawelPlans(prefs: UserPreferences): GeneratedPlan[] {
-  const isFreeRequested = prefs.budgetTier === 'free_0' || prefs.budgetTier === 'free';
+  // Starting coordinate centroid
+  let startLat = 21.608;
+  let startLng = 39.1105;
 
-  // 1. Candidate Filtering
-  let pool = JEDDAH_PLACES.filter((p) => {
-    if (isFreeRequested) return p.averageCostSAR === 0;
-    if (prefs.district !== 'all' && prefs.district !== 'all_jeddah' && p.district !== prefs.district) {
-      return true; // Keep with slight penalty for multi-pass
+  const normDistrict = normalizeDistrictId(startingDistrict);
+  if (normDistrict !== 'all_jeddah') {
+    const distObj = JEDDAH_DISTRICTS.find((d) => d.id === normDistrict);
+    if (distObj) {
+      startLat = distObj.coordinates.lat;
+      startLng = distObj.coordinates.lng;
     }
-    return true;
-  });
+  } else if (preferences.userCoords) {
+    startLat = preferences.userCoords.lat;
+    startLng = preferences.userCoords.lng;
+  }
 
-  if (pool.length < 3) pool = JEDDAH_PLACES;
+  const startCoords = { lat: startLat, lng: startLng };
 
-  // Helper to construct a curated route
-  const buildArchetypePlan = (
-    archetype: GeneratedPlan['archetype'],
-    titleAr: string,
-    titleEn: string,
-    taglineAr: string,
-    taglineEn: string,
-    filterFn: (p: Place) => boolean
-  ): GeneratedPlan => {
-    let selected = pool.filter(filterFn);
-    if (selected.length < 3) selected = pool;
+  // 1. Variant 1: Fastest & Closest
+  const fastestStops = generateVariantStops('fastest', preferences, startCoords);
+  const fastestFinancials = calculateFinancials(fastestStops, 2);
+  const fastestTransitTotals = calculateTransitTotals(fastestStops);
 
-    // Linear Proximity Sorting
-    const sortedStops: Place[] = [selected[0]];
-    const remaining = selected.slice(1);
-
-    while (remaining.length > 0 && sortedStops.length < 4) {
-      const current = sortedStops[sortedStops.length - 1];
-      remaining.sort((a, b) => {
-        const distA = calculateDistanceKm(current.coordinates.lat, current.coordinates.lng, a.coordinates.lat, a.coordinates.lng);
-        const distB = calculateDistanceKm(current.coordinates.lat, current.coordinates.lng, b.coordinates.lat, b.coordinates.lng);
-        return distA - distB;
-      });
-      sortedStops.push(remaining.shift()!);
-    }
-
-    // Build timeline slots
-    let currentHour = 17; // Default 5:00 PM
-    let currentMin = 0;
-    let totalCost = 0;
-    let totalKm = 0;
-    let totalTransitMins = 0;
-
-    const stops: PlanStop[] = sortedStops.map((place, idx) => {
-      const timeSlot = `${String(currentHour % 12 || 12).padStart(2, '0')}:${String(currentMin).padStart(2, '0')} ${currentHour >= 12 ? 'م' : 'ص'}`;
-      totalCost += place.averageCostSAR;
-
-      let dist = 0;
-      let transit = 0;
-
-      if (idx < sortedStops.length - 1) {
-        const next = sortedStops[idx + 1];
-        dist = calculateDistanceKm(place.coordinates.lat, place.coordinates.lng, next.coordinates.lat, next.coordinates.lng);
-        transit = Math.max(8, Math.round(dist * 2.5)); // ~2.5 mins per km in city
-        totalKm += dist;
-        totalTransitMins += transit;
-      }
-
-      // Advance time clock
-      currentMin += (place.durationMinutes || place.dwellTimeMinutes || 60) + transit;
-      while (currentMin >= 60) {
-        currentHour += 1;
-        currentMin -= 60;
-      }
-
-      return {
-        stopOrder: idx + 1,
-        timeSlot,
-        place,
-        transitMinutesToNext: transit,
-        transitKmToNext: dist,
-        estimatedCostSAR: place.averageCostSAR,
-      };
-    });
-
-    return {
-      id: `plan-${archetype}-${Date.now()}`,
-      title: { ar: titleAr, en: titleEn },
-      tagline: { ar: taglineAr, en: taglineEn },
-      archetype,
-      totalDurationHours: `${prefs.durationHours || 4} ساعات`,
-      totalCostSAR: totalCost,
-      totalTransitMinutes: totalTransitMins,
-      totalKm: Number(totalKm.toFixed(1)),
-      isFreePlan: totalCost === 0,
-      stops,
-    };
+  const fastestVariant: PlanVariant = {
+    id: 'fastest',
+    titleAr: '⚡ الأقرب والأسرع',
+    titleEn: '⚡ Shortest Transit & Proximity',
+    taglineAr: 'مسار متقارب جغرافياً يوفّر وقت المشاوير وزحام الطرق',
+    taglineEn: 'Optimized to minimize driving time with tightly clustered venues',
+    badgeAr: 'أقل وقت تنقل (~15 دقيقة)',
+    badgeEn: 'Lowest Transit (~15 mins)',
+    icon: 'Zap',
+    stops: fastestStops,
+    financials: fastestFinancials,
+    totalTransitMinutes: fastestTransitTotals.minutes,
+    totalDistanceKm: fastestTransitTotals.km,
   };
 
-  // Generate the 3 tailored plans
-  return [
-    buildArchetypePlan(
-      'fast_local',
-      '⚡ الأقرب والأسرع',
-      'Fast & Local',
-      'أقل وقت ضائع في الطريق ومحطات متجاورة بنفس الحي',
-      'Minimal transit time with clustered neighborhood stops',
-      (p) => (prefs.district === 'all' || prefs.district === 'all_jeddah' ? true : p.district === prefs.district)
-    ),
-    buildArchetypePlan(
-      'balanced_master',
-      '⚖️ الخطة الموزونة',
-      'The Balanced Masterpiece',
-      'أفضل مزيج بين التمشية، القهوة المختصة، وتجربة الأكل المميزة',
-      'Ideal rhythm between sightseeing, specialty coffee, and dining',
-      (p) => p.rating >= 4.7
-    ),
-    isFreeRequested
-      ? buildArchetypePlan(
-          'free_route',
-          '🆓 خطة الروقان المجانية (0 ر.س)',
-          '100% Free Jeddah Route',
-          'استمتع بجدة والبحر والتراث بدون ما تدفع ولا ريال',
-          'Experience Jeddah waterfronts and heritage at zero cost',
-          (p) => p.averageCostSAR === 0
-        )
-      : buildArchetypePlan(
-          'luxury_vip',
-          '💎 التجربة الفخمة VIP',
-          'Signature Luxury VIP',
-          'أرقى الجلسات، إطلالات البحر واليخوت، وتجارب فاخرة',
-          'Premium yachts, sea view lounges, and fine dining',
-          (p) => p.averageCostSAR >= 90
-        ),
-  ];
-}
+  // 2. Variant 2: Balanced Masterpiece
+  const balancedStops = generateVariantStops('balanced', preferences, startCoords);
+  const balancedFinancials = calculateFinancials(balancedStops, 2);
+  const balancedTransitTotals = calculateTransitTotals(balancedStops);
 
+  const balancedVariant: PlanVariant = {
+    id: 'balanced',
+    titleAr: '⚖️ الخطة الموزونة',
+    titleEn: '⚖️ The Balanced Experience',
+    taglineAr: 'المزيج المثالي بين المشي، القهوة، وأجواء العشاء والغروب',
+    taglineEn: 'The ideal mix of scenic strolls, specialty coffee, and signature dining',
+    badgeAr: 'الخيار الموصى به ⭐',
+    badgeEn: 'Recommended Choice ⭐',
+    icon: 'Scale',
+    stops: balancedStops,
+    financials: balancedFinancials,
+    totalTransitMinutes: balancedTransitTotals.minutes,
+    totalDistanceKm: balancedTransitTotals.km,
+  };
+
+  // 3. Variant 3: Free Outing (0 SAR) OR VIP Luxury
+  const isFreePlanMode = budgetTier === 'free' || budgetTier === 'economy';
+  const thirdVariantKey: PlanVariantKey = isFreePlanMode ? 'free' : 'luxury';
+
+  const thirdStops = generateVariantStops(thirdVariantKey, preferences, startCoords);
+  const thirdFinancials = calculateFinancials(thirdStops, 2);
+  const thirdTransitTotals = calculateTransitTotals(thirdStops);
+
+  const freeVariant: PlanVariant = {
+    id: 'free',
+    titleAr: '🆓 خطة الروقان المجانية (0 ر.س)',
+    titleEn: '🆓 100% Free Outing (0 SAR)',
+    taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
+    taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
+    badgeAr: 'مجانية 100% (0 ر.س) 🆓',
+    badgeEn: '100% Free (0 SAR) 🆓',
+    icon: 'Sparkles',
+    stops: isFreePlanMode ? thirdStops : generateVariantStops('free', preferences, startCoords),
+    financials: isFreePlanMode ? thirdFinancials : calculateFinancials(generateVariantStops('free', preferences, startCoords), 2),
+    totalTransitMinutes: thirdTransitTotals.minutes,
+    totalDistanceKm: thirdTransitTotals.km,
+  };
+
+  const luxuryVariant: PlanVariant = {
+    id: 'luxury',
+    titleAr: '💎 التجربة الفخمة VIP',
+    titleEn: '💎 VIP Luxury Signature',
+    taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
+    taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
+    badgeAr: 'فخامة VIP ✨',
+    badgeEn: 'VIP Luxury ✨',
+    icon: 'Crown',
+    stops: !isFreePlanMode ? thirdStops : generateVariantStops('luxury', preferences, startCoords),
+    financials: !isFreePlanMode ? thirdFinancials : calculateFinancials(generateVariantStops('luxury', preferences, startCoords), 2),
+    totalTransitMinutes: thirdTransitTotals.minutes,
+    totalDistanceKm: thirdTransitTotals.km,
+  };
+
+  const activeVariantKey: PlanVariantKey = budgetTier === 'free' ? 'free' : 'balanced';
+  const activeVariantObj: PlanVariant =
+    activeVariantKey === 'free' ? freeVariant : balancedVariant;
+
+  const districtLabel = getDistrictLabel(startingDistrict);
+
+  return {
+    id: `jadawel-plan-${Date.now()}`,
+    titleAr: `طلعة جدة الذكية • ${districtLabel}`,
+    titleEn: `Jeddah Smart Outing • ${districtLabel}`,
+    descriptionAr: 'تم توليد 3 خطط متكاملة بدقة ومسار جغرافي متصل مع حساب الميزانية والتنقلات.',
+    descriptionEn: 'Generated 3 distinct plans with linear geographic routing & exact SAR budget calculations.',
+    createdAt: new Date().toISOString(),
+    preferences,
+    daysCount: 1,
+    activeVariant: activeVariantKey,
+    variants: {
+      fastest: fastestVariant,
+      balanced: balancedVariant,
+      luxury: luxuryVariant,
+      free: isFreePlanMode ? freeVariant : undefined,
+    },
+    stops: activeVariantObj.stops,
+    financials: activeVariantObj.financials,
+    summaryAr: 'اختر الخطة المناسبة لك وشاركها مع الشلة بنقرة واحدة.',
+    summaryEn: 'Pick your preferred plan variant and share with friends in one click.',
+  };
+}

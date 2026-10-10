@@ -9,7 +9,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 
 export const GroupVotingModal: React.FC = () => {
-  const { language, isRTL } = useLanguage();
+  const { language } = useLanguage();
   const isVotingModalOpen = useItineraryStore((state) => state.isVotingModalOpen);
   const setIsVotingModalOpen = useItineraryStore((state) => state.setIsVotingModalOpen);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
@@ -18,9 +18,13 @@ export const GroupVotingModal: React.FC = () => {
 
   if (!isVotingModalOpen || !currentItinerary) return null;
 
-  const fastest = currentItinerary.variants.fastest;
-  const balanced = currentItinerary.variants.balanced;
-  const luxury = currentItinerary.variants.luxury;
+  const fastest = currentItinerary.variants?.fastest || currentItinerary.variants?.balanced;
+  const balanced = currentItinerary.variants?.balanced || fastest;
+  const thirdVariant =
+    currentItinerary.variants?.free ||
+    currentItinerary.variants?.luxury ||
+    balanced;
+  const isThirdFree = !!currentItinerary.variants?.free;
 
   const buildPollText = () => {
     const isAr = language === 'ar';
@@ -33,9 +37,9 @@ export const GroupVotingModal: React.FC = () => {
         `2️⃣ *الخيار 2: الخطة الموزونة ⚖️ (المقترحة)*\n` +
         `   المسار: ${balanced.stops.map((s) => s.place.nameAr).join(' ➔ ')}\n` +
         `   💰 التكلفة: ~${balanced.financials.totalPerPersonSAR} ر.س | 🚗 وقت المشوار: ${balanced.totalTransitMinutes} دقيقة\n\n` +
-        `3️⃣ *الخيار 3: التجربة الفخمة 💎*\n` +
-        `   المسار: ${luxury.stops.map((s) => s.place.nameAr).join(' ➔ ')}\n` +
-        `   💰 التكلفة: ~${luxury.financials.totalPerPersonSAR} ر.س | 🚗 وقت المشوار: ${luxury.totalTransitMinutes} دقيقة\n\n` +
+        `3️⃣ *الخيار 3: ${isThirdFree ? 'خطة الروقان المجانية (0 ر.س) 🆓' : 'التجربة الفخمة 💎'}*\n` +
+        `   المسار: ${thirdVariant.stops.map((s) => s.place.nameAr).join(' ➔ ')}\n` +
+        `   💰 التكلفة: ~${thirdVariant.financials.totalPerPersonSAR} ر.س | 🚗 وقت المشوار: ${thirdVariant.totalTransitMinutes} دقيقة\n\n` +
         `رد برقم الخيار اللي يناسبك! 👇✨\n` +
         `🌐 التفاصيل كاملة عبر جداول: https://jadawel.app`
       );
@@ -44,8 +48,9 @@ export const GroupVotingModal: React.FC = () => {
       `🗳️ *Group Vote: Which Jeddah Outing Plan?*\n\n` +
       `1️⃣ Option 1: Fastest & Closest ⚡ (~${fastest.financials.totalPerPersonSAR} SAR)\n` +
       `2️⃣ Option 2: The Balanced Plan ⚖️ (~${balanced.financials.totalPerPersonSAR} SAR)\n` +
-      `3️⃣ Option 3: Luxury VIP 💎 (~${luxury.financials.totalPerPersonSAR} SAR)\n\n` +
-      `Reply with your favorite option number! 👇`
+      `3️⃣ Option 3: ${isThirdFree ? '100% Free Plan 🆓 (0 SAR)' : 'Luxury VIP 💎 (~' + thirdVariant.financials.totalPerPersonSAR + ' SAR)'}\n\n` +
+      `Reply with your favorite option number! 👇\n` +
+      `🌐 Detailed plan: https://jadawel.app`
     );
   };
 
@@ -58,9 +63,11 @@ export const GroupVotingModal: React.FC = () => {
   const handleCopyPoll = () => {
     soundEngine.playClick();
     const text = buildPollText();
-    navigator.clipboard.writeText(text);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 3000);
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    }
   };
 
   return (
@@ -70,7 +77,7 @@ export const GroupVotingModal: React.FC = () => {
       title={
         <div className="flex items-center gap-2">
           <Vote className="w-5 h-5 text-gold-400" />
-          <span className="text-base sm:text-lg font-black text-white">
+          <span className="text-base sm:text-lg font-black text-pearl">
             {language === 'ar' ? 'تصويت الشلة على الخطة (Group Poll)' : 'Group Outing Voting Poll'}
           </span>
         </div>
@@ -86,81 +93,95 @@ export const GroupVotingModal: React.FC = () => {
         {/* Preview of the 3 voting choices */}
         <div className="space-y-3">
           {/* Choice 1 */}
-          <div className="p-3.5 rounded-2xl bg-navy-950 border border-white/10 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-2xl bg-abyss-950 border border-white/10 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-400 flex items-center justify-center font-bold text-xs">
+              <div className="w-8 h-8 rounded-xl bg-teal-500/15 text-teal-300 flex items-center justify-center font-bold text-xs border border-teal-500/30">
                 1️⃣
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-white">
-                  {fastest.titleAr}
+                <h4 className="text-xs sm:text-sm font-bold text-pearl">
+                  {language === 'ar' ? fastest.titleAr : fastest.titleEn}
                 </h4>
-                <span className="text-[11px] text-slate-400">
+                <span className="text-[11px] text-pearl-muted">
                   ~{fastest.financials.totalPerPersonSAR} ر.س • {fastest.totalTransitMinutes} دقيقة مشاوير
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-teal-400">
-              {fastest.stops.length} محطات
-            </span>
+            <Zap className="w-4 h-4 text-teal-400 shrink-0" />
           </div>
 
           {/* Choice 2 */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-gold-500/15 via-gold-500/5 to-transparent border border-gold-500/30 flex items-center justify-between gap-3">
+          <div className="p-3.5 rounded-2xl bg-abyss-950 border border-gold-500/30 flex items-center justify-between gap-3 shadow-glow-gold">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-gold-500 text-navy-950 font-black text-xs flex items-center justify-center">
+              <div className="w-8 h-8 rounded-xl bg-gold-500/20 text-gold-400 flex items-center justify-center font-bold text-xs border border-gold-500/40">
                 2️⃣
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-white">
-                  {balanced.titleAr} ⭐
-                </h4>
-                <span className="text-[11px] text-gold-400 font-semibold">
-                  ~{balanced.financials.totalPerPersonSAR} ر.س • الخيار الموصى به
+                <div className="flex items-center gap-1.5">
+                  <h4 className="text-xs sm:text-sm font-bold text-pearl">
+                    {language === 'ar' ? balanced.titleAr : balanced.titleEn}
+                  </h4>
+                  <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-500/20 text-gold-300 font-extrabold border border-gold-500/30">
+                    {language === 'ar' ? 'المقترحة ⭐' : 'Recommended'}
+                  </span>
+                </div>
+                <span className="text-[11px] text-pearl-muted">
+                  ~{balanced.financials.totalPerPersonSAR} ر.س • {balanced.totalTransitMinutes} دقيقة مشاوير
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-gold-400">
-              {balanced.stops.length} محطات
-            </span>
+            <Scale className="w-4 h-4 text-gold-400 shrink-0" />
           </div>
 
-          {/* Choice 3 */}
-          <div className="p-3.5 rounded-2xl bg-navy-950 border border-white/10 flex items-center justify-between gap-3">
+          {/* Choice 3 (Free or Luxury) */}
+          <div className="p-3.5 rounded-2xl bg-abyss-950 border border-white/10 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-coral-500/15 text-coral-400 flex items-center justify-center font-bold text-xs">
+              <div className="w-8 h-8 rounded-xl bg-coral-500/15 text-coral-400 flex items-center justify-center font-bold text-xs border border-coral-500/30">
                 3️⃣
               </div>
               <div>
-                <h4 className="text-xs sm:text-sm font-bold text-white">
-                  {luxury.titleAr}
+                <h4 className="text-xs sm:text-sm font-bold text-pearl">
+                  {language === 'ar' ? thirdVariant.titleAr : thirdVariant.titleEn}
                 </h4>
-                <span className="text-[11px] text-slate-400">
-                  ~{luxury.financials.totalPerPersonSAR} ر.س • تجربة VIP حصرية
+                <span className="text-[11px] text-pearl-muted">
+                  ~{thirdVariant.financials.totalPerPersonSAR} ر.س • {thirdVariant.totalTransitMinutes} دقيقة مشاوير
                 </span>
               </div>
             </div>
-            <span className="text-xs font-bold text-coral-400">
-              {luxury.stops.length} محطات
-            </span>
+            {isThirdFree ? (
+              <Sparkles className="w-4 h-4 text-teal-300 shrink-0" />
+            ) : (
+              <Crown className="w-4 h-4 text-coral-400 shrink-0" />
+            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="pt-3 border-t border-white/10 grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* WhatsApp Poll Preview Box */}
+        <div className="p-4 rounded-2xl bg-[#090B0E] border border-white/10 space-y-2">
+          <div className="flex items-center justify-between text-xs text-pearl-muted font-bold">
+            <span>{language === 'ar' ? 'معاينة نص الاستطلاع للواتساب:' : 'WhatsApp Poll Preview:'}</span>
+            <span className="text-[11px] text-gold-400 font-normal">جاهز للإرسال 💬</span>
+          </div>
+          <pre className="text-xs font-mono text-pearl/90 whitespace-pre-wrap leading-relaxed max-h-40 overflow-y-auto p-2 bg-abyss-950/60 rounded-xl border border-white/5 scrollbar-none">
+            {buildPollText()}
+          </pre>
+        </div>
+
+        {/* Actions Bottom Bar */}
+        <div className="flex flex-col sm:flex-row items-center gap-2.5 pt-2">
           <button
             type="button"
             onClick={handleShareWhatsApp}
-            className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-navy-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+            className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20BD5A] text-white font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer transition-all active:scale-[0.98]"
           >
-            <MessageCircle className="w-4 h-4" />
-            <span>{language === 'ar' ? 'إرسال التصويت للواتساب 🗳️' : 'Share Poll to WhatsApp'}</span>
+            <MessageCircle className="w-4 h-4 fill-white" />
+            <span>{language === 'ar' ? 'إرسال الاستطلاع لقروب الواتساب' : 'Share Poll to WhatsApp'}</span>
           </button>
 
           <button
             type="button"
             onClick={handleCopyPoll}
-            className="w-full py-3.5 px-4 rounded-2xl bg-navy-800 hover:bg-navy-700 text-white font-bold text-xs sm:text-sm border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            className="w-full sm:w-auto py-3 px-5 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-pearl font-bold text-xs sm:text-sm flex items-center justify-center gap-2 cursor-pointer transition-all active:scale-[0.98]"
           >
             {copied ? (
               <>
@@ -170,7 +191,7 @@ export const GroupVotingModal: React.FC = () => {
             ) : (
               <>
                 <Copy className="w-4 h-4 text-gold-400" />
-                <span>{language === 'ar' ? 'نسخ نص التصويت 📋' : 'Copy Poll Text'}</span>
+                <span>{language === 'ar' ? 'نسخ النص' : 'Copy Text'}</span>
               </>
             )}
           </button>
@@ -179,3 +200,5 @@ export const GroupVotingModal: React.FC = () => {
     </Modal>
   );
 };
+
+export default GroupVotingModal;
