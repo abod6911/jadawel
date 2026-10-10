@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Sparkles,
@@ -159,8 +159,79 @@ export const HeroSection: React.FC = () => {
   const [vibe, setVibe] = useState<VibeType>(activeDest.vibe);
   const [atmosphere] = useState(getJeddahAtmosphere());
   const [isMuted, setIsMuted] = useState(soundEngine.isSoundMuted());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Robust HTML5 Video Autoplay & Lifecycle management
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    // Direct DOM property assignment to defeat React JSX muted bug & browser policy blocks
+    video.muted = true;
+    video.defaultMuted = true;
+    video.setAttribute('muted', '');
+    video.setAttribute('playsinline', '');
+    video.setAttribute('webkit-playsinline', '');
+
+    const tryPlay = () => {
+      video.muted = true;
+      const promise = video.play();
+      if (promise !== undefined) {
+        promise
+          .then(() => {
+            setIsVideoPlaying(true);
+          })
+          .catch(() => {
+            setIsVideoPlaying(false);
+          });
+      }
+    };
+
+    // Instant autoplay attempt
+    tryPlay();
+
+    // Event listeners to keep state strictly synced
+    const handlePlaying = () => setIsVideoPlaying(true);
+    const handlePause = () => setIsVideoPlaying(false);
+    const handleEnded = () => {
+      video.currentTime = 0;
+      tryPlay();
+    };
+
+    video.addEventListener('playing', handlePlaying);
+    video.addEventListener('play', handlePlaying);
+    video.addEventListener('pause', handlePause);
+    video.addEventListener('ended', handleEnded);
+
+    // Fallback: If autoplay was policy-restricted by browser, unlock on first user gesture
+    const unlockOnGesture = () => {
+      if (video.paused) {
+        video.muted = true;
+        video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+      }
+      window.removeEventListener('pointerdown', unlockOnGesture);
+      window.removeEventListener('touchstart', unlockOnGesture);
+      window.removeEventListener('scroll', unlockOnGesture);
+      window.removeEventListener('keydown', unlockOnGesture);
+    };
+
+    window.addEventListener('pointerdown', unlockOnGesture, { passive: true });
+    window.addEventListener('touchstart', unlockOnGesture, { passive: true });
+    window.addEventListener('scroll', unlockOnGesture, { passive: true });
+    window.addEventListener('keydown', unlockOnGesture, { passive: true });
+
+    return () => {
+      video.removeEventListener('playing', handlePlaying);
+      video.removeEventListener('play', handlePlaying);
+      video.removeEventListener('pause', handlePause);
+      video.removeEventListener('ended', handleEnded);
+      window.removeEventListener('pointerdown', unlockOnGesture);
+      window.removeEventListener('touchstart', unlockOnGesture);
+      window.removeEventListener('scroll', unlockOnGesture);
+      window.removeEventListener('keydown', unlockOnGesture);
+    };
+  }, []);
 
   const handleSelectDestination = (idx: number) => {
     soundEngine.playClick();
@@ -188,14 +259,14 @@ export const HeroSection: React.FC = () => {
   };
 
   const handleToggleVideo = () => {
-    if (videoRef.current) {
-      if (isVideoPlaying) {
-        videoRef.current.pause();
-        setIsVideoPlaying(false);
-      } else {
-        videoRef.current.play();
-        setIsVideoPlaying(true);
-      }
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.paused) {
+      video.muted = true;
+      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
     }
   };
 
@@ -215,7 +286,7 @@ export const HeroSection: React.FC = () => {
     <section className="relative w-full rounded-[2.5rem] overflow-hidden px-4 sm:px-8 py-8 sm:py-12 select-none border border-gold-500/20 shadow-cinematic">
       {/* 1. CINEMATIC BACKGROUND VIDEO & ATMOSPHERE */}
       <div className="absolute inset-0 z-0 bg-[#090B0E] overflow-hidden">
-        {/* Seamless looping cinematic video of coastal sunset & sea */}
+        {/* Seamless looping cinematic video of coastal Jeddah Corniche */}
         <video
           ref={videoRef}
           autoPlay
@@ -224,8 +295,9 @@ export const HeroSection: React.FC = () => {
           playsInline
           preload="auto"
           poster={activeDest.bgImage}
-          className="w-full h-full object-cover brightness-[0.40] contrast-[1.25] scale-[1.03] transition-transform duration-1000"
+          className="w-full h-full object-cover brightness-[0.42] contrast-[1.20] scale-[1.03] transition-transform duration-1000"
         >
+          <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
           <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
           <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
         </video>
@@ -260,16 +332,20 @@ export const HeroSection: React.FC = () => {
             <button
               type="button"
               onClick={handleToggleVideo}
-              className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 text-pearl-muted hover:text-teal-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer"
-              title={language === 'ar' ? 'تشغيل / إيقاف الفيديو السينمائي' : 'Toggle Cinematic Video'}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                isVideoPlaying
+                  ? 'bg-teal-500/10 hover:bg-teal-500/20 border-teal-500/30 text-teal-300 shadow-[0_0_15px_rgba(45,212,191,0.15)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-pearl-muted hover:text-white'
+              }`}
+              title={language === 'ar' ? 'تشغيل / إيقاف فيديو كورنيش جدة' : 'Toggle Jeddah Corniche Video'}
             >
               <span className="relative flex h-2 w-2">
                 {isVideoPlaying && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />}
                 <span className={`relative inline-flex rounded-full h-2 w-2 ${isVideoPlaying ? 'bg-teal-400' : 'bg-slate-500'}`} />
               </span>
-              <Film className="w-3.5 h-3.5 text-teal-400" />
-              <span className="text-[11px] hidden sm:inline-block">
-                {language === 'ar' ? (isVideoPlaying ? 'فيديو سينمائي حي' : 'فيديو متوقف') : (isVideoPlaying ? 'Live Scene' : 'Paused')}
+              <Film className={`w-3.5 h-3.5 ${isVideoPlaying ? 'text-teal-400' : 'text-slate-400'}`} />
+              <span className="text-[11px]">
+                {language === 'ar' ? (isVideoPlaying ? 'فيديو كورنيش جدة' : 'تشغيل الفيديو ▶') : (isVideoPlaying ? 'Jeddah Live' : 'Play Video ▶')}
               </span>
             </button>
 
