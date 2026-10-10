@@ -19,8 +19,9 @@ import {
   Heart,
   Smile,
   Zap,
-  Anchor,
   Compass,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -214,6 +215,7 @@ export const HeroSection: React.FC = () => {
   // Atmosphere & Video
   const [atmosphere] = useState(getJeddahAtmosphere());
   const [isVideoPlaying, setIsVideoPlaying] = useState(false);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
@@ -317,11 +319,21 @@ export const HeroSection: React.FC = () => {
     const video = videoRef.current;
     if (!video) return;
     if (video.paused) {
-      video.muted = true;
       video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
     } else {
       video.pause();
       setIsVideoPlaying(false);
+    }
+  };
+
+  const handleToggleSound = () => {
+    const video = videoRef.current;
+    if (!video) return;
+    const nextMuted = !video.muted;
+    video.muted = nextMuted;
+    setIsVideoMuted(nextMuted);
+    if (!nextMuted && video.paused) {
+      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
     }
   };
 
@@ -361,7 +373,7 @@ export const HeroSection: React.FC = () => {
           playsInline
           preload="auto"
           poster={activeDest.bgImage}
-          className="w-full h-full object-cover brightness-[0.38] contrast-[1.22] scale-[1.03] transition-transform duration-1000"
+          className="w-full h-full object-cover brightness-[0.46] contrast-[1.12] scale-[1.02] transition-transform duration-1000"
         >
           <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
           <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
@@ -379,7 +391,7 @@ export const HeroSection: React.FC = () => {
             <defs>
               <radialGradient id="particleGlow" cx="50%" cy="50%" r="50%">
                 <stop offset="0%" stopColor="#E5A962" stopOpacity="0.8" />
-                <stop offset="100%" stopColor="#E5A962" stopOpacity="0" />
+                <stop offset="100%" stopColor="#E5A962" stopOpacity="0.8" />
               </radialGradient>
             </defs>
             <circle cx="20%" cy="30%" r="2" fill="url(#particleGlow)" className="animate-pulse" />
@@ -414,26 +426,50 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* Video Playback Toggle Pill */}
-          <button
-            type="button"
-            onClick={handleToggleVideo}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-              isVideoPlaying
-                ? 'bg-teal-500/10 hover:bg-teal-500/20 border-teal-500/30 text-teal-300 shadow-[0_0_15px_rgba(45,212,191,0.15)]'
-                : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/60 hover:text-white'
-            }`}
-            title={language === 'ar' ? 'تشغيل / إيقاف فيديو كورنيش جدة' : 'Toggle Jeddah Corniche Video'}
-          >
-            <span className="relative flex h-2 w-2">
-              {isVideoPlaying && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />}
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${isVideoPlaying ? 'bg-teal-400' : 'bg-slate-500'}`} />
-            </span>
-            <Film className={`w-3.5 h-3.5 ${isVideoPlaying ? 'text-teal-400' : 'text-slate-400'}`} />
-            <span className="text-[11px]">
-              {language === 'ar' ? (isVideoPlaying ? 'فيديو كورنيش جدة' : 'تشغيل الفيديو ▶') : (isVideoPlaying ? 'Jeddah Live' : 'Play Video ▶')}
-            </span>
-          </button>
+          {/* Video Playback & Sound Controls */}
+          <div className="flex items-center gap-2">
+            {/* Video Playback Toggle Pill */}
+            <button
+              type="button"
+              onClick={handleToggleVideo}
+              className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
+                isVideoPlaying
+                  ? 'bg-teal-500/10 hover:bg-teal-500/20 border-teal-500/30 text-teal-300 shadow-[0_0_15px_rgba(45,212,191,0.15)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/60 hover:text-white'
+              }`}
+              title={language === 'ar' ? 'تشغيل / إيقاف فيديو كورنيش جدة' : 'Toggle Jeddah Corniche Video'}
+            >
+              <span className="relative flex h-2 w-2">
+                {isVideoPlaying && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />}
+                <span className={`relative inline-flex rounded-full h-2 w-2 ${isVideoPlaying ? 'bg-teal-400' : 'bg-slate-500'}`} />
+              </span>
+              <Film className={`w-3.5 h-3.5 ${isVideoPlaying ? 'text-teal-400' : 'text-slate-400'}`} />
+              <span className="text-[11px]">
+                {language === 'ar' ? (isVideoPlaying ? 'فيديو جدة' : 'تشغيل الفيديو ▶') : (isVideoPlaying ? 'Jeddah Live' : 'Play Video ▶')}
+              </span>
+            </button>
+
+            {/* Video Sound Toggle Pill */}
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+                !isVideoMuted
+                  ? 'bg-gold-500/15 hover:bg-gold-500/25 border-gold-500/35 text-gold-300 shadow-[0_0_15px_rgba(229,169,98,0.2)]'
+                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/50 hover:text-white'
+              }`}
+              title={language === 'ar' ? (isVideoMuted ? 'تشغيل صوت الفيديو' : 'كتم صوت الفيديو') : (isVideoMuted ? 'Unmute Video' : 'Mute Video')}
+            >
+              {isVideoMuted ? (
+                <VolumeX className="w-3.5 h-3.5 text-white/50" />
+              ) : (
+                <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+              )}
+              <span className="text-[11px] hidden sm:inline">
+                {language === 'ar' ? (isVideoMuted ? 'صوت' : 'مسموع') : (isVideoMuted ? 'Mute' : 'Sound')}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
 
