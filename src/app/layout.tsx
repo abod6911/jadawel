@@ -58,8 +58,8 @@ export const metadata: Metadata = {
     'خطط جدة'
   ],
   icons: {
-    icon: '/images/brand/jadawel-logo.jpg',
-    apple: '/images/brand/jadawel-logo.jpg',
+    icon: '/images/brand/jadawel-logo.svg',
+    apple: '/images/brand/jadawel-logo.svg',
   },
 };
 

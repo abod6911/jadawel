@@ -15,6 +15,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { JadawelLogo } from '@/components/ui/JadawelLogo';
 
 export const Navbar: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
@@ -56,12 +57,8 @@ export const Navbar: React.FC = () => {
           }}
           className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none"
         >
-          <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-xl sm:rounded-2xl overflow-hidden bg-abyss-900 border border-gold-500/40 p-0.5 flex items-center justify-center shadow-glow-gold group-hover:scale-105 transition-transform shrink-0">
-            <img
-              src={getAssetUrl('/images/brand/jadawel-logo.jpg')}
-              alt="Jadawel Logo"
-              className="w-full h-full object-cover rounded-[10px] sm:rounded-[14px]"
-            />
+          <div className="w-9 h-9 sm:w-11 sm:h-11 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
+            <JadawelLogo className="w-9 h-9 sm:w-11 sm:h-11" />
           </div>
 
           <div className="text-start">
