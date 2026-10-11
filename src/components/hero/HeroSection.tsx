@@ -379,31 +379,24 @@ export const HeroSection: React.FC = () => {
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
 
-    // Accessibility & Data Saver: Disable video on reduced-motion or slow 2G connection
-    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
-    const navConn = typeof navigator !== 'undefined' ? (navigator as any).connection : undefined;
-    const isSlowConnection = navConn?.saveData === true || ['slow-2g', '2g'].includes(navConn?.effectiveType);
-
-    if (prefersReducedMotion || isSlowConnection) {
-      video.pause();
-      return;
-    }
-
     const tryPlay = () => {
       video.muted = true;
       const promise = video.play();
       if (promise !== undefined) {
-        promise.catch(() => {});
+        promise.catch((err) => {
+          console.warn('Autoplay prevented by browser policy:', err);
+        });
       }
     };
 
     tryPlay();
+    video.addEventListener('loadeddata', tryPlay);
+    video.addEventListener('canplay', tryPlay);
 
     const handleEnded = () => {
       video.currentTime = 0;
       tryPlay();
     };
-
     video.addEventListener('ended', handleEnded);
 
     // Gesture unlock fallback for strict mobile browser policies
@@ -422,6 +415,8 @@ export const HeroSection: React.FC = () => {
     window.addEventListener('scroll', unlockOnGesture, { passive: true });
 
     return () => {
+      video.removeEventListener('loadeddata', tryPlay);
+      video.removeEventListener('canplay', tryPlay);
       video.removeEventListener('ended', handleEnded);
       window.removeEventListener('pointerdown', unlockOnGesture);
       window.removeEventListener('touchstart', unlockOnGesture);
