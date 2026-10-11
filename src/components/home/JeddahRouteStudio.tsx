@@ -22,6 +22,10 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { MagneticButton } from '@/components/fancy/MagneticButton';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
+import { NumberTicker } from '@/components/fancy/NumberTicker';
 import { Place } from '@/types';
 
 interface CuratedStudioRoute {
@@ -209,6 +213,9 @@ export const JeddahRouteStudio: React.FC = () => {
 
   return (
     <section className="relative w-full rounded-[2.5rem] bg-[#0A0E15]/90 border border-white/[0.08] shadow-[0_24px_60px_rgba(0,0,0,0.7)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
+      {/* Animated Traveling Border Laser Beam */}
+      <BorderBeam size={340} duration={14} borderWidth={1.5} colorFrom="#E5A962" colorTo="#2DD4BF" />
+
       {/* Dynamic Background Atmospheric Radial Glow */}
       <div
         className={`absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br ${activeRoute.bgGlow} blur-3xl pointer-events-none transition-all duration-700`}
@@ -234,17 +241,19 @@ export const JeddahRouteStudio: React.FC = () => {
 
         {/* Global Multi-Stop Navigation Shortcut */}
         <div className="flex items-center gap-3 shrink-0">
-          <a
-            href={generateGoogleMapsMultiStopUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => soundEngine.playClick()}
-            className="px-4 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 hover:border-gold-400/50 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
-          >
-            <Navigation className="w-4 h-4 text-teal-400" />
-            <span>{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
-            <ExternalLink className="w-3.5 h-3.5 text-gold-400" />
-          </a>
+          <MagneticButton distance={0.25}>
+            <a
+              href={generateGoogleMapsMultiStopUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => soundEngine.playClick()}
+              className="px-4 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 hover:border-gold-400/50 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+            >
+              <Navigation className="w-4 h-4 text-teal-400" />
+              <span>{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
+              <ExternalLink className="w-3.5 h-3.5 text-gold-400" />
+            </a>
+          </MagneticButton>
         </div>
       </div>
 
@@ -276,7 +285,9 @@ export const JeddahRouteStudio: React.FC = () => {
               )}
               <span className="text-base sm:text-lg">{route.icon}</span>
               <div className="flex flex-col text-start">
-                <span className="leading-snug">{language === 'ar' ? route.titleAr : route.titleEn}</span>
+                <span className="leading-snug">
+                  <RandomLetterSwap label={language === 'ar' ? route.titleAr : route.titleEn} />
+                </span>
                 <span className="text-[10px] text-pearl-muted font-medium">
                   {route.placeSlugsOrIds.length} {language === 'ar' ? 'محطات' : 'stops'} • {route.totalDurationAr}
                 </span>
@@ -297,6 +308,7 @@ export const JeddahRouteStudio: React.FC = () => {
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
         <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
+          <BorderBeam size={220} duration={10} borderWidth={1} colorFrom="#E5A962" colorTo="#3B82F6" />
           <RouteMap stops={stops} className="w-full h-full min-h-[460px] sm:min-h-[520px]" showPolyline={true} />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
@@ -315,7 +327,7 @@ export const JeddahRouteStudio: React.FC = () => {
               <span>•</span>
               <span className="flex items-center gap-1 text-emerald-300">
                 <Coins className="w-3.5 h-3.5 text-emerald-400" />
-                {activeRoute.estimatedCostSAR} ر.س / شخص
+                <NumberTicker value={activeRoute.estimatedCostSAR} suffix=" ر.س / شخص" />
               </span>
             </div>
           </div>
@@ -416,14 +428,16 @@ export const JeddahRouteStudio: React.FC = () => {
 
           {/* Primary Action Button */}
           <div className="pt-2">
-            <button
-              type="button"
-              onClick={handleApplyRoute}
-              className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-500 to-gold-600 hover:from-gold-400 hover:to-amber-500 text-abyss-950 text-sm font-black shadow-[0_12px_32px_rgba(229,169,98,0.35)] hover:shadow-[0_16px_40px_rgba(229,169,98,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-            >
-              <Sparkles className="w-4 h-4 text-abyss-950" />
-              <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
-            </button>
+            <MagneticButton className="w-full" distance={0.25}>
+              <button
+                type="button"
+                onClick={handleApplyRoute}
+                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-500 to-gold-600 hover:from-gold-400 hover:to-amber-500 text-abyss-950 text-sm font-black shadow-[0_12px_32px_rgba(229,169,98,0.35)] hover:shadow-[0_16px_40px_rgba(229,169,98,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
+              >
+                <Sparkles className="w-4 h-4 text-abyss-950" />
+                <RandomLetterSwap label={language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'} />
+              </button>
+            </MagneticButton>
           </div>
         </div>
       </div>

@@ -7,6 +7,10 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { CURATED_PLANS } from '@/data/curated-plans';
 import { getAssetUrl } from '@/utils/paths';
 import { soundEngine } from '@/utils/audioEngine';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
+import { MagneticButton } from '@/components/fancy/MagneticButton';
+import { NumberTicker } from '@/components/fancy/NumberTicker';
 
 export const CuratedReadyPlans: React.FC = () => {
   const { language, isRTL } = useLanguage();
@@ -82,11 +86,14 @@ export const CuratedReadyPlans: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {CURATED_PLANS.map((plan) => (
+          {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="rounded-3xl bg-abyss-900/90 backdrop-blur-xl border border-white/10 overflow-hidden shadow-cinematic flex flex-col justify-between group hover:border-gold-500/50 transition-all duration-300"
+              className="relative rounded-3xl bg-abyss-900/90 backdrop-blur-xl border border-white/10 overflow-hidden shadow-cinematic flex flex-col justify-between group hover:border-gold-500/50 transition-all duration-300"
             >
+              {idx === 0 && (
+                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#FF6B4A" colorTo="#E5A962" />
+              )}
               <div>
                 <div className="relative aspect-[16/10] overflow-hidden bg-abyss-950">
                   <img
@@ -102,7 +109,7 @@ export const CuratedReadyPlans: React.FC = () => {
 
                 <div className="p-5 space-y-3">
                   <h3 className="text-lg font-black text-pearl group-hover:text-gold-400 transition-colors">
-                    {language === 'ar' ? plan.titleAr : plan.titleEn}
+                    <RandomLetterSwap label={language === 'ar' ? plan.titleAr : plan.titleEn} />
                   </h3>
                   <p className="text-xs text-pearl-muted leading-relaxed line-clamp-2 font-medium">
                     {language === 'ar' ? plan.descriptionAr : plan.descriptionEn}
@@ -114,21 +121,27 @@ export const CuratedReadyPlans: React.FC = () => {
                       <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
                     </span>
                     <span className="text-gold-400 font-black">
-                      ~{plan.estimatedCostSAR} {language === 'ar' ? 'ر.س / شخص' : 'SAR / pers'}
+                      <NumberTicker
+                        value={plan.estimatedCostSAR}
+                        prefix="~"
+                        suffix={language === 'ar' ? ' ر.س / شخص' : ' SAR / pers'}
+                      />
                     </span>
                   </div>
                 </div>
               </div>
 
               <div className="p-5 pt-0">
-                <button
-                  type="button"
-                  onClick={() => handleLoadPlan(plan.id)}
-                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-glow-coral active:scale-[0.98]"
-                >
-                  <span>{language === 'ar' ? 'تحميل هذا الجدول 🚀' : 'Load This Plan 🚀'}</span>
-                  {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
-                </button>
+                <MagneticButton distance={0.2} className="w-full">
+                  <button
+                    type="button"
+                    onClick={() => handleLoadPlan(plan.id)}
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-glow-coral active:scale-[0.98]"
+                  >
+                    <RandomLetterSwap label={language === 'ar' ? 'تحميل هذا الجدول 🚀' : 'Load This Plan 🚀'} />
+                    {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                  </button>
+                </MagneticButton>
               </div>
             </div>
           ))}
@@ -136,7 +149,8 @@ export const CuratedReadyPlans: React.FC = () => {
       </div>
 
       {/* Exclusive Partner Deals Section */}
-      <div className="p-6 sm:p-8 rounded-3xl bg-abyss-900/90 backdrop-blur-2xl border border-gold-500/30 shadow-cinematic space-y-6">
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-abyss-900/90 backdrop-blur-2xl border border-gold-500/30 shadow-cinematic space-y-6 overflow-hidden">
+        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5A962" colorTo="#2DD4BF" />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gold-500/20 text-gold-400 border border-gold-500/30 flex items-center justify-center shadow-glow-gold">

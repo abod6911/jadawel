@@ -227,4 +227,29 @@ input, select, textarea {
   animation: emberRise 5s ease-in-out infinite;
 }
 
+/* Animated Border Beam */
+@keyframes border-beam {
+  100% {
+    offset-distance: 100%;
+  }
+}
+
+.animate-border-beam {
+  animation: border-beam var(--duration, 12s) infinite linear;
+}
+
+/* Rotating Conic Shine Gradient */
+@keyframes spinConic {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-conic {
+  animation: spinConic 10s linear infinite;
+}
+
 

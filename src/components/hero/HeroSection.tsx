@@ -23,6 +23,10 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { VerticalCutReveal } from '@/components/fancy/VerticalCutReveal';
+import { MagneticButton } from '@/components/fancy/MagneticButton';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 
 // ==========================================
@@ -269,7 +273,7 @@ const DestinationTiltCard: React.FC<{
 
         <div>
           <h3 className="text-lg font-black text-white group-hover:text-gold-300 transition-colors drop-shadow-md">
-            {dest.name}
+            <RandomLetterSwap label={dest.name} />
           </h3>
           <p className="text-xs text-white/70 line-clamp-1 mt-1 font-medium">
             {dest.tagline}
@@ -551,25 +555,33 @@ export const HeroSection: React.FC = () => {
           {language === 'ar' ? (
             <>
               <span className="block text-white tracking-wide">
-                عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
+                <VerticalCutReveal delay={0.15} staggerDuration={0.05}>
+                  عروس البحر الأحمر بين يديك..
+                </VerticalCutReveal>
               </span>
               <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
-                  جداول
+                  <RandomLetterSwap label="جداول" />
                 </span>{' '}
-                ترتب طلعتك من وإلى
+                <VerticalCutReveal delay={0.35} staggerDuration={0.05}>
+                  ترتب طلعتك من وإلى
+                </VerticalCutReveal>
               </span>
             </>
           ) : (
             <>
               <span className="block text-white">
-                Bride of the Red Sea in Your Hands..
+                <VerticalCutReveal delay={0.15}>
+                  Bride of the Red Sea in Your Hands..
+                </VerticalCutReveal>
               </span>
               <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
-                  Jadawel
+                  <RandomLetterSwap label="Jadawel" />
                 </span>{' '}
-                curates your outing from start to finish
+                <VerticalCutReveal delay={0.35}>
+                  curates your outing from start to finish
+                </VerticalCutReveal>
               </span>
             </>
           )}
@@ -597,7 +609,7 @@ export const HeroSection: React.FC = () => {
                     : 'bg-[#12161f]/80 hover:bg-[#1a202c]/90 text-white/85 hover:text-white border border-white/[0.12] backdrop-blur-md hover:border-white/25'
                 }`}
               >
-                <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
+                <RandomLetterSwap label={language === 'ar' ? mood.labelAr : mood.labelEn} />
               </button>
             );
           })}
@@ -631,7 +643,9 @@ export const HeroSection: React.FC = () => {
         {/* Soft Ambient Glow Halo behind the Dock */}
         <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/10 via-amber-500/5 to-teal-500/10 rounded-[2.5rem] blur-2xl -z-10 pointer-events-none" />
 
-        <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.85)]">
+        <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.85)] overflow-hidden">
+          {/* Animated Traveling Border Laser Beam */}
+          <BorderBeam size={280} duration={12} borderWidth={1.5} colorFrom="#E5A962" colorTo="#F46F52" />
           
           {/* Main 5 Pillars Cockpit Grid */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
@@ -991,35 +1005,37 @@ export const HeroSection: React.FC = () => {
             </div>
 
             <div className="relative group w-full sm:w-auto">
-              {/* Cinematic Ambient Halo Behind Button */}
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
+              <MagneticButton distance={0.25} strength={1}>
+                {/* Cinematic Ambient Halo Behind Button */}
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
 
-              <motion.button
-                type="button"
-                onClick={handleBuildPlan}
-                disabled={isGeneratingPlan}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="relative w-full sm:w-auto px-7 sm:px-11 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_55px_rgba(229,169,98,0.8)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
-              >
-                {/* Conic Glow Shimmer Layer */}
-                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
+                <motion.button
+                  type="button"
+                  onClick={handleBuildPlan}
+                  disabled={isGeneratingPlan}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  className="relative w-full sm:w-auto px-7 sm:px-11 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_55px_rgba(229,169,98,0.8)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+                >
+                  {/* Conic Glow Shimmer Layer */}
+                  <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
 
-                {/* Top specular highlight */}
-                <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+                  {/* Top specular highlight */}
+                  <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
 
-                {isGeneratingPlan ? (
-                  <>
-                    <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
-                    <span>جاري هندسة خطتك في جدة...</span>
-                  </>
-                ) : (
-                  <>
-                    <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1.5 transition-transform" />
-                    <span>ابنِ خطتي لجدة بنقرة واحدة ✨</span>
-                  </>
-                )}
-              </motion.button>
+                  {isGeneratingPlan ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
+                      <span>جاري هندسة خطتك في جدة...</span>
+                    </>
+                  ) : (
+                    <>
+                      <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1.5 transition-transform" />
+                      <RandomLetterSwap label={language === 'ar' ? 'ابنِ خطتي لجدة بنقرة واحدة ✨' : 'Build My Plan in 1-Click ✨'} />
+                    </>
+                  )}
+                </motion.button>
+              </MagneticButton>
             </div>
           </div>
 

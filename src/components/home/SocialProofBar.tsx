@@ -12,6 +12,9 @@ import {
   TrendingUp,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
+import { NumberTicker } from '@/components/fancy/NumberTicker';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 interface TestimonialCapsule {
   id: string;
@@ -100,6 +103,9 @@ export const SocialProofBar: React.FC = () => {
 
   return (
     <div className="relative w-full rounded-3xl bg-[#0A0E15]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.6)] p-4 sm:p-6 space-y-4 overflow-hidden">
+      {/* Animated Traveling Border Laser Beam */}
+      <BorderBeam size={280} duration={14} borderWidth={1.2} colorFrom="#E5A962" colorTo="#10B981" />
+
       {/* Top Specular Rim Light */}
       <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-gold-400/30 to-transparent pointer-events-none" />
 
@@ -111,8 +117,9 @@ export const SocialProofBar: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
           </span>
-          <span className="font-black text-white">
-            {language === 'ar' ? '842+ يخططون لطلعتهم الآن في جدة' : '842+ Planning Outings in Jeddah Right Now'}
+          <span className="font-black text-white flex items-center gap-1">
+            <NumberTicker value={842} suffix="+" />
+            <span>{language === 'ar' ? 'يخططون لطلعتهم الآن في جدة' : 'Planning Outings in Jeddah Right Now'}</span>
           </span>
           <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30">
             {language === 'ar' ? 'مباشر' : 'Live'}
@@ -123,12 +130,13 @@ export const SocialProofBar: React.FC = () => {
         <div className="hidden sm:flex items-center gap-4 text-pearl-muted text-[11px] font-bold">
           <span className="flex items-center gap-1.5 text-white/90">
             <TrendingUp className="w-3.5 h-3.5 text-gold-400" />
-            {language === 'ar' ? '+50,000 طلعة تم توليدها' : '50,000+ Outings Generated'}
+            <NumberTicker value={50000} prefix="+" />
+            <span>{language === 'ar' ? 'طلعة تم توليدها' : 'Outings Generated'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-white/90">
             <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-            {language === 'ar' ? 'دقة الميزانية بالريال 🇸🇦' : '100% SAR Budget Accuracy'}
+            <span>{language === 'ar' ? 'دقة الميزانية بالريال 🇸🇦' : '100% SAR Budget Accuracy'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1 text-gold-400">
@@ -166,7 +174,7 @@ export const SocialProofBar: React.FC = () => {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-black text-white">
-                      {language === 'ar' ? t.nameAr : t.nameEn}
+                      <RandomLetterSwap label={language === 'ar' ? t.nameAr : t.nameEn} />
                     </span>
                     <span className="text-[10px] text-pearl-muted font-medium">
                       • {language === 'ar' ? t.locationAr : t.locationEn}

@@ -22,6 +22,8 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 export const Navbar: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
@@ -74,16 +76,17 @@ export const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <span className="text-base sm:text-xl font-bold text-white group-hover:text-gold-300 transition-colors">
-              {language === 'ar' ? 'جداول' : 'Jadawel'}
+              <RandomLetterSwap label={language === 'ar' ? 'جداول' : 'Jadawel'} />
             </span>
             <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-400 font-bold border border-gold-500/30 shadow-[0_0_10px_rgba(229,169,98,0.2)]">
-              {language === 'ar' ? 'جدة' : 'Jeddah'}
+              <RandomLetterSwap label={language === 'ar' ? 'جدة' : 'Jeddah'} />
             </span>
           </div>
         </div>
 
         {/* 2. LIVE JEDDAH TIME MACHINE & AMBIENT STATUS PILL (Interactive Day / Sunset / Night Controller) */}
-        <div className="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner">
+        <div className="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner relative overflow-hidden">
+          <BorderBeam size={110} duration={8} borderWidth={1} colorFrom="#E5A962" colorTo="#3B82F6" />
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -217,7 +220,7 @@ export const Navbar: React.FC = () => {
                 )}
 
                 <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-gold-400' : 'text-teal-400/80'}`} />
-                <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                <RandomLetterSwap label={language === 'ar' ? item.labelAr : item.labelEn} />
                 {item.badge !== undefined && (
                   <span className="w-4 h-4 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm">
                     {item.badge}

@@ -18,6 +18,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 interface BentoTiltCardProps {
   colSpanClass: string;
@@ -29,6 +31,7 @@ interface BentoTiltCardProps {
   actionText: string;
   accentColorClass: string;
   borderColorHoverClass: string;
+  hasBorderBeam?: boolean;
   onClick: () => void;
 }
 
@@ -42,6 +45,7 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
   actionText,
   accentColorClass,
   borderColorHoverClass,
+  hasBorderBeam = false,
   onClick,
 }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -82,6 +86,10 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       }}
       className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-white/10 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_16px_40px_rgba(0,0,0,0.6)] select-none`}
     >
+      {hasBorderBeam && (
+        <BorderBeam size={320} duration={12} borderWidth={1.5} colorFrom="#2DD4BF" colorTo="#E5A962" />
+      )}
+
       {/* Background Image with Cinematic Zoom */}
       <img
         src={imageSrc}
@@ -110,13 +118,13 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       {/* Bottom Content Area */}
       <div className="absolute bottom-6 inset-x-6 z-10 space-y-2 text-start">
         <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white drop-shadow-md flex items-center gap-2">
-          <span>{title}</span>
+          <RandomLetterSwap label={title} />
         </h3>
         <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-xl">
           {description}
         </p>
         <div className={`pt-1 flex items-center gap-2 text-xs font-bold ${accentColorClass}`}>
-          <span>{actionText}</span>
+          <RandomLetterSwap label={actionText} />
           {isRTL ? (
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           ) : (
@@ -170,6 +178,7 @@ export const BentoMoodGrid: React.FC = () => {
         <BentoTiltCard
           colSpanClass="md:col-span-7"
           minHeightClass="min-h-[300px] md:min-h-[360px]"
+          hasBorderBeam={true}
           imageSrc={getAssetUrl('/images/moods/mood-beach.jpg')}
           onClick={() => handleMoodSelect('beach_sunset')}
           accentColorClass="text-teal-300"
