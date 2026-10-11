@@ -235,8 +235,8 @@ const DestinationTiltCard: React.FC<{
       }}
       className={`relative group h-52 sm:h-60 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
         isSelected
-          ? 'border-gold-500/70 shadow-[0_16px_50px_rgba(229,169,98,0.35)] ring-2 ring-gold-500/50'
-          : 'border-white/[0.08] hover:border-gold-500/30 shadow-[0_12px_40px_rgba(0,0,0,0.6)]'
+          ? 'border-[#E5C378]/70 shadow-[0_12px_36px_rgba(0,0,0,0.6)] ring-1 ring-[#E5C378]/40'
+          : 'border-white/10 hover:border-[#E5C378]/30 shadow-[0_8px_30px_rgba(0,0,0,0.5)]'
       }`}
     >
       {/* Background Image with Cinematic Zoom */}
@@ -319,9 +319,6 @@ export const HeroSection: React.FC = () => {
   const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
   const atmosphere = getJeddahAtmosphere(atmospherePhase);
 
-  // Video & Sound Controls State
-  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
-  const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   // Form State
   const [district, setDistrict] = useState<DistrictId | 'all_jeddah'>(activeDest.districtId);
@@ -359,33 +356,6 @@ export const HeroSection: React.FC = () => {
     };
   }, []);
 
-
-  const handleToggleVideo = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    soundEngine.playClick();
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
-    } else {
-      video.pause();
-      setIsVideoPlaying(false);
-    }
-  };
-
-  const handleToggleSound = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    soundEngine.playClick();
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.muted) {
-      video.muted = false;
-      setIsVideoMuted(false);
-    } else {
-      video.muted = true;
-      setIsVideoMuted(true);
-    }
-  };
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -591,61 +561,18 @@ export const HeroSection: React.FC = () => {
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
         
-        {/* Atmosphere & Video Controls Floating Pill */}
-        <div className="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-3 px-2 mb-2 sm:mb-4">
-          {/* Luxury Micro-Badge with Pulse Star */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-[#12151C]/80 border border-[#E5C378]/35 text-xs font-bold text-[#F5E2B3] shadow-[0_0_25px_rgba(229,195,120,0.25)]">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5C378]" />
-            </span>
-            <Compass className="w-3.5 h-3.5 text-[#E5C378] animate-spin [animation-duration:22s]" />
-            <span>
-              {language === 'ar'
-                ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
-                : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
-            </span>
-          </div>
-
-          {/* Video Playback & Ocean Waves Sound Controls */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={handleToggleSound}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md ${
-                !isVideoMuted
-                  ? 'bg-[#E5C378]/25 border-[#E5C378]/50 text-[#F5E2B3] shadow-[0_0_15px_rgba(229,195,120,0.35)]'
-                  : 'bg-black/50 border-white/15 text-white/60 hover:text-white'
-              }`}
-              title={language === 'ar' ? (isVideoMuted ? 'تشغيل صوت أمواج البحر' : 'كتم الصوت') : (isVideoMuted ? 'Play Waves Sound' : 'Mute Sound')}
-            >
-              {!isVideoMuted ? (
-                <>
-                  <Volume2 className="w-3.5 h-3.5 text-[#E5C378] animate-pulse" />
-                  <span className="text-[11px] font-bold">صوت البحر 🌊</span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-3.5 h-3.5 text-white/50" />
-                  <span className="text-[11px] font-bold">صامت</span>
-                </>
-              )}
-            </button>
-
-            <button
-              type="button"
-              onClick={handleToggleVideo}
-              className={`px-3 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md ${
-                isVideoPlaying
-                  ? 'bg-teal-500/20 border-teal-500/40 text-teal-300 shadow-[0_0_12px_rgba(45,212,191,0.2)]'
-                  : 'bg-black/50 border-white/15 text-white/60 hover:text-white'
-              }`}
-              title={language === 'ar' ? (isVideoPlaying ? 'إيقاف الفيديو مؤقتاً' : 'تشغيل فيديو جدة') : (isVideoPlaying ? 'Pause Video' : 'Play Video')}
-            >
-              <Film className="w-3.5 h-3.5" />
-              <span className="text-[11px] font-bold">{isVideoPlaying ? 'فيديو جدة' : 'تشغيل ▶'}</span>
-            </button>
-          </div>
+        {/* Subtle Live Atmosphere Badge - Clean & Centered */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10 text-xs font-semibold text-slate-300 shadow-sm mb-2 sm:mb-4">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+          </span>
+          <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
+          <span>
+            {language === 'ar'
+              ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
+              : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+          </span>
         </div>
 
         {/* Master Headline with Clean Modern Arabic Typography & Generous Spacing */}
@@ -695,8 +622,8 @@ export const HeroSection: React.FC = () => {
                 onClick={() => handleApplyMood(mood)}
                 className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer flex items-center justify-center whitespace-nowrap touch-manipulation relative group ${
                   isActive
-                    ? 'bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black shadow-[0_0_28px_rgba(229,195,120,0.55)] border border-[#FFF1CC] scale-[1.04]'
-                    : 'bg-[#12151C]/75 hover:bg-[#1A1F2C]/90 text-slate-200 hover:text-white border border-white/[0.08] hover:border-[#E5C378]/30 backdrop-blur-xl shadow-lg'
+                    ? 'bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black shadow-md border border-[#FFF1CC]/60 scale-[1.02]'
+                    : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 backdrop-blur-md shadow-sm'
                 }`}
               >
                 <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
@@ -714,7 +641,7 @@ export const HeroSection: React.FC = () => {
         className="relative z-30 w-full max-w-5xl mx-auto mb-12 sm:mb-16"
       >
         {/* Ambient Halo Behind Cockpit */}
-        <div className="absolute -inset-3 bg-gradient-to-r from-[#E5C378]/15 via-[#DF9F3D]/10 to-[#C8A452]/15 rounded-[2.8rem] blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute -inset-2 bg-gradient-to-r from-[#E5C378]/10 via-[#DF9F3D]/5 to-[#C8A452]/10 rounded-[2.8rem] blur-2xl -z-10 pointer-events-none opacity-40" />
 
         {/* Dynamic Live Prompter Bar with TextRotate */}
         <div className="flex items-center justify-between px-4 sm:px-6 mb-3 text-xs text-white/80">
@@ -750,9 +677,8 @@ export const HeroSection: React.FC = () => {
           </span>
         </div>
 
-        {/* Main Cockpit Shell with Laser Border Beam (Ultra-Premium Smoky Obsidian Glass) */}
-        <div className="glass-specular relative p-5 sm:p-8 rounded-[2.5rem] bg-[#0E1118]/75 backdrop-blur-3xl border border-[#E5C378]/35 shadow-[0_28px_90px_rgba(0,0,0,0.92)] overflow-hidden space-y-6">
-          <BorderBeam size={340} duration={14} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F3DA9C" />
+        {/* Main Cockpit Shell (Ultra-Premium Smoky Obsidian Glass) */}
+        <div className="relative p-5 sm:p-8 rounded-[2.5rem] bg-[#0E1118]/85 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-6">
 
           {/* CONTROL RAIL 1: DISTRICT / LOCATION */}
           <div className="space-y-2.5">
@@ -776,8 +702,8 @@ export const HeroSection: React.FC = () => {
                     }}
                     className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-1 border text-center ${
                       isSelected
-                        ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
-                        : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
+                        ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
+                        : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                     }`}
                   >
                     <span className="text-base">{d.icon}</span>
@@ -810,8 +736,8 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
-                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
+                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0 text-[#E5C378]" />
@@ -841,8 +767,8 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
-                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
+                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
                       <span className="text-sm">{b.icon}</span>
@@ -872,8 +798,8 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-2.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
-                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
+                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
                       <span className="text-sm">{d.icon}</span>
@@ -885,12 +811,12 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR (Elegant Obsidian Bar with Subtle Cyan/Teal Indicator) */}
+          {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR (Clean Minimalist Obsidian Bar) */}
           <div className="pt-2">
-            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#0B0D12]/95 border border-[#E5C378]/30 text-xs shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#0B0D12]/95 border border-white/10 text-xs shadow-lg">
               <div className="flex flex-wrap items-center gap-2 text-white/90 font-medium">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-60" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5C378]" />
                 </span>
                 <span className="text-[#E5C378] font-black">{language === 'ar' ? 'ملخص المسار المختار:' : 'Selected Plan:'}</span>
@@ -902,7 +828,7 @@ export const HeroSection: React.FC = () => {
                 <span className="text-white/30">•</span>
                 <span className="text-[#F5E2B3] font-bold">{currentDurationObj.labelAr}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-teal-200 bg-teal-500/15 border border-teal-400/50 px-3 py-1 rounded-full font-bold shadow-[0_0_15px_rgba(20,184,166,0.3)]">
+              <div className="flex items-center gap-1.5 text-[11px] text-teal-200 bg-teal-500/15 border border-teal-400/40 px-3 py-1 rounded-full font-bold shadow-sm">
                 <Check className="w-3.5 h-3.5 text-teal-300" />
                 <span>{language === 'ar' ? 'مسار جغرافي متصل بدون زحمة' : 'Zero-traffic optimized route'}</span>
               </div>
@@ -918,16 +844,16 @@ export const HeroSection: React.FC = () => {
 
             <div className="relative group w-full sm:w-auto">
               <MagneticButton distance={0.25} strength={1}>
-                {/* Cinematic Ambient Halo Behind Button */}
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] opacity-70 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
+                {/* Subtle Refined Halo Behind Button */}
+                <div className="absolute -inset-0.5 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] opacity-30 blur-md group-hover:opacity-50 transition-all duration-300" />
 
                 <motion.button
                   type="button"
                   onClick={handleBuildPlan}
                   disabled={isGeneratingPlan}
-                  whileHover={{ scale: 1.02 }}
+                  whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
-                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,195,120,0.5)] hover:shadow-[0_0_60px_rgba(229,195,120,0.85)] border border-[#FFF1CC]/60 cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_8px_24px_rgba(229,195,120,0.35)] hover:shadow-[0_12px_32px_rgba(229,195,120,0.45)] border border-[#FFF1CC]/40 cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
                 >
                   {/* Conic Glow Shimmer Layer */}
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />

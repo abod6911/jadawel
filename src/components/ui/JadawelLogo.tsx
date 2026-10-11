@@ -20,7 +20,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
       {/* Minimalist Vector Emblem */}
       <div
         style={style}
-        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A1F2C] to-[#0B0D12] border border-[#E5C378]/40 p-1 flex items-center justify-center shadow-[0_4px_20px_rgba(229,195,120,0.3)] hover:border-[#F5E2B3]/70 hover:shadow-[0_4px_25px_rgba(229,195,120,0.45)] transition-all shrink-0"
+        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#161B26] to-[#0A0D14] border border-white/15 p-1 flex items-center justify-center shadow-md hover:border-[#E5C378]/40 transition-all shrink-0"
       >
         <svg
           viewBox="0 0 100 100"
