@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { NumberTicker } from '@/components/fancy/NumberTicker';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 interface TestimonialCapsule {
@@ -174,7 +173,7 @@ export const SocialProofBar: React.FC = () => {
                 <div className="flex items-center justify-between gap-2">
                   <div className="flex items-center gap-1.5">
                     <span className="text-xs font-black text-white">
-                      <RandomLetterSwap label={language === 'ar' ? t.nameAr : t.nameEn} />
+                      {language === 'ar' ? t.nameAr : t.nameEn}
                     </span>
                     <span className="text-[10px] text-pearl-muted font-medium">
                       • {language === 'ar' ? t.locationAr : t.locationEn}

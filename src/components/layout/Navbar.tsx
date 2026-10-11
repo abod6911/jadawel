@@ -22,7 +22,6 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 export const Navbar: React.FC = () => {
@@ -76,10 +75,10 @@ export const Navbar: React.FC = () => {
 
           <div className="flex items-center gap-1.5 sm:gap-2">
             <span className="text-base sm:text-xl font-bold text-white group-hover:text-gold-300 transition-colors">
-              <RandomLetterSwap label={language === 'ar' ? 'جداول' : 'Jadawel'} />
+              {language === 'ar' ? 'جداول' : 'Jadawel'}
             </span>
             <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-400 font-bold border border-gold-500/30 shadow-[0_0_10px_rgba(229,169,98,0.2)]">
-              <RandomLetterSwap label={language === 'ar' ? 'جدة' : 'Jeddah'} />
+              {language === 'ar' ? 'جدة' : 'Jeddah'}
             </span>
           </div>
         </div>
@@ -220,7 +219,7 @@ export const Navbar: React.FC = () => {
                 )}
 
                 <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-gold-400' : 'text-teal-400/80'}`} />
-                <RandomLetterSwap label={language === 'ar' ? item.labelAr : item.labelEn} />
+                <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
                 {item.badge !== undefined && (
                   <span className="w-4 h-4 rounded-full bg-coral-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm">
                     {item.badge}

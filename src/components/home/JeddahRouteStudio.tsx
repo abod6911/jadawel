@@ -22,7 +22,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
 import { MagneticButton } from '@/components/fancy/MagneticButton';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { NumberTicker } from '@/components/fancy/NumberTicker';
@@ -286,7 +285,7 @@ export const JeddahRouteStudio: React.FC = () => {
               <span className="text-base sm:text-lg">{route.icon}</span>
               <div className="flex flex-col text-start">
                 <span className="leading-snug">
-                  <RandomLetterSwap label={language === 'ar' ? route.titleAr : route.titleEn} />
+                  {language === 'ar' ? route.titleAr : route.titleEn}
                 </span>
                 <span className="text-[10px] text-pearl-muted font-medium">
                   {route.placeSlugsOrIds.length} {language === 'ar' ? 'محطات' : 'stops'} • {route.totalDurationAr}
@@ -435,7 +434,7 @@ export const JeddahRouteStudio: React.FC = () => {
                 className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-500 to-gold-600 hover:from-gold-400 hover:to-amber-500 text-abyss-950 text-sm font-black shadow-[0_12px_32px_rgba(229,169,98,0.35)] hover:shadow-[0_16px_40px_rgba(229,169,98,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
               >
                 <Sparkles className="w-4 h-4 text-abyss-950" />
-                <RandomLetterSwap label={language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'} />
+                <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
               </button>
             </MagneticButton>
           </div>

@@ -7,7 +7,6 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { CURATED_PLANS } from '@/data/curated-plans';
 import { getAssetUrl } from '@/utils/paths';
 import { soundEngine } from '@/utils/audioEngine';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { MagneticButton } from '@/components/fancy/MagneticButton';
 import { NumberTicker } from '@/components/fancy/NumberTicker';
@@ -109,7 +108,7 @@ export const CuratedReadyPlans: React.FC = () => {
 
                 <div className="p-5 space-y-3">
                   <h3 className="text-lg font-black text-pearl group-hover:text-gold-400 transition-colors">
-                    <RandomLetterSwap label={language === 'ar' ? plan.titleAr : plan.titleEn} />
+                    {language === 'ar' ? plan.titleAr : plan.titleEn}
                   </h3>
                   <p className="text-xs text-pearl-muted leading-relaxed line-clamp-2 font-medium">
                     {language === 'ar' ? plan.descriptionAr : plan.descriptionEn}
@@ -138,7 +137,7 @@ export const CuratedReadyPlans: React.FC = () => {
                     onClick={() => handleLoadPlan(plan.id)}
                     className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-glow-coral active:scale-[0.98]"
                   >
-                    <RandomLetterSwap label={language === 'ar' ? 'تحميل هذا الجدول 🚀' : 'Load This Plan 🚀'} />
+                    <span>{language === 'ar' ? 'تحميل هذا الجدول 🚀' : 'Load This Plan 🚀'}</span>
                     {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                   </button>
                 </MagneticButton>

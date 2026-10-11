@@ -17,16 +17,18 @@ import {
   Smile,
   Zap,
   Compass,
+  Film,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
-import { VerticalCutReveal } from '@/components/fancy/VerticalCutReveal';
 import { MagneticButton } from '@/components/fancy/MagneticButton';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
+import { TextRotate } from '@/components/fancy/TextRotate';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 
 // ==========================================
@@ -273,7 +275,7 @@ const DestinationTiltCard: React.FC<{
 
         <div>
           <h3 className="text-lg font-black text-white group-hover:text-gold-300 transition-colors drop-shadow-md">
-            <RandomLetterSwap label={dest.name} />
+            <span>{dest.name}</span>
           </h3>
           <p className="text-xs text-white/70 line-clamp-1 mt-1 font-medium">
             {dest.tagline}
@@ -300,13 +302,9 @@ export const HeroSection: React.FC = () => {
   const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
   const atmosphere = getJeddahAtmosphere(atmospherePhase);
 
-  // Dynamic Time Machine video selection
-  const activeVideoSrc =
-    atmosphere.phase === 'golden_hour'
-      ? getAssetUrl('/videos/jeddah-sunset.webm')
-      : atmosphere.phase === 'daytime'
-        ? getAssetUrl('/videos/jeddah-waves.webm')
-        : getAssetUrl('/videos/jeddah-corniche.mp4');
+  // Video & Sound Controls State
+  const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const [isVideoMuted, setIsVideoMuted] = useState(true);
 
   // Form State
   const [district, setDistrict] = useState<DistrictId | 'all_jeddah'>(activeDest.districtId);
@@ -328,19 +326,36 @@ export const HeroSection: React.FC = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsIntroStage(false);
-    }, 2500);
+    }, 2800);
     return () => clearTimeout(timer);
   }, []);
 
-  // Update video when atmospherePhase changes
-  useEffect(() => {
+  const handleToggleVideo = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    soundEngine.playClick();
     const video = videoRef.current;
     if (!video) return;
-    video.src = activeVideoSrc;
-    video.load();
-    const promise = video.play();
-    if (promise) promise.catch(() => {});
-  }, [activeVideoSrc]);
+    if (video.paused) {
+      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+    } else {
+      video.pause();
+      setIsVideoPlaying(false);
+    }
+  };
+
+  const handleToggleSound = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    soundEngine.playClick();
+    const video = videoRef.current;
+    if (!video) return;
+    if (video.muted) {
+      video.muted = false;
+      setIsVideoMuted(false);
+    } else {
+      video.muted = true;
+      setIsVideoMuted(true);
+    }
+  };
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -457,7 +472,7 @@ export const HeroSection: React.FC = () => {
       {/* 1. ATMOSPHERIC CANVAS: RED SEA TWILIGHT & VIDEO OVERLAY  */}
       {/* ======================================================== */}
       <div className="absolute inset-0 z-0 bg-[#0B0F15] overflow-hidden">
-        {/* Native Looping Jeddah Video */}
+        {/* Native Looping Jeddah Corniche Video - Full Atmospheric Vibe */}
         <video
           ref={videoRef}
           autoPlay
@@ -465,30 +480,28 @@ export const HeroSection: React.FC = () => {
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover brightness-[0.95]"
         >
           <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
-          <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
-          <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
         </video>
 
         {/* Deep Obsidian & Luminous Golden Amber Ambient Glows (Smooth crossfade from clear video to high-contrast canvas) */}
         <div
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none ${
-            isIntroStage ? 'opacity-20' : 'opacity-85'
-          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90`}
+            isIntroStage ? 'opacity-15' : 'opacity-55'
+          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/45 to-transparent`}
         />
         {/* Dynamic Atmosphere Radial Gradient */}
         <div
           className={`absolute inset-0 pointer-events-none transition-all duration-1000 ${
             atmosphere.phase === 'golden_hour'
-              ? 'bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.24)_0%,rgba(234,88,12,0.12)_40%,transparent_70%)]'
+              ? 'bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.2)_0%,rgba(234,88,12,0.1)_40%,transparent_70%)]'
               : atmosphere.phase === 'daytime'
-                ? 'bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.24)_0%,rgba(20,184,166,0.12)_40%,transparent_70%)]'
-                : 'bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.2)_0%,rgba(245,158,11,0.08)_35%,transparent_70%)]'
+                ? 'bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.2)_0%,rgba(20,184,166,0.1)_40%,transparent_70%)]'
+                : 'bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.18)_0%,rgba(245,158,11,0.06)_35%,transparent_70%)]'
           }`}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.3)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Cinematic Lens Vignette & 35mm Film Grain */}
         <div className="cinematic-vignette absolute inset-0 z-0 pointer-events-none" />
@@ -536,18 +549,61 @@ export const HeroSection: React.FC = () => {
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
         
-        {/* Luxury Micro-Badge with Pulse Star */}
-        <div className="inline-flex items-center gap-2.5 px-4.5 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/40 text-xs font-bold text-gold-300 shadow-[0_0_25px_rgba(229,169,98,0.28)] transition-all hover:scale-105">
-          <span className="relative flex h-2 w-2">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
-          </span>
-          <Compass className="w-3.5 h-3.5 text-gold-400 animate-spin [animation-duration:22s]" />
-          <span>
-            {language === 'ar'
-              ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
-              : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
-          </span>
+        {/* Atmosphere & Video Controls Floating Pill */}
+        <div className="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-3 px-2 mb-2 sm:mb-4">
+          {/* Luxury Micro-Badge with Pulse Star */}
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/40 text-xs font-bold text-gold-300 shadow-[0_0_25px_rgba(229,169,98,0.28)]">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+            </span>
+            <Compass className="w-3.5 h-3.5 text-gold-400 animate-spin [animation-duration:22s]" />
+            <span>
+              {language === 'ar'
+                ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
+                : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+            </span>
+          </div>
+
+          {/* Video Playback & Ocean Waves Sound Controls */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleToggleSound}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md ${
+                !isVideoMuted
+                  ? 'bg-gold-500/25 border-gold-500/50 text-gold-300 shadow-[0_0_15px_rgba(229,169,98,0.35)]'
+                  : 'bg-black/50 border-white/15 text-white/60 hover:text-white'
+              }`}
+              title={language === 'ar' ? (isVideoMuted ? 'تشغيل صوت أمواج البحر' : 'كتم الصوت') : (isVideoMuted ? 'Play Waves Sound' : 'Mute Sound')}
+            >
+              {!isVideoMuted ? (
+                <>
+                  <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+                  <span className="text-[11px] font-bold">صوت البحر 🌊</span>
+                </>
+              ) : (
+                <>
+                  <VolumeX className="w-3.5 h-3.5 text-white/50" />
+                  <span className="text-[11px] font-bold">صامت</span>
+                </>
+              )}
+            </button>
+
+            <button
+              type="button"
+              onClick={handleToggleVideo}
+              className={`px-3 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md ${
+                isVideoPlaying
+                  ? 'bg-teal-500/20 border-teal-500/40 text-teal-300 shadow-[0_0_12px_rgba(45,212,191,0.2)]'
+                  : 'bg-black/50 border-white/15 text-white/60 hover:text-white'
+              }`}
+              title={language === 'ar' ? (isVideoPlaying ? 'إيقاف الفيديو مؤقتاً' : 'تشغيل فيديو جدة') : (isVideoPlaying ? 'Pause Video' : 'Play Video')}
+            >
+              <Film className="w-3.5 h-3.5" />
+              <span className="text-[11px] font-bold">{isVideoPlaying ? 'فيديو جدة' : 'تشغيل ▶'}</span>
+            </button>
+          </div>
         </div>
 
         {/* Master Headline with Luxury Arabic Typography */}
@@ -555,40 +611,32 @@ export const HeroSection: React.FC = () => {
           {language === 'ar' ? (
             <>
               <span className="block text-white tracking-wide">
-                <VerticalCutReveal delay={0.15} staggerDuration={0.05}>
-                  عروس البحر الأحمر بين يديك..
-                </VerticalCutReveal>
+                عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
               </span>
               <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
-                  <RandomLetterSwap label="جداول" />
+                  جداول
                 </span>{' '}
-                <VerticalCutReveal delay={0.35} staggerDuration={0.05}>
-                  ترتب طلعتك من وإلى
-                </VerticalCutReveal>
+                ترتب طلعتك من وإلى
               </span>
             </>
           ) : (
             <>
               <span className="block text-white">
-                <VerticalCutReveal delay={0.15}>
-                  Bride of the Red Sea in Your Hands..
-                </VerticalCutReveal>
+                Bride of the Red Sea in Your Hands..
               </span>
               <span className="block text-white">
                 <span className="text-shimmer-gold font-bold">
-                  <RandomLetterSwap label="Jadawel" />
+                  Jadawel
                 </span>{' '}
-                <VerticalCutReveal delay={0.35}>
-                  curates your outing from start to finish
-                </VerticalCutReveal>
+                curates your outing from start to finish
               </span>
             </>
           )}
         </h1>
 
         {/* Generous Subheading */}
-        <p className="text-xs sm:text-sm md:text-base text-white/75 max-w-2xl mx-auto font-normal leading-relaxed">
+        <p className="text-xs sm:text-sm md:text-base text-white/80 max-w-2xl mx-auto font-normal leading-relaxed">
           {language === 'ar'
             ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية — اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
             : 'From Obhur beach clubs to historic Al-Balad alleys — choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
@@ -609,7 +657,7 @@ export const HeroSection: React.FC = () => {
                     : 'bg-[#12161f]/80 hover:bg-[#1a202c]/90 text-white/85 hover:text-white border border-white/[0.12] backdrop-blur-md hover:border-white/25'
                 }`}
               >
-                <RandomLetterSwap label={language === 'ar' ? mood.labelAr : mood.labelEn} />
+                <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
               </button>
             );
           })}
@@ -642,6 +690,40 @@ export const HeroSection: React.FC = () => {
       >
         {/* Soft Ambient Glow Halo behind the Dock */}
         <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/10 via-amber-500/5 to-teal-500/10 rounded-[2.5rem] blur-2xl -z-10 pointer-events-none" />
+
+        {/* Dynamic Vibe Prompter with Fancy TextRotate */}
+        <div className="flex items-center justify-between px-4 sm:px-6 mb-2.5 text-xs text-white/80">
+          <div className="flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+            </span>
+            <span className="text-white/60 font-bold">{language === 'ar' ? 'جاهز لاستكشاف:' : 'Ready to explore:'}</span>
+            <TextRotate
+              texts={
+                language === 'ar'
+                  ? [
+                      'شواطئ ونوادي أبحر الفارهة 🌊',
+                      'محامص وكافيهات الروضة الرايقة ☕',
+                      'رواشين البلد وتراث اليونسكو 🏛️',
+                      'سهرات الواجهة البحرية واليخوت 👑',
+                      'ممشى الكورنيش والحدائق المجانية 🌴',
+                    ]
+                  : [
+                      'Obhur Luxury Beach Clubs 🌊',
+                      'Al-Rawdah Specialty Coffee & Cafes ☕',
+                      'Historic Al-Balad Heritage 🏛️',
+                      'VIP Waterfront & Yacht Lounges 👑',
+                      'Scenic Corniche Walks 🌴',
+                    ]
+              }
+              className="text-gold-300 font-bold"
+            />
+          </div>
+          <span className="text-[11px] text-white/40 hidden sm:inline font-medium">
+            {language === 'ar' ? 'حدد تفاصيل طلعتك بالأسفل ↓' : 'Configure your outing ↓'}
+          </span>
+        </div>
 
         <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.85)] overflow-hidden">
           {/* Animated Traveling Border Laser Beam */}
@@ -1031,7 +1113,7 @@ export const HeroSection: React.FC = () => {
                   ) : (
                     <>
                       <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1.5 transition-transform" />
-                      <RandomLetterSwap label={language === 'ar' ? 'ابنِ خطتي لجدة بنقرة واحدة ✨' : 'Build My Plan in 1-Click ✨'} />
+                      <span>{language === 'ar' ? 'ابنِ خطتي لجدة بنقرة واحدة ✨' : 'Build My Plan in 1-Click ✨'}</span>
                     </>
                   )}
                 </motion.button>

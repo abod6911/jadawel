@@ -18,7 +18,6 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
-import { RandomLetterSwap } from '@/components/fancy/RandomLetterSwap';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 interface BentoTiltCardProps {
@@ -118,13 +117,13 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       {/* Bottom Content Area */}
       <div className="absolute bottom-6 inset-x-6 z-10 space-y-2 text-start">
         <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white drop-shadow-md flex items-center gap-2">
-          <RandomLetterSwap label={title} />
+          <span>{title}</span>
         </h3>
         <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-xl">
           {description}
         </p>
         <div className={`pt-1 flex items-center gap-2 text-xs font-bold ${accentColorClass}`}>
-          <RandomLetterSwap label={actionText} />
+          <span>{actionText}</span>
           {isRTL ? (
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
           ) : (
