@@ -196,7 +196,8 @@ const DestinationTiltCard: React.FC<{
   idx: number;
   isSelected: boolean;
   onSelect: () => void;
-}> = ({ dest, idx, isSelected, onSelect }) => {
+  onLaunch?: () => void;
+}> = ({ dest, idx, isSelected, onSelect, onLaunch }) => {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50, isHovered: false });
 
@@ -232,7 +233,7 @@ const DestinationTiltCard: React.FC<{
         }`,
         transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative group h-48 sm:h-56 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
+      className={`relative group h-52 sm:h-60 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
         isSelected
           ? 'border-gold-500/70 shadow-[0_16px_50px_rgba(229,169,98,0.35)] ring-2 ring-gold-500/50'
           : 'border-white/[0.08] hover:border-gold-500/30 shadow-[0_12px_40px_rgba(0,0,0,0.6)]'
@@ -280,6 +281,22 @@ const DestinationTiltCard: React.FC<{
           <p className="text-xs text-white/70 line-clamp-1 mt-1 font-medium">
             {dest.tagline}
           </p>
+          <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center justify-between">
+            <span className="text-[11px] font-bold text-gold-400 group-hover:text-gold-300 flex items-center gap-1 transition-colors">
+              <span>استكشف هذا المسار</span>
+              <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+            </span>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                onLaunch?.();
+              }}
+              className="text-[10px] font-bold px-2.5 py-1 rounded-full bg-gold-500/20 hover:bg-gold-500 hover:text-stone-950 text-gold-300 border border-gold-500/40 transition-all cursor-pointer"
+            >
+              تشغيل فوري ⚡
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -651,10 +668,10 @@ export const HeroSection: React.FC = () => {
                 key={mood.id}
                 type="button"
                 onClick={() => handleApplyMood(mood)}
-                className={`px-4 sm:px-5 py-2 sm:py-2.5 rounded-full text-xs sm:text-sm font-semibold transition-all duration-200 cursor-pointer flex items-center justify-center whitespace-nowrap shadow-sm touch-manipulation ${
+                className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer flex items-center justify-center whitespace-nowrap touch-manipulation relative group ${
                   isActive
-                    ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-stone-950 font-bold shadow-[0_0_22px_rgba(245,158,11,0.4)] border border-amber-400/40 scale-[1.02]'
-                    : 'bg-[#12161f]/80 hover:bg-[#1a202c]/90 text-white/85 hover:text-white border border-white/[0.12] backdrop-blur-md hover:border-white/25'
+                    ? 'bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600 text-stone-950 font-black shadow-[0_0_28px_rgba(245,158,11,0.55)] border border-amber-300 scale-[1.04]'
+                    : 'bg-[#12161f]/85 hover:bg-[#1a202c] text-white/90 hover:text-white border border-white/[0.14] hover:border-gold-500/40 backdrop-blur-xl shadow-lg'
                 }`}
               >
                 <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
@@ -665,38 +682,21 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* ======================================================== */}
-      {/* 4. DYNAMIC DESTINATION SHOWCASE (3D PERSPECTIVE CARDS)   */}
-      {/* ======================================================== */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto mb-10 sm:mb-14">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {DESTINATIONS.map((dest, idx) => (
-            <DestinationTiltCard
-              key={dest.id}
-              dest={dest}
-              idx={idx}
-              isSelected={activeIdx === idx}
-              onSelect={() => handleSelectDestination(idx)}
-            />
-          ))}
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* 5. THE ULTRA-MODERN TRIP ENGINE (MODULAR COMMAND PILL)  */}
+      {/* 3. CENTRAL TRIP ENGINE COCKPIT (FRONT & CENTER LUXURY)   */}
       {/* ======================================================== */}
       <div
         ref={searchBarRef}
-        className="relative z-30 w-full max-w-5xl mx-auto"
+        className="relative z-30 w-full max-w-5xl mx-auto mb-12 sm:mb-16"
       >
-        {/* Soft Ambient Glow Halo behind the Dock */}
-        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/10 via-amber-500/5 to-teal-500/10 rounded-[2.5rem] blur-2xl -z-10 pointer-events-none" />
+        {/* Ambient Halo Behind Cockpit */}
+        <div className="absolute -inset-3 bg-gradient-to-r from-amber-500/15 via-gold-500/10 to-teal-500/15 rounded-[2.8rem] blur-3xl -z-10 pointer-events-none" />
 
-        {/* Dynamic Vibe Prompter with Fancy TextRotate */}
-        <div className="flex items-center justify-between px-4 sm:px-6 mb-2.5 text-xs text-white/80">
+        {/* Dynamic Live Prompter Bar with TextRotate */}
+        <div className="flex items-center justify-between px-4 sm:px-6 mb-3 text-xs text-white/80">
           <div className="flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
+            <span className="relative flex h-2.5 w-2.5">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-gold-400" />
             </span>
             <span className="text-white/60 font-bold">{language === 'ar' ? 'جاهز لاستكشاف:' : 'Ready to explore:'}</span>
             <TextRotate
@@ -720,376 +720,181 @@ export const HeroSection: React.FC = () => {
               className="text-gold-300 font-bold"
             />
           </div>
-          <span className="text-[11px] text-white/40 hidden sm:inline font-medium">
-            {language === 'ar' ? 'حدد تفاصيل طلعتك بالأسفل ↓' : 'Configure your outing ↓'}
+          <span className="text-[11px] text-white/50 hidden sm:inline font-medium">
+            {language === 'ar' ? 'تحكّم في خطتك بنقرة واحدة مباشرة بالأسفل ↓' : 'One-tap tactile controls below ↓'}
           </span>
         </div>
 
-        <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.85)] overflow-hidden">
-          {/* Animated Traveling Border Laser Beam */}
-          <BorderBeam size={280} duration={12} borderWidth={1.5} colorFrom="#E5A962" colorTo="#F46F52" />
-          
-          {/* Main 5 Pillars Cockpit Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
-            
-            {/* PILLAR 1: DISTRICT / LOCATION */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setActivePopover(activePopover === 'district' ? null : 'district');
-                }}
-                className={`w-full text-start p-3 sm:p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer ${
-                  activePopover === 'district'
-                    ? 'bg-white/10 border border-gold-500/40 shadow-inner'
-                    : 'hover:bg-white/[0.04] border border-transparent'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-gold-500/15 border border-gold-500/30 flex items-center justify-center text-gold-400 shrink-0">
-                  <MapPin className="w-5 h-5" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-[11px] font-bold text-white/50 block">المنطقة</span>
-                  <span className="text-xs sm:text-sm font-black text-white truncate block">
-                    {currentDistrictObj.nameAr}
-                  </span>
-                </div>
-              </button>
+        {/* Main Cockpit Shell with Laser Border Beam */}
+        <div className="glass-specular relative p-4 sm:p-7 rounded-[2.5rem] bg-[#0E131C]/92 backdrop-blur-3xl border border-white/[0.14] shadow-[0_28px_80px_rgba(0,0,0,0.9)] overflow-hidden space-y-6">
+          <BorderBeam size={320} duration={12} borderWidth={1.5} colorFrom="#E5A962" colorTo="#F46F52" />
 
-              {/* DISTRICT POPOVER */}
-              <AnimatePresence>
-                {activePopover === 'district' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full mt-2 right-0 sm:right-auto sm:left-0 w-72 sm:w-80 p-2.5 rounded-2xl bg-[#0F141D] backdrop-blur-3xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 space-y-1.5"
-                  >
-                    <div className="px-2 py-1 text-[11px] font-black text-gold-400 border-b border-white/10 pb-1.5">
-                      اختر وجهة الانطلاق في جدة:
-                    </div>
-                    <div className="max-h-60 overflow-y-auto space-y-1 pr-1">
-                      {DISTRICT_OPTIONS.map((d) => (
-                        <button
-                          key={d.id}
-                          type="button"
-                          onClick={() => {
-                            soundEngine.playClick();
-                            setDistrict(d.id);
-                            setActivePopover(null);
-                          }}
-                          className={`w-full p-2.5 rounded-xl text-start flex items-center justify-between transition-all cursor-pointer ${
-                            district === d.id
-                              ? 'bg-gold-500/20 text-gold-300 font-black border border-gold-500/30'
-                              : 'hover:bg-white/5 text-white/80'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <span className="text-lg">{d.icon}</span>
-                            <div>
-                              <span className="text-xs font-bold block">{d.nameAr}</span>
-                              <span className="text-[10px] text-white/40 block">{d.subAr}</span>
-                            </div>
-                          </div>
-                          {district === d.id && <Check className="w-4 h-4 text-gold-400 shrink-0" />}
-                        </button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+          {/* CONTROL RAIL 1: DISTRICT / LOCATION */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between text-xs font-bold text-white/70 px-1">
+              <span className="flex items-center gap-1.5 text-gold-400">
+                <MapPin className="w-4 h-4" />
+                <span>{language === 'ar' ? '1. منطقة الانطلاق في جدة:' : '1. Starting Location:'}</span>
+              </span>
+              <span className="text-white/40 text-[11px]">{currentDistrictObj.subAr}</span>
             </div>
-
-            {/* PILLAR 2: COMPANIONS */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setActivePopover(activePopover === 'companions' ? null : 'companions');
-                }}
-                className={`w-full text-start p-3 sm:p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer ${
-                  activePopover === 'companions'
-                    ? 'bg-white/10 border border-teal-500/40 shadow-inner'
-                    : 'hover:bg-white/[0.04] border border-transparent'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-teal-500/15 border border-teal-500/30 flex items-center justify-center text-teal-400 shrink-0">
-                  <Users className="w-5 h-5" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-[11px] font-bold text-white/50 block">الرفقة</span>
-                  <span className="text-xs sm:text-sm font-black text-white truncate block">
-                    {currentCompanionObj.labelAr}
-                  </span>
-                </div>
-              </button>
-
-              {/* COMPANIONS POPOVER */}
-              <AnimatePresence>
-                {activePopover === 'companions' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full mt-2 right-0 sm:right-auto sm:left-0 w-64 sm:w-72 p-2.5 rounded-2xl bg-[#0F141D] backdrop-blur-3xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 space-y-1.5"
+            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+              {DISTRICT_OPTIONS.map((d) => {
+                const isSelected = district === d.id;
+                return (
+                  <button
+                    key={d.id}
+                    type="button"
+                    onClick={() => {
+                      soundEngine.playClick();
+                      setDistrict(d.id);
+                    }}
+                    className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-1 border text-center ${
+                      isSelected
+                        ? 'bg-gradient-to-b from-gold-500/25 to-gold-600/15 border-gold-400/80 text-gold-300 shadow-[0_0_16px_rgba(229,169,98,0.3)] scale-[1.02]'
+                        : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.08] text-white/75 hover:text-white'
+                    }`}
                   >
-                    <div className="px-2 py-1 text-[11px] font-black text-teal-400 border-b border-white/10 pb-1.5">
-                      مين طالع معاك اليوم؟
-                    </div>
-                    {COMPANION_OPTIONS.map((c) => {
-                      const Icon = c.icon;
-                      return (
-                        <button
-                          key={c.id}
-                          type="button"
-                          onClick={() => {
-                            soundEngine.playClick();
-                            setCompanions(c.id);
-                            setActivePopover(null);
-                          }}
-                          className={`w-full p-2.5 rounded-xl text-start flex items-center justify-between transition-all cursor-pointer ${
-                            companions === c.id
-                              ? 'bg-teal-500/20 text-teal-300 font-black border border-teal-500/30'
-                              : 'hover:bg-white/5 text-white/80'
-                          }`}
-                        >
-                          <div className="flex items-center gap-2.5">
-                            <Icon className="w-4 h-4 text-teal-400 shrink-0" />
-                            <div>
-                              <span className="text-xs font-bold block">{c.labelAr}</span>
-                              <span className="text-[10px] text-white/40 block">{c.subAr}</span>
-                            </div>
-                          </div>
-                          {companions === c.id && <Check className="w-4 h-4 text-teal-400 shrink-0" />}
-                        </button>
-                      );
-                    })}
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                    <span className="text-base">{d.icon}</span>
+                    <span className="truncate w-full">{language === 'ar' ? d.nameAr : d.nameEn}</span>
+                  </button>
+                );
+              })}
             </div>
-
-            {/* PILLAR 3: BUDGET TIER */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setActivePopover(activePopover === 'budget' ? null : 'budget');
-                }}
-                className={`w-full text-start p-3 sm:p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer ${
-                  activePopover === 'budget'
-                    ? 'bg-white/10 border border-amber-500/40 shadow-inner'
-                    : 'hover:bg-white/[0.04] border border-transparent'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-400 shrink-0">
-                  <Coins className="w-5 h-5" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-[11px] font-bold text-white/50 block">الميزانية</span>
-                  <span className="text-xs sm:text-sm font-black text-white truncate block">
-                    {currentBudgetObj.labelAr}
-                  </span>
-                </div>
-              </button>
-
-              {/* BUDGET POPOVER */}
-              <AnimatePresence>
-                {activePopover === 'budget' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full mt-2 right-0 sm:right-auto sm:left-0 w-64 sm:w-72 p-2.5 rounded-2xl bg-[#0F141D] backdrop-blur-3xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 space-y-1.5"
-                  >
-                    <div className="px-2 py-1 text-[11px] font-black text-amber-400 border-b border-white/10 pb-1.5">
-                      حدد سقف الصرف للطلعة:
-                    </div>
-                    {BUDGET_OPTIONS.map((b) => (
-                      <button
-                        key={b.id}
-                        type="button"
-                        onClick={() => {
-                          soundEngine.playClick();
-                          setBudget(b.id);
-                          setActivePopover(null);
-                        }}
-                        className={`w-full p-2.5 rounded-xl text-start flex items-center justify-between transition-all cursor-pointer ${
-                          budget === b.id
-                            ? 'bg-amber-500/20 text-amber-300 font-black border border-amber-500/30'
-                            : 'hover:bg-white/5 text-white/80'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-base">{b.icon}</span>
-                          <div>
-                            <span className="text-xs font-bold block">{b.labelAr}</span>
-                            <span className="text-[10px] text-white/40 block">{b.priceAr}</span>
-                          </div>
-                        </div>
-                        {budget === b.id && <Check className="w-4 h-4 text-amber-400 shrink-0" />}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* PILLAR 4: DURATION */}
-            <div className="relative">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setActivePopover(activePopover === 'duration' ? null : 'duration');
-                }}
-                className={`w-full text-start p-3 sm:p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer ${
-                  activePopover === 'duration'
-                    ? 'bg-white/10 border border-sky-500/40 shadow-inner'
-                    : 'hover:bg-white/[0.04] border border-transparent'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-sky-500/15 border border-sky-500/30 flex items-center justify-center text-sky-400 shrink-0">
-                  <Clock className="w-5 h-5" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-[11px] font-bold text-white/50 block">المدة</span>
-                  <span className="text-xs sm:text-sm font-black text-white truncate block">
-                    {currentDurationObj.labelAr}
-                  </span>
-                </div>
-              </button>
-
-              {/* DURATION POPOVER */}
-              <AnimatePresence>
-                {activePopover === 'duration' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full mt-2 left-0 w-64 sm:w-72 p-2.5 rounded-2xl bg-[#0F141D] backdrop-blur-3xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 space-y-1.5"
-                  >
-                    <div className="px-2 py-1 text-[11px] font-black text-sky-400 border-b border-white/10 pb-1.5">
-                      كم وقت مخصص للطلعة؟
-                    </div>
-                    {DURATION_OPTIONS.map((d) => (
-                      <button
-                        key={d.id}
-                        type="button"
-                        onClick={() => {
-                          soundEngine.playClick();
-                          setDuration(d.id);
-                          setActivePopover(null);
-                        }}
-                        className={`w-full p-2.5 rounded-xl text-start flex items-center justify-between transition-all cursor-pointer ${
-                          duration === d.id
-                            ? 'bg-sky-500/20 text-sky-300 font-black border border-sky-500/30'
-                            : 'hover:bg-white/5 text-white/80'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-base">{d.icon}</span>
-                          <div>
-                            <span className="text-xs font-bold block">{d.labelAr}</span>
-                            <span className="text-[10px] text-white/40 block">{d.subAr}</span>
-                          </div>
-                        </div>
-                        {duration === d.id && <Check className="w-4 h-4 text-sky-400 shrink-0" />}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
-            {/* PILLAR 5: VIBE */}
-            <div className="relative col-span-2 md:col-span-1">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setActivePopover(activePopover === 'vibe' ? null : 'vibe');
-                }}
-                className={`w-full text-start p-3 sm:p-3.5 rounded-2xl transition-all flex items-center gap-3 cursor-pointer ${
-                  activePopover === 'vibe'
-                    ? 'bg-white/10 border border-purple-500/40 shadow-inner'
-                    : 'hover:bg-white/[0.04] border border-transparent'
-                }`}
-              >
-                <div className="w-10 h-10 rounded-xl bg-purple-500/15 border border-purple-500/30 flex items-center justify-center text-purple-400 shrink-0">
-                  <Compass className="w-5 h-5" />
-                </div>
-                <div className="overflow-hidden">
-                  <span className="text-[11px] font-bold text-white/50 block">المود</span>
-                  <span className="text-xs sm:text-sm font-black text-white truncate block">
-                    {currentVibeObj.labelAr}
-                  </span>
-                </div>
-              </button>
-
-              {/* VIBE POPOVER */}
-              <AnimatePresence>
-                {activePopover === 'vibe' && (
-                  <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                    transition={{ duration: 0.18 }}
-                    className="absolute top-full mt-2 left-0 w-64 sm:w-72 p-2.5 rounded-2xl bg-[#0F141D] backdrop-blur-3xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.9)] z-50 space-y-1.5"
-                  >
-                    <div className="px-2 py-1 text-[11px] font-black text-purple-400 border-b border-white/10 pb-1.5">
-                      وش الجو اللي ببالك؟
-                    </div>
-                    {VIBE_OPTIONS.map((v) => (
-                      <button
-                        key={v.id}
-                        type="button"
-                        onClick={() => {
-                          soundEngine.playClick();
-                          setVibe(v.id);
-                          setActivePopover(null);
-                        }}
-                        className={`w-full p-2.5 rounded-xl text-start flex items-center justify-between transition-all cursor-pointer ${
-                          vibe === v.id
-                            ? 'bg-purple-500/20 text-purple-300 font-black border border-purple-500/30'
-                            : 'hover:bg-white/5 text-white/80'
-                        }`}
-                      >
-                        <div className="flex items-center gap-2.5">
-                          <span className="text-base">{v.icon}</span>
-                          <div>
-                            <span className="text-xs font-bold block">{v.labelAr}</span>
-                            <span className="text-[10px] text-white/40 block">{v.subAr}</span>
-                          </div>
-                        </div>
-                        {vibe === v.id && <Check className="w-4 h-4 text-purple-400 shrink-0" />}
-                      </button>
-                    ))}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
-
           </div>
 
-          {/* PRIMARY SHOW-STOPPING CTA BUTTON */}
-          <div className="mt-3 pt-3 border-t border-white/[0.08] flex items-center justify-between gap-3">
-            <div className="hidden sm:flex items-center gap-2 text-xs text-white/60 font-medium px-2">
+          {/* CONTROL RAILS 2, 3, 4: COMPANIONS, BUDGET, DURATION IN A 3-COLUMN RESPONSIVE GRID */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1 border-t border-white/[0.07]">
+            {/* COMPANIONS */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-teal-400 px-1">
+                <Users className="w-4 h-4" />
+                <span>{language === 'ar' ? '2. الرفقة:' : '2. Companions:'}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {COMPANION_OPTIONS.map((c) => {
+                  const isSelected = companions === c.id;
+                  const Icon = c.icon;
+                  return (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setCompanions(c.id);
+                      }}
+                      className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
+                        isSelected
+                          ? 'bg-teal-500/20 border-teal-400/70 text-teal-300 shadow-[0_0_14px_rgba(45,212,191,0.25)] scale-[1.02]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.08] text-white/75 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4 shrink-0" />
+                      <span>{language === 'ar' ? c.labelAr : c.labelEn}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* BUDGET */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 px-1">
+                <Coins className="w-4 h-4" />
+                <span>{language === 'ar' ? '3. الميزانية للشخص:' : '3. Budget:'}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {BUDGET_OPTIONS.map((b) => {
+                  const isSelected = budget === b.id;
+                  return (
+                    <button
+                      key={b.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setBudget(b.id);
+                      }}
+                      className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
+                        isSelected
+                          ? 'bg-amber-500/20 border-amber-400/70 text-amber-300 shadow-[0_0_14px_rgba(245,158,11,0.25)] scale-[1.02]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.08] text-white/75 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-sm">{b.icon}</span>
+                      <span>{language === 'ar' ? b.labelAr : b.labelEn}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* DURATION */}
+            <div className="space-y-2">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-sky-400 px-1">
+                <Clock className="w-4 h-4" />
+                <span>{language === 'ar' ? '4. المدة المتاحة:' : '4. Duration:'}</span>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                {DURATION_OPTIONS.slice(0, 4).map((d) => {
+                  const isSelected = duration === d.id;
+                  return (
+                    <button
+                      key={d.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setDuration(d.id);
+                      }}
+                      className={`px-2.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border ${
+                        isSelected
+                          ? 'bg-sky-500/20 border-sky-400/70 text-sky-300 shadow-[0_0_14px_rgba(56,189,248,0.25)] scale-[1.02]'
+                          : 'bg-white/[0.03] hover:bg-white/[0.07] border-white/[0.08] text-white/75 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-sm">{d.icon}</span>
+                      <span className="truncate">{language === 'ar' ? d.labelAr : d.labelEn}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
+
+          {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR */}
+          <div className="pt-2">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#090C12]/90 border border-white/[0.1] text-xs">
+              <div className="flex flex-wrap items-center gap-2 text-white/90 font-medium">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+                </span>
+                <span className="text-gold-300 font-black">{language === 'ar' ? 'ملخص المسار المختار:' : 'Selected Plan:'}</span>
+                <span className="text-white font-bold">{currentDistrictObj.nameAr}</span>
+                <span className="text-white/30">•</span>
+                <span className="text-teal-300 font-bold">{currentCompanionObj.labelAr}</span>
+                <span className="text-white/30">•</span>
+                <span className="text-amber-300 font-bold">{currentBudgetObj.labelAr}</span>
+                <span className="text-white/30">•</span>
+                <span className="text-sky-300 font-bold">{currentDurationObj.labelAr}</span>
+              </div>
+              <div className="flex items-center gap-1.5 text-[11px] text-emerald-300 bg-emerald-500/10 border border-emerald-500/30 px-3 py-1 rounded-full font-bold">
+                <Check className="w-3.5 h-3.5 text-emerald-400" />
+                <span>{language === 'ar' ? 'مسار جغرافي متصل بدون زحمة' : 'Zero-traffic optimized route'}</span>
+              </div>
+            </div>
+          </div>
+
+          {/* PRIMARY SHOW-STOPPING CTA LAUNCH BUTTON */}
+          <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-2 text-xs text-white/60 font-medium px-1">
               <Zap className="w-4 h-4 text-gold-400" />
-              <span>محرك ذكي يُحلل 50+ موقعاً ومساراً في ثوانٍ</span>
+              <span>{language === 'ar' ? 'محرك ذكي يُحلل 50+ موقعاً ومساراً في ثوانٍ مع خريطة تفاعلية' : 'AI engine analyzes 50+ spots with interactive map'}</span>
             </div>
 
             <div className="relative group w-full sm:w-auto">
               <MagneticButton distance={0.25} strength={1}>
                 {/* Cinematic Ambient Halo Behind Button */}
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-70 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
 
                 <motion.button
                   type="button"
@@ -1097,18 +902,18 @@ export const HeroSection: React.FC = () => {
                   disabled={isGeneratingPlan}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="relative w-full sm:w-auto px-7 sm:px-11 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_55px_rgba(229,169,98,0.8)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.5)] hover:shadow-[0_0_60px_rgba(229,169,98,0.85)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
                 >
                   {/* Conic Glow Shimmer Layer */}
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
 
                   {/* Top specular highlight */}
-                  <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+                  <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/60 to-transparent pointer-events-none" />
 
                   {isGeneratingPlan ? (
                     <>
                       <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
-                      <span>جاري هندسة خطتك في جدة...</span>
+                      <span>{language === 'ar' ? 'جاري هندسة خطتك في جدة...' : 'Generating your plan...'}</span>
                     </>
                   ) : (
                     <>
@@ -1121,6 +926,42 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 4. DYNAMIC DESTINATION SHOWCASE (3D PERSPECTIVE CARDS)   */}
+      {/* ======================================================== */}
+      <div className="relative z-10 w-full max-w-5xl mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2">
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span className="text-gold-400">✦</span>
+              <span>{language === 'ar' ? 'مسارات أيقونية جاهزة للتجربة الفورية' : 'Iconic Ready-to-Experience Itineraries'}</span>
+            </h2>
+            <p className="text-xs text-white/60 font-normal">
+              {language === 'ar' ? 'انقر على أي وجهة لضبط المحرك واستكشاف مسارها بالكامل' : 'Click any card to load its tailored itinerary directly'}
+            </p>
+          </div>
+          <span className="text-xs text-gold-400/90 font-bold hidden sm:inline">
+            {language === 'ar' ? '3 مسارات مختارة بدقة ⚡' : '3 Curated Experiences ⚡'}
+          </span>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          {DESTINATIONS.map((dest, idx) => (
+            <DestinationTiltCard
+              key={dest.id}
+              dest={dest}
+              idx={idx}
+              isSelected={activeIdx === idx}
+              onSelect={() => handleSelectDestination(idx)}
+              onLaunch={() => {
+                handleSelectDestination(idx);
+                setTimeout(handleBuildPlan, 50);
+              }}
+            />
+          ))}
         </div>
       </div>
 

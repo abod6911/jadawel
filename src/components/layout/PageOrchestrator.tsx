@@ -30,7 +30,7 @@ export const PageOrchestrator: React.FC = () => {
         <Navbar />
 
         {/* Main Application Content Container */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-2 sm:py-6 mb-20 md:mb-10">
+        <main className="flex-1 w-full mx-auto py-2 sm:py-4 mb-20 md:mb-10">
           <AnimatePresence mode="wait">
             {/* TAB 1: Home Screen */}
             {activeNavTab === 'home' && (
@@ -40,22 +40,27 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
-                className="space-y-10 sm:space-y-14"
+                className="space-y-12 sm:space-y-16"
               >
-                {/* 1. Rich Full-Bleed Atmospheric Hero with 5-Pillar Smart Dock */}
-                <HeroSection />
+                {/* 1. Grand Widescreen Atmospheric Hero */}
+                <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
+                  <HeroSection />
+                </div>
 
-                {/* 2. Live Social Proof Marquee Bar */}
-                <SocialProofBar />
+                {/* 2. Main Content Sections */}
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
+                  {/* Live Social Proof Marquee Bar */}
+                  <SocialProofBar />
 
-                {/* 3. 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
-                <JeddahRouteStudio />
+                  {/* 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
+                  <JeddahRouteStudio />
 
-                {/* 4. Asymmetrical 3D Bento Mood Grid */}
-                <BentoMoodGrid />
+                  {/* Asymmetrical 3D Bento Mood Grid */}
+                  <BentoMoodGrid />
 
-                {/* 5. Curated Ready Plans & Exclusive Partner Deals */}
-                <CuratedReadyPlans />
+                  {/* Curated Ready Plans & Exclusive Partner Deals */}
+                  <CuratedReadyPlans />
+                </div>
               </motion.div>
             )}
 
@@ -67,6 +72,7 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
+                className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanGeneratorWizard />
               </motion.div>
@@ -80,6 +86,7 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
+                className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanResultsView />
               </motion.div>
@@ -93,6 +100,7 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
+                className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <ExploreDirectory />
               </motion.div>
@@ -106,6 +114,7 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
+                className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <CuratedReadyPlans />
               </motion.div>
