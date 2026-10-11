@@ -209,6 +209,15 @@ export const HeroSection: React.FC = () => {
   // Ambient Background Video Ref & Search Bar Ref
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const [isIntroStage, setIsIntroStage] = useState(true);
+
+  // Cinematic Entrance: Showcase pure Jeddah video scenery first, then gracefully reveal the luxury text
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsIntroStage(false);
+    }, 2500);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -316,7 +325,10 @@ export const HeroSection: React.FC = () => {
   const currentVibeObj = VIBE_OPTIONS.find((v) => v.id === vibe) || VIBE_OPTIONS[0];
 
   return (
-    <section className="relative w-full rounded-[2.5rem] overflow-hidden px-3 sm:px-8 py-8 sm:py-16 select-none border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.85)] bg-[#0B0F15]">
+    <section
+      onClick={() => isIntroStage && setIsIntroStage(false)}
+      className="relative w-full rounded-[2.5rem] overflow-hidden px-3 sm:px-8 py-8 sm:py-16 select-none border border-white/[0.08] shadow-[0_24px_64px_rgba(0,0,0,0.85)] bg-[#0B0F15]"
+    >
       
       {/* ======================================================== */}
       {/* 1. ATMOSPHERIC CANVAS: RED SEA TWILIGHT & VIDEO OVERLAY  */}
@@ -337,9 +349,11 @@ export const HeroSection: React.FC = () => {
           <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
         </video>
 
-        {/* Deep Obsidian & Luminous Golden Amber Ambient Glows (Smooth 60fps GPU Crossfade) */}
+        {/* Deep Obsidian & Luminous Golden Amber Ambient Glows (Smooth crossfade from clear video to high-contrast canvas) */}
         <div
-          className="absolute inset-0 bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90 pointer-events-none"
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none ${
+            isIntroStage ? 'opacity-20' : 'opacity-85'
+          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90`}
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.18)_0%,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
@@ -367,9 +381,12 @@ export const HeroSection: React.FC = () => {
       {/* ======================================================== */}
       <motion.div
         key="hero-interactive-content"
-        initial={{ opacity: 0, y: 12 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 28 }}
+        animate={{
+          opacity: isIntroStage ? 0 : 1,
+          y: isIntroStage ? 28 : 0,
+        }}
+        transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full flex flex-col items-center"
       >
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
