@@ -497,39 +497,39 @@ export const HeroSection: React.FC = () => {
           muted
           playsInline
           preload="auto"
-          className="w-full h-full object-cover brightness-[0.95]"
+          className="w-full h-full object-cover brightness-[0.88] contrast-[1.14] saturate-[1.05]"
         >
           <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
         </video>
 
-        {/* Deep Midnight Sapphire & Sunset Gold Ambient Glows */}
+        {/* Obsidian Noir & Champagne Gold Ambient Glows */}
         <div
           className={`absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none ${
-            isIntroStage ? 'opacity-15' : 'opacity-60'
-          } bg-gradient-to-t from-[#070B14] via-[#070B14]/55 to-transparent`}
+            isIntroStage ? 'opacity-20' : 'opacity-70'
+          } bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/60 to-[#0B0D12]/20`}
         />
         {/* Dynamic Atmosphere Radial Gradient */}
         <div
           className={`absolute inset-0 pointer-events-none transition-all duration-1000 ${
             atmosphere.phase === 'golden_hour'
-              ? 'bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.25)_0%,rgba(14,165,233,0.15)_45%,transparent_70%)]'
+              ? 'bg-[radial-gradient(ellipse_at_top,rgba(229,195,120,0.22)_0%,rgba(18,21,28,0.4)_45%,transparent_75%)]'
               : atmosphere.phase === 'daytime'
-                ? 'bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.25)_0%,rgba(14,165,233,0.15)_40%,transparent_70%)]'
-                : 'bg-[radial-gradient(ellipse_at_top,rgba(14,165,233,0.2)_0%,rgba(245,158,11,0.08)_35%,transparent_70%)]'
+                ? 'bg-[radial-gradient(ellipse_at_top,rgba(20,184,166,0.2)_0%,rgba(18,21,28,0.4)_40%,transparent_75%)]'
+                : 'bg-[radial-gradient(ellipse_at_top,rgba(229,195,120,0.16)_0%,rgba(18,21,28,0.5)_35%,transparent_75%)]'
           }`}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.3)_0%,transparent_70%)] pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(229,195,120,0.08)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Cinematic Lens Vignette & 35mm Film Grain */}
         <div className="cinematic-vignette absolute inset-0 z-0 pointer-events-none" />
         <div className="cinematic-film-grain absolute inset-0 z-0 pointer-events-none" />
 
-        {/* Cinematic Floating Golden Twilight Embers */}
+        {/* Cinematic Floating Champagne Gold Twilight Embers */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden">
-          <div className="absolute bottom-10 left-[15%] w-2 h-2 rounded-full bg-gold-400 blur-[1px] animate-ember opacity-40" />
-          <div className="absolute bottom-24 right-[20%] w-1.5 h-1.5 rounded-full bg-amber-300 blur-[1px] animate-ember opacity-60 [animation-delay:1.5s]" />
-          <div className="absolute bottom-16 left-[45%] w-2.5 h-2.5 rounded-full bg-gold-500 blur-[1px] animate-ember opacity-30 [animation-delay:3s]" />
-          <div className="absolute bottom-32 right-[40%] w-1.5 h-1.5 rounded-full bg-amber-400 blur-[1px] animate-ember opacity-50 [animation-delay:2.2s]" />
+          <div className="absolute bottom-10 left-[15%] w-2 h-2 rounded-full bg-[#E5C378] blur-[1px] animate-ember opacity-40" />
+          <div className="absolute bottom-24 right-[20%] w-1.5 h-1.5 rounded-full bg-[#F5E2B3] blur-[1px] animate-ember opacity-60 [animation-delay:1.5s]" />
+          <div className="absolute bottom-16 left-[45%] w-2.5 h-2.5 rounded-full bg-[#C8A452] blur-[1px] animate-ember opacity-30 [animation-delay:3s]" />
+          <div className="absolute bottom-32 right-[40%] w-1.5 h-1.5 rounded-full bg-[#E5C378] blur-[1px] animate-ember opacity-50 [animation-delay:2.2s]" />
         </div>
 
         {/* Subtle Ambient SVG Floating Light Ray particles */}
@@ -537,8 +537,8 @@ export const HeroSection: React.FC = () => {
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
             <defs>
               <radialGradient id="particleGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stopColor="#F59E0B" stopOpacity="0.9" />
-                <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.9" />
+                <stop offset="0%" stopColor="#E5C378" stopOpacity="0.9" />
+                <stop offset="100%" stopColor="#E5C378" stopOpacity="0.9" />
               </radialGradient>
             </defs>
             <circle cx="20%" cy="30%" r="2" fill="url(#particleGlow)" className="animate-pulse" />
@@ -569,12 +569,12 @@ export const HeroSection: React.FC = () => {
         {/* Atmosphere & Video Controls Floating Pill */}
         <div className="w-full max-w-4xl mx-auto flex flex-wrap items-center justify-between gap-3 px-2 mb-2 sm:mb-4">
           {/* Luxury Micro-Badge with Pulse Star */}
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/40 text-xs font-bold text-gold-300 shadow-[0_0_25px_rgba(229,169,98,0.28)]">
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-[#12151C]/80 border border-[#E5C378]/35 text-xs font-bold text-[#F5E2B3] shadow-[0_0_25px_rgba(229,195,120,0.25)]">
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5C378]" />
             </span>
-            <Compass className="w-3.5 h-3.5 text-gold-400 animate-spin [animation-duration:22s]" />
+            <Compass className="w-3.5 h-3.5 text-[#E5C378] animate-spin [animation-duration:22s]" />
             <span>
               {language === 'ar'
                 ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
@@ -589,14 +589,14 @@ export const HeroSection: React.FC = () => {
               onClick={handleToggleSound}
               className={`px-3 py-1.5 rounded-full text-xs font-bold border flex items-center gap-1.5 transition-all cursor-pointer backdrop-blur-md ${
                 !isVideoMuted
-                  ? 'bg-gold-500/25 border-gold-500/50 text-gold-300 shadow-[0_0_15px_rgba(229,169,98,0.35)]'
+                  ? 'bg-[#E5C378]/25 border-[#E5C378]/50 text-[#F5E2B3] shadow-[0_0_15px_rgba(229,195,120,0.35)]'
                   : 'bg-black/50 border-white/15 text-white/60 hover:text-white'
               }`}
               title={language === 'ar' ? (isVideoMuted ? 'تشغيل صوت أمواج البحر' : 'كتم الصوت') : (isVideoMuted ? 'Play Waves Sound' : 'Mute Sound')}
             >
               {!isVideoMuted ? (
                 <>
-                  <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
+                  <Volume2 className="w-3.5 h-3.5 text-[#E5C378] animate-pulse" />
                   <span className="text-[11px] font-bold">صوت البحر 🌊</span>
                 </>
               ) : (
@@ -623,15 +623,15 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Master Headline with Luxury Arabic Typography */}
-        <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-3 sm:gap-5">
+        {/* Master Headline with Clean Modern Arabic Typography & Generous Spacing */}
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-4 sm:gap-6 leading-[1.3] select-none">
           {language === 'ar' ? (
             <>
-              <span className="block text-white tracking-wide">
+              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
               </span>
-              <span className="block text-white">
-                <span className="text-shimmer-gold font-bold">
+              <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                <span className="text-shimmer-champagne font-black">
                   جداول
                 </span>{' '}
                 ترتب طلعتك من وإلى
@@ -639,11 +639,11 @@ export const HeroSection: React.FC = () => {
             </>
           ) : (
             <>
-              <span className="block text-white">
+              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 Bride of the Red Sea in Your Hands..
               </span>
-              <span className="block text-white">
-                <span className="text-shimmer-gold font-bold">
+              <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                <span className="text-shimmer-champagne font-black">
                   Jadawel
                 </span>{' '}
                 curates your outing from start to finish
@@ -652,15 +652,15 @@ export const HeroSection: React.FC = () => {
           )}
         </h1>
 
-        {/* Generous Subheading */}
-        <p className="text-xs sm:text-sm md:text-base text-white/80 max-w-2xl mx-auto font-normal leading-relaxed">
+        {/* Generous Subheading in Refined Light Platinum Font */}
+        <p className="text-sm sm:text-base md:text-lg text-[#E2E8F0] max-w-2xl mx-auto font-normal leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] pt-1">
           {language === 'ar'
-            ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية — اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
-            : 'From Obhur beach clubs to historic Al-Balad alleys — choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
+            ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية – اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
+            : 'From Obhur beach clubs to historic Al-Balad alleys – choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
         </p>
 
-        {/* Quick Mood Chips (Linear / Apple Tier - Sunset Glow & Oceanic Navy Glass) */}
-        <div className="w-full flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-2">
+        {/* Quick Mood Chips (Obsidian Noir & Warm Glowing Amber-Gold Capsule) */}
+        <div className="w-full flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-3">
           {QUICK_MOODS.map((mood) => {
             const isActive = activeMoodId === mood.id;
             return (
@@ -670,8 +670,8 @@ export const HeroSection: React.FC = () => {
                 onClick={() => handleApplyMood(mood)}
                 className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer flex items-center justify-center whitespace-nowrap touch-manipulation relative group ${
                   isActive
-                    ? 'bg-gradient-to-r from-orange-500 via-amber-500 to-rose-500 text-stone-950 font-black shadow-[0_0_30px_rgba(249,115,22,0.65)] border border-orange-300 scale-[1.04]'
-                    : 'bg-[#0C162D]/85 hover:bg-[#122246] text-white/90 hover:text-white border border-cyan-500/25 backdrop-blur-xl shadow-lg'
+                    ? 'bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black shadow-[0_0_28px_rgba(229,195,120,0.55)] border border-[#FFF1CC] scale-[1.04]'
+                    : 'bg-[#12151C]/75 hover:bg-[#1A1F2C]/90 text-slate-200 hover:text-white border border-white/[0.08] hover:border-[#E5C378]/30 backdrop-blur-xl shadow-lg'
                 }`}
               >
                 <span>{language === 'ar' ? mood.labelAr : mood.labelEn}</span>
@@ -689,14 +689,14 @@ export const HeroSection: React.FC = () => {
         className="relative z-30 w-full max-w-5xl mx-auto mb-12 sm:mb-16"
       >
         {/* Ambient Halo Behind Cockpit */}
-        <div className="absolute -inset-3 bg-gradient-to-r from-cyan-500/20 via-amber-500/15 to-blue-600/20 rounded-[2.8rem] blur-3xl -z-10 pointer-events-none" />
+        <div className="absolute -inset-3 bg-gradient-to-r from-[#E5C378]/15 via-[#DF9F3D]/10 to-[#C8A452]/15 rounded-[2.8rem] blur-3xl -z-10 pointer-events-none" />
 
         {/* Dynamic Live Prompter Bar with TextRotate */}
         <div className="flex items-center justify-between px-4 sm:px-6 mb-3 text-xs text-white/80">
           <div className="flex items-center gap-2">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-400" />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E5C378]" />
             </span>
             <span className="text-white/70 font-bold">{language === 'ar' ? 'جاهز لاستكشاف:' : 'Ready to explore:'}</span>
             <TextRotate
@@ -717,7 +717,7 @@ export const HeroSection: React.FC = () => {
                       'Scenic Corniche Walks 🌴',
                     ]
               }
-              className="text-amber-300 font-bold"
+              className="text-[#F5E2B3] font-bold"
             />
           </div>
           <span className="text-[11px] text-white/50 hidden sm:inline font-medium">
@@ -725,18 +725,18 @@ export const HeroSection: React.FC = () => {
           </span>
         </div>
 
-        {/* Main Cockpit Shell with Laser Border Beam (Translucent Deep Sapphire Glass) */}
-        <div className="glass-specular relative p-4 sm:p-7 rounded-[2.5rem] bg-[#0A1224]/90 backdrop-blur-3xl border border-cyan-500/30 shadow-[0_28px_90px_rgba(2,10,28,0.95)] overflow-hidden space-y-6">
-          <BorderBeam size={340} duration={12} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+        {/* Main Cockpit Shell with Laser Border Beam (Ultra-Premium Smoky Obsidian Glass) */}
+        <div className="glass-specular relative p-5 sm:p-8 rounded-[2.5rem] bg-[#0E1118]/75 backdrop-blur-3xl border border-[#E5C378]/35 shadow-[0_28px_90px_rgba(0,0,0,0.92)] overflow-hidden space-y-6">
+          <BorderBeam size={340} duration={14} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F3DA9C" />
 
           {/* CONTROL RAIL 1: DISTRICT / LOCATION */}
-          <div className="space-y-2">
+          <div className="space-y-2.5">
             <div className="flex items-center justify-between text-xs font-bold text-white/70 px-1">
-              <span className="flex items-center gap-1.5 text-amber-400">
-                <MapPin className="w-4 h-4 text-cyan-400" />
+              <span className="flex items-center gap-1.5 text-[#E5C378]">
+                <MapPin className="w-4 h-4 text-[#E5C378]" />
                 <span>{language === 'ar' ? '1. منطقة الانطلاق في جدة:' : '1. Starting Location:'}</span>
               </span>
-              <span className="text-white/40 text-[11px]">{currentDistrictObj.subAr}</span>
+              <span className="text-slate-400 text-[11px]">{currentDistrictObj.subAr}</span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
               {DISTRICT_OPTIONS.map((d) => {
@@ -751,8 +751,8 @@ export const HeroSection: React.FC = () => {
                     }}
                     className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-1 border text-center ${
                       isSelected
-                        ? 'bg-gradient-to-b from-amber-500/30 to-amber-600/15 border-amber-400 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.45)] scale-[1.02]'
-                        : 'bg-[#0B152B]/70 hover:bg-[#112042] border-cyan-500/20 text-white/80 hover:text-white'
+                        ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
+                        : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
                     }`}
                   >
                     <span className="text-base">{d.icon}</span>
@@ -764,11 +764,11 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* CONTROL RAILS 2, 3, 4: COMPANIONS, BUDGET, DURATION IN A 3-COLUMN RESPONSIVE GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1 border-t border-cyan-500/15">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1 border-t border-white/[0.08]">
             {/* COMPANIONS */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-400 px-1">
-                <Users className="w-4 h-4 text-cyan-300" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
+                <Users className="w-4 h-4 text-[#E5C378]" />
                 <span>{language === 'ar' ? '2. الرفقة:' : '2. Companions:'}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -785,11 +785,11 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
                         isSelected
-                          ? 'bg-cyan-500/25 border-cyan-400 text-cyan-200 shadow-[0_0_18px_rgba(6,182,212,0.45)] scale-[1.02]'
-                          : 'bg-[#0B152B]/70 hover:bg-[#112042] border-cyan-500/20 text-white/80 hover:text-white'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
+                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
                       }`}
                     >
-                      <Icon className="w-4 h-4 shrink-0 text-cyan-300" />
+                      <Icon className="w-4 h-4 shrink-0 text-[#E5C378]" />
                       <span>{language === 'ar' ? c.labelAr : c.labelEn}</span>
                     </button>
                   );
@@ -798,9 +798,9 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* BUDGET */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-amber-400 px-1">
-                <Coins className="w-4 h-4 text-amber-300" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
+                <Coins className="w-4 h-4 text-[#E5C378]" />
                 <span>{language === 'ar' ? '3. الميزانية للشخص:' : '3. Budget:'}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -816,8 +816,8 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
                         isSelected
-                          ? 'bg-amber-500/25 border-amber-400 text-amber-200 shadow-[0_0_18px_rgba(245,158,11,0.45)] scale-[1.02]'
-                          : 'bg-[#0B152B]/70 hover:bg-[#112042] border-cyan-500/20 text-white/80 hover:text-white'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
+                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
                       }`}
                     >
                       <span className="text-sm">{b.icon}</span>
@@ -829,9 +829,9 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* DURATION */}
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5 text-xs font-bold text-sky-400 px-1">
-                <Clock className="w-4 h-4 text-sky-300" />
+            <div className="space-y-2.5">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
+                <Clock className="w-4 h-4 text-[#E5C378]" />
                 <span>{language === 'ar' ? '4. المدة المتاحة:' : '4. Duration:'}</span>
               </div>
               <div className="grid grid-cols-2 gap-2">
@@ -847,8 +847,8 @@ export const HeroSection: React.FC = () => {
                       }}
                       className={`px-2.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border ${
                         isSelected
-                          ? 'bg-sky-500/25 border-sky-400 text-sky-200 shadow-[0_0_18px_rgba(14,165,233,0.45)] scale-[1.02]'
-                          : 'bg-[#0B152B]/70 hover:bg-[#112042] border-cyan-500/20 text-white/80 hover:text-white'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/10 border-[#E5C378] text-[#F5E2B3] shadow-[0_0_20px_rgba(229,195,120,0.4)] scale-[1.02]'
+                          : 'bg-[#131722]/60 hover:bg-[#1A1F2C]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-slate-300 hover:text-white backdrop-blur-xl'
                       }`}
                     >
                       <span className="text-sm">{d.icon}</span>
@@ -860,25 +860,25 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR (Oceanic Navy & Glowing Turquoise Accent) */}
+          {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR (Elegant Obsidian Bar with Subtle Cyan/Teal Indicator) */}
           <div className="pt-2">
-            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-[#060D1E]/95 border border-cyan-500/30 text-xs shadow-xl">
+            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#0B0D12]/95 border border-[#E5C378]/30 text-xs shadow-xl">
               <div className="flex flex-wrap items-center gap-2 text-white/90 font-medium">
                 <span className="relative flex h-2 w-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-400" />
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5C378]" />
                 </span>
-                <span className="text-amber-300 font-black">{language === 'ar' ? 'ملخص المسار المختار:' : 'Selected Plan:'}</span>
+                <span className="text-[#E5C378] font-black">{language === 'ar' ? 'ملخص المسار المختار:' : 'Selected Plan:'}</span>
                 <span className="text-white font-bold">{currentDistrictObj.nameAr}</span>
                 <span className="text-white/30">•</span>
-                <span className="text-cyan-300 font-bold">{currentCompanionObj.labelAr}</span>
+                <span className="text-[#F5E2B3] font-bold">{currentCompanionObj.labelAr}</span>
                 <span className="text-white/30">•</span>
-                <span className="text-amber-300 font-bold">{currentBudgetObj.labelAr}</span>
+                <span className="text-[#F5E2B3] font-bold">{currentBudgetObj.labelAr}</span>
                 <span className="text-white/30">•</span>
-                <span className="text-sky-300 font-bold">{currentDurationObj.labelAr}</span>
+                <span className="text-[#F5E2B3] font-bold">{currentDurationObj.labelAr}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-cyan-200 bg-cyan-500/20 border border-cyan-400/50 px-3 py-1 rounded-full font-bold shadow-[0_0_15px_rgba(6,182,212,0.35)]">
-                <Check className="w-3.5 h-3.5 text-cyan-300" />
+              <div className="flex items-center gap-1.5 text-[11px] text-teal-200 bg-teal-500/15 border border-teal-400/50 px-3 py-1 rounded-full font-bold shadow-[0_0_15px_rgba(20,184,166,0.3)]">
+                <Check className="w-3.5 h-3.5 text-teal-300" />
                 <span>{language === 'ar' ? 'مسار جغرافي متصل بدون زحمة' : 'Zero-traffic optimized route'}</span>
               </div>
             </div>
@@ -887,14 +887,14 @@ export const HeroSection: React.FC = () => {
           {/* PRIMARY SHOW-STOPPING CTA LAUNCH BUTTON */}
           <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2 text-xs text-white/60 font-medium px-1">
-              <Zap className="w-4 h-4 text-gold-400" />
+              <Zap className="w-4 h-4 text-[#E5C378]" />
               <span>{language === 'ar' ? 'محرك ذكي يُحلل 50+ موقعاً ومساراً في ثوانٍ مع خريطة تفاعلية' : 'AI engine analyzes 50+ spots with interactive map'}</span>
             </div>
 
             <div className="relative group w-full sm:w-auto">
               <MagneticButton distance={0.25} strength={1}>
                 {/* Cinematic Ambient Halo Behind Button */}
-                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-70 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
+                <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] opacity-70 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
 
                 <motion.button
                   type="button"
@@ -902,7 +902,7 @@ export const HeroSection: React.FC = () => {
                   disabled={isGeneratingPlan}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.5)] hover:shadow-[0_0_60px_rgba(229,169,98,0.85)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,195,120,0.5)] hover:shadow-[0_0_60px_rgba(229,195,120,0.85)] border border-[#FFF1CC]/60 cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
                 >
                   {/* Conic Glow Shimmer Layer */}
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
@@ -912,12 +912,12 @@ export const HeroSection: React.FC = () => {
 
                   {isGeneratingPlan ? (
                     <>
-                      <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
+                      <div className="w-5 h-5 border-2 border-[#0B0D12] border-t-transparent rounded-full animate-spin" />
                       <span>{language === 'ar' ? 'جاري هندسة خطتك في جدة...' : 'Generating your plan...'}</span>
                     </>
                   ) : (
                     <>
-                      <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1.5 transition-transform" />
+                      <ArrowLeft className="w-5 h-5 text-[#0B0D12] group-hover:-translate-x-1.5 transition-transform" />
                       <span>{language === 'ar' ? 'ابنِ خطتي لجدة بنقرة واحدة ✨' : 'Build My Plan in 1-Click ✨'}</span>
                     </>
                   )}

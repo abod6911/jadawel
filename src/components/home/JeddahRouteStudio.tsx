@@ -211,27 +211,27 @@ export const JeddahRouteStudio: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full rounded-[2.5rem] bg-[#0A1224]/85 border border-cyan-500/25 shadow-[0_24px_70px_rgba(2,10,28,0.9)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
+    <section className="relative w-full rounded-[2.5rem] bg-[#0E1118]/85 border border-[#E5C378]/30 shadow-[0_24px_70px_rgba(0,0,0,0.9)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
       {/* Animated Traveling Border Laser Beam */}
-      <BorderBeam size={360} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+      <BorderBeam size={360} duration={14} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
 
       {/* Dynamic Background Atmospheric Radial Glow */}
       <div
         className={`absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br ${activeRoute.bgGlow} blur-3xl pointer-events-none transition-all duration-700`}
       />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-tr from-cyan-500/15 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-tr from-[#E5C378]/10 via-transparent to-transparent blur-3xl pointer-events-none" />
 
       {/* 1. SECTION HEADER WITH LUXURY EYEBROW */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2 text-start">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-black shadow-[0_0_15px_rgba(245,158,11,0.25)]">
-            <Compass className="w-3.5 h-3.5 text-amber-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/40 text-[#E5C378] text-xs font-black shadow-[0_0_15px_rgba(229,195,120,0.25)]">
+            <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
             <span>{language === 'ar' ? 'استوديو مسارات جدة الذكية 3D' : 'Jeddah 3D Route Studio'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
             {language === 'ar' ? 'خرائط ومسارات طلعتك المعتمدة' : 'Curated Geographic Outing Tracks'}
           </h2>
-          <p className="text-xs sm:text-sm text-pearl-muted font-medium max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-2xl leading-relaxed">
             {language === 'ar'
               ? 'تصفح مسارات جدة الجغرافية المحسوبة بالمتر والدقيقة، مع الربط المباشر بخرائط جوجل متعددة المحطات ومحاكاة الميزانية.'
               : 'Explore verified geographic itineraries optimized for traffic flow with multi-stop Google Maps integration.'}
@@ -246,11 +246,11 @@ export const JeddahRouteStudio: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundEngine.playClick()}
-              className="px-4 py-2.5 rounded-full bg-[#0E1B38] hover:bg-[#14264F] border border-cyan-500/30 hover:border-amber-400/60 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              className="px-4 py-2.5 rounded-full bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/35 hover:border-[#E5C378]/70 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
             >
-              <Navigation className="w-4 h-4 text-cyan-400" />
+              <Navigation className="w-4 h-4 text-[#E5C378]" />
               <span>{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
-              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-[#E5C378]" />
             </a>
           </MagneticButton>
         </div>
@@ -271,14 +271,14 @@ export const JeddahRouteStudio: React.FC = () => {
               }}
               className={`relative px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-2.5 shrink-0 cursor-pointer select-none border ${
                 isActive
-                  ? 'border-amber-400/60 text-white shadow-[0_8px_24px_rgba(245,158,11,0.3)]'
-                  : 'border-cyan-500/15 bg-[#0B152B]/70 text-white/75 hover:text-white hover:bg-[#112042]'
+                  ? 'border-[#E5C378] text-white shadow-[0_8px_24px_rgba(229,195,120,0.3)]'
+                  : 'border-white/[0.08] bg-[#131722]/70 text-slate-300 hover:text-white hover:bg-[#1A1F2C]'
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeRouteStudioIndicator"
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-500/30 via-gold-400/25 to-cyan-500/20 -z-10"
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-[#DF9F3D]/25 via-[#E5C378]/20 to-[#C8A452]/15 -z-10"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
@@ -287,13 +287,13 @@ export const JeddahRouteStudio: React.FC = () => {
                 <span className="leading-snug">
                   {language === 'ar' ? route.titleAr : route.titleEn}
                 </span>
-                <span className="text-[10px] text-pearl-muted font-medium">
+                <span className="text-[10px] text-slate-400 font-medium">
                   {route.placeSlugsOrIds.length} {language === 'ar' ? 'محطات' : 'stops'} • {route.totalDurationAr}
                 </span>
               </div>
               <span
                 className={`text-[10px] px-2 py-0.5 rounded-full border ${
-                  isActive ? 'bg-gold-500/20 border-gold-500/40 text-gold-300' : 'bg-white/5 border-white/10 text-white/50'
+                  isActive ? 'bg-[#E5C378]/20 border-[#E5C378]/40 text-[#F5E2B3]' : 'bg-white/5 border-white/10 text-white/50'
                 }`}
               >
                 {language === 'ar' ? route.badgeAr : route.badgeEn}
@@ -306,21 +306,21 @@ export const JeddahRouteStudio: React.FC = () => {
       {/* 3. DUAL-PANE ROUTE CANVAS & STATION DRAWER */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-cyan-500/20 shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
-          <BorderBeam size={220} duration={10} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-[#E5C378]/25 shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
+          <BorderBeam size={220} duration={10} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
           <RouteMap stops={stops} className="w-full h-full min-h-[460px] sm:min-h-[520px]" showPolyline={true} />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
-          <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
+          <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#0B0D12]/90 backdrop-blur-xl border border-[#E5C378]/30 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-black text-white">
                 {language === 'ar' ? activeRoute.titleAr : activeRoute.titleEn}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-[11px] font-bold text-pearl-muted">
-              <span className="flex items-center gap-1 text-gold-300">
-                <Clock className="w-3.5 h-3.5 text-gold-400" />
+            <div className="flex items-center gap-3 text-[11px] font-bold text-slate-300">
+              <span className="flex items-center gap-1 text-[#E5C378]">
+                <Clock className="w-3.5 h-3.5 text-[#E5C378]" />
                 {activeRoute.totalDurationAr}
               </span>
               <span>•</span>
@@ -333,11 +333,11 @@ export const JeddahRouteStudio: React.FC = () => {
         </div>
 
         {/* PANE 2: Stations Breakdown, Transit Details & 1-Click Load CTA (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-[#0E131C]/90 border border-white/[0.08] p-5 sm:p-6 space-y-5">
+        <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-[#12151C]/90 border border-[#E5C378]/20 p-5 sm:p-6 space-y-5">
           {/* Top Route Overview Card */}
           <div className="space-y-3 text-start">
             <div className="flex items-center justify-between">
-              <span className="px-2.5 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-300 text-[11px] font-black">
+              <span className="px-2.5 py-1 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/30 text-[#F5E2B3] text-[11px] font-black">
                 {language === 'ar' ? activeRoute.badgeAr : activeRoute.badgeEn}
               </span>
               <div className="flex items-center gap-1 text-[11px] text-teal-300 font-bold bg-teal-500/10 px-2.5 py-1 rounded-full border border-teal-500/20">
@@ -352,20 +352,20 @@ export const JeddahRouteStudio: React.FC = () => {
 
             {/* Quick Metrics Pills */}
             <div className="grid grid-cols-3 gap-2 pt-1">
-              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center">
-                <span className="text-[10px] text-pearl-muted block font-medium">
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center">
+                <span className="text-[10px] text-slate-400 block font-medium">
                   {language === 'ar' ? 'المحطات' : 'Stops'}
                 </span>
                 <span className="text-sm font-black text-white">{stops.length} محطات</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center">
-                <span className="text-[10px] text-pearl-muted block font-medium">
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center">
+                <span className="text-[10px] text-slate-400 block font-medium">
                   {language === 'ar' ? 'المدة التقديرية' : 'Duration'}
                 </span>
-                <span className="text-sm font-black text-gold-400">{activeRoute.totalDurationAr}</span>
+                <span className="text-sm font-black text-[#E5C378]">{activeRoute.totalDurationAr}</span>
               </div>
-              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center">
-                <span className="text-[10px] text-pearl-muted block font-medium">
+              <div className="p-2.5 rounded-xl bg-white/[0.03] border border-white/[0.08] text-center">
+                <span className="text-[10px] text-slate-400 block font-medium">
                   {language === 'ar' ? 'الميزانية للفرد' : 'Budget'}
                 </span>
                 <span className="text-sm font-black text-emerald-400">~{activeRoute.estimatedCostSAR} ر.س</span>
@@ -380,11 +380,11 @@ export const JeddahRouteStudio: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="group p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-gold-500/50 transition-all flex items-center justify-between gap-3 text-start shadow-sm"
+                  className="group p-3 rounded-2xl bg-white/[0.03] hover:bg-[#171B24] border border-white/[0.08] hover:border-[#E5C378]/40 transition-all flex items-center justify-between gap-3 text-start shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Number Badge */}
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-amber-500 text-stone-950 font-black text-xs flex items-center justify-center shrink-0 shadow-md">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#DF9F3D] to-[#E5C378] text-[#0B0D12] font-black text-xs flex items-center justify-center shrink-0 shadow-md">
                       {idx + 1}
                     </div>
 
@@ -397,10 +397,10 @@ export const JeddahRouteStudio: React.FC = () => {
 
                     {/* Details */}
                     <div className="min-w-0 space-y-0.5">
-                      <h4 className="text-xs sm:text-sm font-black text-white truncate group-hover:text-gold-300 transition-colors">
+                      <h4 className="text-xs sm:text-sm font-black text-white truncate group-hover:text-[#F5E2B3] transition-colors">
                         {language === 'ar' ? p.nameAr : p.nameEn}
                       </h4>
-                      <p className="text-[10px] text-pearl-muted font-medium truncate">
+                      <p className="text-[10px] text-slate-400 font-medium truncate">
                         {language === 'ar' ? p.districtNameAr : p.districtNameEn} • {p.durationMinutes} دقيقة
                       </p>
                     </div>
@@ -415,7 +415,7 @@ export const JeddahRouteStudio: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => soundEngine.playClick()}
-                    className="p-2 rounded-xl bg-white/[0.04] hover:bg-gold-500 hover:text-stone-950 text-gold-400 border border-white/10 shrink-0 transition-all cursor-pointer"
+                    className="p-2 rounded-xl bg-white/[0.04] hover:bg-[#E5C378] hover:text-[#0B0D12] text-[#E5C378] border border-white/10 shrink-0 transition-all cursor-pointer"
                     title="فتح هذه المحطة في خرائط جوجل"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -428,14 +428,14 @@ export const JeddahRouteStudio: React.FC = () => {
           {/* Primary Action Button */}
           <div className="pt-2">
             <div className="relative group w-full">
-              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-300" />
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] opacity-60 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-300" />
               <MagneticButton className="w-full" distance={0.25}>
                 <button
                   type="button"
                   onClick={handleApplyRoute}
-                  className="relative w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-stone-950 text-sm font-black shadow-[0_0_35px_rgba(245,158,11,0.5)] hover:shadow-[0_0_55px_rgba(245,158,11,0.85)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation active:scale-[0.98]"
+                  className="relative w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] text-sm font-black shadow-[0_0_35px_rgba(229,195,120,0.5)] hover:shadow-[0_0_55px_rgba(229,195,120,0.85)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation active:scale-[0.98]"
                 >
-                  <Sparkles className="w-4 h-4 text-stone-950" />
+                  <Sparkles className="w-4 h-4 text-[#0B0D12]" />
                   <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
                 </button>
               </MagneticButton>

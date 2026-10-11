@@ -101,45 +101,45 @@ export const SocialProofBar: React.FC = () => {
   const { language } = useLanguage();
 
   return (
-    <div className="relative w-full rounded-3xl bg-[#0A1224]/85 backdrop-blur-2xl border border-cyan-500/25 shadow-[0_16px_50px_rgba(2,10,28,0.85)] p-4 sm:p-6 space-y-4 overflow-hidden">
+    <div className="relative w-full rounded-3xl bg-[#0E1118]/80 backdrop-blur-2xl border border-[#E5C378]/30 shadow-[0_16px_50px_rgba(0,0,0,0.85)] p-4 sm:p-6 space-y-4 overflow-hidden">
       {/* Animated Traveling Border Laser Beam */}
-      <BorderBeam size={320} duration={14} borderWidth={1.2} colorFrom="#F59E0B" colorTo="#06B6D4" />
+      <BorderBeam size={320} duration={14} borderWidth={1.2} colorFrom="#E5C378" colorTo="#F5E2B3" />
 
       {/* Top Specular Rim Light */}
-      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent pointer-events-none" />
+      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-[#E5C378]/30 to-transparent pointer-events-none" />
 
       {/* 1. LIVE ACTIVE METRICS STRIP */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-2 text-xs">
         {/* Live Active Travelers */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E5C378]" />
           </span>
           <span className="font-black text-white flex items-center gap-1">
             <NumberTicker value={842} suffix="+" />
             <span>{language === 'ar' ? 'يخططون لطلعتهم الآن في جدة' : 'Planning Outings in Jeddah Right Now'}</span>
           </span>
-          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
+          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-bold border border-[#E5C378]/35 shadow-[0_0_10px_rgba(229,195,120,0.25)]">
             {language === 'ar' ? 'مباشر' : 'Live'}
           </span>
         </div>
 
         {/* Aggregate Credibility Badges */}
-        <div className="hidden sm:flex items-center gap-4 text-pearl-muted text-[11px] font-bold">
+        <div className="hidden sm:flex items-center gap-4 text-slate-300 text-[11px] font-bold">
           <span className="flex items-center gap-1.5 text-white/90">
-            <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
+            <TrendingUp className="w-3.5 h-3.5 text-[#E5C378]" />
             <NumberTicker value={50000} prefix="+" />
             <span>{language === 'ar' ? 'طلعة تم توليدها' : 'Outings Generated'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-white/90">
-            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
             <span>{language === 'ar' ? 'دقة الميزانية بالريال 🇸🇦' : '100% SAR Budget Accuracy'}</span>
           </span>
           <span>•</span>
-          <span className="flex items-center gap-1 text-amber-400">
-            <Star className="w-3 h-3 fill-amber-400" />
+          <span className="flex items-center gap-1 text-[#E5C378]">
+            <Star className="w-3 h-3 fill-[#E5C378]" />
             <span className="font-black">4.9/5</span>
             <span className="text-white/60 font-medium">(2,400+ تقييم)</span>
           </span>
@@ -161,10 +161,10 @@ export const SocialProofBar: React.FC = () => {
           {[...TESTIMONIALS, ...TESTIMONIALS].map((t, idx) => (
             <div
               key={`${t.id}-${idx}`}
-              className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#0B152B]/60 hover:bg-[#101F3E] border border-cyan-500/15 hover:border-amber-400/50 backdrop-blur-md shadow-lg transition-all duration-300 shrink-0 max-w-sm sm:max-w-md select-none group cursor-default"
+              className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#131722]/70 hover:bg-[#1A1F2C]/90 border border-white/[0.08] hover:border-[#E5C378]/40 backdrop-blur-md shadow-lg transition-all duration-300 shrink-0 max-w-sm sm:max-w-md select-none group cursor-default"
             >
               {/* Avatar Emoji */}
-              <div className="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
+              <div className="w-10 h-10 rounded-xl bg-[#E5C378]/10 border border-[#E5C378]/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
                 {t.avatar}
               </div>
 
@@ -175,16 +175,16 @@ export const SocialProofBar: React.FC = () => {
                     <span className="text-xs font-black text-white">
                       {language === 'ar' ? t.nameAr : t.nameEn}
                     </span>
-                    <span className="text-[10px] text-pearl-muted font-medium">
+                    <span className="text-[10px] text-slate-400 font-medium">
                       • {language === 'ar' ? t.locationAr : t.locationEn}
                     </span>
                   </div>
-                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-gold-500/15 text-gold-300 font-bold border border-gold-500/30 shrink-0">
+                  <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-bold border border-[#E5C378]/30 shrink-0">
                     {language === 'ar' ? t.tagAr : t.tagEn}
                   </span>
                 </div>
 
-                <p className="text-[11px] text-pearl-muted font-medium leading-relaxed line-clamp-2">
+                <p className="text-[11px] text-slate-300 font-medium leading-relaxed line-clamp-2">
                   "{language === 'ar' ? t.quoteAr : t.quoteEn}"
                 </p>
               </div>

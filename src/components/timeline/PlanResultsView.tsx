@@ -144,11 +144,11 @@ export const PlanResultsView: React.FC = () => {
       <div className="space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
-            <span className="text-[11px] sm:text-xs font-bold text-gold-400 uppercase flex items-center gap-2">
-              <Compass className="w-3.5 h-3.5 text-coral-400" />
+            <span className="text-[11px] sm:text-xs font-bold text-[#E5C378] uppercase flex items-center gap-2">
+              <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
               <span>{language === 'ar' ? '3 خطط ذكية جاهزة لطلعتكم' : '3 Generated Outing Plans'}</span>
             </span>
-            <h2 className="text-xl sm:text-3xl font-bold text-pearl mt-1">
+            <h2 className="text-xl sm:text-3xl font-bold text-white mt-1">
               {language === 'ar' ? currentItinerary.titleAr : currentItinerary.titleEn}
             </h2>
           </div>
@@ -161,9 +161,9 @@ export const PlanResultsView: React.FC = () => {
               setWizardStep(1);
               setActiveNavTab('quick-plan');
             }}
-            className="min-h-[44px] px-4 py-2 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-xs font-bold text-pearl-muted hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 touch-manipulation self-start sm:self-auto"
+            className="min-h-[44px] px-4 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-xs font-bold text-slate-300 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer shrink-0 touch-manipulation self-start sm:self-auto"
           >
-            <RotateCcw className="w-3.5 h-3.5 text-gold-400" />
+            <RotateCcw className="w-3.5 h-3.5 text-[#E5C378]" />
             <span>{language === 'ar' ? 'تعديل المعايير' : 'Edit Criteria'}</span>
           </button>
         </div>
@@ -184,22 +184,22 @@ export const PlanResultsView: React.FC = () => {
                 }}
                 className={`min-h-[44px] p-3.5 sm:p-5 rounded-2xl border text-start cursor-pointer transition-all duration-200 touch-manipulation active:scale-[0.98] ${
                   isActive
-                    ? `${tab.activeBorder} shadow-cinematic scale-[1.01]`
-                    : 'bg-abyss-950/80 border-white/10 hover:border-gold-400/40 text-pearl hover:bg-abyss-800'
+                    ? 'border-[#E5C378] ring-2 ring-[#E5C378]/40 bg-[#12151C] shadow-2xl scale-[1.01]'
+                    : 'bg-[#0E1118]/80 border-white/[0.08] hover:border-[#E5C378]/30 text-white hover:bg-[#131722]'
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1.5 sm:mb-2">
                   <div className="flex items-center gap-2">
-                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${tab.color}`} />
-                    <h3 className="text-xs sm:text-sm font-black text-pearl">
+                    <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-[#E5C378]' : tab.color}`} />
+                    <h3 className="text-xs sm:text-sm font-black text-white">
                       {language === 'ar' ? tab.title : tab.titleEn}
                     </h3>
                   </div>
-                  <span className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold border ${isActive ? 'bg-gold-500/20 text-gold-300 border-gold-400/40' : 'bg-white/5 text-pearl-muted border-white/10'}`}>
+                  <span className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold border ${isActive ? 'bg-[#E5C378]/20 text-[#F5E2B3] border-[#E5C378]/40' : 'bg-white/5 text-slate-400 border-white/10'}`}>
                     {language === 'ar' ? tab.badge : tab.badgeEn}
                   </span>
                 </div>
-                <div className="flex items-center justify-between text-[11px] sm:text-xs text-pearl-muted font-medium pt-0.5 sm:pt-1">
+                <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 font-medium pt-0.5 sm:pt-1">
                   <span>~{variantData?.financials?.totalPerPersonSAR ?? 0} ر.س / شخص</span>
                   <span>~{variantData?.totalTransitMinutes ?? 15} د مشاوير</span>
                 </div>
@@ -210,7 +210,7 @@ export const PlanResultsView: React.FC = () => {
       </div>
 
       {/* 2. Interactive Action Toolbar */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/25 shadow-cinematic flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0E1118]/90 backdrop-blur-xl border border-[#E5C378]/30 shadow-2xl flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
         {/* Left Action: Start Live Outing */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
@@ -219,9 +219,9 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               openLiveOuting();
             }}
-            className="flex-1 sm:flex-initial min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-black text-xs sm:text-sm shadow-glow-coral flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
+            className="flex-1 sm:flex-initial min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(229,195,120,0.45)] flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
           >
-            <Play className="w-4 h-4 fill-white" />
+            <Play className="w-4 h-4 fill-[#0B0D12]" />
             <span>{language === 'ar' ? 'بدء الطلعة (Live Mode)' : 'Start Live Outing'}</span>
           </button>
 
@@ -231,7 +231,7 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               setIsStoryPassOpen(true);
             }}
-            className="min-h-[48px] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-gold-500/40 text-gold-400 font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 shrink-0"
+            className="min-h-[48px] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-[#E5C378] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 shrink-0"
           >
             <Ticket className="w-4 h-4" />
             <span>{language === 'ar' ? 'بطاقة 9:16' : 'Pass 9:16'}</span>
@@ -246,10 +246,10 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               setIsSplitBillOpen(true);
             }}
-            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-pearl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
             title="حاسبة تقسيم الفاتورة"
           >
-            <Coins className="w-4 h-4 text-gold-400" />
+            <Coins className="w-4 h-4 text-[#E5C378]" />
             <span>{language === 'ar' ? 'حسبة القطة' : 'Split Bill'}</span>
           </button>
 

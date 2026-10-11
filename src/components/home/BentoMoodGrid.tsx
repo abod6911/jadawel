@@ -83,10 +83,10 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
         }`,
         transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-cyan-500/20 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_16px_50px_rgba(2,10,28,0.8)] select-none`}
+      className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-white/10 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none`}
     >
       {hasBorderBeam && (
-        <BorderBeam size={340} duration={12} borderWidth={1.5} colorFrom="#06B6D4" colorTo="#F59E0B" />
+        <BorderBeam size={340} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
       )}
 
       {/* Background Image with Cinematic Zoom */}
@@ -97,7 +97,7 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       />
 
       {/* Atmospheric Multi-layer Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/60 to-transparent transition-opacity group-hover:opacity-85" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/60 to-transparent transition-opacity group-hover:opacity-85" />
 
       {/* Top Specular Rim Light */}
       <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
@@ -119,7 +119,7 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
         <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white drop-shadow-md flex items-center gap-2">
           <span>{title}</span>
         </h3>
-        <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-xl">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-xl">
           {description}
         </p>
         <div className={`pt-1 flex items-center gap-2 text-xs font-bold ${accentColorClass}`}>
@@ -156,7 +156,7 @@ export const BentoMoodGrid: React.FC = () => {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-black shadow-[0_0_12px_rgba(229,169,98,0.2)]">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/35 text-[#E5C378] text-xs font-black shadow-[0_0_15px_rgba(229,195,120,0.25)]">
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'مود اليوم وش جوك؟' : 'What is your vibe today?'}</span>
           </div>
@@ -164,7 +164,7 @@ export const BentoMoodGrid: React.FC = () => {
             {language === 'ar' ? 'استكشف جدة حسب المزاج والطلعة' : 'Explore Jeddah by Mood & Vibe'}
           </h2>
         </div>
-        <p className="text-xs sm:text-sm text-pearl-muted font-medium max-w-md leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-md leading-relaxed">
           {language === 'ar'
             ? 'انقر على أي بطاقة لتوليد مسار ذكي مخصص فوراً متوافق مع جوك وميزانيتك'
             : 'Click any mood category to automatically tailor your bespoke Jeddah outing'}
@@ -203,10 +203,10 @@ export const BentoMoodGrid: React.FC = () => {
           minHeightClass="min-h-[300px] md:min-h-[360px]"
           imageSrc={getAssetUrl('/images/moods/mood-food.jpg')}
           onClick={() => handleMoodSelect('food')}
-          accentColorClass="text-gold-300"
-          borderColorHoverClass="hover:border-gold-400/60"
+          accentColorClass="text-[#E5C378]"
+          borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-gold-500/90 backdrop-blur-md text-abyss-950 text-xs font-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,169,98,0.35)] border border-gold-300/40">
+            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378] backdrop-blur-md text-[#0B0D12] text-xs font-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
               <Star className="w-3.5 h-3.5 fill-current" />
               <span>{language === 'ar' ? 'أعلى تقييماً 4.9 ★' : 'Top Rated 4.9 ★'}</span>
             </span>
@@ -226,10 +226,10 @@ export const BentoMoodGrid: React.FC = () => {
           minHeightClass="min-h-[260px] md:min-h-[300px]"
           imageSrc={getAssetUrl('/images/moods/mood-heritage.jpg')}
           onClick={() => handleMoodSelect('heritage_arts')}
-          accentColorClass="text-amber-300"
-          borderColorHoverClass="hover:border-amber-400/60"
+          accentColorClass="text-[#E5C378]"
+          borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-amber-500/80 backdrop-blur-md text-white text-xs font-black flex items-center gap-1.5 border border-amber-300/40 shadow-sm">
+            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378]/20 backdrop-blur-md text-[#F5E2B3] text-xs font-black flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
               <Landmark className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'تراث اليونسكو 🏛️' : 'UNESCO Heritage 🏛️'}</span>
             </span>

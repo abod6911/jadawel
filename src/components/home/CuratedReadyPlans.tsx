@@ -69,15 +69,15 @@ export const CuratedReadyPlans: React.FC = () => {
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
           <div className="space-y-1">
-            <span className="text-xs font-bold text-gold-400 uppercase flex items-center gap-1.5">
-              <Compass className="w-3.5 h-3.5 text-coral-400" />
+            <span className="text-xs font-bold text-[#E5C378] uppercase flex items-center gap-1.5">
+              <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
               <span>{language === 'ar' ? 'مسارات جاهزة ومجربة' : 'Curated Ready Tracks'}</span>
             </span>
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-pearl">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white">
               {language === 'ar' ? 'جداول عطلة نهاية الأسبوع الجاهزة' : 'Pre-Crafted Weekend Itineraries'}
             </h2>
           </div>
-          <p className="text-xs sm:text-sm text-pearl-muted font-medium max-w-md">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-md">
             {language === 'ar'
               ? 'خطط متكاملة معدة مسبقاً بعناية من خبراء جدة، جاهزة للبدء بنقرة واحدة.'
               : 'Complete expert-crafted itineraries ready to load and start in one click.'}
@@ -88,38 +88,38 @@ export const CuratedReadyPlans: React.FC = () => {
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="relative rounded-3xl bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/20 overflow-hidden shadow-cinematic flex flex-col justify-between group hover:border-gold-500/50 transition-all duration-300"
+              className="relative rounded-3xl bg-[#0E1118]/85 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 transition-all duration-300"
             >
               {idx === 0 && (
-                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#F43F5E" colorTo="#F59E0B" />
+                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
               )}
               <div>
-                <div className="relative aspect-[16/10] overflow-hidden bg-abyss-950">
+                <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0D12]">
                   <img
                     src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1224] via-black/30 to-transparent" />
-                  <span className="absolute top-3 start-3 px-3 py-1 rounded-xl bg-[#070B14]/85 backdrop-blur-md text-gold-400 text-xs font-black border border-gold-500/40 shadow-sm">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E1118] via-black/30 to-transparent" />
+                  <span className="absolute top-3 start-3 px-3 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-[#F5E2B3] text-xs font-black border border-[#E5C378]/40 shadow-sm">
                     {language === 'ar' ? plan.badgeAr : plan.badgeEn}
                   </span>
                 </div>
 
                 <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-black text-pearl group-hover:text-gold-400 transition-colors">
+                  <h3 className="text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors">
                     {language === 'ar' ? plan.titleAr : plan.titleEn}
                   </h3>
-                  <p className="text-xs text-pearl-muted leading-relaxed line-clamp-2 font-medium">
+                  <p className="text-xs text-slate-300 leading-relaxed line-clamp-2 font-medium">
                     {language === 'ar' ? plan.descriptionAr : plan.descriptionEn}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs font-bold text-pearl-muted pt-3 border-t border-white/10">
-                    <span className="flex items-center gap-1.5 text-cyan-300 font-bold">
+                  <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-3 border-t border-white/10">
+                    <span className="flex items-center gap-1.5 text-teal-300 font-bold">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
                     </span>
-                    <span className="text-gold-400 font-black">
+                    <span className="text-[#E5C378] font-black">
                       <NumberTicker
                         value={plan.estimatedCostSAR}
                         prefix="~"
@@ -135,7 +135,7 @@ export const CuratedReadyPlans: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleLoadPlan(plan.id)}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-glow-coral active:scale-[0.98]"
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:brightness-110 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(229,195,120,0.4)] active:scale-[0.98]"
                   >
                     <span>{language === 'ar' ? 'تحميل هذا الجدول 🚀' : 'Load This Plan 🚀'}</span>
                     {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
@@ -148,18 +148,18 @@ export const CuratedReadyPlans: React.FC = () => {
       </div>
 
       {/* Exclusive Partner Deals Section */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-[#0A1224]/90 backdrop-blur-2xl border border-cyan-500/30 shadow-cinematic space-y-6 overflow-hidden">
-        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-[#0E1118]/85 backdrop-blur-2xl border border-[#E5C378]/30 shadow-2xl space-y-6 overflow-hidden">
+        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gold-500/20 text-gold-400 border border-gold-500/30 flex items-center justify-center shadow-glow-gold">
+            <div className="w-10 h-10 rounded-2xl bg-[#E5C378]/15 text-[#E5C378] border border-[#E5C378]/30 flex items-center justify-center shadow-[0_0_15px_rgba(229,195,120,0.25)]">
               <Gift className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-pearl">
+              <h3 className="text-xl font-black text-white">
                 {language === 'ar' ? 'عروض وخصومات حصرية لطلعتك' : 'Exclusive Partner Deals'}
               </h3>
-              <p className="text-xs text-pearl-muted font-medium">
+              <p className="text-xs text-slate-300 font-medium">
                 {language === 'ar'
                   ? 'وفّر على مطاعم وتذاكر فعاليات جدة المميزة مع شركاء جداول'
                   : 'Exclusive vouchers and discounts curated for Jadawel explorers'}
@@ -174,16 +174,16 @@ export const CuratedReadyPlans: React.FC = () => {
             return (
               <div
                 key={deal.id}
-                className="p-4 rounded-2xl bg-[#070B14]/80 border border-white/10 flex flex-col justify-between space-y-3 shadow-inner hover:border-cyan-400/40 transition-colors"
+                className="p-4 rounded-2xl bg-[#131722]/80 border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-inner hover:border-[#E5C378]/40 transition-colors"
               >
                 <div>
                   <span className="text-[10px] px-2 py-0.5 rounded-lg bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">
                     {deal.category}
                   </span>
-                  <h4 className="text-sm font-black text-pearl mt-2">
+                  <h4 className="text-sm font-black text-white mt-2">
                     {language === 'ar' ? deal.discountAr : deal.discountEn}
                   </h4>
-                  <p className="text-[11px] text-pearl-muted mt-1 font-medium leading-relaxed">
+                  <p className="text-[11px] text-slate-300 mt-1 font-medium leading-relaxed">
                     {language === 'ar' ? deal.descAr : deal.descEn}
                   </p>
                 </div>
@@ -191,11 +191,11 @@ export const CuratedReadyPlans: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => handleCopyCode(deal.code)}
-                  className="p-2.5 rounded-xl bg-abyss-900 border border-dashed border-gold-500/50 hover:border-gold-400 flex items-center justify-between text-xs font-mono font-bold text-gold-400 cursor-pointer transition-all"
+                  className="p-2.5 rounded-xl bg-[#0B0D12] border border-dashed border-[#E5C378]/50 hover:border-[#E5C378] flex items-center justify-between text-xs font-mono font-bold text-[#E5C378] cursor-pointer transition-all"
                   title="نسخ كود الخصم"
                 >
                   <span className="tracking-wider">{deal.code}</span>
-                  <span className="text-[10px] text-pearl-muted flex items-center gap-1 font-sans">
+                  <span className="text-[10px] text-slate-400 flex items-center gap-1 font-sans">
                     {isCopied ? (
                       <>
                         <Check className="w-3.5 h-3.5 text-emerald-400" />

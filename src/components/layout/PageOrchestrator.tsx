@@ -20,7 +20,7 @@ export const PageOrchestrator: React.FC = () => {
   const activeNavTab = useItineraryStore((state) => state.activeNavTab);
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-[#FBFBFA] selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
+    <div className="relative min-h-[100dvh] flex flex-col bg-[#0B0D12] text-[#FBFBFA] selection:bg-[#E5C378]/30 selection:text-[#E5C378] overflow-x-hidden">
       {/* LUXURY FLUID CURSOR SPOTLIGHT AMBIENT TRAIL */}
       <CursorGlow />
 

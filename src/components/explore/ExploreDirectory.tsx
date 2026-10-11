@@ -69,18 +69,18 @@ export const ExploreDirectory: React.FC = () => {
 
   return (
     <div className="max-w-7xl w-full mx-auto space-y-6 sm:space-y-8 pb-12">
-      {/* Header Container with Velvet Twilight Surface */}
-      <div className="bg-[#0A1224]/90 backdrop-blur-2xl rounded-3xl p-5 sm:p-8 border border-cyan-500/30 shadow-cinematic space-y-6 relative overflow-hidden">
-        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+      {/* Header Container with Smoky Obsidian Glass */}
+      <div className="bg-[#0E1118]/85 backdrop-blur-3xl rounded-3xl p-5 sm:p-8 border border-[#E5C378]/30 shadow-[0_24px_70px_rgba(0,0,0,0.9)] space-y-6 relative overflow-hidden">
+        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
         <div className="space-y-1.5 text-start">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-400 text-xs font-bold">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/30 text-[#E5C378] text-xs font-bold">
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'أفضل وجهات عروس البحر الأحمر' : 'Curated Destinations in Jeddah'}</span>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-bold text-pearl">
+          <h1 className="text-2xl sm:text-4xl font-bold text-white">
             {language === 'ar' ? 'دليل معالم ووجهات جدة' : 'Jeddah Destination Guide'}
           </h1>
-          <p className="text-xs sm:text-sm text-pearl-muted font-medium leading-relaxed max-w-2xl">
+          <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-2xl">
             {language === 'ar'
               ? 'استكشف وجهات منتقاة بعناية في كافة أرجاء المدينة، مع تفاصيل الأسعار، ساعات العمل، ومستوى التقييم.'
               : 'Explore handpicked destinations across Jeddah with verified pricing, hours, and insider local tips.'}
@@ -105,7 +105,7 @@ export const ExploreDirectory: React.FC = () => {
 
       {/* Main Content: Grid vs Map */}
       {viewMode === 'map' ? (
-        <div className="rounded-[2.5rem] overflow-hidden border border-cyan-500/30 shadow-cinematic bg-[#070B14] min-h-[500px]">
+        <div className="rounded-[2.5rem] overflow-hidden border border-[#E5C378]/30 shadow-2xl bg-[#0B0D12] min-h-[500px]">
           <InteractiveMap
             stops={filteredPlaces.map((p, idx) => ({ place: p, order: idx + 1 }))}
             className="h-[600px] w-full"

@@ -58,11 +58,11 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-3 sm:top-5 z-50 w-full max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300">
-      {/* Translucent Dark Navy Glassmorphic Bar with Subtle Gold and Cyan Borders */}
-      <div className="relative glass-specular backdrop-blur-2xl bg-[#0A1224]/85 border border-cyan-500/25 shadow-[0_16px_50px_rgba(2,10,28,0.85)] rounded-full px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
-        {/* Subtle dual border glow: top sunset gold highlight, bottom oceanic cyan glow */}
-        <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-amber-400/60 to-transparent pointer-events-none" />
-        <div className="absolute bottom-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/50 to-transparent pointer-events-none" />
+      {/* Sleek Translucent Dark Glass (Smoky Glassmorphism 70% opacity) with 1px Metallic Champagne Gold Border */}
+      <div className="relative glass-specular backdrop-blur-2xl bg-[#0B0D12]/70 border border-[#E5C378]/35 shadow-[0_16px_50px_rgba(0,0,0,0.85)] rounded-full px-3 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4 overflow-hidden">
+        {/* Razor-thin 1px metallic champagne gold specular highlight */}
+        <div className="absolute top-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-[#E5C378]/60 to-transparent pointer-events-none" />
+        <div className="absolute bottom-0 inset-x-8 h-[1px] bg-gradient-to-r from-transparent via-[#E5C378]/25 to-transparent pointer-events-none" />
         
         {/* 1. BRAND LOGO & JEWEL IDENTITY */}
         <div
@@ -73,14 +73,14 @@ export const Navbar: React.FC = () => {
           className="flex items-center gap-2.5 sm:gap-3 cursor-pointer group select-none shrink-0"
         >
           <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
-            <JadawelLogo className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_0_15px_rgba(245,158,11,0.5)]" />
+            <JadawelLogo className="w-8 h-8 sm:w-10 sm:h-10 drop-shadow-[0_0_15px_rgba(229,195,120,0.5)]" />
           </div>
 
           <div className="flex items-center gap-1.5 sm:gap-2">
-            <span className="text-base sm:text-xl font-bold text-white group-hover:text-gold-300 transition-colors">
+            <span className="text-base sm:text-xl font-bold text-white group-hover:text-[#F3DA9C] transition-colors">
               {language === 'ar' ? 'جداول' : 'Jadawel'}
             </span>
-            <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-300 font-bold border border-gold-400/40 shadow-[0_0_12px_rgba(245,158,11,0.25)]">
+            <span className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-bold border border-[#E5C378]/40 shadow-[0_0_12px_rgba(229,195,120,0.25)]">
               {language === 'ar' ? 'جدة' : 'Jeddah'}
             </span>
           </div>
@@ -88,7 +88,7 @@ export const Navbar: React.FC = () => {
 
         {/* 2. LIVE JEDDAH TIME MACHINE & AMBIENT STATUS PILL (Interactive Day / Sunset / Night Controller) */}
         <div className="hidden lg:flex items-center gap-2.5 px-3 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner relative overflow-hidden">
-          <BorderBeam size={110} duration={8} borderWidth={1} colorFrom="#F59E0B" colorTo="#06B6D4" />
+          <BorderBeam size={110} duration={8} borderWidth={1} colorFrom="#E5C378" colorTo="#F3DA9C" />
           <div className="flex items-center gap-1.5">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -192,8 +192,8 @@ export const Navbar: React.FC = () => {
           </button>
         </div>
 
-        {/* 3. DESKTOP NAVIGATION TABS (Deep Sapphire Glass & Fluid Indicator) */}
-        <nav className="hidden md:flex items-center gap-1 bg-[#070E22]/80 p-1 rounded-full border border-cyan-500/20 shadow-inner">
+        {/* 3. DESKTOP NAVIGATION TABS (Smoky Obsidian Glass & Champagne Gold Fluid Indicator) */}
+        <nav className="hidden md:flex items-center gap-1 bg-[#12151C]/80 p-1 rounded-full border border-[#E5C378]/25 shadow-inner">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeNavTab === item.id;
@@ -206,25 +206,25 @@ export const Navbar: React.FC = () => {
                   soundEngine.playClick();
                   setActiveNavTab(item.id);
                 }}
-                className={`relative px-4 py-1.5 rounded-full text-xs font-black transition-colors flex items-center gap-1.5 cursor-pointer z-10 ${
+                className={`relative px-4 py-1.5 rounded-full text-xs font-bold transition-colors flex items-center gap-1.5 cursor-pointer z-10 ${
                   isActive
                     ? 'text-white'
-                    : 'text-white/70 hover:text-white'
+                    : 'text-slate-300 hover:text-white'
                 }`}
               >
                 {/* Fluid layoutId Pill Background */}
                 {isActive && (
                   <motion.div
                     layoutId="activeNavTabIndicator"
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-amber-500/30 via-gold-400/25 to-cyan-500/20 border border-gold-400/60 shadow-[0_0_18px_rgba(245,158,11,0.35)] -z-10"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#E5C378]/30 via-[#F3DA9C]/20 to-[#C8A452]/20 border border-[#E5C378]/60 shadow-[0_0_18px_rgba(229,195,120,0.35)] -z-10"
                     transition={{ type: 'spring', stiffness: 450, damping: 32 }}
                   />
                 )}
 
-                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-amber-400' : 'text-cyan-400/80'}`} />
+                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#E5C378]' : 'text-slate-400'}`} />
                 <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
                 {item.badge !== undefined && (
-                  <span className="w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-black flex items-center justify-center shadow-sm">
+                  <span className="w-4 h-4 rounded-full bg-[#E5C378] text-[#0B0D12] text-[9px] font-black flex items-center justify-center shadow-sm">
                     {item.badge}
                   </span>
                 )}

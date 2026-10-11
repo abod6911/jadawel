@@ -28,9 +28,9 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       : `${place.dwellTimeMinutes} mins`;
 
   return (
-    <div className="group bg-abyss-850/90 rounded-3xl overflow-hidden border border-white/10 shadow-card-dark hover:border-gold-500/50 hover:shadow-cinematic transition-all duration-300 flex flex-col justify-between">
+    <div className="group bg-[#0E1118]/85 rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl hover:border-[#E5C378]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)] transition-all duration-300 flex flex-col justify-between">
       {/* Image Banner */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-abyss-950">
+      <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0D12]">
         <img
           src={getAssetUrl(place.imageUrl)}
           alt={place.nameEn}
@@ -44,8 +44,8 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
         {/* Top Badges overlay */}
         <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
           <div className="flex items-center gap-1.5 pointer-events-auto">
-            <span className="px-2.5 py-1 rounded-xl bg-abyss-950/85 backdrop-blur-md text-pearl text-xs font-black flex items-center gap-1 border border-white/10">
-              <Star className="w-3.5 h-3.5 text-gold-400 fill-gold-400" />
+            <span className="px-2.5 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white text-xs font-black flex items-center gap-1 border border-white/10">
+              <Star className="w-3.5 h-3.5 text-[#E5C378] fill-[#E5C378]" />
               <span>{place.rating}</span>
             </span>
           </div>
@@ -56,12 +56,12 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
               e.stopPropagation();
               toggleFavoritePlace(place.id);
             }}
-            className="p-2 rounded-xl bg-abyss-950/85 backdrop-blur-md text-pearl hover:text-red-400 transition-colors pointer-events-auto shadow-sm cursor-pointer border border-white/10"
+            className="p-2 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white hover:text-red-400 transition-colors pointer-events-auto shadow-sm cursor-pointer border border-white/10"
             aria-label="Favorite"
           >
             <Heart
               className={`w-4 h-4 ${
-                isFavorite ? 'text-red-500 fill-red-500' : 'text-pearl-muted'
+                isFavorite ? 'text-red-500 fill-red-500' : 'text-slate-400'
               }`}
             />
           </button>
@@ -69,7 +69,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
 
         {/* Price Tag Overlay */}
         <div className="absolute bottom-3 start-3">
-          <span className="px-3 py-1 rounded-xl bg-abyss-950/90 backdrop-blur-md text-gold-400 font-black text-xs border border-gold-500/40">
+          <span className="px-3 py-1 rounded-xl bg-[#0B0D12]/90 backdrop-blur-md text-[#E5C378] font-black text-xs border border-[#E5C378]/40">
             {place.averageCostSAR > 0
               ? `${place.averageCostSAR} ر.س`
               : language === 'ar'
@@ -88,20 +88,20 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
               <span>{language === 'ar' ? place.districtNameAr : place.districtNameEn}</span>
             </span>
 
-            <span className="text-xs text-pearl-muted font-semibold flex items-center gap-1">
-              <Clock className="w-3 h-3 text-gold-400" />
+            <span className="text-xs text-slate-400 font-semibold flex items-center gap-1">
+              <Clock className="w-3 h-3 text-[#E5C378]" />
               <span>{formattedDuration}</span>
             </span>
           </div>
 
           <h3
             onClick={() => setSelectedPlaceForModal(place)}
-            className="text-base sm:text-lg font-black text-pearl hover:text-gold-400 transition-colors cursor-pointer line-clamp-1"
+            className="text-base sm:text-lg font-black text-white hover:text-[#F5E2B3] transition-colors cursor-pointer line-clamp-1"
           >
             {language === 'ar' ? place.nameAr : place.nameEn}
           </h3>
 
-          <p className="text-xs text-pearl-muted line-clamp-2 leading-relaxed font-medium">
+          <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed font-medium">
             {language === 'ar' ? place.descriptionAr : place.descriptionEn}
           </p>
         </div>
@@ -111,7 +111,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
           <button
             type="button"
             onClick={() => setSelectedPlaceForModal(place)}
-            className="flex-1 py-2.5 px-3 rounded-xl bg-abyss-800 hover:bg-abyss-700 text-pearl border border-white/10 text-xs font-bold transition-all cursor-pointer text-center"
+            className="flex-1 py-2.5 px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] text-white border border-white/10 text-xs font-bold transition-all cursor-pointer text-center"
           >
             {language === 'ar' ? 'تفاصيل المكان' : 'Details'}
           </button>
@@ -122,7 +122,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
             className={`py-2.5 px-4 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
               isAlreadyInPlan
                 ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm font-black'
-                : 'bg-gold-500 hover:bg-gold-600 text-abyss-950 shadow-glow-gold hover:scale-[1.02]'
+                : 'bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] shadow-[0_0_15px_rgba(229,195,120,0.4)] hover:brightness-110 active:scale-95'
             }`}
           >
             {isAlreadyInPlan ? (

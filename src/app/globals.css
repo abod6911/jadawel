@@ -13,9 +13,9 @@ html {
 }
 
 body {
-  font-family: var(--font-readex-pro), var(--font-ibm-plex-sans-arabic), 'Alexandria', var(--font-jakarta), system-ui, -apple-system, sans-serif;
-  background-color: #070B14;
-  color: #FBFBFA;
+  font-family: var(--font-readex-pro), var(--font-ibm-plex-sans-arabic), 'Cairo', 'Almarai', 'Alexandria', var(--font-jakarta), system-ui, -apple-system, sans-serif;
+  background-color: #0B0D12;
+  color: #FFFFFF;
   min-height: 100dvh;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
@@ -33,7 +33,7 @@ button, a, select, input, [role="button"] {
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;
   letter-spacing: normal;
-  color: #FBFBFA;
+  color: #FFFFFF;
 }
 
 p {
@@ -67,17 +67,17 @@ input, select, textarea {
 }
 
 ::-webkit-scrollbar-track {
-  background: #070B14;
+  background: #0B0D12;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #0F1A36;
+  background: #171B24;
   border-radius: 6px;
-  border: 1px solid rgba(245, 158, 11, 0.3);
+  border: 1px solid rgba(229, 195, 120, 0.25);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #F59E0B;
+  background: #E5C378;
 }
 
 /* Custom Leaflet Map styling for Dark Luxury Theme */
@@ -85,23 +85,23 @@ input, select, textarea {
   width: 100%;
   height: 100%;
   border-radius: 2rem;
-  background-color: #070B14 !important;
+  background-color: #0B0D12 !important;
   font-family: inherit;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(10, 17, 36, 0.96) !important;
+  background: rgba(14, 17, 24, 0.96) !important;
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  color: #FBFBFA !important;
-  border: 1px solid rgba(245, 158, 11, 0.5) !important;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(229, 195, 120, 0.5) !important;
   border-radius: 1.25rem !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
   padding: 0 !important;
 }
 
 .leaflet-popup-tip {
-  background: rgba(10, 17, 36, 0.96) !important;
+  background: rgba(14, 17, 24, 0.96) !important;
 }
 
 .custom-leaflet-pin-wrapper {
@@ -118,7 +118,7 @@ input, select, textarea {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(245, 158, 11, 0.45) 0%, rgba(6, 182, 212, 0.3) 100%);
+  background: linear-gradient(135deg, rgba(229, 195, 120, 0.45) 0%, rgba(20, 184, 166, 0.25) 100%);
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -127,7 +127,7 @@ input, select, textarea {
   opacity: 1;
 }
 
-/* Metallic Golden Shimmer Animation */
+/* Metallic Champagne Golden Shimmer Animation */
 @keyframes metallicShimmer {
   0% {
     background-position: -200% center;
@@ -137,17 +137,18 @@ input, select, textarea {
   }
 }
 
-.text-shimmer-gold {
+.text-shimmer-gold,
+.text-shimmer-champagne {
   background: linear-gradient(
     135deg,
-    #F59E0B 0%,
-    #FDE68A 25%,
-    #FBBF24 50%,
-    #FEF3C7 75%,
-    #D97706 100%
+    #E5C378 0%,
+    #FFF1CC 25%,
+    #F5E2B3 50%,
+    #FFF8E7 75%,
+    #C8A452 100%
   );
   background-size: 200% auto;
-  color: #F59E0B;
+  color: #E5C378;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
@@ -186,7 +187,7 @@ input, select, textarea {
 
 /* Anamorphic Lens Flare & Cinematic Vignette */
 .cinematic-vignette {
-  background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(7, 11, 20, 0.92) 100%);
+  background: radial-gradient(ellipse 90% 80% at 50% 50%, transparent 40%, rgba(11, 13, 18, 0.94) 100%);
   pointer-events: none;
 }
 

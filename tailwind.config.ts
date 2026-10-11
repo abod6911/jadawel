@@ -11,55 +11,60 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Jeddah Twilight & Gold Luxury Palette
-        // Deep Midnight Sapphire & Oceanic Navy Luxury Palette
+        // Obsidian Noir & Champagne Gold VIP Concierge Palette
         obsidian: {
-          DEFAULT: "#070B14", // Deep Midnight Sapphire
-          950: "#04070D",
-          900: "#070B14",
-          850: "#0A1124",     // Oceanic Navy Base
-          800: "#0F1A36",     // Smoked Sapphire Glass
-          700: "#17254D",     // Elevated Surface
+          DEFAULT: "#0B0D12", // Smoky Obsidian Noir Base
+          950: "#06070A",     // Deepest Noir Pitch
+          900: "#0B0D12",     // Primary Obsidian Noir
+          850: "#12151C",     // Elevated Charcoal Noir
+          800: "#171B24",     // Smoky Charcoal Glass
+          700: "#222734",     // Subdued Graphite
+          600: "#2D3445",
         },
         surface: {
-          DEFAULT: "#0B132B",
-          card: "rgba(12, 22, 45, 0.82)",
-          cardHover: "rgba(18, 32, 66, 0.92)",
+          DEFAULT: "#12151C",
+          card: "rgba(14, 17, 24, 0.72)",     // Smoky Glassmorphism 70-75%
+          cardHover: "rgba(20, 24, 34, 0.88)",
+        },
+        champagne: {
+          DEFAULT: "#E5C378", // Metallic Champagne Gold
+          light: "#F5E2B3",   // Light Champagne
+          shimmer: "#FFF1CC", // High-Luminance Specular
+          dark: "#C8A452",    // Rich Bronze Gold
+          deep: "#947328",    // Antique Deep Gold
+        },
+        platinum: {
+          DEFAULT: "#E2E8F0", // Refined Light Platinum
+          light: "#F8FAFC",
+          muted: "#94A3B8",
+          subtle: "#64748B",
         },
         abyss: {
-          DEFAULT: "#070B14",
-          950: "#04070D",
-          900: "#0A1124",
-          850: "#0F1A36",
-          800: "#142247",
-          700: "#1C3063",
-          600: "#264287",
+          DEFAULT: "#0B0D12",
+          950: "#06070A",
+          900: "#0B0D12",
+          850: "#12151C",
+          800: "#171B24",
+          700: "#222734",
+          600: "#2D3445",
         },
         navy: {
-          DEFAULT: "#0A1124",
-          950: "#04070D",
-          900: "#0A1124",
-          850: "#0F1A36",
-          800: "#142247",
-          700: "#1C3063",
-          600: "#264287",
-        },
-        sapphire: {
-          DEFAULT: "#070E22",
-          950: "#03060F",
-          900: "#070E22",
-          850: "#0B1736",
-          800: "#0F204C",
-          700: "#162E6B",
+          DEFAULT: "#0E1118",
+          950: "#06070A",
+          900: "#0B0D12",
+          850: "#12151C",
+          800: "#171B24",
+          700: "#222734",
+          600: "#2D3445",
         },
         gold: {
-          primary: "#F59E0B", // Radiant Amber Gold
-          hover: "#D97706",   // Deep Saffron Amber
-          300: "#FEF3C7",     // Luminescent Cream Gold
-          400: "#FDE68A",     // 24K Accent Gold
-          500: "#F59E0B",     // Primary Luxury Gold
-          600: "#D97706",     // Amber Ochre
-          700: "#B45309",
+          primary: "#E5C378", // Luminous Metallic Champagne Gold
+          hover: "#C8A452",   // Deep Champagne Bronze
+          300: "#FFF1CC",     // High-Specular Gold
+          400: "#F5E2B3",     // Light Champagne
+          500: "#E5C378",     // Primary Champagne Gold
+          600: "#C8A452",     // Rich Warm Gold
+          700: "#947328",
         },
         coral: {
           300: "#FDA4AF",
@@ -69,7 +74,7 @@ const config: Config = {
           700: "#BE123C",
         },
         teal: {
-          mist: "#2DD4BF",    // Luminescent Marine Teal
+          mist: "#2DD4BF",    // Luminescent Marine Teal Accent
           300: "#5EEAD4",
           400: "#2DD4BF",
           500: "#14B8A6",
@@ -77,47 +82,49 @@ const config: Config = {
           light: "rgba(20, 184, 166, 0.15)",
         },
         pearl: {
-          DEFAULT: "#FBFBFA", // Crisp Luminescent White
-          muted: "#9EA8B3",   // Soft Slate
+          DEFAULT: "#FFFFFF", // Crisp Pure White
+          muted: "#CBD5E1",   // Light Platinum Slate
         },
         sand: {
           warm: "#FBF8F2",
           DEFAULT: "#F1F5F9",
         },
         text: {
-          pure: "#FBFBFA",
-          subtle: "#9EA8B3",
-          gold: "#F3CA95",
-          pearl: "#FBFBFA",
-          muted: "#9EA8B3",
-          dark: "#090B0E",
-          lightPrimary: "#FBFBFA",
-          lightSecondary: "#9EA8B3",
-          darkPrimary: "#090B0E",
+          pure: "#FFFFFF",
+          subtle: "#CBD5E1",
+          gold: "#E5C378",
+          pearl: "#FFFFFF",
+          muted: "#94A3B8",
+          dark: "#0B0D12",
+          lightPrimary: "#FFFFFF",
+          lightSecondary: "#E2E8F0",
+          darkPrimary: "#0B0D12",
           darkSecondary: "#64748B",
         },
         status: {
           success: "#22C55E",
-          warning: "#E5A962",
+          warning: "#E5C378",
           error: "#EF4444",
         },
       },
       fontFamily: {
-        arabic: ["var(--font-readex-pro)", "var(--font-ibm-plex-sans-arabic)", "sans-serif"],
+        arabic: ["var(--font-readex-pro)", "var(--font-ibm-plex-sans-arabic)", "'Cairo'", "'Almarai'", "sans-serif"],
         sans: ["var(--font-jakarta)", "var(--font-inter)", "sans-serif"],
       },
       backgroundImage: {
-        'gold-gradient': 'linear-gradient(135deg, #E5A962 0%, #D48B38 100%)',
-        'sunset-gradient': 'linear-gradient(135deg, #F3CA95 0%, #E5A962 50%, #4E9F96 100%)',
-        'teal-gradient': 'linear-gradient(135deg, #68B2A9 0%, #4E9F96 100%)',
+        'gold-gradient': 'linear-gradient(135deg, #E5C378 0%, #C8A452 100%)',
+        'champagne-gradient': 'linear-gradient(135deg, #F5E2B3 0%, #E5C378 50%, #C8A452 100%)',
+        'sunset-gradient': 'linear-gradient(135deg, #FFF1CC 0%, #E5C378 50%, #14B8A6 100%)',
+        'teal-gradient': 'linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%)',
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
       },
       boxShadow: {
-        'glow-gold': '0 0 30px -2px rgba(229, 169, 98, 0.35)',
-        'glow-teal': '0 0 30px -2px rgba(78, 159, 150, 0.30)',
-        'glow-coral': '0 0 30px -2px rgba(229, 169, 98, 0.35)',
-        'cinematic': '0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 169, 98, 0.12)',
-        'card-dark': '0 15px 35px -10px rgba(0, 0, 0, 0.7)',
+        'glow-gold': '0 0 30px -2px rgba(229, 195, 120, 0.45)',
+        'glow-champagne': '0 0 30px -2px rgba(229, 195, 120, 0.50)',
+        'glow-teal': '0 0 30px -2px rgba(20, 184, 166, 0.35)',
+        'glow-coral': '0 0 30px -2px rgba(229, 195, 120, 0.45)',
+        'cinematic': '0 24px 60px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(229, 195, 120, 0.18)',
+        'card-dark': '0 15px 35px -10px rgba(0, 0, 0, 0.8)',
       },
       transitionDuration: {
         instant: '75ms',

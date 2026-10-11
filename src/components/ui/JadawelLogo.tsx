@@ -20,7 +20,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
       {/* Minimalist Vector Emblem */}
       <div
         style={style}
-        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#0F1E3D] to-[#070B14] border border-gold-500/40 p-1 flex items-center justify-center shadow-[0_4px_20px_rgba(245,158,11,0.25)] hover:border-gold-400/70 hover:shadow-[0_4px_25px_rgba(245,158,11,0.4)] transition-all shrink-0"
+        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#1A1F2C] to-[#0B0D12] border border-[#E5C378]/40 p-1 flex items-center justify-center shadow-[0_4px_20px_rgba(229,195,120,0.3)] hover:border-[#F5E2B3]/70 hover:shadow-[0_4px_25px_rgba(229,195,120,0.45)] transition-all shrink-0"
       >
         <svg
           viewBox="0 0 100 100"
@@ -30,9 +30,9 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
         >
           <defs>
             <linearGradient id="logo-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#FDE68A" />
-              <stop offset="50%" stopColor="#F59E0B" />
-              <stop offset="100%" stopColor="#D97706" />
+              <stop offset="0%" stopColor="#FFF1CC" />
+              <stop offset="50%" stopColor="#E5C378" />
+              <stop offset="100%" stopColor="#C8A452" />
             </linearGradient>
           </defs>
 
@@ -52,7 +52,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
           />
 
           {/* Minimalist Red Sea Pearl Dot */}
-          <circle cx="48" cy="58" r="5" fill="#06B6D4" />
+          <circle cx="48" cy="58" r="5" fill="#E5C378" />
         </svg>
       </div>
 
@@ -62,7 +62,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
             <span className="text-xl font-black tracking-tight text-[#FBFBFA]">
               جداول
             </span>
-            <span className="text-[10px] px-2 py-0.5 rounded-full bg-gold-500/15 text-gold-400 font-black border border-gold-500/30">
+            <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-black border border-[#E5C378]/30">
               جدة
             </span>
           </div>

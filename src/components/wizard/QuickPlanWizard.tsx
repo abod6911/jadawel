@@ -158,23 +158,23 @@ export const QuickPlanWizard: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto backdrop-blur-2xl bg-[#0A1224]/90 border border-cyan-500/30 rounded-3xl p-4 sm:p-8 md:p-10 shadow-cinematic relative select-none my-2 sm:my-4 overflow-hidden">
-      <BorderBeam size={320} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
+    <div className="w-full max-w-4xl mx-auto backdrop-blur-3xl bg-[#0E1118]/85 border border-[#E5C378]/30 rounded-3xl p-4 sm:p-8 md:p-10 shadow-[0_24px_70px_rgba(0,0,0,0.9)] relative select-none my-2 sm:my-4 overflow-hidden">
+      <BorderBeam size={320} duration={14} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
       {/* 1. Header Progress Strip */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <span className="w-2.5 h-2.5 rounded-full bg-gold-400 animate-pulse" />
-          <span className="text-xs sm:text-sm font-black text-gold-400">
+          <span className="w-2.5 h-2.5 rounded-full bg-[#E5C378] animate-pulse" />
+          <span className="text-xs sm:text-sm font-black text-[#E5C378]">
             {language === 'ar' ? `المرحلة ${currentStep} من 7` : `Step ${currentStep} of 7`}
           </span>
         </div>
-        <span className="font-mono text-xs sm:text-sm font-bold text-pearl-muted">{progressPercent}%</span>
+        <span className="font-mono text-xs sm:text-sm font-bold text-slate-300">{progressPercent}%</span>
       </div>
 
       {/* Progress Track */}
       <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden mb-5 sm:mb-6">
         <motion.div
-          className="h-full bg-gradient-to-r from-gold-500 via-gold-400 to-coral-500 rounded-full shadow-glow-gold"
+          className="h-full bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] rounded-full shadow-[0_0_15px_rgba(229,195,120,0.5)]"
           initial={{ width: 0 }}
           animate={{ width: `${progressPercent}%` }}
           transition={{ duration: 0.35, ease: 'easeInOut' }}
@@ -194,10 +194,10 @@ export const QuickPlanWizard: React.FC = () => {
               onClick={() => goToStep(def.id)}
               className={`flex-1 py-1.5 px-2 rounded-xl text-[11px] font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
                 isCurrent
-                  ? 'bg-gold-500/20 text-gold-300 border border-gold-500/50 shadow-glow-gold'
+                  ? 'bg-[#E5C378]/20 text-[#F5E2B3] border border-[#E5C378]/50 shadow-[0_0_15px_rgba(229,195,120,0.3)]'
                   : isPassed
                   ? 'text-teal-300 hover:text-white bg-white/5'
-                  : 'text-pearl-muted/40 hover:text-pearl-muted'
+                  : 'text-slate-500 hover:text-slate-300'
               }`}
             >
               <Icon className="w-3 h-3" />
@@ -209,12 +209,12 @@ export const QuickPlanWizard: React.FC = () => {
 
       {/* 2. Step Title & Narrative */}
       <div className="text-center mb-6 sm:mb-8">
-        <h2 className="text-xl sm:text-3xl font-black text-pearl mb-2 flex items-center justify-center gap-2">
+        <h2 className="text-xl sm:text-3xl font-black text-white mb-2 flex items-center justify-center gap-2">
           {language === 'ar'
             ? STEP_DEFINITIONS[currentStep - 1].titleAr
             : STEP_DEFINITIONS[currentStep - 1].titleEn}
         </h2>
-        <p className="text-xs sm:text-sm text-pearl-muted max-w-xl mx-auto font-medium leading-relaxed">
+        <p className="text-xs sm:text-sm text-slate-300 max-w-xl mx-auto font-medium leading-relaxed">
           {language === 'ar'
             ? STEP_DEFINITIONS[currentStep - 1].subtitleAr
             : STEP_DEFINITIONS[currentStep - 1].subtitleEn}
@@ -260,15 +260,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer relative touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20 hover:bg-white/[0.06]'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted leading-relaxed font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -302,15 +302,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -344,15 +344,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -387,15 +387,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -427,15 +427,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -468,15 +468,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -513,15 +513,15 @@ export const QuickPlanWizard: React.FC = () => {
                     }}
                     className={`flex flex-col text-start p-3.5 sm:p-4 rounded-2xl border transition-all cursor-pointer touch-manipulation ${
                       isSelected
-                        ? 'bg-gold-500/15 border-gold-500 shadow-glow-gold'
+                        ? 'bg-[#E5C378]/15 border-[#E5C378] shadow-[0_0_20px_rgba(229,195,120,0.35)]'
                         : 'bg-white/[0.03] border-white/10 hover:border-white/20'
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
-                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-gold-300' : 'text-pearl'}`}>
+                      <span className={`text-xs sm:text-sm font-bold ${isSelected ? 'text-[#F5E2B3]' : 'text-white'}`}>
                         {language === 'ar' ? item.titleAr : item.titleEn}
                       </span>
-                      {isSelected && <CheckCircle2 className="w-4 h-4 text-gold-400" />}
+                      {isSelected && <CheckCircle2 className="w-4 h-4 text-[#E5C378]" />}
                     </div>
                     <span className="text-[11px] text-pearl-muted font-normal">
                       {language === 'ar' ? item.descAr : item.descEn}
@@ -542,8 +542,8 @@ export const QuickPlanWizard: React.FC = () => {
           disabled={currentStep === 1}
           className={`min-h-[44px] px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all ${
             currentStep === 1
-              ? 'opacity-30 cursor-not-allowed text-pearl-muted/40'
-              : 'backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/10 text-pearl cursor-pointer touch-manipulation'
+              ? 'opacity-30 cursor-not-allowed text-slate-600'
+              : 'backdrop-blur-md bg-white/5 hover:bg-white/10 border border-white/10 text-white cursor-pointer touch-manipulation'
           }`}
         >
           {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
@@ -556,11 +556,11 @@ export const QuickPlanWizard: React.FC = () => {
           type="button"
           onClick={nextStep}
           disabled={isGeneratingPlan}
-          className="min-h-[44px] px-6 sm:px-9 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-gold-500 via-gold-400 to-coral-500 text-abyss-950 text-xs sm:text-sm font-black shadow-glow-gold flex items-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
+          className="min-h-[44px] px-6 sm:px-9 py-3 sm:py-3.5 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] text-xs sm:text-sm font-black shadow-[0_0_25px_rgba(229,195,120,0.5)] flex items-center gap-2 cursor-pointer touch-manipulation disabled:opacity-50"
         >
           {isGeneratingPlan ? (
             <div className="flex items-center gap-2">
-              <span className="w-4 h-4 border-2 border-abyss-950 border-t-transparent rounded-full animate-spin" />
+              <span className="w-4 h-4 border-2 border-[#0B0D12] border-t-transparent rounded-full animate-spin" />
               <span>{language === 'ar' ? 'جاري الابتكار...' : 'Generating...'}</span>
             </div>
           ) : (

@@ -78,11 +78,11 @@ export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete
       {!isDone && (
         <motion.div
           key="clean-intro-overlay"
-          className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#070B14] select-none overflow-hidden"
+          className="fixed inset-0 z-[999999] flex items-center justify-center bg-[#0B0D12] select-none overflow-hidden"
           exit={{ opacity: 0, transition: { duration: 0.6, ease: [0.76, 0, 0.24, 1] } }}
         >
           {/* Subtle Ambient Radial Glow */}
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(245,158,11,0.1)_0%,rgba(6,182,212,0.06)_40%,transparent_70%)] pointer-events-none" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(229,195,120,0.12)_0%,rgba(18,21,28,0.06)_40%,transparent_70%)] pointer-events-none" />
 
           {/* Central Deck Container */}
           <motion.div
@@ -99,7 +99,7 @@ export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete
               return (
                 <motion.div
                   key={idx}
-                  className="absolute w-[180px] h-[240px] rounded-2xl overflow-hidden shadow-2xl border border-cyan-500/30 bg-[#0B132B]"
+                  className="absolute w-[180px] h-[240px] rounded-2xl overflow-hidden shadow-2xl border border-[#E5C378]/30 bg-[#12151C]"
                   animate={{
                     scale: isTop ? 1.05 : 0.94,
                     rotate: isTop ? 0 : idx % 2 === 0 ? -6 : 6,
@@ -109,7 +109,7 @@ export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete
                   transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 >
                   <img src={card.url} alt="" className="w-full h-full object-cover brightness-[0.85] contrast-[1.1]" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#070B14]/90 via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/90 via-transparent to-transparent" />
                   <span className="absolute bottom-3 inset-x-0 text-center text-[11px] font-bold text-white/95">
                     {card.label}
                   </span>
@@ -118,13 +118,13 @@ export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete
             })}
 
             {/* Wordmark & Clean Minimalist Ticker */}
-            <div className="absolute z-20 flex flex-col items-center justify-center px-6 py-3.5 backdrop-blur-2xl bg-[#0A1224]/90 border border-cyan-500/30 rounded-2xl shadow-[0_8px_32px_rgba(7,11,20,0.8)]">
+            <div className="absolute z-20 flex flex-col items-center justify-center px-6 py-3.5 backdrop-blur-2xl bg-[#0E1118]/90 border border-[#E5C378]/35 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
               <span className="text-3xl sm:text-4xl font-black text-white tracking-wider">
-                جداول <span className="text-[#F59E0B] text-[10px] font-bold tracking-widest uppercase">JADAWEL</span>
+                جداول <span className="text-[#E5C378] text-[10px] font-bold tracking-widest uppercase">JADAWEL</span>
               </span>
               <div className="flex items-center justify-between w-full mt-2.5 pt-2 border-t border-white/10">
-                <span className="text-[10px] text-cyan-200/80">جاري تجهيز المسار</span>
-                <span className="font-mono text-xs font-bold text-[#F59E0B]">
+                <span className="text-[10px] text-slate-300">جاري تجهيز المسار</span>
+                <span className="font-mono text-xs font-bold text-[#E5C378]">
                   {String(count).padStart(3, '0')}%
                 </span>
               </div>
