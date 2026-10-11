@@ -337,7 +337,27 @@ export const HeroSection: React.FC = () => {
   // Ambient Background Video Ref & Search Bar Ref
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
-  const [isIntroStage, setIsIntroStage] = useState(false);
+
+  // Cinematic Entrance: Showcase pure Jeddah video scenery first (~5s), then gracefully reveal the luxury text
+  const [isIntroStage, setIsIntroStage] = useState(true);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsIntroStage(false);
+    }, 4800);
+
+    const handleScroll = () => {
+      if (window.scrollY > 40) {
+        setIsIntroStage(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
 
 
   const handleToggleVideo = (e?: React.MouseEvent) => {
@@ -507,9 +527,11 @@ export const HeroSection: React.FC = () => {
           <source src={getAssetUrl('/videos/r07qxo-jeddah.mp4')} type="video/mp4" />
         </video>
 
-        {/* Obsidian Noir & Champagne Gold Ambient Glows */}
+        {/* Obsidian Noir & Champagne Gold Ambient Glows (Smooth crossfade from pure scenic video to high-contrast backdrop) */}
         <div
-          className="absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none opacity-40 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/30 to-transparent"
+          className={`absolute inset-0 transition-opacity duration-1000 ease-in-out pointer-events-none ${
+            isIntroStage ? 'opacity-10' : 'opacity-45'
+          } bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/30 to-transparent`}
         />
         {/* Dynamic Atmosphere Radial Gradient */}
         <div
@@ -969,6 +991,15 @@ export const HeroSection: React.FC = () => {
       </div>
 
       </motion.div>
+
+      {/* Presentation skip hint during pure video entrance */}
+      {isIntroStage && (
+        <div className="absolute bottom-6 sm:bottom-8 inset-x-0 z-20 flex justify-center pointer-events-none">
+          <div className="px-3.5 py-1.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-white/80 text-[11px] font-medium flex items-center gap-1.5 shadow-lg animate-pulse">
+            <span>{language === 'ar' ? 'انقر في أي مكان للمتابعة المباشرة ✦' : 'Click anywhere to explore ✦'}</span>
+          </div>
+        </div>
+      )}
 
     </section>
   );
