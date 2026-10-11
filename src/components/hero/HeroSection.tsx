@@ -182,6 +182,104 @@ const VIBE_OPTIONS: { id: VibeType; labelAr: string; labelEn: string; icon: stri
 ];
 
 // ==========================================
+// 1.5 3D PERSPECTIVE TILT CARD (SPATIAL DEPTH)
+// ==========================================
+const DestinationTiltCard: React.FC<{
+  dest: Destination;
+  idx: number;
+  isSelected: boolean;
+  onSelect: () => void;
+}> = ({ dest, idx, isSelected, onSelect }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50, isHovered: false });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const normX = x / rect.width - 0.5;
+    const normY = y / rect.height - 0.5;
+    setTilt({
+      x: normY * -9,
+      y: normX * 9,
+      glareX: (x / rect.width) * 100,
+      glareY: (y / rect.height) * 100,
+      isHovered: true,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTilt({ x: 0, y: 0, glareX: 50, glareY: 50, isHovered: false });
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={onSelect}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(1000px) rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) ${
+          tilt.isHovered ? 'scale3d(1.025, 1.025, 1.025)' : 'scale3d(1, 1, 1)'
+        }`,
+        transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
+      }}
+      className={`relative group h-48 sm:h-56 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
+        isSelected
+          ? 'border-gold-500/70 shadow-[0_16px_50px_rgba(229,169,98,0.35)] ring-2 ring-gold-500/50'
+          : 'border-white/[0.08] hover:border-gold-500/30 shadow-[0_12px_40px_rgba(0,0,0,0.6)]'
+      }`}
+    >
+      {/* Background Image with Cinematic Zoom */}
+      <img
+        src={dest.bgImage}
+        alt={dest.name}
+        className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.55]"
+      />
+
+      {/* Ambient Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/45 to-transparent" />
+
+      {/* Dynamic Specular Spotlight Glare following cursor */}
+      <div
+        className="absolute inset-0 pointer-events-none transition-opacity duration-300"
+        style={{
+          opacity: tilt.isHovered ? 0.35 : 0,
+          background: `radial-gradient(circle 200px at ${tilt.glareX}% ${tilt.glareY}%, rgba(255, 255, 255, 0.45), transparent 70%)`,
+        }}
+      />
+
+      {/* Top Specular Rim Light */}
+      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />
+
+      {/* Content */}
+      <div className="absolute inset-0 p-5 flex flex-col justify-between z-10">
+        <div className="flex items-center justify-between">
+          <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-black text-gold-300 shadow-sm">
+            {dest.badge}
+          </span>
+          {isSelected && (
+            <span className="w-6 h-6 rounded-full bg-gradient-to-tr from-gold-500 to-amber-400 text-stone-950 flex items-center justify-center shadow-lg font-black text-xs">
+              ✓
+            </span>
+          )}
+        </div>
+
+        <div>
+          <h3 className="text-lg font-black text-white group-hover:text-gold-300 transition-colors drop-shadow-md">
+            {dest.name}
+          </h3>
+          <p className="text-xs text-white/70 line-clamp-1 mt-1 font-medium">
+            {dest.tagline}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
 // 2. MAIN HERO SECTION COMPONENT
 // ==========================================
 
@@ -358,6 +456,18 @@ export const HeroSection: React.FC = () => {
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.18)_0%,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
 
+        {/* Cinematic Lens Vignette & 35mm Film Grain */}
+        <div className="cinematic-vignette absolute inset-0 z-0 pointer-events-none" />
+        <div className="cinematic-film-grain absolute inset-0 z-0 pointer-events-none" />
+
+        {/* Cinematic Floating Golden Twilight Embers */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden">
+          <div className="absolute bottom-10 left-[15%] w-2 h-2 rounded-full bg-gold-400 blur-[1px] animate-ember opacity-40" />
+          <div className="absolute bottom-24 right-[20%] w-1.5 h-1.5 rounded-full bg-amber-300 blur-[1px] animate-ember opacity-60 [animation-delay:1.5s]" />
+          <div className="absolute bottom-16 left-[45%] w-2.5 h-2.5 rounded-full bg-gold-500 blur-[1px] animate-ember opacity-30 [animation-delay:3s]" />
+          <div className="absolute bottom-32 right-[40%] w-1.5 h-1.5 rounded-full bg-amber-400 blur-[1px] animate-ember opacity-50 [animation-delay:2.2s]" />
+        </div>
+
         {/* Subtle Ambient SVG Floating Light Ray particles */}
         <div className="absolute inset-0 opacity-40 mix-blend-screen pointer-events-none">
           <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
@@ -392,9 +502,13 @@ export const HeroSection: React.FC = () => {
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
         <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
         
-        {/* Luxury Micro-Badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/30 text-xs font-bold text-gold-300 shadow-[0_0_20px_rgba(229,169,98,0.2)]">
-          <Compass className="w-3.5 h-3.5 text-gold-400" />
+        {/* Luxury Micro-Badge with Pulse Star */}
+        <div className="inline-flex items-center gap-2.5 px-4.5 py-1.5 rounded-full backdrop-blur-2xl bg-gold-500/10 border border-gold-500/40 text-xs font-bold text-gold-300 shadow-[0_0_25px_rgba(229,169,98,0.28)] transition-all hover:scale-105">
+          <span className="relative flex h-2 w-2">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
+          </span>
+          <Compass className="w-3.5 h-3.5 text-gold-400 animate-spin [animation-duration:22s]" />
           <span>{language === 'ar' ? 'عروس البحر الأحمر • تجارب استثنائية' : 'Bride of the Red Sea • Exceptional Experiences'}</span>
         </div>
 
@@ -461,59 +575,15 @@ export const HeroSection: React.FC = () => {
       {/* ======================================================== */}
       <div className="relative z-10 w-full max-w-5xl mx-auto mb-10 sm:mb-14">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
-          {DESTINATIONS.map((dest, idx) => {
-            const isSelected = activeIdx === idx;
-
-            return (
-              <motion.div
-                key={dest.id}
-                onClick={() => handleSelectDestination(idx)}
-                whileHover={{ y: -6, scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className={`relative group h-48 sm:h-56 rounded-3xl overflow-hidden cursor-pointer border transition-all duration-300 shadow-xl ${
-                  isSelected
-                    ? 'border-gold-500/60 shadow-[0_12px_40px_rgba(229,169,98,0.3)] ring-2 ring-gold-500/40'
-                    : 'border-white/[0.08] hover:border-white/20'
-                }`}
-              >
-                {/* Background Image with Zoom */}
-                <img
-                  src={dest.bgImage}
-                  alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 brightness-[0.55]"
-                />
-
-                {/* Ambient Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/40 to-transparent" />
-
-                {/* Specular Inner Glare on Hover */}
-                <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/[0.03] to-white/[0.08] opacity-0 group-hover:opacity-100 transition-opacity" />
-
-                {/* Content */}
-                <div className="absolute inset-0 p-5 flex flex-col justify-between">
-                  <div className="flex items-center justify-between">
-                    <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-black text-gold-300">
-                      {dest.badge}
-                    </span>
-                    {isSelected && (
-                      <span className="w-6 h-6 rounded-full bg-gold-500 text-black flex items-center justify-center shadow-lg font-black text-xs">
-                        ✓
-                      </span>
-                    )}
-                  </div>
-
-                  <div>
-                    <h3 className="text-lg font-black text-white group-hover:text-gold-300 transition-colors drop-shadow-md">
-                      {dest.name}
-                    </h3>
-                    <p className="text-xs text-white/70 line-clamp-1 mt-1 font-medium">
-                      {dest.tagline}
-                    </p>
-                  </div>
-                </div>
-              </motion.div>
-            );
-          })}
+          {DESTINATIONS.map((dest, idx) => (
+            <DestinationTiltCard
+              key={dest.id}
+              dest={dest}
+              idx={idx}
+              isSelected={activeIdx === idx}
+              onSelect={() => handleSelectDestination(idx)}
+            />
+          ))}
         </div>
       </div>
 
@@ -524,7 +594,10 @@ export const HeroSection: React.FC = () => {
         ref={searchBarRef}
         className="relative z-30 w-full max-w-5xl mx-auto"
       >
-        <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_20px_60px_rgba(0,0,0,0.85)]">
+        {/* Soft Ambient Glow Halo behind the Dock */}
+        <div className="absolute -inset-2 bg-gradient-to-r from-gold-500/10 via-amber-500/5 to-teal-500/10 rounded-[2.5rem] blur-2xl -z-10 pointer-events-none" />
+
+        <div className="glass-specular relative p-2.5 sm:p-3 rounded-[2rem] bg-[#0E131C]/90 backdrop-blur-2xl border border-white/[0.12] shadow-[0_24px_70px_rgba(0,0,0,0.85)]">
           
           {/* Main 5 Pillars Cockpit Grid */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-2 items-center">
@@ -883,29 +956,37 @@ export const HeroSection: React.FC = () => {
               <span>محرك ذكي يُحلل 50+ موقعاً ومساراً في ثوانٍ</span>
             </div>
 
-            <motion.button
-              type="button"
-              onClick={handleBuildPlan}
-              disabled={isGeneratingPlan}
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              className="relative w-full sm:w-auto px-6 sm:px-10 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_50px_rgba(229,169,98,0.7)] cursor-pointer overflow-hidden transition-all duration-300 group touch-manipulation"
-            >
-              {/* Conic Glow Shimmer Layer */}
-              <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
+            <div className="relative group w-full sm:w-auto">
+              {/* Cinematic Ambient Halo Behind Button */}
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-lg group-hover:opacity-100 group-hover:blur-xl transition-all duration-500 animate-pulse" />
 
-              {isGeneratingPlan ? (
-                <>
-                  <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
-                  <span>جاري هندسة خطتك في جدة...</span>
-                </>
-              ) : (
-                <>
-                  <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1 transition-transform" />
-                  <span>ابنِ خطتي لجدة بنقرة واحدة</span>
-                </>
-              )}
-            </motion.button>
+              <motion.button
+                type="button"
+                onClick={handleBuildPlan}
+                disabled={isGeneratingPlan}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                className="relative w-full sm:w-auto px-7 sm:px-11 py-4 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-[#090B0E] font-bold text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_0_35px_rgba(229,169,98,0.45)] hover:shadow-[0_0_55px_rgba(229,169,98,0.8)] cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+              >
+                {/* Conic Glow Shimmer Layer */}
+                <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
+
+                {/* Top specular highlight */}
+                <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/50 to-transparent pointer-events-none" />
+
+                {isGeneratingPlan ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-[#090B0E] border-t-transparent rounded-full animate-spin" />
+                    <span>جاري هندسة خطتك في جدة...</span>
+                  </>
+                ) : (
+                  <>
+                    <ArrowLeft className="w-5 h-5 text-[#090B0E] group-hover:-translate-x-1.5 transition-transform" />
+                    <span>ابنِ خطتي لجدة بنقرة واحدة ✨</span>
+                  </>
+                )}
+              </motion.button>
+            </div>
           </div>
 
         </div>
