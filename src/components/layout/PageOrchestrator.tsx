@@ -12,6 +12,8 @@ import { CuratedReadyPlans } from '@/components/home/CuratedReadyPlans';
 import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
 import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
+import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
+import { CursorGlow } from '@/components/ui/CursorGlow';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
 export const PageOrchestrator: React.FC = () => {
@@ -19,8 +21,11 @@ export const PageOrchestrator: React.FC = () => {
 
   return (
     <div className="relative min-h-[100dvh] flex flex-col bg-[#090B0E] text-[#FBFBFA] selection:bg-gold-500/30 selection:text-gold-300 overflow-x-hidden">
+      {/* LUXURY FLUID CURSOR SPOTLIGHT AMBIENT TRAIL */}
+      <CursorGlow />
+
       {/* PERSISTENT APP SHELL - ZERO DELAY FIRST RENDER */}
-      <div className="flex-1 flex flex-col w-full">
+      <div className="flex-1 flex flex-col w-full relative z-10">
         {/* Navigation Bar */}
         <Navbar />
 
@@ -40,13 +45,16 @@ export const PageOrchestrator: React.FC = () => {
                 {/* 1. Rich Full-Bleed Atmospheric Hero with 5-Pillar Smart Dock */}
                 <HeroSection />
 
-                {/* 2. Live Social Proof Bar */}
+                {/* 2. Live Social Proof Marquee Bar */}
                 <SocialProofBar />
 
-                {/* 3. Bento Mood Grid */}
+                {/* 3. 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
+                <JeddahRouteStudio />
+
+                {/* 4. Asymmetrical 3D Bento Mood Grid */}
                 <BentoMoodGrid />
 
-                {/* 4. Curated Ready Plans & Exclusive Partner Deals */}
+                {/* 5. Curated Ready Plans & Exclusive Partner Deals */}
                 <CuratedReadyPlans />
               </motion.div>
             )}

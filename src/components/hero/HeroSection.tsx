@@ -22,6 +22,7 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 
 // ==========================================
@@ -292,6 +293,16 @@ export const HeroSection: React.FC = () => {
   const updateWizardPreferences = useItineraryStore((state) => state.updateWizardPreferences);
   const generatePlanFromPreferences = useItineraryStore((state) => state.generatePlanFromPreferences);
   const isGeneratingPlan = useItineraryStore((state) => state.isGeneratingPlan);
+  const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
+  const atmosphere = getJeddahAtmosphere(atmospherePhase);
+
+  // Dynamic Time Machine video selection
+  const activeVideoSrc =
+    atmosphere.phase === 'golden_hour'
+      ? getAssetUrl('/videos/jeddah-sunset.webm')
+      : atmosphere.phase === 'daytime'
+        ? getAssetUrl('/videos/jeddah-waves.webm')
+        : getAssetUrl('/videos/jeddah-corniche.mp4');
 
   // Form State
   const [district, setDistrict] = useState<DistrictId | 'all_jeddah'>(activeDest.districtId);
@@ -316,6 +327,16 @@ export const HeroSection: React.FC = () => {
     }, 2500);
     return () => clearTimeout(timer);
   }, []);
+
+  // Update video when atmospherePhase changes
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.src = activeVideoSrc;
+    video.load();
+    const promise = video.play();
+    if (promise) promise.catch(() => {});
+  }, [activeVideoSrc]);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -453,7 +474,16 @@ export const HeroSection: React.FC = () => {
             isIntroStage ? 'opacity-20' : 'opacity-85'
           } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90`}
         />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.18)_0%,transparent_60%)] pointer-events-none" />
+        {/* Dynamic Atmosphere Radial Gradient */}
+        <div
+          className={`absolute inset-0 pointer-events-none transition-all duration-1000 ${
+            atmosphere.phase === 'golden_hour'
+              ? 'bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.24)_0%,rgba(234,88,12,0.12)_40%,transparent_70%)]'
+              : atmosphere.phase === 'daytime'
+                ? 'bg-[radial-gradient(ellipse_at_top,rgba(6,182,212,0.24)_0%,rgba(20,184,166,0.12)_40%,transparent_70%)]'
+                : 'bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.2)_0%,rgba(245,158,11,0.08)_35%,transparent_70%)]'
+          }`}
+        />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
 
         {/* Cinematic Lens Vignette & 35mm Film Grain */}
@@ -509,7 +539,11 @@ export const HeroSection: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
           </span>
           <Compass className="w-3.5 h-3.5 text-gold-400 animate-spin [animation-duration:22s]" />
-          <span>{language === 'ar' ? 'عروس البحر الأحمر • تجارب استثنائية' : 'Bride of the Red Sea • Exceptional Experiences'}</span>
+          <span>
+            {language === 'ar'
+              ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
+              : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+          </span>
         </div>
 
         {/* Master Headline with Luxury Arabic Typography */}

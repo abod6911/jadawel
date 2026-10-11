@@ -19,8 +19,9 @@ export interface JeddahAtmosphere {
 
 /**
  * Calculates dynamic atmosphere, realistic Jeddah weather, and sunset countdown.
+ * Supports manual override for interactive Jeddah Time Machine simulation.
  */
-export function getJeddahAtmosphere(): JeddahAtmosphere {
+export function getJeddahAtmosphere(forcedPhase?: AtmospherePhase | 'auto'): JeddahAtmosphere {
   const now = new Date();
   const hours = now.getHours();
   const minutes = now.getMinutes();
@@ -53,8 +54,15 @@ export function getJeddahAtmosphere(): JeddahAtmosphere {
   // Sunset (16:30 - 18:45): 31°C
   // Evening (18:45 - 23:59): 29°C
 
-  if (totalMinutesNow >= 360 && totalMinutesNow < 990) {
-    // Daytime (06:00 - 16:30)
+  const activePhase = (forcedPhase && forcedPhase !== 'auto')
+    ? forcedPhase
+    : (totalMinutesNow >= 360 && totalMinutesNow < 990)
+      ? 'daytime'
+      : (totalMinutesNow >= 990 && totalMinutesNow < 1125)
+        ? 'golden_hour'
+        : 'nightlife';
+
+  if (activePhase === 'daytime') {
     const temp = totalMinutesNow >= 660 ? 33 : 30;
     return {
       phase: 'daytime',

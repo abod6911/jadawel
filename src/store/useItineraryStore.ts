@@ -15,12 +15,14 @@ import {
   calculateFinancials,
   normalizeDistrictId,
 } from '@/utils/plannerEngine';
+import { AtmospherePhase } from '@/utils/atmosphereEngine';
 
 interface ItineraryState {
   // Global App State
   language: Language;
   theme: Theme;
   activeNavTab: 'home' | 'quick-plan' | 'timeline' | 'explore' | 'curated';
+  atmospherePhase: AtmospherePhase | 'auto';
 
   // Itinerary & Plan Variants
   currentItinerary: Itinerary | null;
@@ -48,6 +50,7 @@ interface ItineraryState {
   setTheme: (theme: Theme) => void;
   toggleTheme: () => void;
   setActiveNavTab: (tab: 'home' | 'quick-plan' | 'timeline' | 'explore' | 'curated') => void;
+  setAtmospherePhase: (phase: AtmospherePhase | 'auto') => void;
 
   setWizardStep: (step: number) => void;
   updateWizardPreferences: (partial: Partial<WizardPreferences>) => void;
@@ -127,6 +130,8 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
   toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
 
   setActiveNavTab: (activeNavTab) => set({ activeNavTab }),
+  atmospherePhase: 'auto',
+  setAtmospherePhase: (atmospherePhase) => set({ atmospherePhase }),
   setWizardStep: (wizardStep) => set({ wizardStep }),
 
   updateWizardPreferences: (partial) => {
