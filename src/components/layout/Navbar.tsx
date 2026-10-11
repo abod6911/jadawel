@@ -21,7 +21,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
-import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
+import { useJeddahWeather } from '@/hooks/useJeddahWeather';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 
 export const Navbar: React.FC = () => {
@@ -32,7 +32,7 @@ export const Navbar: React.FC = () => {
   const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
   const setAtmospherePhase = useItineraryStore((state) => state.setAtmospherePhase);
   const [isMuted, setIsMuted] = useState(soundEngine.isSoundMuted());
-  const atmosphere = getJeddahAtmosphere(atmospherePhase);
+  const { atmosphere } = useJeddahWeather(atmospherePhase);
 
   const navItems = [
     { id: 'home' as const, labelAr: 'الرئيسية', labelEn: 'Home', icon: Flame },

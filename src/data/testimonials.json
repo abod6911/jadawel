@@ -1,0 +1,67 @@
+[
+  {
+    "id": "t1",
+    "nameAr": "ريان السلمي",
+    "nameEn": "Rayan Al-Sulami",
+    "locationAr": "أبحر الشمالية",
+    "locationEn": "North Obhur",
+    "quoteAr": "طلعة أبحر كانت رايقة ومحسوبة بالميلي، توقيت الغروب في نادي اليخوت كان مناسب جداً! 🌊",
+    "quoteEn": "Obhur outing was smooth and well-paced, golden hour at Yacht Club was spot on! 🌊",
+    "avatar": "👨🏻‍💼",
+    "tagAr": "مسار اليخوت والغروب",
+    "tagEn": "Yacht & Sunset Track",
+    "rating": 5
+  },
+  {
+    "id": "t2",
+    "nameAr": "سارة الحربي",
+    "nameEn": "Sarah Al-Harbi",
+    "locationAr": "البلد التاريخية",
+    "locationEn": "Historic Al-Balad",
+    "quoteAr": "توفير وقت حقيقي في أزقة البلد التاريخية وتيم لاب، رتبنا اليوم بضغطة زر 🏛️",
+    "quoteEn": "Real time saver for UNESCO Balad and teamLab, planned in one click 🏛️",
+    "avatar": "👩🏻‍💻",
+    "tagAr": "تراث وفنون اليونسكو",
+    "tagEn": "UNESCO Arts & Heritage",
+    "rating": 5
+  },
+  {
+    "id": "t3",
+    "nameAr": "فيصل الغامدي",
+    "nameEn": "Faisal Al-Ghamdi",
+    "locationAr": "حي الروضة",
+    "locationEn": "Al-Rawdah",
+    "quoteAr": "تقدير الميزانية تقريبي وواقعي، ساعدنا نرتب ميزانية الشلة بالريال قبل لا نطلع 💰",
+    "quoteEn": "Realistic SAR budget estimate helped us plan our group outing finances 💰",
+    "avatar": "👨🏽‍💼",
+    "tagAr": "تقدير تقريبي للميزانية",
+    "tagEn": "Realistic Budget Estimate",
+    "rating": 5
+  },
+  {
+    "id": "t4",
+    "nameAr": "نورة الشريف",
+    "nameEn": "Noura Al-Sharif",
+    "locationAr": "التحلية والروضة",
+    "locationEn": "Tahlia & Rawdah",
+    "quoteAr": "محامص القهوة المختصة والمطاعم الراقية في جدول واحد سلس ومرتب ☕",
+    "quoteEn": "Specialty roasteries and dining in one seamless plan ☕",
+    "avatar": "👩🏼‍🎨",
+    "tagAr": "عشاق القهوة المختصة",
+    "tagEn": "Specialty Coffee Lovers",
+    "rating": 5
+  },
+  {
+    "id": "t5",
+    "nameAr": "ماجد القرني",
+    "nameEn": "Majed Al-Qarni",
+    "locationAr": "الكورنيش الشمالي",
+    "locationEn": "North Corniche",
+    "quoteAr": "جدول عائلي مريح جداً للأطفال، دمج الكورنيش مع ملاهي الشلال كان تجربة ممتازة 👨‍👩‍👧‍👦",
+    "quoteEn": "Comfortable family schedule with kids, blending Corniche with theme park 👨‍👩‍👧‍👦",
+    "avatar": "👨🏻‍🦱",
+    "tagAr": "طلعة عائلية متكاملة",
+    "tagEn": "Curated Family Plan",
+    "rating": 5
+  }
+]

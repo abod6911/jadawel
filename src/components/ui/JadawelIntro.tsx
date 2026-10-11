@@ -108,7 +108,13 @@ export const JadawelIntro: React.FC<{ onComplete?: () => void }> = ({ onComplete
                   }}
                   transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 >
-                  <img src={card.url} alt="" className="w-full h-full object-cover brightness-[0.85] contrast-[1.1]" />
+                  <img
+                    src={card.url}
+                    alt={card.label}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover brightness-[0.85] contrast-[1.1]"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12]/90 via-transparent to-transparent" />
                   <span className="absolute bottom-3 inset-x-0 text-center text-[11px] font-bold text-white/95">
                     {card.label}

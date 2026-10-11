@@ -210,34 +210,44 @@ function computeVenueScore(
     }
   }
 
-  // 6. Budget Fit
+  // 6. Strict Budget Fit
   let budgetScore = 0;
+  const isLuxury = archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+  const isEconomy = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
+
   if (isFreeRequired) {
-    budgetScore = 30;
-  } else if (archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium') {
-    if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 180) {
-      budgetScore = 30;
-    } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 90) {
-      budgetScore = 20;
-    } else {
-      penalties += 15;
+    if (venue.averageCostSAR > 0 && !venue.isFree) {
+      return -99999;
     }
-  } else if (prefs.budgetTier === 'economy') {
-    if (venue.averageCostSAR === 0 || venue.averageCostSAR <= 50) {
+    budgetScore = 40;
+  } else if (isLuxury) {
+    if (venue.averageCostSAR === 0 && venue.priceTier === 'free') {
+      penalties += 60; // Strongly avoid plain free street spots when VIP luxury is chosen
+    } else if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 180) {
+      budgetScore = 50;
+    } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 90) {
       budgetScore = 30;
-    } else if (venue.averageCostSAR <= 90) {
-      budgetScore = 18;
     } else {
-      penalties += 25;
+      penalties += 40;
+    }
+  } else if (isEconomy) {
+    if (venue.averageCostSAR > 110 || venue.priceTier === '$$$$') {
+      return -99999; // Strictly disallow expensive dining/luxury clubs in economy mode
+    } else if (venue.averageCostSAR <= 50) {
+      budgetScore = 45;
+    } else if (venue.averageCostSAR <= 85) {
+      budgetScore = 25;
+    } else {
+      penalties += 30;
     }
   } else {
-    // Moderate (~150 SAR)
-    if (venue.averageCostSAR > 0 && venue.averageCostSAR <= 160) {
-      budgetScore = 25;
-    } else if (venue.averageCostSAR === 0) {
-      budgetScore = 18;
+    // Moderate
+    if (venue.averageCostSAR > 250) {
+      penalties += 40;
+    } else if (venue.averageCostSAR >= 35 && venue.averageCostSAR <= 160) {
+      budgetScore = 35;
     } else {
-      budgetScore = 12;
+      budgetScore = 15;
     }
   }
 
@@ -332,20 +342,45 @@ function generateVariantStops(
 
     let bestPlace = scoredVenues[0]?.venue;
 
-    // Strict free fallback
-    if (archetype === 'free' || prefs.budgetTier === 'free') {
-      const freeCandidates = JEDDAH_PLACES.filter(
-        (p) => p.averageCostSAR === 0 && !usedIds.has(p.id)
-      );
+    const isFreePlan = archetype === 'free' || prefs.budgetTier === 'free';
+    const isEconPlan = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
+    const isLuxPlan = archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+
+    // Strict candidate filtering by budget tier
+    if (isFreePlan) {
+      const freeCandidates = scoredVenues
+        .filter((sv) => (sv.venue.averageCostSAR === 0 || sv.venue.isFree) && !usedIds.has(sv.venue.id))
+        .map((sv) => sv.venue);
       if (freeCandidates.length > 0) {
         bestPlace = freeCandidates[0];
+      }
+    } else if (isEconPlan) {
+      const econCandidates = scoredVenues
+        .filter((sv) => sv.venue.averageCostSAR <= 110 && sv.venue.priceTier !== '$$$$' && !usedIds.has(sv.venue.id))
+        .map((sv) => sv.venue);
+      if (econCandidates.length > 0) {
+        bestPlace = econCandidates[0];
+      }
+    } else if (isLuxPlan) {
+      const luxCandidates = scoredVenues
+        .filter((sv) => (sv.venue.averageCostSAR >= 90 || sv.venue.priceTier === '$$$$' || sv.venue.priceTier === '$$$') && !usedIds.has(sv.venue.id))
+        .map((sv) => sv.venue);
+      if (luxCandidates.length > 0) {
+        bestPlace = luxCandidates[0];
       }
     }
 
     if (!bestPlace || usedIds.has(bestPlace.id)) {
-      bestPlace =
-        JEDDAH_PLACES.find((p) => !usedIds.has(p.id)) ||
-        JEDDAH_PLACES[idx % JEDDAH_PLACES.length];
+      const unused = JEDDAH_PLACES.filter((p) => !usedIds.has(p.id));
+      if (isFreePlan) {
+        bestPlace = unused.find((p) => p.averageCostSAR === 0 || p.isFree) || JEDDAH_PLACES[0];
+      } else if (isEconPlan) {
+        bestPlace = unused.find((p) => p.averageCostSAR <= 110 && p.priceTier !== '$$$$') || unused[0] || JEDDAH_PLACES[0];
+      } else if (isLuxPlan) {
+        bestPlace = unused.find((p) => p.averageCostSAR >= 90 || p.priceTier === '$$$$') || unused[0] || JEDDAH_PLACES[0];
+      } else {
+        bestPlace = unused[0] || JEDDAH_PLACES[idx % JEDDAH_PLACES.length];
+      }
     }
 
     usedIds.add(bestPlace.id);

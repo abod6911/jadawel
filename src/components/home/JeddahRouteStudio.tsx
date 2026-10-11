@@ -63,7 +63,7 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     borderColor: 'border-amber-500/40',
     bgGlow: 'from-amber-500/10 via-amber-500/5 to-transparent',
     placeSlugsOrIds: [
-      'indigo-beach-obhur',
+      'indigo-beach-resort',
       'jeddah-yacht-club',
       'twina-seafood-lounge',
     ],
@@ -88,9 +88,9 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     bgGlow: 'from-gold-500/10 via-gold-500/5 to-transparent',
     placeSlugsOrIds: [
       'teamlab-borderless-jeddah',
-      'historic-al-balad',
+      'historic-balad-open-trail',
       'bait-nassif-balad',
-      'medd-cafe-roastery',
+      'medd-cafe-alrawdah',
     ],
     totalDurationAr: '4.5 ساعات',
     totalDurationEn: '4.5 Hours',
@@ -136,7 +136,7 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     borderColor: 'border-rose-400/40',
     bgGlow: 'from-rose-500/10 via-rose-500/5 to-transparent',
     placeSlugsOrIds: [
-      'boho-cafe-rawdah',
+      'caffe-bene-rawdah',
       'hayy-jameel-arts',
       'san-carlo-cicchetti',
     ],
@@ -164,9 +164,15 @@ export const JeddahRouteStudio: React.FC = () => {
   const stops = useMemo(() => {
     const list: { place: Place; order: number; timeSlot: string }[] = [];
     activeRoute.placeSlugsOrIds.forEach((idOrSlug, index) => {
-      const found = JEDDAH_PLACES.find(
+      let found = JEDDAH_PLACES.find(
         (p) => p.id === idOrSlug || p.slug === idOrSlug
       );
+      if (!found) {
+        const cleanSlug = idOrSlug.toLowerCase();
+        found = JEDDAH_PLACES.find(
+          (p) => p.slug.toLowerCase().includes(cleanSlug) || cleanSlug.includes(p.slug.toLowerCase())
+        );
+      }
       if (found) {
         list.push({
           place: found,
@@ -392,6 +398,8 @@ export const JeddahRouteStudio: React.FC = () => {
                     <img
                       src={p.imageUrl ? getAssetUrl(p.imageUrl) : getAssetUrl('/images/places/indigo-beach.jpg')}
                       alt={p.nameAr}
+                      loading="lazy"
+                      decoding="async"
                       className="w-12 h-12 rounded-xl object-cover shrink-0 border border-white/10 group-hover:scale-105 transition-transform"
                     />
 

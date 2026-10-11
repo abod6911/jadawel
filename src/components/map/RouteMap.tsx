@@ -19,30 +19,51 @@ export interface RouteMapProps {
 
 // Fallback Vector Route Canvas during client hydration or offline
 const VectorRouteFallback: React.FC<{ stops: MapStop[] }> = ({ stops }) => {
+  const validStops = stops.filter((s) => s.place?.coordinates?.lat && s.place?.coordinates?.lng);
+  const gmapsUrl = validStops.length >= 2
+    ? `https://www.google.com/maps/dir/?api=1&origin=${validStops[0].place.coordinates.lat},${validStops[0].place.coordinates.lng}&destination=${validStops[validStops.length - 1].place.coordinates.lat},${validStops[validStops.length - 1].place.coordinates.lng}`
+    : validStops.length === 1
+    ? `https://www.google.com/maps/search/?api=1&query=${validStops[0].place.coordinates.lat},${validStops[0].place.coordinates.lng}`
+    : 'https://www.google.com/maps';
+
   return (
-    <div className="w-full h-full min-h-[420px] bg-abyss-950 rounded-[2rem] p-6 flex flex-col items-center justify-center text-center space-y-4 border border-gold-500/25 relative overflow-hidden">
+    <div className="w-full h-full min-h-[420px] bg-[#0A0D14] rounded-[2rem] p-6 flex flex-col items-center justify-center text-center space-y-4 border border-[#E5C378]/25 relative overflow-hidden">
       <div className="absolute inset-0 bg-mesh-abyss opacity-40 pointer-events-none" />
-      <div className="w-14 h-14 rounded-2xl bg-gold-500/20 text-gold-400 border border-gold-500/40 flex items-center justify-center shadow-glow-gold animate-bounce">
-        <MapPin className="w-7 h-7 text-coral-400" />
+      <div className="w-14 h-14 rounded-2xl bg-[#E5C378]/15 text-[#E5C378] border border-[#E5C378]/40 flex items-center justify-center shadow-lg animate-pulse">
+        <MapPin className="w-7 h-7 text-[#E5C378]" />
       </div>
       <div className="space-y-1 relative z-10">
-        <h4 className="text-base font-black text-pearl">جارٍ تحميل خريطة مسار جدة التفاعلية...</h4>
-        <p className="text-xs text-pearl-muted font-medium">جاري تجهيز نقاط المسار والاتصال بالأقمار الصناعية 🛰️</p>
+        <h4 className="text-base font-black text-white">خريطة مسار جدة التفاعلية</h4>
+        <p className="text-xs text-slate-400 font-medium">جاري تجهيز نقاط المسار المرقّمة والتنقل المباشر 🛰️</p>
       </div>
 
       {/* Mini Node Route Indicator */}
-      <div className="flex items-center gap-2 pt-2 relative z-10">
-        {stops.slice(0, 4).map((s, idx) => (
-          <React.Fragment key={idx}>
-            <div className="w-8 h-8 rounded-full bg-coral-500 text-white font-black text-xs flex items-center justify-center border-2 border-gold-400 shadow-md">
-              {idx + 1}
-            </div>
-            {idx < stops.slice(0, 4).length - 1 && (
-              <div className="w-6 h-0.5 bg-teal-400 opacity-60" />
-            )}
-          </React.Fragment>
-        ))}
-      </div>
+      {validStops.length > 0 && (
+        <div className="flex items-center gap-2 pt-2 relative z-10">
+          {validStops.slice(0, 4).map((s, idx) => (
+            <React.Fragment key={idx}>
+              <div className="w-8 h-8 rounded-full bg-[#E5C378] text-[#0A0D14] font-black text-xs flex items-center justify-center border-2 border-white shadow-md">
+                {idx + 1}
+              </div>
+              {idx < validStops.slice(0, 4).length - 1 && (
+                <div className="w-6 h-0.5 bg-[#E5C378]/40" />
+              )}
+            </React.Fragment>
+          ))}
+        </div>
+      )}
+
+      {validStops.length > 0 && (
+        <a
+          href={gmapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="relative z-10 inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-500/20 hover:bg-teal-500/30 border border-teal-400/40 text-teal-300 text-xs font-bold transition-all shadow-md mt-2"
+        >
+          <Navigation className="w-3.5 h-3.5" />
+          <span>فتح المسار في Google Maps</span>
+        </a>
+      )}
     </div>
   );
 };

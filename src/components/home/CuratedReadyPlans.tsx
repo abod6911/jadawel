@@ -1,20 +1,36 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, ArrowLeft, ArrowRight, Clock, Coins, MapPin, Tag, Gift, Check, Copy } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Compass, ArrowLeft, ArrowRight, Clock, Coins, MapPin, Tag, Gift, Check, Copy, AlertCircle } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { CURATED_PLANS } from '@/data/curated-plans';
+import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { getAssetUrl } from '@/utils/paths';
 import { soundEngine } from '@/utils/audioEngine';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { MagneticButton } from '@/components/fancy/MagneticButton';
-import { NumberTicker } from '@/components/fancy/NumberTicker';
 
 export const CuratedReadyPlans: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const loadCuratedPlan = useItineraryStore((state) => state.loadCuratedPlan);
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const getPlanBudgetRange = (plan: typeof CURATED_PLANS[0]) => {
+    const places = plan.placesIds
+      .map((id) => JEDDAH_PLACES.find((p) => p.id === id || p.slug === id))
+      .filter(Boolean);
+
+    const totalBase = places.reduce((sum, p) => sum + (p?.averageCostSAR || 0), 0);
+    const baseCost = totalBase > 0 ? totalBase : plan.estimatedCostSAR;
+
+    const min = Math.max(0, Math.round((baseCost * 0.85) / 5) * 5);
+    const max = Math.max(min + 25, Math.round((baseCost * 1.15) / 5) * 5);
+
+    return { min, max };
+  };
 
   const deals = [
     {
@@ -51,7 +67,15 @@ export const CuratedReadyPlans: React.FC = () => {
     if (typeof window !== 'undefined' && navigator.clipboard) {
       navigator.clipboard.writeText(code);
       setCopiedCode(code);
-      setTimeout(() => setCopiedCode(null), 2500);
+      setToastMessage(
+        language === 'ar'
+          ? `✅ تم نسخ كود الخصم (${code}) إلى الحافظة بنجاح!`
+          : `✅ Promo code (${code}) copied to clipboard!`
+      );
+      setTimeout(() => {
+        setCopiedCode(null);
+        setToastMessage(null);
+      }, 3000);
     }
   };
 
@@ -98,6 +122,8 @@ export const CuratedReadyPlans: React.FC = () => {
                   <img
                     src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0E1118] via-black/30 to-transparent" />
@@ -114,19 +140,25 @@ export const CuratedReadyPlans: React.FC = () => {
                     {language === 'ar' ? plan.descriptionAr : plan.descriptionEn}
                   </p>
 
-                  <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-3 border-t border-white/10">
-                    <span className="flex items-center gap-1.5 text-teal-300 font-bold">
-                      <Clock className="w-3.5 h-3.5" />
-                      <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
-                    </span>
-                    <span className="text-[#E5C378] font-black">
-                      <NumberTicker
-                        value={plan.estimatedCostSAR}
-                        prefix="~"
-                        suffix={language === 'ar' ? ' ر.س / شخص' : ' SAR / pers'}
-                      />
-                    </span>
-                  </div>
+                  {(() => {
+                    const range = getPlanBudgetRange(plan);
+                    return (
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-3 border-t border-white/10">
+                        <span className="flex items-center gap-1.5 text-teal-300 font-bold">
+                          <Clock className="w-3.5 h-3.5" />
+                          <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
+                        </span>
+                        <div className="text-end">
+                          <span className="text-[#E5C378] font-black block text-sm">
+                            {range.min}–{range.max} {language === 'ar' ? 'ر.س / شخص' : 'SAR / pers'}
+                          </span>
+                          <span className="text-[10px] text-slate-400 font-normal">
+                            {language === 'ar' ? 'تقدير تقريبي للميزانية' : 'Realistic SAR estimate'}
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
@@ -150,19 +182,24 @@ export const CuratedReadyPlans: React.FC = () => {
       {/* Exclusive Partner Deals Section */}
       <div className="relative p-6 sm:p-8 rounded-3xl bg-[#0E1118]/85 backdrop-blur-2xl border border-[#E5C378]/30 shadow-2xl space-y-6 overflow-hidden">
         <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-[#E5C378]/15 text-[#E5C378] border border-[#E5C378]/30 flex items-center justify-center shadow-[0_0_15px_rgba(229,195,120,0.25)]">
               <Gift className="w-5 h-5" />
             </div>
             <div>
-              <h3 className="text-xl font-black text-white">
-                {language === 'ar' ? 'عروض وخصومات حصرية لطلعتك' : 'Exclusive Partner Deals'}
-              </h3>
+              <div className="flex items-center gap-2">
+                <h3 className="text-xl font-black text-white">
+                  {language === 'ar' ? 'عروض وخصومات حصرية لطلعتك' : 'Exclusive Partner Deals'}
+                </h3>
+                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/35 text-amber-300 font-bold">
+                  {language === 'ar' ? 'عروض تجريبية' : 'Demo Offers'}
+                </span>
+              </div>
               <p className="text-xs text-slate-300 font-medium">
                 {language === 'ar'
-                  ? 'وفّر على مطاعم وتذاكر فعاليات جدة المميزة مع شركاء جداول'
-                  : 'Exclusive vouchers and discounts curated for Jadawel explorers'}
+                  ? 'عروض وكوبونات استرشادية وتجريبية قيد التنسيق والاعتماد مع الشركاء المحليين'
+                  : 'Demonstration partner vouchers and discount perks in validation phase'}
               </p>
             </div>
           </div>
@@ -214,6 +251,21 @@ export const CuratedReadyPlans: React.FC = () => {
           })}
         </div>
       </div>
+
+      {/* Floating Toast Notification on Copy */}
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 30, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            className="fixed bottom-6 start-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-2xl bg-[#0F1420]/95 border border-[#E5C378]/50 text-white font-bold text-xs sm:text-sm shadow-[0_16px_50px_rgba(0,0,0,0.9)] flex items-center gap-2.5 backdrop-blur-xl"
+          >
+            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
+            <span>{toastMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

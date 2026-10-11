@@ -15,6 +15,8 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { NumberTicker } from '@/components/fancy/NumberTicker';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 
+import testimonialsData from '@/data/testimonials.json';
+
 interface TestimonialCapsule {
   id: string;
   nameAr: string;
@@ -29,73 +31,7 @@ interface TestimonialCapsule {
   rating: number;
 }
 
-const TESTIMONIALS: TestimonialCapsule[] = [
-  {
-    id: 't1',
-    nameAr: 'ريان السلمي',
-    nameEn: 'Rayan Al-Sulami',
-    locationAr: 'أبحر الشمالية',
-    locationEn: 'North Obhur',
-    quoteAr: 'طلعة أبحر كانت خيالية بدون أي زحمة، توقيت الغروب في نادي اليخوت كان بالميلي! 🌊',
-    quoteEn: 'Obhur outing was surreal without traffic, golden hour at Yacht Club was spot on! 🌊',
-    avatar: '👨🏻‍💼',
-    tagAr: 'مسار اليخوت والغروب',
-    tagEn: 'Yacht & Sunset Track',
-    rating: 5,
-  },
-  {
-    id: 't2',
-    nameAr: 'سارة الحربي',
-    nameEn: 'Sarah Al-Harbi',
-    locationAr: 'البلد التاريخية',
-    locationEn: 'Historic Al-Balad',
-    quoteAr: 'توفير وقت حقيقي في أزقة البلد التاريخية وتيم لاب، رتبنا اليوم بضغطة زر 🏛️',
-    quoteEn: 'Real time saver for UNESCO Balad and teamLab, planned in one click 🏛️',
-    avatar: '👩🏻‍💻',
-    tagAr: 'تراث وفنون اليونسكو',
-    tagEn: 'UNESCO Arts & Heritage',
-    rating: 5,
-  },
-  {
-    id: 't3',
-    nameAr: 'فيصل الغامدي',
-    nameEn: 'Faisal Al-Ghamdi',
-    locationAr: 'حي الروضة',
-    locationEn: 'Al-Rawdah',
-    quoteAr: 'حساب الميزانية طلع بالريال بالضبط شامل العشاء وتكلفة أوبر، أسطوري 💰',
-    quoteEn: 'Exact SAR budget breakdown including dinner and Uber, absolutely legendary 💰',
-    avatar: '👨🏽‍💼',
-    tagAr: 'دقة الميزانية 100%',
-    tagEn: '100% SAR Accuracy',
-    rating: 5,
-  },
-  {
-    id: 't4',
-    nameAr: 'نورة الشريف',
-    nameEn: 'Noura Al-Sharif',
-    locationAr: 'التحلية والروضة',
-    locationEn: 'Tahlia & Rawdah',
-    quoteAr: 'أفضل محامص القهوة المختصة والمطاعم الراقية في جدول واحد سلس ورايق ☕',
-    quoteEn: 'The best specialty roasteries and gourmet dining in one seamless plan ☕',
-    avatar: '👩🏼‍🎨',
-    tagAr: 'عشاق القهوة المختصة',
-    tagEn: 'Specialty Coffee Lovers',
-    rating: 5,
-  },
-  {
-    id: 't5',
-    nameAr: 'ماجد القرني',
-    nameEn: 'Majed Al-Qarni',
-    locationAr: 'الكورنيش الشمالي',
-    locationEn: 'North Corniche',
-    quoteAr: 'جدول عائلي مريح جداً للأطفال، دمج الكورنيش مع ملاهي الشلال كان تجربة ممتازة 👨‍👩‍👧‍👦',
-    quoteEn: 'Super comfortable family schedule with kids, blending Corniche with theme park 👨‍👩‍👧‍👦',
-    avatar: '👨🏻‍🦱',
-    tagAr: 'طلعة عائلية متكاملة',
-    tagEn: 'Curated Family Plan',
-    rating: 5,
-  },
-];
+const TESTIMONIALS: TestimonialCapsule[] = testimonialsData as TestimonialCapsule[];
 
 export const SocialProofBar: React.FC = () => {
   const { language } = useLanguage();
@@ -117,8 +53,8 @@ export const SocialProofBar: React.FC = () => {
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#E5C378]" />
           </span>
           <span className="font-black text-white flex items-center gap-1">
-            <NumberTicker value={842} suffix="+" />
-            <span>{language === 'ar' ? 'يخططون لطلعتهم الآن في جدة' : 'Planning Outings in Jeddah Right Now'}</span>
+            <NumberTicker value={142} suffix="+" />
+            <span>{language === 'ar' ? 'يخططون لطلعتهم الآن في جدة' : 'Exploring Jeddah Outings Right Now'}</span>
           </span>
           <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-bold border border-[#E5C378]/35 shadow-[0_0_10px_rgba(229,195,120,0.25)]">
             {language === 'ar' ? 'مباشر' : 'Live'}
@@ -129,19 +65,19 @@ export const SocialProofBar: React.FC = () => {
         <div className="hidden sm:flex items-center gap-4 text-slate-300 text-[11px] font-bold">
           <span className="flex items-center gap-1.5 text-white/90">
             <TrendingUp className="w-3.5 h-3.5 text-[#E5C378]" />
-            <NumberTicker value={50000} prefix="+" />
-            <span>{language === 'ar' ? 'طلعة تم توليدها' : 'Outings Generated'}</span>
+            <NumberTicker value={12500} prefix="+" />
+            <span>{language === 'ar' ? 'مسار استكشفه الزوار' : 'Routes Explored'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-white/90">
             <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
-            <span>{language === 'ar' ? 'دقة الميزانية بالريال 🇸🇦' : '100% SAR Budget Accuracy'}</span>
+            <span>{language === 'ar' ? 'تقدير تقريبي للميزانية بالريال 🇸🇦' : 'Realistic SAR Budget Estimate 🇸🇦'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1 text-[#E5C378]">
             <Star className="w-3 h-3 fill-[#E5C378]" />
             <span className="font-black">4.9/5</span>
-            <span className="text-white/60 font-medium">(2,400+ تقييم)</span>
+            <span className="text-white/60 font-medium">({language === 'ar' ? 'نماذج استطلاعية توضيحية' : 'Sample Reviews'})</span>
           </span>
         </div>
       </div>

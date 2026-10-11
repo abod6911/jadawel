@@ -282,6 +282,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
       </div>
 
       <MapContainer
+        key={`leaflet-map-${validStops.map((s) => s.place?.id || s.place?.slug).join('_')}-${mapStyle}`}
         center={polylineCoords[0] || center}
         zoom={zoom}
         scrollWheelZoom={false}

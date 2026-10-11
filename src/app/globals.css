@@ -29,6 +29,12 @@ button, a, select, input, [role="button"] {
   -webkit-tap-highlight-color: transparent;
 }
 
+@media (max-width: 640px) {
+  button:not(.badge-compact), [role="button"]:not(.badge-compact) {
+    min-height: 44px;
+  }
+}
+
 /* Typography Guardrails (Zero Text Overlap & Zero Clipping) */
 h1, h2, h3, h4, h5, h6 {
   text-wrap: balance;

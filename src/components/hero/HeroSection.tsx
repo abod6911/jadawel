@@ -396,6 +396,16 @@ export const HeroSection: React.FC = () => {
     video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
 
+    // Accessibility & Data Saver: Disable video on reduced-motion or slow 2G connection
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+    const navConn = typeof navigator !== 'undefined' ? (navigator as any).connection : undefined;
+    const isSlowConnection = navConn?.saveData === true || ['slow-2g', '2g'].includes(navConn?.effectiveType);
+
+    if (prefersReducedMotion || isSlowConnection) {
+      video.pause();
+      return;
+    }
+
     const tryPlay = () => {
       video.muted = true;
       const promise = video.play();
@@ -496,7 +506,8 @@ export const HeroSection: React.FC = () => {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster={getAssetUrl('/images/places/indigo-beach.jpg')}
           className="w-full h-full object-cover brightness-[0.88] contrast-[1.14] saturate-[1.05]"
         >
           <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
