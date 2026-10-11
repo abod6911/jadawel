@@ -368,59 +368,95 @@ export const HeroSection: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // HTML5 Video Autoplay Lifecycle (Direct DOM property assignment for smooth ambient background)
+  // HTML5 Video Autoplay Lifecycle (Bulletproof ambient background video playback)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
+    // Enforce HTML5 autoplay policies strictly
     video.muted = true;
     video.defaultMuted = true;
     video.setAttribute('muted', '');
     video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
+    video.setAttribute('webkit-playsinline', 'true');
+    video.setAttribute('x5-playsinline', 'true');
 
     const tryPlay = () => {
+      if (!video) return;
       video.muted = true;
       const promise = video.play();
       if (promise !== undefined) {
-        promise.catch((err) => {
-          console.warn('Autoplay prevented by browser policy:', err);
+        promise.catch(() => {
+          // Handled gracefully; watchdog or gesture will unlock
         });
       }
     };
 
+    // Immediate attempt
     tryPlay();
+
+    // Attach to all readiness events
+    video.addEventListener('loadedmetadata', tryPlay);
     video.addEventListener('loadeddata', tryPlay);
     video.addEventListener('canplay', tryPlay);
+    video.addEventListener('canplaythrough', tryPlay);
 
+    // Watchdog retry: Ensures video plays even if browser throttled initial frame
+    const watchdog = setInterval(() => {
+      if (video && video.paused) {
+        tryPlay();
+      } else if (video && !video.paused) {
+        clearInterval(watchdog);
+      }
+    }, 250);
+
+    // Keep looping seamlessly
     const handleEnded = () => {
+      if (!video) return;
       video.currentTime = 0;
       tryPlay();
     };
     video.addEventListener('ended', handleEnded);
 
-    // Gesture unlock fallback for strict mobile browser policies
-    const unlockOnGesture = () => {
-      if (video.paused) {
-        video.muted = true;
-        video.play().catch(() => {});
+    // Prevent unexpected pausing
+    const handlePause = () => {
+      if (video && video.paused && document.visibilityState === 'visible') {
+        tryPlay();
       }
-      window.removeEventListener('pointerdown', unlockOnGesture);
-      window.removeEventListener('touchstart', unlockOnGesture);
-      window.removeEventListener('scroll', unlockOnGesture);
+    };
+    video.addEventListener('pause', handlePause);
+
+    // Auto-resume when user returns to tab
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        tryPlay();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Universal gesture unlock for mobile battery-saver / restricted environments
+    const unlockOnGesture = () => {
+      tryPlay();
     };
 
     window.addEventListener('pointerdown', unlockOnGesture, { passive: true });
     window.addEventListener('touchstart', unlockOnGesture, { passive: true });
     window.addEventListener('scroll', unlockOnGesture, { passive: true });
+    window.addEventListener('keydown', unlockOnGesture, { passive: true });
 
     return () => {
+      clearInterval(watchdog);
+      video.removeEventListener('loadedmetadata', tryPlay);
       video.removeEventListener('loadeddata', tryPlay);
       video.removeEventListener('canplay', tryPlay);
+      video.removeEventListener('canplaythrough', tryPlay);
       video.removeEventListener('ended', handleEnded);
+      video.removeEventListener('pause', handlePause);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('pointerdown', unlockOnGesture);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('scroll', unlockOnGesture);
+      window.removeEventListener('keydown', unlockOnGesture);
     };
   }, []);
 
@@ -485,11 +521,11 @@ export const HeroSection: React.FC = () => {
           muted
           playsInline
           preload="auto"
-          src={getAssetUrl('/videos/jeddah-corniche.mp4')}
+          src={getAssetUrl('/videos/jeddah-corniche.mp4?v=20261012b')}
           className="w-full h-full object-cover brightness-[0.92] contrast-[1.08] saturate-[1.05]"
         >
-          <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
-          <source src={getAssetUrl('/videos/r07qxo-jeddah.mp4')} type="video/mp4" />
+          <source src={getAssetUrl('/videos/jeddah-corniche.mp4?v=20261012b')} type="video/mp4" />
+          <source src={getAssetUrl('/videos/r07qxo-jeddah.mp4?v=20261012b')} type="video/mp4" />
         </video>
 
         {/* Obsidian Noir & Champagne Gold Ambient Glows (Smooth crossfade from pure scenic video to high-contrast backdrop) */}
