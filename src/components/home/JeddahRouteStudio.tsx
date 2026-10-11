@@ -211,21 +211,21 @@ export const JeddahRouteStudio: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full rounded-[2.5rem] bg-[#0A0E15]/90 border border-white/[0.08] shadow-[0_24px_60px_rgba(0,0,0,0.7)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
+    <section className="relative w-full rounded-[2.5rem] bg-[#0A1224]/85 border border-cyan-500/25 shadow-[0_24px_70px_rgba(2,10,28,0.9)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
       {/* Animated Traveling Border Laser Beam */}
-      <BorderBeam size={340} duration={14} borderWidth={1.5} colorFrom="#E5A962" colorTo="#2DD4BF" />
+      <BorderBeam size={360} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
 
       {/* Dynamic Background Atmospheric Radial Glow */}
       <div
         className={`absolute -top-32 -right-32 w-96 h-96 rounded-full bg-gradient-to-br ${activeRoute.bgGlow} blur-3xl pointer-events-none transition-all duration-700`}
       />
-      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-tr from-teal-500/10 via-transparent to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-tr from-cyan-500/15 via-transparent to-transparent blur-3xl pointer-events-none" />
 
       {/* 1. SECTION HEADER WITH LUXURY EYEBROW */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2 text-start">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-gold-500/15 border border-gold-500/30 text-gold-300 text-xs font-black shadow-[0_0_15px_rgba(229,169,98,0.2)]">
-            <Compass className="w-3.5 h-3.5 text-gold-400" />
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs font-black shadow-[0_0_15px_rgba(245,158,11,0.25)]">
+            <Compass className="w-3.5 h-3.5 text-amber-400" />
             <span>{language === 'ar' ? 'استوديو مسارات جدة الذكية 3D' : 'Jeddah 3D Route Studio'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
@@ -246,11 +246,11 @@ export const JeddahRouteStudio: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundEngine.playClick()}
-              className="px-4 py-2.5 rounded-full bg-white/[0.05] hover:bg-white/[0.1] border border-white/10 hover:border-gold-400/50 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              className="px-4 py-2.5 rounded-full bg-[#0E1B38] hover:bg-[#14264F] border border-cyan-500/30 hover:border-amber-400/60 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
             >
-              <Navigation className="w-4 h-4 text-teal-400" />
+              <Navigation className="w-4 h-4 text-cyan-400" />
               <span>{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
-              <ExternalLink className="w-3.5 h-3.5 text-gold-400" />
+              <ExternalLink className="w-3.5 h-3.5 text-amber-400" />
             </a>
           </MagneticButton>
         </div>
@@ -271,14 +271,14 @@ export const JeddahRouteStudio: React.FC = () => {
               }}
               className={`relative px-4 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-2.5 shrink-0 cursor-pointer select-none border ${
                 isActive
-                  ? 'border-gold-500/50 text-white shadow-[0_8px_24px_rgba(229,169,98,0.25)]'
-                  : 'border-white/[0.06] bg-[#0E131C]/60 text-white/70 hover:text-white hover:bg-white/[0.04]'
+                  ? 'border-amber-400/60 text-white shadow-[0_8px_24px_rgba(245,158,11,0.3)]'
+                  : 'border-cyan-500/15 bg-[#0B152B]/70 text-white/75 hover:text-white hover:bg-[#112042]'
               }`}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeRouteStudioIndicator"
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-gold-500/20 via-amber-500/15 to-gold-500/20 -z-10"
+                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-500/30 via-gold-400/25 to-cyan-500/20 -z-10"
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
@@ -306,12 +306,12 @@ export const JeddahRouteStudio: React.FC = () => {
       {/* 3. DUAL-PANE ROUTE CANVAS & STATION DRAWER */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
-          <BorderBeam size={220} duration={10} borderWidth={1} colorFrom="#E5A962" colorTo="#3B82F6" />
+        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-cyan-500/20 shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
+          <BorderBeam size={220} duration={10} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
           <RouteMap stops={stops} className="w-full h-full min-h-[460px] sm:min-h-[520px]" showPolyline={true} />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
-          <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#090D14]/90 backdrop-blur-xl border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
+          <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/30 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
             <div className="flex items-center gap-2">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
               <span className="text-xs font-black text-white">

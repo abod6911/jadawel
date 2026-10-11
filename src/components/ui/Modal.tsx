@@ -92,7 +92,7 @@ export const Modal: React.FC<ModalProps> = ({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-abyss-950/85 backdrop-blur-md"
+            className="fixed inset-0 bg-[#070B14]/85 backdrop-blur-md"
           />
 
           {/* Modal / Native Pull-Up Bottom Sheet Card */}
@@ -105,7 +105,7 @@ export const Modal: React.FC<ModalProps> = ({
             dragElastic={{ top: 0, bottom: 0.5 }}
             onDragEnd={handleDragEnd}
             transition={{ type: 'spring', damping: 28, stiffness: 350 }}
-            className={`relative w-full ${maxWidthClasses[maxWidth]} bg-abyss-900/98 backdrop-blur-2xl rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-cinematic border border-gold-500/30 overflow-hidden z-10 text-pearl max-h-[92dvh] sm:max-h-[88vh] flex flex-col pb-[env(safe-area-inset-bottom)] sm:pb-0`}
+            className={`relative w-full ${maxWidthClasses[maxWidth]} bg-[#0A1224]/98 backdrop-blur-2xl rounded-t-[2.5rem] sm:rounded-[2.5rem] shadow-cinematic border border-cyan-500/30 overflow-hidden z-10 text-pearl max-h-[92dvh] sm:max-h-[88vh] flex flex-col pb-[env(safe-area-inset-bottom)] sm:pb-0`}
           >
             {/* Native Mobile Pull-Down Drag Handle Indicator */}
             <div className="sm:hidden pt-3 pb-1 flex justify-center cursor-grab active:cursor-grabbing w-full">
@@ -114,7 +114,7 @@ export const Modal: React.FC<ModalProps> = ({
 
             {/* Header */}
             {(title || showCloseButton) && (
-              <div className="flex items-center justify-between px-6 py-4 sm:py-5 border-b border-white/10 bg-abyss-950/80">
+              <div className="flex items-center justify-between px-6 py-4 sm:py-5 border-b border-white/10 bg-[#070B14]/80">
                 <div className="text-start">
                   {title && (
                     <h3 className="text-lg sm:text-xl font-black text-pearl">

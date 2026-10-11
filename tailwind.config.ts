@@ -12,35 +12,45 @@ const config: Config = {
     extend: {
       colors: {
         // Jeddah Twilight & Gold Luxury Palette
+        // Deep Midnight Sapphire & Oceanic Navy Luxury Palette
         obsidian: {
-          DEFAULT: "#090B0E",
-          950: "#060709",
-          900: "#090B0E",
-          850: "#0F141C",
-          800: "#161C24",
-          700: "#1E2630",
+          DEFAULT: "#070B14", // Deep Midnight Sapphire
+          950: "#04070D",
+          900: "#070B14",
+          850: "#0A1124",     // Oceanic Navy Base
+          800: "#0F1A36",     // Smoked Sapphire Glass
+          700: "#17254D",     // Elevated Surface
         },
         surface: {
-          DEFAULT: "#0F141C",
-          card: "rgba(22, 28, 36, 0.75)",
-          cardHover: "rgba(30, 38, 48, 0.85)",
+          DEFAULT: "#0B132B",
+          card: "rgba(12, 22, 45, 0.82)",
+          cardHover: "rgba(18, 32, 66, 0.92)",
         },
         abyss: {
-          DEFAULT: "#090B0E", // Deep Obsidian Black
-          950: "#060709",
-          900: "#0F141C",     // Red Sea Twilight
-          850: "#131922",
-          800: "#161C24",     // Smoked Frosted Glass Base
-          700: "#1E2630",     // Elevated Surface
-          600: "#28323F",
+          DEFAULT: "#070B14",
+          950: "#04070D",
+          900: "#0A1124",
+          850: "#0F1A36",
+          800: "#142247",
+          700: "#1C3063",
+          600: "#264287",
         },
         navy: {
-          950: "#060709",
-          900: "#0F141C",
-          850: "#131922",
-          800: "#161C24",
-          700: "#1E2630",
-          600: "#28323F",
+          DEFAULT: "#0A1124",
+          950: "#04070D",
+          900: "#0A1124",
+          850: "#0F1A36",
+          800: "#142247",
+          700: "#1C3063",
+          600: "#264287",
+        },
+        sapphire: {
+          DEFAULT: "#070E22",
+          950: "#03060F",
+          900: "#070E22",
+          850: "#0B1736",
+          800: "#0F204C",
+          700: "#162E6B",
         },
         gold: {
           primary: "#F59E0B", // Radiant Amber Gold

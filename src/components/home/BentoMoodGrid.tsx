@@ -83,10 +83,10 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
         }`,
         transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-white/10 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_16px_40px_rgba(0,0,0,0.6)] select-none`}
+      className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-cyan-500/20 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_16px_50px_rgba(2,10,28,0.8)] select-none`}
     >
       {hasBorderBeam && (
-        <BorderBeam size={320} duration={12} borderWidth={1.5} colorFrom="#2DD4BF" colorTo="#E5A962" />
+        <BorderBeam size={340} duration={12} borderWidth={1.5} colorFrom="#06B6D4" colorTo="#F59E0B" />
       )}
 
       {/* Background Image with Cinematic Zoom */}
@@ -97,7 +97,7 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       />
 
       {/* Atmospheric Multi-layer Gradient */}
-      <div className="absolute inset-0 bg-gradient-to-t from-[#080B10] via-[#080B10]/55 to-transparent transition-opacity group-hover:opacity-85" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#070B14] via-[#070B14]/60 to-transparent transition-opacity group-hover:opacity-85" />
 
       {/* Top Specular Rim Light */}
       <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-white/20 to-transparent pointer-events-none" />

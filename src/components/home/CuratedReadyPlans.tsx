@@ -88,10 +88,10 @@ export const CuratedReadyPlans: React.FC = () => {
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="relative rounded-3xl bg-abyss-900/90 backdrop-blur-xl border border-white/10 overflow-hidden shadow-cinematic flex flex-col justify-between group hover:border-gold-500/50 transition-all duration-300"
+              className="relative rounded-3xl bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/20 overflow-hidden shadow-cinematic flex flex-col justify-between group hover:border-gold-500/50 transition-all duration-300"
             >
               {idx === 0 && (
-                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#FF6B4A" colorTo="#E5A962" />
+                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#F43F5E" colorTo="#F59E0B" />
               )}
               <div>
                 <div className="relative aspect-[16/10] overflow-hidden bg-abyss-950">
@@ -100,8 +100,8 @@ export const CuratedReadyPlans: React.FC = () => {
                     alt={plan.titleEn}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-abyss-900 via-black/30 to-transparent" />
-                  <span className="absolute top-3 start-3 px-3 py-1 rounded-xl bg-abyss-950/85 backdrop-blur-md text-gold-400 text-xs font-black border border-gold-500/30">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0A1224] via-black/30 to-transparent" />
+                  <span className="absolute top-3 start-3 px-3 py-1 rounded-xl bg-[#070B14]/85 backdrop-blur-md text-gold-400 text-xs font-black border border-gold-500/40 shadow-sm">
                     {language === 'ar' ? plan.badgeAr : plan.badgeEn}
                   </span>
                 </div>
@@ -115,7 +115,7 @@ export const CuratedReadyPlans: React.FC = () => {
                   </p>
 
                   <div className="flex items-center justify-between text-xs font-bold text-pearl-muted pt-3 border-t border-white/10">
-                    <span className="flex items-center gap-1.5 text-teal-300 font-bold">
+                    <span className="flex items-center gap-1.5 text-cyan-300 font-bold">
                       <Clock className="w-3.5 h-3.5" />
                       <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
                     </span>
@@ -148,8 +148,8 @@ export const CuratedReadyPlans: React.FC = () => {
       </div>
 
       {/* Exclusive Partner Deals Section */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-abyss-900/90 backdrop-blur-2xl border border-gold-500/30 shadow-cinematic space-y-6 overflow-hidden">
-        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5A962" colorTo="#2DD4BF" />
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-[#0A1224]/90 backdrop-blur-2xl border border-cyan-500/30 shadow-cinematic space-y-6 overflow-hidden">
+        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gold-500/20 text-gold-400 border border-gold-500/30 flex items-center justify-center shadow-glow-gold">
@@ -174,7 +174,7 @@ export const CuratedReadyPlans: React.FC = () => {
             return (
               <div
                 key={deal.id}
-                className="p-4 rounded-2xl bg-abyss-950/80 border border-white/10 flex flex-col justify-between space-y-3 shadow-inner hover:border-gold-500/40 transition-colors"
+                className="p-4 rounded-2xl bg-[#070B14]/80 border border-white/10 flex flex-col justify-between space-y-3 shadow-inner hover:border-cyan-400/40 transition-colors"
               >
                 <div>
                   <span className="text-[10px] px-2 py-0.5 rounded-lg bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">

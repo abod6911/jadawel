@@ -35,6 +35,7 @@ import { SplitBillModal } from '@/components/modals/SplitBillModal';
 import { GroupVotingModal } from '@/components/modals/GroupVotingModal';
 import { StoryPassModal } from '@/components/modals/StoryPassModal';
 import { InteractiveMap } from '@/components/map/InteractiveMap';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { soundEngine } from '@/utils/audioEngine';
 import { PlanVariant, ItineraryStop } from '@/types';
 
@@ -209,7 +210,7 @@ export const PlanResultsView: React.FC = () => {
       </div>
 
       {/* 2. Interactive Action Toolbar */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-abyss-900/90 backdrop-blur-xl border border-gold-500/25 shadow-cinematic flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
+      <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0A1224]/90 backdrop-blur-xl border border-cyan-500/25 shadow-cinematic flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
         {/* Left Action: Start Live Outing */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
@@ -387,7 +388,8 @@ export const PlanResultsView: React.FC = () => {
 
         {/* Interactive Map Column */}
         <div className={`lg:col-span-5 lg:sticky lg:top-24 space-y-4 ${mobileViewMode === 'timeline' ? 'hidden lg:block' : 'block'}`}>
-          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-gold-500/30 shadow-cinematic bg-abyss-950 min-h-[420px] sm:min-h-[480px] lg:min-h-[580px]">
+          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-cyan-500/30 shadow-cinematic bg-[#070B14] min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative">
+            <BorderBeam size={280} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
             <InteractiveMap
               stops={currentVariantData?.stops || []}
               className="w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px]"

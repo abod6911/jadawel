@@ -24,7 +24,7 @@ export const MobileTabBar: React.FC = () => {
   };
 
   return (
-    <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-abyss-950/95 backdrop-blur-2xl border-t border-white/10 pb-[env(safe-area-inset-bottom)] shadow-2xl touch-manipulation select-none">
+    <nav className="fixed bottom-0 inset-x-0 z-40 md:hidden bg-[#0A1224]/95 backdrop-blur-2xl border-t border-cyan-500/25 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_32px_rgba(7,11,20,0.8)] touch-manipulation select-none">
       <div className="grid grid-cols-5 h-16 items-center px-1 max-w-lg mx-auto">
         {/* 1. Home */}
         <button
@@ -71,7 +71,7 @@ export const MobileTabBar: React.FC = () => {
           <button
             type="button"
             onClick={handleCenterPlanClick}
-            className="w-14 h-14 rounded-full bg-gradient-to-tr from-coral-600 via-coral-500 to-gold-400 text-white flex items-center justify-center shadow-glow-coral border-2 border-abyss-950 hover:scale-105 active:scale-95 transition-all cursor-pointer relative group"
+            className="w-14 h-14 rounded-full bg-gradient-to-tr from-coral-600 via-coral-500 to-gold-400 text-white flex items-center justify-center shadow-glow-coral border-2 border-[#0A1224] hover:scale-105 active:scale-95 transition-all cursor-pointer relative group"
             title="اصنع خطتك أو افتح الجدول"
           >
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-coral-400 opacity-25 pointer-events-none" />

@@ -20,7 +20,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
       {/* Minimalist Vector Emblem */}
       <div
         style={style}
-        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#161C24] to-[#090B0E] border border-gold-500/35 p-1 flex items-center justify-center shadow-[0_4px_20px_rgba(229,169,98,0.2)] hover:border-gold-400/60 hover:shadow-[0_4px_25px_rgba(229,169,98,0.35)] transition-all shrink-0"
+        className="relative aspect-square w-10 h-10 rounded-2xl overflow-hidden bg-gradient-to-br from-[#0F1E3D] to-[#070B14] border border-gold-500/40 p-1 flex items-center justify-center shadow-[0_4px_20px_rgba(245,158,11,0.25)] hover:border-gold-400/70 hover:shadow-[0_4px_25px_rgba(245,158,11,0.4)] transition-all shrink-0"
       >
         <svg
           viewBox="0 0 100 100"
@@ -30,9 +30,9 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
         >
           <defs>
             <linearGradient id="logo-gold-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#F3CA95" />
-              <stop offset="50%" stopColor="#E5A962" />
-              <stop offset="100%" stopColor="#D48B38" />
+              <stop offset="0%" stopColor="#FDE68A" />
+              <stop offset="50%" stopColor="#F59E0B" />
+              <stop offset="100%" stopColor="#D97706" />
             </linearGradient>
           </defs>
 
@@ -52,7 +52,7 @@ export const JadawelLogo: React.FC<JadawelLogoProps> = ({
           />
 
           {/* Minimalist Red Sea Pearl Dot */}
-          <circle cx="48" cy="58" r="5" fill="#4E9F96" />
+          <circle cx="48" cy="58" r="5" fill="#06B6D4" />
         </svg>
       </div>
 

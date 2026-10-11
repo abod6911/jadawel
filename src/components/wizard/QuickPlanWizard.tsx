@@ -17,6 +17,7 @@ import {
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
+import { BorderBeam } from '@/components/fancy/BorderBeam';
 import {
   DistrictId,
   CompanionType,
@@ -157,7 +158,8 @@ export const QuickPlanWizard: React.FC = () => {
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto backdrop-blur-2xl bg-abyss-900/95 border border-gold-500/25 rounded-3xl p-4 sm:p-8 md:p-10 shadow-cinematic relative select-none my-2 sm:my-4">
+    <div className="w-full max-w-4xl mx-auto backdrop-blur-2xl bg-[#0A1224]/90 border border-cyan-500/30 rounded-3xl p-4 sm:p-8 md:p-10 shadow-cinematic relative select-none my-2 sm:my-4 overflow-hidden">
+      <BorderBeam size={320} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
       {/* 1. Header Progress Strip */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">

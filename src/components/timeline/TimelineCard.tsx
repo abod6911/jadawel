@@ -49,7 +49,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
       </div>
 
       {/* Card Body */}
-      <div className="ms-10 sm:ms-14 bg-abyss-900/90 backdrop-blur-xl rounded-[2rem] p-4 sm:p-7 border border-white/10 shadow-cinematic hover:border-gold-500/50 transition-all duration-300">
+      <div className="ms-10 sm:ms-14 bg-[#0A1224]/90 backdrop-blur-xl rounded-[2rem] p-4 sm:p-7 border border-cyan-500/20 shadow-cinematic hover:border-gold-500/50 transition-all duration-300">
         {/* Top Header Bar: Time Slot, District, & Order Controls */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex flex-wrap items-center gap-2">

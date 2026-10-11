@@ -101,26 +101,26 @@ export const SocialProofBar: React.FC = () => {
   const { language } = useLanguage();
 
   return (
-    <div className="relative w-full rounded-3xl bg-[#0A0E15]/85 backdrop-blur-2xl border border-white/[0.08] shadow-[0_16px_40px_rgba(0,0,0,0.6)] p-4 sm:p-6 space-y-4 overflow-hidden">
+    <div className="relative w-full rounded-3xl bg-[#0A1224]/85 backdrop-blur-2xl border border-cyan-500/25 shadow-[0_16px_50px_rgba(2,10,28,0.85)] p-4 sm:p-6 space-y-4 overflow-hidden">
       {/* Animated Traveling Border Laser Beam */}
-      <BorderBeam size={280} duration={14} borderWidth={1.2} colorFrom="#E5A962" colorTo="#10B981" />
+      <BorderBeam size={320} duration={14} borderWidth={1.2} colorFrom="#F59E0B" colorTo="#06B6D4" />
 
       {/* Top Specular Rim Light */}
-      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-gold-400/30 to-transparent pointer-events-none" />
+      <div className="absolute top-0 inset-x-0 h-[1px] bg-gradient-to-r from-transparent via-cyan-400/40 to-transparent pointer-events-none" />
 
       {/* 1. LIVE ACTIVE METRICS STRIP */}
       <div className="flex flex-wrap items-center justify-between gap-3 px-2 text-xs">
         {/* Live Active Travelers */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-400" />
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-cyan-400" />
           </span>
           <span className="font-black text-white flex items-center gap-1">
             <NumberTicker value={842} suffix="+" />
             <span>{language === 'ar' ? 'يخططون لطلعتهم الآن في جدة' : 'Planning Outings in Jeddah Right Now'}</span>
           </span>
-          <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-400 font-bold border border-emerald-500/30">
+          <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-cyan-500/15 text-cyan-300 font-bold border border-cyan-500/30 shadow-[0_0_10px_rgba(6,182,212,0.25)]">
             {language === 'ar' ? 'مباشر' : 'Live'}
           </span>
         </div>
@@ -128,20 +128,20 @@ export const SocialProofBar: React.FC = () => {
         {/* Aggregate Credibility Badges */}
         <div className="hidden sm:flex items-center gap-4 text-pearl-muted text-[11px] font-bold">
           <span className="flex items-center gap-1.5 text-white/90">
-            <TrendingUp className="w-3.5 h-3.5 text-gold-400" />
+            <TrendingUp className="w-3.5 h-3.5 text-amber-400" />
             <NumberTicker value={50000} prefix="+" />
             <span>{language === 'ar' ? 'طلعة تم توليدها' : 'Outings Generated'}</span>
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-white/90">
-            <ShieldCheck className="w-3.5 h-3.5 text-teal-400" />
+            <ShieldCheck className="w-3.5 h-3.5 text-cyan-400" />
             <span>{language === 'ar' ? 'دقة الميزانية بالريال 🇸🇦' : '100% SAR Budget Accuracy'}</span>
           </span>
           <span>•</span>
-          <span className="flex items-center gap-1 text-gold-400">
-            <Star className="w-3 h-3 fill-gold-400" />
+          <span className="flex items-center gap-1 text-amber-400">
+            <Star className="w-3 h-3 fill-amber-400" />
             <span className="font-black">4.9/5</span>
-            <span className="text-pearl-muted font-medium">(2,400+ تقييم)</span>
+            <span className="text-white/60 font-medium">(2,400+ تقييم)</span>
           </span>
         </div>
       </div>
@@ -161,7 +161,7 @@ export const SocialProofBar: React.FC = () => {
           {[...TESTIMONIALS, ...TESTIMONIALS].map((t, idx) => (
             <div
               key={`${t.id}-${idx}`}
-              className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.07] hover:border-gold-500/40 backdrop-blur-md shadow-lg transition-all duration-300 shrink-0 max-w-sm sm:max-w-md select-none group cursor-default"
+              className="flex items-center gap-3.5 px-4 py-3 rounded-2xl bg-[#0B152B]/60 hover:bg-[#101F3E] border border-cyan-500/15 hover:border-amber-400/50 backdrop-blur-md shadow-lg transition-all duration-300 shrink-0 max-w-sm sm:max-w-md select-none group cursor-default"
             >
               {/* Avatar Emoji */}
               <div className="w-10 h-10 rounded-xl bg-gold-500/10 border border-gold-500/30 flex items-center justify-center text-xl shrink-0 group-hover:scale-110 transition-transform">
