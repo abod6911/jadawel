@@ -40,8 +40,8 @@ interface MoodChip {
 const HERO_MOOD_CHIPS: MoodChip[] = [
   {
     id: 'sunset_beach',
-    labelAr: 'بحر وغروب',
-    labelEn: 'Beach & Sunset',
+    labelAr: 'بحر وغروب 🌅',
+    labelEn: 'Beach & Sunset 🌅',
     icon: Waves,
     district: 'obhur',
     vibe: 'beach_sunset',
@@ -51,8 +51,8 @@ const HERO_MOOD_CHIPS: MoodChip[] = [
   },
   {
     id: 'specialty_coffee',
-    labelAr: 'قهوة وروقان',
-    labelEn: 'Coffee & Chill',
+    labelAr: 'قهوة وروقان ☕',
+    labelEn: 'Coffee & Chill ☕',
     icon: Coffee,
     district: 'al-rawdah',
     vibe: 'coffee_dessert',
@@ -62,8 +62,8 @@ const HERO_MOOD_CHIPS: MoodChip[] = [
   },
   {
     id: 'balad_heritage',
-    labelAr: 'أزقة وتراث البلد',
-    labelEn: 'Historic Al-Balad',
+    labelAr: 'أزقة وتراث البلد 🏛️',
+    labelEn: 'Historic Al-Balad 🏛️',
     icon: Landmark,
     district: 'al-balad',
     vibe: 'heritage_arts',
@@ -73,8 +73,8 @@ const HERO_MOOD_CHIPS: MoodChip[] = [
   },
   {
     id: 'luxury_vip',
-    labelAr: 'سهرة فاخرة VIP',
-    labelEn: 'Luxury VIP Night',
+    labelAr: 'سهرة فاخرة VIP 👑',
+    labelEn: 'Luxury VIP Night 👑',
     icon: Sparkles,
     district: 'al-shati',
     vibe: 'food',
@@ -84,8 +84,8 @@ const HERO_MOOD_CHIPS: MoodChip[] = [
   },
   {
     id: 'free_scenic',
-    labelAr: 'ممشى وطبيعة مجانية',
-    labelEn: 'Free Scenic Walk',
+    labelAr: 'ممشى وطبيعة مجانية 🌿',
+    labelEn: 'Free Scenic Walk 🌿',
     icon: Footprints,
     district: 'al-shati',
     vibe: 'free_walk',
@@ -294,10 +294,8 @@ export const HeroSection: React.FC = () => {
             playsInline
             preload="auto"
             poster={getAssetUrl('/images/places/indigo-beach.jpg')}
-            className="w-full h-full object-cover brightness-[0.88] contrast-[1.14] saturate-[1.08]"
+            className="w-full h-full object-cover brightness-[0.88] contrast-[1.14] saturate-[1.05]"
           >
-            <source src={getAssetUrl('/videos/jeddah-sunset.webm')} type="video/webm" />
-            <source src={getAssetUrl('/videos/jeddah-waves.webm')} type="video/webm" />
             <source src={getAssetUrl('/videos/jeddah-corniche.mp4')} type="video/mp4" />
           </video>
         </motion.div>
@@ -305,9 +303,9 @@ export const HeroSection: React.FC = () => {
         {/* Authentic Hijazi Rawasheen Decorative Watermark (< 1.5KB, 3% Opacity) */}
         <RawashinPattern className="text-[var(--accent-gold)]" opacity={0.03} />
 
-        {/* Cinematic Scrim: Let the video and sea scenery shine while keeping text legible */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[var(--bg-base)] via-[var(--bg-base)]/40 to-black/30 pointer-events-none" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_25%,rgba(8,11,17,0.65)_100%)] pointer-events-none" />
+        {/* Ambient Glows letting the original video show clearly */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0B0D12] via-[#0B0D12]/55 to-[#0B0D12]/20 pointer-events-none" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(229,195,120,0.08)_0%,transparent_70%)] pointer-events-none" />
       </div>
 
       {/* 2. TOP CORNER CONTROLS (Atmosphere Tag & Video Playback Controls) */}
@@ -318,11 +316,11 @@ export const HeroSection: React.FC = () => {
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
           </span>
-          <Compass className="w-3.5 h-3.5 text-[var(--accent-gold)]" />
+          <Compass className="w-3.5 h-3.5 text-[var(--accent-gold)] animate-spin [animation-duration:22s]" />
           <span className="text-[11px] sm:text-xs">
             {language === 'ar'
-              ? `جدة • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°م)`
-              : `Jeddah • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+              ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
+              : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
           </span>
         </div>
 
@@ -334,11 +332,11 @@ export const HeroSection: React.FC = () => {
             className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
               !isMuted ? 'text-[var(--accent-gold)] bg-[var(--accent-gold-soft)]' : 'text-slate-300 hover:text-white'
             }`}
-            title={isMuted ? (language === 'ar' ? 'تشغيل صوت البحر' : 'Unmute') : (language === 'ar' ? 'كتم الصوت' : 'Mute')}
+            title={language === 'ar' ? (isMuted ? 'تشغيل صوت أمواج البحر' : 'كتم الصوت') : (isMuted ? 'Play Waves Sound' : 'Mute Sound')}
             aria-label="Toggle Video Sound"
           >
             {isMuted ? <VolumeX className="w-3.5 h-3.5" /> : <Volume2 className="w-3.5 h-3.5 text-[var(--accent-gold)] animate-pulse" />}
-            <span className="text-[11px] font-bold">{isMuted ? (language === 'ar' ? 'صوت البحر' : 'Sound') : (language === 'ar' ? 'شغّال' : 'Playing')}</span>
+            <span className="text-[11px] font-bold">{isMuted ? (language === 'ar' ? 'صوت البحر' : 'Sound') : (language === 'ar' ? 'صوت البحر 🌊' : 'Playing')}</span>
           </button>
 
           <button
@@ -347,11 +345,11 @@ export const HeroSection: React.FC = () => {
             className={`px-2.5 py-1 rounded-full text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer ${
               isPlaying ? 'text-teal-300 bg-teal-500/10' : 'text-slate-300 hover:text-white'
             }`}
-            title={isPlaying ? (language === 'ar' ? 'إيقاف الفيديو' : 'Pause Video') : (language === 'ar' ? 'تشغيل فيديو جدة' : 'Play Video')}
+            title={language === 'ar' ? (isPlaying ? 'إيقاف الفيديو مؤقتاً' : 'تشغيل فيديو جدة') : (isPlaying ? 'Pause Video' : 'Play Video')}
             aria-label="Toggle Video Playback"
           >
             {isPlaying ? <Pause className="w-3.5 h-3.5 text-teal-400" /> : <Play className="w-3.5 h-3.5 text-[var(--accent-gold)]" />}
-            <span className="text-[11px] font-bold">{isPlaying ? (language === 'ar' ? 'فيديو جدة' : 'Video') : (language === 'ar' ? 'تشغيل' : 'Play')}</span>
+            <span className="text-[11px] font-bold">{isPlaying ? (language === 'ar' ? 'فيديو جدة' : 'Video') : (language === 'ar' ? 'تشغيل ▶' : 'Play')}</span>
           </button>
         </div>
       </div>
@@ -362,7 +360,7 @@ export const HeroSection: React.FC = () => {
         variants={containerVariants}
         initial="hidden"
         animate="visible"
-        className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center text-center py-10 sm:py-14 space-y-6 sm:space-y-8"
+        className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center text-center py-10 sm:py-14 space-y-5 sm:space-y-6"
       >
         {/* Curated Subtitle Pill */}
         <motion.div variants={itemVariants} className="inline-block">
@@ -372,40 +370,46 @@ export const HeroSection: React.FC = () => {
           </span>
         </motion.div>
 
-        {/* Master Staggered Headline (Apple Keynote Simplicity) */}
+        {/* Master Headline with Clean Modern Arabic Typography & Generous Spacing */}
         <motion.h1
           variants={itemVariants}
-          className="text-3xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white leading-[1.25] sm:leading-[1.2] max-w-3xl"
+          className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-3 sm:gap-4 leading-[1.3] select-none"
         >
           {language === 'ar' ? (
             <>
-              <span className="block text-white font-bold">
-                عروس البحر الأحمر بين يديك..
+              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
               </span>
-              <span className="block mt-2 font-black text-transparent bg-clip-text bg-gradient-to-r from-[#F5E2B3] via-[#E5C378] to-[#C8A452]">
-                جداول ترتّب طلعتك من وإلى
+              <span className="block font-bold text-white tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#F5E2B3] drop-shadow-[0_0_25px_rgba(229,195,120,0.45)] font-black">
+                  جداول
+                </span>
+                &nbsp;ترتب طلعتك من وإلى
               </span>
             </>
           ) : (
             <>
-              <span className="block text-white font-bold">
-                The Red Sea Bride in Your Hands..
+              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                Bride of the Red Sea in Your Hands..
               </span>
-              <span className="block mt-2 font-black text-transparent bg-clip-text bg-gradient-to-r from-[#F5E2B3] via-[#E5C378] to-[#C8A452]">
-                Jadawel Crafts Your Outing End-to-End
+              <span className="block font-bold text-white tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#F5E2B3] drop-shadow-[0_0_25px_rgba(229,195,120,0.45)] font-black">
+                  Jadawel
+                </span>
+                &nbsp;curates your outing from start to finish
               </span>
             </>
           )}
         </motion.h1>
 
-        {/* Refined Descriptive Copy */}
+        {/* Generous Subheading in Refined Light Platinum Font */}
         <motion.p
           variants={itemVariants}
-          className="text-sm sm:text-base md:text-lg text-slate-200 max-w-2xl mx-auto font-normal leading-relaxed text-balance"
+          className="text-sm sm:text-base md:text-lg text-[#E2E8F0] max-w-2xl mx-auto font-normal leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] pt-1 text-center"
         >
           {language === 'ar'
-            ? 'من نوادي وشواطئ أبحر إلى أزقة البلد العتيقة — اختر مودك وميزانيتك، وسننسّق لك مساراً سينمائياً متكاملاً بدقة متناهية.'
-            : 'From Obhur beach clubs to historic Al-Balad alleys — choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
+            ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية – اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
+            : 'From Obhur beach clubs to historic Al-Balad alleys – choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
         </motion.p>
 
         {/* Curated Mood Chips (Unified SVG Icons, Smooth Highlights) */}
