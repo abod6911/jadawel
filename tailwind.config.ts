@@ -43,28 +43,28 @@ const config: Config = {
           600: "#28323F",
         },
         gold: {
-          primary: "#E5A962", // Champagne Gold
-          hover: "#D48B38",   // Saffron Amber
-          300: "#FBF0DF",
-          400: "#F3CA95",
-          500: "#E5A962",
-          600: "#D48B38",
-          700: "#B87326",
+          primary: "#F59E0B", // Radiant Amber Gold
+          hover: "#D97706",   // Deep Saffron Amber
+          300: "#FEF3C7",     // Luminescent Cream Gold
+          400: "#FDE68A",     // 24K Accent Gold
+          500: "#F59E0B",     // Primary Luxury Gold
+          600: "#D97706",     // Amber Ochre
+          700: "#B45309",
         },
         coral: {
-          300: "#FAD8B5",
-          400: "#F3CA95",
-          500: "#E5A962",
-          600: "#D48B38",
-          700: "#B87326",
+          300: "#FDA4AF",
+          400: "#FB7185",
+          500: "#F43F5E",
+          600: "#E11D48",
+          700: "#BE123C",
         },
         teal: {
-          mist: "#4E9F96",    // Muted Marine Teal
-          300: "#86C7BF",
-          400: "#68B2A9",
-          500: "#4E9F96",
-          600: "#3D827A",
-          light: "rgba(78, 159, 150, 0.12)",
+          mist: "#2DD4BF",    // Luminescent Marine Teal
+          300: "#5EEAD4",
+          400: "#2DD4BF",
+          500: "#14B8A6",
+          600: "#0D9488",
+          light: "rgba(20, 184, 166, 0.15)",
         },
         pearl: {
           DEFAULT: "#FBFBFA", // Crisp Luminescent White

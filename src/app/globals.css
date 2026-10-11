@@ -94,7 +94,7 @@ input, select, textarea {
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   color: #FBFBFA !important;
-  border: 1px solid rgba(229, 169, 98, 0.4) !important;
+  border: 1px solid rgba(245, 158, 11, 0.5) !important;
   border-radius: 1.25rem !important;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8) !important;
   padding: 0 !important;
@@ -102,6 +102,11 @@ input, select, textarea {
 
 .leaflet-popup-tip {
   background: rgba(15, 20, 28, 0.96) !important;
+}
+
+.custom-leaflet-pin-wrapper {
+  background: transparent !important;
+  border: none !important;
 }
 
 /* Interactive Card Glow Effect */

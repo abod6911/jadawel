@@ -380,11 +380,11 @@ export const JeddahRouteStudio: React.FC = () => {
               return (
                 <div
                   key={idx}
-                  className="group p-3 rounded-2xl bg-white/[0.02] hover:bg-white/[0.05] border border-white/[0.06] hover:border-gold-500/30 transition-all flex items-center justify-between gap-3 text-start"
+                  className="group p-3 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-gold-500/50 transition-all flex items-center justify-between gap-3 text-start shadow-sm"
                 >
                   <div className="flex items-center gap-3 min-w-0">
                     {/* Number Badge */}
-                    <div className="w-7 h-7 rounded-full bg-gold-500/20 text-gold-300 border border-gold-500/40 text-xs font-black flex items-center justify-center shrink-0 shadow-sm">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold-400 to-amber-500 text-stone-950 font-black text-xs flex items-center justify-center shrink-0 shadow-md">
                       {idx + 1}
                     </div>
 
@@ -392,7 +392,7 @@ export const JeddahRouteStudio: React.FC = () => {
                     <img
                       src={p.imageUrl ? getAssetUrl(p.imageUrl) : getAssetUrl('/images/places/indigo-beach.jpg')}
                       alt={p.nameAr}
-                      className="w-11 h-11 rounded-xl object-cover shrink-0 border border-white/10 group-hover:scale-105 transition-transform"
+                      className="w-12 h-12 rounded-xl object-cover shrink-0 border border-white/10 group-hover:scale-105 transition-transform"
                     />
 
                     {/* Details */}
@@ -415,7 +415,7 @@ export const JeddahRouteStudio: React.FC = () => {
                     target="_blank"
                     rel="noopener noreferrer"
                     onClick={() => soundEngine.playClick()}
-                    className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.1] text-pearl-muted hover:text-gold-300 border border-white/10 shrink-0 transition-colors"
+                    className="p-2 rounded-xl bg-white/[0.04] hover:bg-gold-500 hover:text-stone-950 text-gold-400 border border-white/10 shrink-0 transition-all cursor-pointer"
                     title="فتح هذه المحطة في خرائط جوجل"
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
@@ -427,16 +427,19 @@ export const JeddahRouteStudio: React.FC = () => {
 
           {/* Primary Action Button */}
           <div className="pt-2">
-            <MagneticButton className="w-full" distance={0.25}>
-              <button
-                type="button"
-                onClick={handleApplyRoute}
-                className="w-full py-3.5 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-500 to-gold-600 hover:from-gold-400 hover:to-amber-500 text-abyss-950 text-sm font-black shadow-[0_12px_32px_rgba(229,169,98,0.35)] hover:shadow-[0_16px_40px_rgba(229,169,98,0.5)] transition-all flex items-center justify-center gap-2 cursor-pointer active:scale-98"
-              >
-                <Sparkles className="w-4 h-4 text-abyss-950" />
-                <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
-              </button>
-            </MagneticButton>
+            <div className="relative group w-full">
+              <div className="absolute -inset-1 rounded-2xl bg-gradient-to-r from-amber-500 via-gold-400 to-teal-500 opacity-60 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-300" />
+              <MagneticButton className="w-full" distance={0.25}>
+                <button
+                  type="button"
+                  onClick={handleApplyRoute}
+                  className="relative w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-stone-950 text-sm font-black shadow-[0_0_35px_rgba(245,158,11,0.5)] hover:shadow-[0_0_55px_rgba(245,158,11,0.85)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation active:scale-[0.98]"
+                >
+                  <Sparkles className="w-4 h-4 text-stone-950" />
+                  <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
+                </button>
+              </MagneticButton>
+            </div>
           </div>
         </div>
       </div>

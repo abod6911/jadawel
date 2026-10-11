@@ -17,43 +17,43 @@
   --bg-card-hover: rgba(30, 38, 48, 0.85);
   --bg-editorial-light: #FAF8F3; /* Warm Editorial Ivory */
 
-  /* Brand Accents */
-  --gold-primary: #E5A962;       /* Champagne Gold (Primary Brand Accent) */
-  --gold-hover: #D48B38;         /* Saffron Amber */
-  --gold-gradient: linear-gradient(135deg, #E5A962 0%, #D48B38 100%);
-  --gold-glow: rgba(229, 169, 98, 0.25);
-  --coral-accent: #F46F52;       /* Sunset Coral (High-Impact Elements) */
-  --teal-marine: #4E9F96;        /* Red Sea Muted Teal (Badges & Discoveries) */
-  --teal-mist: #4E9F96;          /* Muted Marine Teal */
-  --teal-soft-bg: rgba(78, 159, 150, 0.12);
+  /* Brand Accents - 24K Radiant Luxury Gold & Red Sea Twilight */
+  --gold-primary: #F59E0B;       /* Radiant Sunset Gold */
+  --gold-hover: #D97706;         /* Deep Rich Amber */
+  --gold-light: #FBBF24;         /* 24K Luminous Accent */
+  --gold-gradient: linear-gradient(135deg, #F59E0B 0%, #FBBF24 50%, #D97706 100%);
+  --gold-glow: rgba(245, 158, 11, 0.4);
+  --coral-accent: #FB7185;       /* Twilight Rose-Coral */
+  --teal-marine: #14B8A6;        /* Vibrant Red Sea Turquoise */
+  --teal-mist: #2DD4BF;          /* Luminescent Marine Teal */
+  --teal-soft-bg: rgba(20, 184, 166, 0.15);
 
   /* Typography */
   --text-pure: #FBFBFA;          /* Luminescent Pearl White */
   --text-subtle: #9EA8B3;        /* Soft Slate */
-  --text-gold: #F3CA95;
+  --text-gold: #FDE68A;          /* Warm Golden Text */
   --text-dark: #090B0E;
 
   /* Borders & Dividers */
-  --border-glass: rgba(255, 255, 255, 0.08);
-  --border-gold: rgba(229, 169, 98, 0.35);
-  --border-gold-subtle: rgba(229, 169, 98, 0.3);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-gold: rgba(245, 158, 11, 0.45);
+  --border-gold-subtle: rgba(245, 158, 11, 0.25);
 
-  /* Legacy & Architectural Mappings for Backwards-Compatibility */
+  /* Architectural Mappings */
   --bg-abyss: var(--bg-obsidian);
   --bg-surface-glass: var(--bg-card);
   --bg-elevated: var(--bg-surface);
   --coral-primary: var(--gold-primary);
   --coral-glow: var(--gold-glow);
-  --teal-marine: var(--teal-mist);
   --teal-glow: var(--teal-soft-bg);
   --gold-rawashin: var(--gold-primary);
   --text-pearl: var(--text-pure);
   --text-muted: var(--text-subtle);
-  --border-active: var(--border-gold-subtle);
-  --shadow-cinematic: 0 20px 50px -10px rgba(0, 0, 0, 0.7), 0 0 30px rgba(229, 169, 98, 0.12);
-  --shadow-coral-glow: 0 10px 30px -5px rgba(229, 169, 98, 0.35);
-  --shadow-gold-glow: 0 10px 30px -5px rgba(229, 169, 98, 0.35);
-  --shadow-teal-glow: 0 10px 30px -5px rgba(78, 159, 150, 0.3);
+  --border-active: var(--border-gold);
+  --shadow-cinematic: 0 20px 60px -10px rgba(0, 0, 0, 0.8), 0 0 35px rgba(245, 158, 11, 0.18);
+  --shadow-coral-glow: 0 10px 30px -5px rgba(245, 158, 11, 0.4);
+  --shadow-gold-glow: 0 12px 35px -5px rgba(245, 158, 11, 0.45);
+  --shadow-teal-glow: 0 10px 30px -5px rgba(20, 184, 166, 0.35);
 }
 
 @supports (height: 100dvh) {
