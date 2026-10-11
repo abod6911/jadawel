@@ -210,44 +210,60 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   return (
     <div className="w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#080B10]">
       {/* FLOATING TOP BAR: Route Info Badge + Map Style Switcher + Recenter + Google Maps Route */}
-      <div className="absolute top-3.5 inset-x-3.5 z-[400] flex flex-wrap items-center justify-between gap-2.5 pointer-events-none">
+      <div className="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-3.5 z-[400] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pointer-events-none">
         
-        {/* Left Side: Route Badge & Recenter Button */}
-        <div className="flex items-center gap-2 pointer-events-auto">
-          <div className="px-3.5 py-2 rounded-xl bg-[#0B0F17] border border-amber-500/50 shadow-[0_8px_24px_rgba(0,0,0,0.85)] text-white text-xs font-bold flex items-center gap-2">
-            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 ring-2 ring-emerald-400/40 animate-pulse shrink-0" />
+        {/* Row 1 on mobile: Route Badge + Recenter Button + Google Maps Shortcut */}
+        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2 pointer-events-auto w-full sm:w-auto">
+          <div className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#0B0F17] border border-amber-500/50 shadow-[0_8px_24px_rgba(0,0,0,0.85)] text-white text-xs font-bold flex items-center gap-1.5 sm:gap-2">
+            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 ring-2 ring-emerald-400/40 animate-pulse shrink-0" />
             <span>
               {language === 'ar' ? (
                 <>
-                  <span>📍 مسار جدة المباشر • </span>
+                  <span>مسار جدة • </span>
                   <span className="text-amber-300 font-black">{validStops.length} محطات</span>
                 </>
               ) : (
                 <>
-                  <span>📍 Live Route • </span>
+                  <span>Route • </span>
                   <span className="text-amber-300 font-black">{validStops.length} Stops</span>
                 </>
               )}
             </span>
           </div>
 
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              setRecenterCount((c) => c + 1);
-            }}
-            className="p-2.5 rounded-xl bg-[#0B0F17] hover:bg-[#162032] border border-white/25 text-white transition-all shadow-[0_8px_24px_rgba(0,0,0,0.85)] cursor-pointer"
-            title={language === 'ar' ? 'إعادة تركيز الخريطة على كامل المسار' : 'Recenter map'}
-          >
-            <Crosshair className="w-4 h-4 text-amber-400" />
-          </button>
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                setRecenterCount((c) => c + 1);
+              }}
+              className="p-2 sm:p-2.5 rounded-xl bg-[#0B0F17] hover:bg-[#162032] border border-white/25 text-white transition-all shadow-[0_8px_24px_rgba(0,0,0,0.85)] cursor-pointer"
+              title={language === 'ar' ? 'إعادة تركيز الخريطة على كامل المسار' : 'Recenter map'}
+            >
+              <Crosshair className="w-4 h-4 text-amber-400" />
+            </button>
+
+            {/* Google Maps Route Link */}
+            <a
+              href={generateGoogleMapsRouteUrl()}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => soundEngine.playClick()}
+              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#0B0F17] hover:bg-[#0E241E] border border-emerald-400/60 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-xs font-bold shadow-[0_8px_24px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer"
+              title="فتح المسار في خرائط جوجل"
+            >
+              <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span className="font-bold">{language === 'ar' ? 'Google Maps' : 'Google Maps'}</span>
+              <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 hidden sm:inline" />
+            </a>
+          </div>
         </div>
 
-        {/* Right Side: 3-Layer Map Style Switcher & External Route Link */}
-        <div className="flex items-center gap-2 pointer-events-auto">
+        {/* Row 2 on mobile, Right side on desktop: 3-Layer Map Style Switcher */}
+        <div className="flex items-center justify-center sm:justify-end pointer-events-auto w-full sm:w-auto">
           {/* Map Style Pills */}
-          <div className="flex items-center p-1 rounded-xl bg-[#0B0F17] border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.85)] gap-1">
+          <div className="flex items-center p-0.5 sm:p-1 rounded-xl bg-[#0B0F17] border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.85)] gap-1 w-full sm:w-auto justify-between sm:justify-start">
             {(Object.keys(MAP_TILES) as MapStyleKey[]).map((key) => {
               const tile = MAP_TILES[key];
               const isSelected = mapStyle === key;
@@ -259,32 +275,27 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     soundEngine.playClick();
                     setMapStyle(key);
                   }}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+                  className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
                     isSelected
                       ? 'bg-amber-400 text-stone-950 font-black shadow-md'
                       : 'bg-white/[0.06] hover:bg-white/[0.14] text-white hover:text-white border border-transparent hover:border-white/20'
                   }`}
                 >
-                  <span className="text-sm">{tile.icon}</span>
-                  <span className="font-bold">{language === 'ar' ? tile.nameAr : tile.nameEn}</span>
+                  <span className="text-sm leading-none">{tile.icon}</span>
+                  <span className="font-bold whitespace-nowrap">
+                    {language === 'ar' ? (
+                      <>
+                        <span>{key === 'streets' ? 'شوارع' : key === 'satellite' ? 'قمر' : 'ساحل'}</span>
+                        <span className="hidden sm:inline">{key === 'streets' ? ' ومعالم' : key === 'satellite' ? ' صناعي' : ' وتضاريس'}</span>
+                      </>
+                    ) : (
+                      tile.nameEn
+                    )}
+                  </span>
                 </button>
               );
             })}
           </div>
-
-          {/* Google Maps Multi-Stop Link */}
-          <a
-            href={generateGoogleMapsRouteUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => soundEngine.playClick()}
-            className="px-3.5 py-2 rounded-xl bg-[#0B0F17] hover:bg-[#0E241E] border border-emerald-400/60 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-xs font-bold shadow-[0_8px_24px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer"
-            title="فتح المسار في خرائط جوجل"
-          >
-            <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="font-bold">{language === 'ar' ? 'خرائط Google' : 'Google Maps'}</span>
-            <ExternalLink className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-          </a>
         </div>
 
       </div>

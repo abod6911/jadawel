@@ -108,11 +108,11 @@ export const CuratedReadyPlans: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 overflow-x-auto md:overflow-visible pb-3 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-1 px-1">
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="relative rounded-3xl bg-[#0E1118]/85 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 transition-all duration-300"
+              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0E1118]/85 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 transition-all duration-300"
             >
               {idx === 0 && (
                 <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
@@ -205,13 +205,13 @@ export const CuratedReadyPlans: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-1 px-1">
           {deals.map((deal) => {
             const isCopied = copiedCode === deal.code;
             return (
               <div
                 key={deal.id}
-                className="p-4 rounded-2xl bg-[#131722]/80 border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-inner hover:border-[#E5C378]/40 transition-colors"
+                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none p-4 rounded-2xl bg-[#131722]/80 border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-inner hover:border-[#E5C378]/40 transition-colors"
               >
                 <div>
                   <span className="text-[10px] px-2 py-0.5 rounded-lg bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">

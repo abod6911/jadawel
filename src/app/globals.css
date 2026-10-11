@@ -125,6 +125,12 @@ input, select, textarea {
   border: none !important;
 }
 
+@media (max-width: 640px) {
+  .leaflet-top.leaflet-left {
+    top: 92px !important;
+  }
+}
+
 /* Interactive Card Glow Effect */
 .luxury-glow {
   position: relative;

@@ -335,25 +335,31 @@ export const HeroSection: React.FC = () => {
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
 
-  // Cinematic Entrance: Showcase pure Jeddah video scenery first (~5s), then gracefully reveal the luxury text
-  const [isIntroStage, setIsIntroStage] = useState(true);
+  // Cinematic Entrance: Showcase pure Jeddah video scenery first (~4.5s) on desktop, instant on mobile
+  const [isIntroStage, setIsIntroStage] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsIntroStage(false);
-    }, 4800);
-
-    const handleScroll = () => {
-      if (window.scrollY > 40) {
+    // Only enable intro video delay on desktop screens (>= 768px), reveal instantly on mobile
+    if (typeof window !== 'undefined' && window.innerWidth >= 768) {
+      setIsIntroStage(true);
+      const timer = setTimeout(() => {
         setIsIntroStage(false);
-      }
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
+      }, 4500);
 
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener('scroll', handleScroll);
-    };
+      const handleScroll = () => {
+        if (window.scrollY > 30) {
+          setIsIntroStage(false);
+        }
+      };
+      window.addEventListener('scroll', handleScroll, { passive: true });
+
+      return () => {
+        clearTimeout(timer);
+        window.removeEventListener('scroll', handleScroll);
+      };
+    } else {
+      setIsIntroStage(false);
+    }
   }, []);
 
 
@@ -506,7 +512,7 @@ export const HeroSection: React.FC = () => {
   return (
     <section
       onClick={() => isIntroStage && setIsIntroStage(false)}
-      className="relative w-full rounded-[2.5rem] overflow-hidden px-3 sm:px-8 py-8 sm:py-16 select-none border border-cyan-500/20 shadow-[0_24px_70px_rgba(2,8,23,0.9)] bg-[#070B14]"
+      className="relative w-full rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden px-2.5 sm:px-8 py-5 sm:py-16 select-none border border-cyan-500/20 shadow-[0_24px_70px_rgba(2,8,23,0.9)] bg-[#070B14]"
     >
       
       {/* ======================================================== */}
@@ -587,19 +593,19 @@ export const HeroSection: React.FC = () => {
           y: isIntroStage ? 28 : 0,
         }}
         transition={{ duration: 1.0, ease: [0.16, 1, 0.3, 1] }}
-        className="relative z-10 w-full flex flex-col items-center"
+        className="relative z-10 w-full max-w-full min-w-0 flex flex-col items-center"
       >
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
-        <div className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto space-y-5 sm:space-y-6 mb-10 sm:mb-14">
+        <div className="relative z-10 w-full max-w-4xl min-w-0 flex flex-col items-center text-center space-y-3 sm:space-y-6 mb-6 sm:mb-14 px-1">
         
         {/* Subtle Live Atmosphere Badge - Clean & Centered */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10 text-xs font-semibold text-slate-300 shadow-sm mb-2 sm:mb-4">
-          <span className="relative flex h-2 w-2">
+        <div className="inline-flex items-center gap-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full backdrop-blur-md bg-white/[0.04] border border-white/10 text-[10px] sm:text-xs font-semibold text-slate-300 shadow-sm mb-1 sm:mb-4 max-w-[92vw] overflow-hidden">
+          <span className="relative flex h-2 w-2 shrink-0">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
           </span>
-          <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
-          <span>
+          <Compass className="w-3.5 h-3.5 text-[#E5C378] shrink-0" />
+          <span className="truncate">
             {language === 'ar'
               ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
               : `Bride of the Red Sea • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
@@ -607,11 +613,11 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Master Headline with Clean Modern Arabic Typography & Generous Spacing */}
-        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-4 sm:gap-6 leading-[1.3] select-none">
+        <h1 className="text-xl sm:text-3xl md:text-5xl lg:text-[3.25rem] font-bold text-white tracking-normal max-w-4xl mx-auto flex flex-col items-center gap-1.5 sm:gap-5 leading-[1.3] select-none px-2 text-center">
           {language === 'ar' ? (
             <>
-              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
-                عروس البحر الأحمر&nbsp;&nbsp;بين يديك..
+              <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+                عروس البحر الأحمر بين يديك..
               </span>
               <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 <span className="text-shimmer-champagne font-black">
@@ -622,7 +628,7 @@ export const HeroSection: React.FC = () => {
             </>
           ) : (
             <>
-              <span className="block text-white font-bold tracking-wide drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
+              <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
                 Bride of the Red Sea in Your Hands..
               </span>
               <span className="block text-white font-bold tracking-normal drop-shadow-[0_4px_16px_rgba(0,0,0,0.9)]">
@@ -636,14 +642,14 @@ export const HeroSection: React.FC = () => {
         </h1>
 
         {/* Generous Subheading in Refined Light Platinum Font */}
-        <p className="text-sm sm:text-base md:text-lg text-[#E2E8F0] max-w-2xl mx-auto font-normal leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] pt-1">
+        <p className="text-xs sm:text-base md:text-lg text-[#E2E8F0] max-w-2xl mx-auto font-normal leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] pt-0.5 px-2">
           {language === 'ar'
             ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية – اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
             : 'From Obhur beach clubs to historic Al-Balad alleys – choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
         </p>
 
-        {/* Quick Mood Chips (Obsidian Noir & Warm Glowing Amber-Gold Capsule) */}
-        <div className="w-full flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 pt-3">
+        {/* Quick Mood Chips (Smooth Horizontal Swipe Rail on Mobile, Centered Flex on Desktop) */}
+        <div className="w-full max-w-full min-w-0 flex items-center justify-start sm:justify-center gap-2 sm:gap-3.5 pt-2 sm:pt-3 overflow-x-auto sm:overflow-visible pb-1.5 sm:pb-0 scrollbar-none px-1">
           {QUICK_MOODS.map((mood) => {
             const isActive = activeMoodId === mood.id;
             return (
@@ -651,7 +657,7 @@ export const HeroSection: React.FC = () => {
                 key={mood.id}
                 type="button"
                 onClick={() => handleApplyMood(mood)}
-                className={`px-4 sm:px-5 py-2.5 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer flex items-center justify-center whitespace-nowrap touch-manipulation relative group ${
+                className={`px-3.5 sm:px-5 py-2 sm:py-3 rounded-full text-xs sm:text-sm font-bold transition-all duration-300 cursor-pointer flex items-center justify-center whitespace-nowrap touch-manipulation shrink-0 relative group ${
                   isActive
                     ? 'bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black shadow-md border border-[#FFF1CC]/60 scale-[1.02]'
                     : 'bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 backdrop-blur-md shadow-sm'
@@ -669,7 +675,7 @@ export const HeroSection: React.FC = () => {
       {/* ======================================================== */}
       <div
         ref={searchBarRef}
-        className="relative z-30 w-full max-w-5xl mx-auto mb-12 sm:mb-16"
+        className="relative z-30 w-full max-w-5xl min-w-0 mx-auto mb-12 sm:mb-16"
       >
         {/* Ambient Halo Behind Cockpit */}
         <div className="absolute -inset-2 bg-gradient-to-r from-[#E5C378]/10 via-[#DF9F3D]/5 to-[#C8A452]/10 rounded-[2.8rem] blur-2xl -z-10 pointer-events-none opacity-40" />
@@ -709,18 +715,18 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Main Cockpit Shell (Ultra-Premium Smoky Obsidian Glass) */}
-        <div className="relative p-5 sm:p-8 rounded-[2.5rem] bg-[#0E1118]/85 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-6">
+        <div className="relative p-3.5 sm:p-8 rounded-[2rem] sm:rounded-[2.5rem] bg-[#0E1118]/85 backdrop-blur-2xl border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.7)] space-y-4 sm:space-y-6">
 
           {/* CONTROL RAIL 1: DISTRICT / LOCATION */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-xs font-bold text-white/70 px-1">
               <span className="flex items-center gap-1.5 text-[#E5C378]">
-                <MapPin className="w-4 h-4 text-[#E5C378]" />
+                <MapPin className="w-4 h-4 text-[#E5C378] shrink-0" />
                 <span>{language === 'ar' ? '1. منطقة الانطلاق في جدة:' : '1. Starting Location:'}</span>
               </span>
-              <span className="text-slate-400 text-[11px]">{currentDistrictObj.subAr}</span>
+              <span className="text-slate-400 text-[11px] truncate max-w-[200px]">{currentDistrictObj.subAr}</span>
             </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-7 gap-2">
+            <div className="flex sm:grid sm:grid-cols-4 md:grid-cols-7 gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-visible pb-1.5 sm:pb-0 scrollbar-none snap-x -mx-1 px-1">
               {DISTRICT_OPTIONS.map((d) => {
                 const isSelected = district === d.id;
                 return (
@@ -731,29 +737,29 @@ export const HeroSection: React.FC = () => {
                       soundEngine.playClick();
                       setDistrict(d.id);
                     }}
-                    className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex flex-col items-center justify-center gap-1 border text-center ${
+                    className={`px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex sm:flex-col items-center justify-center gap-1.5 border text-center shrink-0 snap-start whitespace-nowrap sm:whitespace-normal touch-manipulation min-h-[38px] sm:min-h-0 ${
                       isSelected
-                        ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
-                        : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
+                        ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/15 border-[#E5C378]/70 text-[#F5E2B3] shadow-md scale-[1.02]'
+                        : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                     }`}
                   >
-                    <span className="text-base">{d.icon}</span>
-                    <span className="truncate w-full">{language === 'ar' ? d.nameAr : d.nameEn}</span>
+                    <span className="text-base leading-none">{d.icon}</span>
+                    <span className="truncate">{language === 'ar' ? d.nameAr : d.nameEn}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* CONTROL RAILS 2, 3, 4: COMPANIONS, BUDGET, DURATION IN A 3-COLUMN RESPONSIVE GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 pt-1 border-t border-white/[0.08]">
+          {/* CONTROL RAILS 2, 3, 4: COMPANIONS, BUDGET, DURATION */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-5 pt-1 border-t border-white/[0.08]">
             {/* COMPANIONS */}
-            <div className="space-y-2.5">
+            <div className="space-y-1.5 sm:space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
-                <Users className="w-4 h-4 text-[#E5C378]" />
+                <Users className="w-4 h-4 text-[#E5C378] shrink-0" />
                 <span>{language === 'ar' ? '2. الرفقة:' : '2. Companions:'}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex sm:grid sm:grid-cols-2 gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none snap-x -mx-1 px-1">
                 {COMPANION_OPTIONS.map((c) => {
                   const isSelected = companions === c.id;
                   const Icon = c.icon;
@@ -765,10 +771,10 @@ export const HeroSection: React.FC = () => {
                         soundEngine.playClick();
                         setCompanions(c.id);
                       }}
-                      className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
+                      className={`px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border shrink-0 snap-start whitespace-nowrap sm:whitespace-normal touch-manipulation min-h-[38px] sm:min-h-0 ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
-                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/15 border-[#E5C378]/70 text-[#F5E2B3] shadow-md scale-[1.02]'
+                          : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
                       <Icon className="w-4 h-4 shrink-0 text-[#E5C378]" />
@@ -780,12 +786,12 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* BUDGET */}
-            <div className="space-y-2.5">
+            <div className="space-y-1.5 sm:space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
-                <Coins className="w-4 h-4 text-[#E5C378]" />
+                <Coins className="w-4 h-4 text-[#E5C378] shrink-0" />
                 <span>{language === 'ar' ? '3. الميزانية للشخص:' : '3. Budget:'}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex sm:grid sm:grid-cols-2 gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none snap-x -mx-1 px-1">
                 {BUDGET_OPTIONS.map((b) => {
                   const isSelected = budget === b.id;
                   return (
@@ -796,13 +802,13 @@ export const HeroSection: React.FC = () => {
                         soundEngine.playClick();
                         setBudget(b.id);
                       }}
-                      className={`px-3 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-2 border ${
+                      className={`px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border shrink-0 snap-start whitespace-nowrap sm:whitespace-normal touch-manipulation min-h-[38px] sm:min-h-0 ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
-                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/15 border-[#E5C378]/70 text-[#F5E2B3] shadow-md scale-[1.02]'
+                          : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
-                      <span className="text-sm">{b.icon}</span>
+                      <span className="text-sm leading-none">{b.icon}</span>
                       <span>{language === 'ar' ? b.labelAr : b.labelEn}</span>
                     </button>
                   );
@@ -811,12 +817,12 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* DURATION */}
-            <div className="space-y-2.5">
+            <div className="space-y-1.5 sm:space-y-2">
               <div className="flex items-center gap-1.5 text-xs font-bold text-[#E5C378] px-1">
-                <Clock className="w-4 h-4 text-[#E5C378]" />
+                <Clock className="w-4 h-4 text-[#E5C378] shrink-0" />
                 <span>{language === 'ar' ? '4. المدة المتاحة:' : '4. Duration:'}</span>
               </div>
-              <div className="grid grid-cols-2 gap-2">
+              <div className="flex sm:grid sm:grid-cols-2 gap-1.5 sm:gap-2 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none snap-x -mx-1 px-1">
                 {DURATION_OPTIONS.slice(0, 4).map((d) => {
                   const isSelected = duration === d.id;
                   return (
@@ -827,14 +833,14 @@ export const HeroSection: React.FC = () => {
                         soundEngine.playClick();
                         setDuration(d.id);
                       }}
-                      className={`px-2.5 py-2.5 rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border ${
+                      className={`px-3 py-2 sm:py-2.5 rounded-xl sm:rounded-2xl text-xs font-bold transition-all duration-200 cursor-pointer flex items-center justify-center gap-1.5 border shrink-0 snap-start whitespace-nowrap sm:whitespace-normal touch-manipulation min-h-[38px] sm:min-h-0 ${
                         isSelected
-                          ? 'bg-gradient-to-b from-[#E5C378]/20 to-[#C8A452]/10 border-[#E5C378]/60 text-[#F5E2B3] shadow-sm scale-[1.01]'
-                          : 'bg-white/[0.03] hover:bg-white/[0.06] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
+                          ? 'bg-gradient-to-b from-[#E5C378]/25 to-[#C8A452]/15 border-[#E5C378]/70 text-[#F5E2B3] shadow-md scale-[1.02]'
+                          : 'bg-white/[0.04] hover:bg-white/[0.08] border-white/10 hover:border-white/20 text-slate-300 hover:text-white backdrop-blur-md'
                       }`}
                     >
-                      <span className="text-sm">{d.icon}</span>
-                      <span className="truncate">{language === 'ar' ? d.labelAr : d.labelEn}</span>
+                      <span className="text-sm leading-none">{d.icon}</span>
+                      <span>{language === 'ar' ? d.labelAr : d.labelEn}</span>
                     </button>
                   );
                 })}
@@ -843,14 +849,14 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* DYNAMIC LIVE PLAN SYNTHESIS HUD BAR (Clean Minimalist Obsidian Bar) */}
-          <div className="pt-2">
-            <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 sm:p-4 rounded-2xl bg-[#0B0D12]/95 border border-white/10 text-xs shadow-lg">
-              <div className="flex flex-wrap items-center gap-2 text-white/90 font-medium">
+          <div className="pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2.5 p-3 sm:p-4 rounded-xl sm:rounded-2xl bg-[#0B0D12]/95 border border-white/10 text-xs shadow-lg">
+              <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 text-white/90 font-medium">
                 <span className="relative flex h-2 w-2">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E5C378] opacity-60" />
                   <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E5C378]" />
                 </span>
-                <span className="text-[#E5C378] font-black">{language === 'ar' ? 'ملخص المسار المختار:' : 'Selected Plan:'}</span>
+                <span className="text-[#E5C378] font-black">{language === 'ar' ? 'ملخص المسار:' : 'Plan:'}</span>
                 <span className="text-white font-bold">{currentDistrictObj.nameAr}</span>
                 <span className="text-white/30">•</span>
                 <span className="text-[#F5E2B3] font-bold">{currentCompanionObj.labelAr}</span>
@@ -859,18 +865,18 @@ export const HeroSection: React.FC = () => {
                 <span className="text-white/30">•</span>
                 <span className="text-[#F5E2B3] font-bold">{currentDurationObj.labelAr}</span>
               </div>
-              <div className="flex items-center gap-1.5 text-[11px] text-teal-200 bg-teal-500/15 border border-teal-400/40 px-3 py-1 rounded-full font-bold shadow-sm">
+              <div className="flex items-center gap-1 text-[11px] text-teal-200 bg-teal-500/15 border border-teal-400/40 px-2.5 py-0.5 sm:px-3 sm:py-1 rounded-full font-bold shadow-sm">
                 <Check className="w-3.5 h-3.5 text-teal-300" />
-                <span>{language === 'ar' ? 'مسار جغرافي متصل بدون زحمة' : 'Zero-traffic optimized route'}</span>
+                <span>{language === 'ar' ? 'مسار بدون زحمة' : 'Optimized route'}</span>
               </div>
             </div>
           </div>
 
           {/* PRIMARY SHOW-STOPPING CTA LAUNCH BUTTON */}
-          <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2 text-xs text-white/60 font-medium px-1">
-              <Zap className="w-4 h-4 text-[#E5C378]" />
-              <span>{language === 'ar' ? 'محرك ذكي يُحلل 50+ موقعاً ومساراً في ثوانٍ مع خريطة تفاعلية' : 'AI engine analyzes 50+ spots with interactive map'}</span>
+          <div className="pt-1 flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+            <div className="flex items-center gap-2 text-xs text-white/60 font-medium px-1 self-start sm:self-auto">
+              <Zap className="w-4 h-4 text-[#E5C378] shrink-0" />
+              <span>{language === 'ar' ? 'محرك ذكي يُحلل 50+ موقعاً مع خريطة تفاعلية' : 'AI engine analyzes 50+ spots with interactive map'}</span>
             </div>
 
             <div className="relative group w-full sm:w-auto">
@@ -884,7 +890,7 @@ export const HeroSection: React.FC = () => {
                   disabled={isGeneratingPlan}
                   whileHover={{ scale: 1.01 }}
                   whileTap={{ scale: 0.98 }}
-                  className="relative w-full sm:w-auto px-8 sm:px-12 py-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm sm:text-base tracking-normal flex items-center justify-center gap-3 shadow-[0_8px_24px_rgba(229,195,120,0.35)] hover:shadow-[0_12px_32px_rgba(229,195,120,0.45)] border border-[#FFF1CC]/40 cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
+                  className="relative w-full sm:w-auto px-6 sm:px-12 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm sm:text-base tracking-normal flex items-center justify-center gap-2.5 sm:gap-3 shadow-[0_8px_24px_rgba(229,195,120,0.35)] hover:shadow-[0_12px_32px_rgba(229,195,120,0.45)] border border-[#FFF1CC]/40 cursor-pointer overflow-hidden transition-all duration-300 touch-manipulation"
                 >
                   {/* Conic Glow Shimmer Layer */}
                   <div className="absolute inset-0 bg-[linear-gradient(45deg,transparent_25%,rgba(255,255,255,0.4)_50%,transparent_75%)] bg-[length:250%_250%] opacity-0 group-hover:opacity-100 group-hover:animate-pulse transition-opacity pointer-events-none" />
@@ -914,8 +920,8 @@ export const HeroSection: React.FC = () => {
       {/* ======================================================== */}
       {/* 4. DYNAMIC DESTINATION SHOWCASE (3D PERSPECTIVE CARDS)   */}
       {/* ======================================================== */}
-      <div className="relative z-10 w-full max-w-5xl mx-auto space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-2">
+      <div className="relative z-10 w-full max-w-5xl min-w-0 mx-auto space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1 sm:gap-2 px-1">
           <div>
             <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
               <span className="text-gold-400">✦</span>
@@ -930,19 +936,21 @@ export const HeroSection: React.FC = () => {
           </span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+        {/* Horizontal Snap Track on Mobile, 3-Col Grid on Desktop */}
+        <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-6 overflow-x-auto md:overflow-visible pb-3 sm:pb-0 scrollbar-none snap-x snap-mandatory px-1 sm:px-0">
           {DESTINATIONS.map((dest, idx) => (
-            <DestinationTiltCard
-              key={dest.id}
-              dest={dest}
-              idx={idx}
-              isSelected={activeIdx === idx}
-              onSelect={() => handleSelectDestination(idx)}
-              onLaunch={() => {
-                handleSelectDestination(idx);
-                setTimeout(handleBuildPlan, 50);
-              }}
-            />
+            <div key={dest.id} className="w-[82vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none">
+              <DestinationTiltCard
+                dest={dest}
+                idx={idx}
+                isSelected={activeIdx === idx}
+                onSelect={() => handleSelectDestination(idx)}
+                onLaunch={() => {
+                  handleSelectDestination(idx);
+                  setTimeout(handleBuildPlan, 50);
+                }}
+              />
+            </div>
           ))}
         </div>
       </div>

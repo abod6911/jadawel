@@ -26,7 +26,7 @@ export const Footer: React.FC = () => {
   };
 
   return (
-    <footer className="relative border-t border-[var(--border-subtle)] bg-[var(--bg-card)] pt-12 pb-24 md:pb-12 text-slate-300 transition-colors overflow-hidden">
+    <footer className="relative border-t border-[var(--border-subtle)] bg-[var(--bg-card)] pt-12 pb-28 md:pb-12 text-slate-300 transition-colors overflow-hidden">
       {/* Subtle Authentic Hijazi Pattern in Footer Background */}
       <RawashinPattern className="opacity-10 pointer-events-none" />
 

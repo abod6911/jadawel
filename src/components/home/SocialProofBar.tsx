@@ -81,12 +81,12 @@ export const SocialProofBar: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. REFINED VERIFIED TESTIMONIALS GRID (Quiet Luxury, No Marquee Thrashing) */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+      {/* 2. REFINED VERIFIED TESTIMONIALS (Horizontal snap carousel on mobile, 3-col grid on desktop) */}
+      <div className="flex md:grid md:grid-cols-3 gap-3.5 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-1 px-1">
         {TESTIMONIALS.slice(0, 3).map((t) => (
           <div
             key={t.id}
-            className="p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-[var(--border-gold)] transition-colors duration-200 space-y-3"
+            className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-[var(--border-gold)] transition-colors duration-200 space-y-3"
           >
             {/* Reviewer Header */}
             <div className="flex items-center justify-between gap-2">

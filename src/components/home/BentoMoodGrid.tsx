@@ -114,17 +114,17 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
       />
 
       {/* Floating Badge (Top Left/Start) */}
-      <div className="absolute top-5 start-5 z-10">{badgeNode}</div>
+      <div className="absolute top-3.5 sm:top-5 start-3.5 sm:start-5 z-10">{badgeNode}</div>
 
       {/* Bottom Content Area */}
-      <div className="absolute bottom-6 inset-x-6 z-10 space-y-2 text-start">
-        <h3 className="text-xl sm:text-2xl md:text-3xl font-black text-white drop-shadow-md flex items-center gap-2">
+      <div className="absolute bottom-4 sm:bottom-6 inset-x-4 sm:inset-x-6 z-10 space-y-1.5 sm:space-y-2 text-start">
+        <h3 className="text-lg sm:text-2xl md:text-3xl font-black text-white drop-shadow-md flex items-center gap-2">
           <span>{title}</span>
         </h3>
-        <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-xl">
+        <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed max-w-xl line-clamp-2 sm:line-clamp-none">
           {description}
         </p>
-        <div className={`pt-1 flex items-center gap-2 text-xs font-bold ${accentColorClass}`}>
+        <div className={`pt-0.5 sm:pt-1 flex items-center gap-2 text-xs font-bold ${accentColorClass}`}>
           <span>{actionText}</span>
           {isRTL ? (
             <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
@@ -174,18 +174,18 @@ export const BentoMoodGrid: React.FC = () => {
       </div>
 
       {/* Asymmetrical Bento Grid with 3D Tilt Physics */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-5">
         {/* 1. Large Hero Bento Cell: Beaches & Sunset (7 Cols) */}
         <BentoTiltCard
           colSpanClass="md:col-span-7"
-          minHeightClass="min-h-[300px] md:min-h-[360px]"
+          minHeightClass="min-h-[250px] md:min-h-[360px]"
           hasBorderBeam={true}
           imageSrc={getAssetUrl('/images/moods/mood-beach.jpg')}
           onClick={() => handleMoodSelect('beach_sunset')}
           accentColorClass="text-teal-300"
           borderColorHoverClass="hover:border-teal-400/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-teal-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
+            <span className="px-3 py-1 rounded-xl bg-teal-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
               <Wind className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'نسيم البحر • روقان الغروب' : 'Sea Breeze • Sunset Vibe'}</span>
             </span>
@@ -202,13 +202,13 @@ export const BentoMoodGrid: React.FC = () => {
         {/* 2. Secondary Bento Cell: Cafes & Fine Dining (5 Cols) */}
         <BentoTiltCard
           colSpanClass="md:col-span-5"
-          minHeightClass="min-h-[300px] md:min-h-[360px]"
+          minHeightClass="min-h-[250px] md:min-h-[360px]"
           imageSrc={getAssetUrl('/images/moods/mood-food.jpg')}
           onClick={() => handleMoodSelect('food')}
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378] text-[#080B11] text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
+            <span className="px-3 py-1 rounded-xl bg-[#E5C378] text-[#080B11] text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
               <Star className="w-3.5 h-3.5 fill-current" />
               <span>{language === 'ar' ? 'أعلى تقييماً 4.9' : 'Top Rated 4.9'}</span>
             </span>
@@ -225,13 +225,13 @@ export const BentoMoodGrid: React.FC = () => {
         {/* 3. Bento Cell: UNESCO Heritage (6 Cols) */}
         <BentoTiltCard
           colSpanClass="md:col-span-6"
-          minHeightClass="min-h-[260px] md:min-h-[300px]"
+          minHeightClass="min-h-[220px] md:min-h-[300px]"
           imageSrc={getAssetUrl('/images/moods/mood-heritage.jpg')}
           onClick={() => handleMoodSelect('heritage_arts')}
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378]/20 text-[#F5E2B3] text-xs font-bold flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
+            <span className="px-3 py-1 rounded-xl bg-[#E5C378]/20 text-[#F5E2B3] text-xs font-bold flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
               <Landmark className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'تراث اليونسكو' : 'UNESCO Heritage'}</span>
             </span>
@@ -248,7 +248,7 @@ export const BentoMoodGrid: React.FC = () => {
         {/* 4. Bento Cell: Entertainment & Adrenaline (6 Cols) */}
         <BentoTiltCard
           colSpanClass="md:col-span-6"
-          minHeightClass="min-h-[260px] md:min-h-[300px]"
+          minHeightClass="min-h-[220px] md:min-h-[300px]"
           imageSrc={getAssetUrl('/images/moods/mood-gaming.jpg')}
           onClick={() => handleMoodSelect('gaming_challenges')}
           accentColorClass="text-rose-300"
