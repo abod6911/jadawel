@@ -371,9 +371,16 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     {placeName}
                   </h4>
 
-                  <p className="text-[11px] text-white/70">
-                    {language === 'ar' ? stop.place.districtNameAr : stop.place.districtNameEn}
-                  </p>
+                  <div className="flex items-center gap-2 text-[11px] text-white/80">
+                    <span className="flex items-center gap-1 text-[#E5C378] font-bold">
+                      <Clock className="w-3 h-3" />
+                      <span>{stop.place.dwellTimeMinutes || stop.place.durationMinutes || 60} {language === 'ar' ? 'دقيقة' : 'mins'}</span>
+                    </span>
+                    <span>•</span>
+                    <span className="text-white/70">
+                      {language === 'ar' ? stop.place.districtNameAr : stop.place.districtNameEn}
+                    </span>
+                  </div>
 
                   <a
                     href={

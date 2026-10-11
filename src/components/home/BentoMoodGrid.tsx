@@ -185,12 +185,12 @@ export const BentoMoodGrid: React.FC = () => {
           accentColorClass="text-teal-300"
           borderColorHoverClass="hover:border-teal-400/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-teal-500/80 backdrop-blur-md text-white text-xs font-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
+            <span className="px-3.5 py-1.5 rounded-xl bg-teal-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
               <Wind className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'نسيم البحر • روقان الغروب 🌊' : 'Sea Breeze • Sunset Vibe 🌊'}</span>
+              <span>{language === 'ar' ? 'نسيم البحر • روقان الغروب' : 'Sea Breeze • Sunset Vibe'}</span>
             </span>
           }
-          title={language === 'ar' ? 'شواطئ وغروب بحري 🌊' : 'Beach Clubs & Sunsets 🌊'}
+          title={language === 'ar' ? 'شواطئ وغروب بحري' : 'Beach Clubs & Sunsets'}
           description={
             language === 'ar'
               ? 'منتجعات أبحر الشاطئية، جلسات ممشى الكورنيش الشمالي، ونوادي اليخوت الفارهة مع نسيم البحر الأحمر.'
@@ -208,12 +208,12 @@ export const BentoMoodGrid: React.FC = () => {
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378] backdrop-blur-md text-[#0B0D12] text-xs font-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
+            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378] text-[#080B11] text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
               <Star className="w-3.5 h-3.5 fill-current" />
-              <span>{language === 'ar' ? 'أعلى تقييماً 4.9 ★' : 'Top Rated 4.9 ★'}</span>
+              <span>{language === 'ar' ? 'أعلى تقييماً 4.9' : 'Top Rated 4.9'}</span>
             </span>
           }
-          title={language === 'ar' ? 'مطاعم ومحامص رايقة ☕' : 'Dining & Roasteries ☕'}
+          title={language === 'ar' ? 'مطاعم ومحامص رايقة' : 'Dining & Roasteries'}
           description={
             language === 'ar'
               ? 'محامص القهوة المختصة في الروضة، وأرقى جلسات العشاء العالمية في التحلية والشاطئ.'
@@ -231,12 +231,12 @@ export const BentoMoodGrid: React.FC = () => {
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378]/20 backdrop-blur-md text-[#F5E2B3] text-xs font-black flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
+            <span className="px-3.5 py-1.5 rounded-xl bg-[#E5C378]/20 text-[#F5E2B3] text-xs font-bold flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
               <Landmark className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'تراث اليونسكو 🏛️' : 'UNESCO Heritage 🏛️'}</span>
+              <span>{language === 'ar' ? 'تراث اليونسكو' : 'UNESCO Heritage'}</span>
             </span>
           }
-          title={language === 'ar' ? 'تراث وأزقة البلد العتيقة 🏛️' : 'Historic Al-Balad Trail 🏛️'}
+          title={language === 'ar' ? 'تراث وأزقة البلد العتيقة' : 'Historic Al-Balad Trail'}
           description={
             language === 'ar'
               ? 'بيوت الرواشين الخشبية، بسطات الشاي الحجازي بالنعناع، والأسواق الشعبية الساحرة.'
@@ -254,12 +254,12 @@ export const BentoMoodGrid: React.FC = () => {
           accentColorClass="text-rose-300"
           borderColorHoverClass="hover:border-rose-400/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-rose-500/80 backdrop-blur-md text-white text-xs font-black flex items-center gap-1.5 shadow-[0_0_15px_rgba(244,63,94,0.35)] border border-rose-300/40">
+            <span className="px-3.5 py-1.5 rounded-xl bg-rose-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(244,63,94,0.35)] border border-rose-300/40">
               <Gamepad2 className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'طاقة وحماس 🎯' : 'Action & Challenges 🎯'}</span>
+              <span>{language === 'ar' ? 'طاقة وحماس' : 'Action & Challenges'}</span>
             </span>
           }
-          title={language === 'ar' ? 'تحديات وفعاليات حماسية 🎯' : 'Gaming, Bowling & Fun 🎯'}
+          title={language === 'ar' ? 'تحديات وفعاليات حماسية' : 'Gaming, Bowling & Fun'}
           description={
             language === 'ar'
               ? 'حلبات الكارتينج، صالات البولينج والسينما، ومراكز الترفيه الجماعي للشلة والعائلة.'

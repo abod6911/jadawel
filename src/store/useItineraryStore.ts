@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { persist, createJSONStorage } from 'zustand/middleware';
 import {
   Itinerary,
   ItineraryStop,
@@ -7,6 +8,7 @@ import {
   Theme,
   WizardPreferences,
   PlanVariantKey,
+  SavedPlan,
 } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { CURATED_PLANS } from '@/data/curated-plans';
@@ -28,6 +30,16 @@ interface ItineraryState {
   currentItinerary: Itinerary | null;
   activeVariant: PlanVariantKey;
   favoritePlaceIds: string[];
+
+  // Saved Plans
+  savedPlans: SavedPlan[];
+  isSavedPlansModalOpen: boolean;
+  setIsSavedPlansModalOpen: (open: boolean) => void;
+  saveCurrentPlan: (customTitle?: string) => string;
+  loadSavedPlan: (planId: string) => void;
+  renameSavedPlan: (planId: string, newTitle: string) => void;
+  deleteSavedPlan: (planId: string) => void;
+  duplicateSavedPlan: (planId: string) => void;
 
   // Wizard state (7 steps)
   wizardStep: number;
@@ -92,26 +104,130 @@ const defaultPreferences: WizardPreferences = {
   preferences: ['no_traffic', 'easy_parking'],
 };
 
-export const useItineraryStore = create<ItineraryState>((set, get) => ({
-  language: 'ar',
-  theme: 'dark',
-  activeNavTab: 'home',
+// Safe storage wrapper protecting against Incognito / Private mode quotas and errors
+const safeLocalStorage = {
+  getItem: (name: string): string | null => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        return window.localStorage.getItem(name);
+      }
+    } catch (e) {
+      console.warn('Storage access restricted (incognito mode):', e);
+    }
+    return null;
+  },
+  setItem: (name: string, value: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.setItem(name, value);
+      }
+    } catch (e) {
+      console.warn('Storage write restricted (incognito mode):', e);
+    }
+  },
+  removeItem: (name: string): void => {
+    try {
+      if (typeof window !== 'undefined' && window.localStorage) {
+        window.localStorage.removeItem(name);
+      }
+    } catch (e) {
+      console.warn('Storage delete restricted (incognito mode):', e);
+    }
+  },
+};
 
-  currentItinerary: null,
-  activeVariant: 'balanced',
-  favoritePlaceIds: ['historic-al-balad', 'jeddah-yacht-club', 'twina-seafood-lounge'],
+export const useItineraryStore = create<ItineraryState>()(
+  persist(
+    (set, get) => ({
+      language: 'ar',
+      theme: 'dark',
+      activeNavTab: 'home',
 
-  wizardStep: 1,
-  wizardPreferences: defaultPreferences,
-  isGeneratingPlan: false,
+      currentItinerary: null,
+      activeVariant: 'balanced',
+      favoritePlaceIds: ['historic-al-balad', 'jeddah-yacht-club', 'twina-seafood-lounge'],
 
-  isLiveOutingOpen: false,
-  activeLiveStopIndex: 0,
+      savedPlans: [],
+      isSavedPlansModalOpen: false,
+      setIsSavedPlansModalOpen: (isSavedPlansModalOpen) => set({ isSavedPlansModalOpen }),
 
-  isSplitBillOpen: false,
-  isVotingModalOpen: false,
-  selectedPlaceForModal: null,
-  stopToSwap: null,
+      saveCurrentPlan: (customTitle) => {
+        const { currentItinerary, wizardPreferences, savedPlans } = get();
+        if (!currentItinerary) return '';
+
+        const newId = `saved-${Date.now()}`;
+        const title = customTitle || currentItinerary.titleAr || `طلعة جدة #${savedPlans.length + 1}`;
+
+        const newSaved: SavedPlan = {
+          id: newId,
+          title,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          itinerary: JSON.parse(JSON.stringify(currentItinerary)),
+          preferences: wizardPreferences,
+        };
+
+        set({ savedPlans: [newSaved, ...savedPlans] });
+        return newId;
+      },
+
+      loadSavedPlan: (planId) => {
+        const { savedPlans } = get();
+        const found = savedPlans.find((p) => p.id === planId);
+        if (!found) return;
+
+        set({
+          currentItinerary: JSON.parse(JSON.stringify(found.itinerary)),
+          wizardPreferences: found.preferences || get().wizardPreferences,
+          activeNavTab: 'timeline',
+          isSavedPlansModalOpen: false,
+        });
+      },
+
+      renameSavedPlan: (planId, newTitle) => {
+        set((state) => ({
+          savedPlans: state.savedPlans.map((p) =>
+            p.id === planId
+              ? { ...p, title: newTitle.trim(), updatedAt: new Date().toISOString() }
+              : p
+          ),
+        }));
+      },
+
+      deleteSavedPlan: (planId) => {
+        set((state) => ({
+          savedPlans: state.savedPlans.filter((p) => p.id !== planId),
+        }));
+      },
+
+      duplicateSavedPlan: (planId) => {
+        const { savedPlans } = get();
+        const found = savedPlans.find((p) => p.id === planId);
+        if (!found) return;
+
+        const clone: SavedPlan = {
+          ...found,
+          id: `saved-${Date.now()}`,
+          title: `${found.title} (نسخة)`,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          itinerary: JSON.parse(JSON.stringify(found.itinerary)),
+        };
+
+        set({ savedPlans: [clone, ...savedPlans] });
+      },
+
+      wizardStep: 1,
+      wizardPreferences: defaultPreferences,
+      isGeneratingPlan: false,
+
+      isLiveOutingOpen: false,
+      activeLiveStopIndex: 0,
+
+      isSplitBillOpen: false,
+      isVotingModalOpen: false,
+      selectedPlaceForModal: null,
+      stopToSwap: null,
 
   setLanguage: (language) => {
     set({ language });
@@ -126,8 +242,20 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
     get().setLanguage(next);
   },
 
-  setTheme: (theme) => set({ theme }),
-  toggleTheme: () => set((state) => ({ theme: state.theme === 'dark' ? 'light' : 'dark' })),
+  setTheme: (theme) => {
+    set({ theme });
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      root.classList.remove('dark', 'light');
+      root.classList.add(theme);
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+    }
+  },
+  toggleTheme: () => {
+    const next = get().theme === 'dark' ? 'light' : 'dark';
+    get().setTheme(next);
+  },
 
   setActiveNavTab: (activeNavTab) => set({ activeNavTab }),
   atmospherePhase: 'auto',
@@ -392,4 +520,18 @@ export const useItineraryStore = create<ItineraryState>((set, get) => ({
         : [...state.favoritePlaceIds, placeId],
     }));
   },
-}));
+}),
+{
+  name: 'jadawel_user_storage_v2',
+  storage: createJSONStorage(() => safeLocalStorage),
+  partialize: (state) => ({
+    savedPlans: state.savedPlans,
+    wizardPreferences: state.wizardPreferences,
+    favoritePlaceIds: state.favoritePlaceIds,
+    currentItinerary: state.currentItinerary,
+    language: state.language,
+    theme: state.theme,
+  }),
+}
+)
+);

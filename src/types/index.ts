@@ -281,3 +281,12 @@ export interface CuratedPlan {
   startingDistrict: string;
   placesIds: string[];
 }
+
+export interface SavedPlan {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  itinerary: Itinerary;
+  preferences?: WizardPreferences;
+}

@@ -15,6 +15,10 @@ import {
   Car,
   CheckCircle2,
   Share2,
+  Waves,
+  Landmark,
+  Palmtree,
+  Coffee,
 } from 'lucide-react';
 import { RouteMap } from '@/components/map/RouteMap';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
@@ -36,7 +40,7 @@ interface CuratedStudioRoute {
   taglineEn: string;
   badgeAr: string;
   badgeEn: string;
-  icon: string;
+  icon: React.ComponentType<{ className?: string }>;
   color: string;
   borderColor: string;
   bgGlow: string;
@@ -56,9 +60,9 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     titleEn: 'Obhur Luxury Yacht & Beach Route',
     taglineAr: 'روقان الغروب الذهبي بين أفخم أندية اليخوت ومطاعم البحر الأحمر',
     taglineEn: 'Golden sunset relaxation among private yacht clubs and seafood lounges',
-    badgeAr: 'فاخر VIP 👑',
-    badgeEn: 'VIP Luxury 👑',
-    icon: '🌊',
+    badgeAr: 'فاخر VIP',
+    badgeEn: 'VIP Luxury',
+    icon: Waves,
     color: 'text-amber-400',
     borderColor: 'border-amber-500/40',
     bgGlow: 'from-amber-500/10 via-amber-500/5 to-transparent',
@@ -80,9 +84,9 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     titleEn: 'Historic Al-Balad & teamLab Heritage',
     taglineAr: 'جولة ساحرة بين عبق التاريخ الحجازي وفنون المستقبل الرقمية',
     taglineEn: 'Enchanting blend of Hijazi architecture and futuristic digital art',
-    badgeAr: 'يونسكو وتراث 🏛️',
-    badgeEn: 'UNESCO Heritage 🏛️',
-    icon: '🏛️',
+    badgeAr: 'يونسكو وتراث',
+    badgeEn: 'UNESCO Heritage',
+    icon: Landmark,
     color: 'text-gold-400',
     borderColor: 'border-gold-500/40',
     bgGlow: 'from-gold-500/10 via-gold-500/5 to-transparent',
@@ -105,9 +109,9 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     titleEn: 'Corniche Waterfront & Entertainment',
     taglineAr: 'أيقونات عروس البحر: نسيم الشاطئ، حماس الملاهي، والنافورة',
     taglineEn: 'Jeddah icons: Sea breeze, amusement park thrills, and King Fahd Fountain',
-    badgeAr: 'أيقوني وعائلي 🌴',
-    badgeEn: 'Iconic & Family 🌴',
-    icon: '🌴',
+    badgeAr: 'أيقوني وعائلي',
+    badgeEn: 'Iconic & Family',
+    icon: Palmtree,
     color: 'text-teal-400',
     borderColor: 'border-teal-400/40',
     bgGlow: 'from-teal-500/10 via-teal-500/5 to-transparent',
@@ -129,9 +133,9 @@ const STUDIO_ROUTES: CuratedStudioRoute[] = [
     titleEn: 'Al-Rawdah Coffee & Creative Arts',
     taglineAr: 'عاصمة الروقان: محامص القهوة المختصة، المعارض التشكيلية، واللقاءات الهادئة',
     taglineEn: 'The chill capital: Specialty coffee roasters, art galleries, and boutique bites',
-    badgeAr: 'عشاق القهوة ☕',
-    badgeEn: 'Coffee Lovers ☕',
-    icon: '☕',
+    badgeAr: 'عشاق القهوة',
+    badgeEn: 'Coffee Lovers',
+    icon: Coffee,
     color: 'text-rose-400',
     borderColor: 'border-rose-400/40',
     bgGlow: 'from-rose-500/10 via-rose-500/5 to-transparent',
@@ -288,7 +292,7 @@ export const JeddahRouteStudio: React.FC = () => {
                   transition={{ type: 'spring', stiffness: 400, damping: 30 }}
                 />
               )}
-              <span className="text-base sm:text-lg">{route.icon}</span>
+              <route.icon className={`w-5 h-5 shrink-0 ${isActive ? 'text-[var(--accent-gold)]' : route.color}`} />
               <div className="flex flex-col text-start">
                 <span className="leading-snug">
                   {language === 'ar' ? route.titleAr : route.titleEn}
@@ -444,7 +448,7 @@ export const JeddahRouteStudio: React.FC = () => {
                   className="relative w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] text-sm font-black shadow-[0_0_35px_rgba(229,195,120,0.5)] hover:shadow-[0_0_55px_rgba(229,195,120,0.85)] hover:scale-[1.01] transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation active:scale-[0.98]"
                 >
                   <Sparkles className="w-4 h-4 text-[#0B0D12]" />
-                  <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي ⚡' : 'Load This Route Into My Plan ⚡'}</span>
+                  <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي' : 'Load This Route Into My Plan'}</span>
                 </button>
               </MagneticButton>
             </div>

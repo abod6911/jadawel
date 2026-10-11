@@ -1,7 +1,8 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import {
   Zap,
   Scale,
@@ -23,17 +24,23 @@ import {
   Split,
   Download,
   MapPin,
+  Bookmark,
+  FolderHeart,
+  Sparkles,
+  X,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { TimelineCard } from './TimelineCard';
 import { TransitConnector } from './TransitConnector';
+import { BudgetDonutChart } from './BudgetDonutChart';
 import { SwapPlaceModal } from './SwapPlaceModal';
 import { ExportHubModal } from '@/components/export/ExportHubModal';
 import { LiveOutingModal } from '@/components/modals/LiveOutingModal';
 import { SplitBillModal } from '@/components/modals/SplitBillModal';
 import { GroupVotingModal } from '@/components/modals/GroupVotingModal';
 import { StoryPassModal } from '@/components/modals/StoryPassModal';
+import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { InteractiveMap } from '@/components/map/InteractiveMap';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { soundEngine } from '@/utils/audioEngine';
@@ -50,10 +57,47 @@ export const PlanResultsView: React.FC = () => {
   const setWizardStep = useItineraryStore((state) => state.setWizardStep);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
   const setSelectedPlaceForModal = useItineraryStore((state) => state.setSelectedPlaceForModal);
+  const saveCurrentPlan = useItineraryStore((state) => state.saveCurrentPlan);
+  const setIsSavedPlansModalOpen = useItineraryStore((state) => state.setIsSavedPlansModalOpen);
+  const savedPlans = useItineraryStore((state) => state.savedPlans);
 
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [isStoryPassOpen, setIsStoryPassOpen] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState<'timeline' | 'map'>('timeline');
+  const [saveToast, setSaveToast] = useState(false);
+  const [hasCelebrated, setHasCelebrated] = useState(false);
+  const [showCelebrationBanner, setShowCelebrationBanner] = useState(true);
+
+  // Soft celebratory gold confetti burst upon unveiling
+  useEffect(() => {
+    if (hasCelebrated) return;
+    setHasCelebrated(true);
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
+
+    if (!prefersReducedMotion) {
+      try {
+        confetti({
+          particleCount: 42,
+          spread: 70,
+          origin: { y: 0.65 },
+          colors: ['#E5C378', '#F5E2B3', '#DF9F3D', '#FFFFFF', '#2DD4BF'],
+          disableForReducedMotion: true,
+        });
+      } catch (e) {
+        // graceful fallback if canvas blocked
+      }
+    }
+  }, [hasCelebrated]);
+
+  const handleSavePlan = () => {
+    soundEngine.playSuccess();
+    saveCurrentPlan();
+    setSaveToast(true);
+    setTimeout(() => setSaveToast(false), 3000);
+  };
 
   if (!currentItinerary) {
     return (
@@ -78,7 +122,7 @@ export const PlanResultsView: React.FC = () => {
           }}
           className="min-h-[48px] px-8 py-4 rounded-2xl bg-gradient-to-r from-coral-500 to-coral-600 hover:from-coral-600 hover:to-coral-700 text-white font-black text-sm shadow-glow-coral cursor-pointer transition-all active:scale-95"
         >
-          {language === 'ar' ? '🚀 اصنع خطتك الآن' : 'Create Your Plan'}
+          {language === 'ar' ? 'اصنع خطتك الآن' : 'Create Your Plan'}
         </button>
       </div>
     );
@@ -117,8 +161,8 @@ export const PlanResultsView: React.FC = () => {
     },
     {
       id: (isThirdFree ? 'free' : 'luxury') as any,
-      title: thirdVariantObj?.titleAr || '💎 التجربة الفخمة VIP',
-      titleEn: thirdVariantObj?.titleEn || '💎 VIP Luxury Signature',
+      title: thirdVariantObj?.titleAr || 'التجربة الفخمة VIP',
+      titleEn: thirdVariantObj?.titleEn || 'VIP Luxury Signature',
       badge: thirdVariantObj?.badgeAr || 'VIP',
       badgeEn: thirdVariantObj?.badgeEn || 'VIP',
       icon: isThirdFree ? Compass : Crown,
@@ -140,6 +184,37 @@ export const PlanResultsView: React.FC = () => {
 
   return (
     <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-20 lg:pb-8 text-start select-none">
+      {/* 0. Celebration Announcement Banner */}
+      <AnimatePresence>
+        {showCelebrationBanner && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10, height: 0 }}
+            className="p-3.5 sm:p-4 rounded-2xl bg-gradient-to-r from-[var(--accent-gold)]/15 via-[var(--accent-teal)]/10 to-transparent border border-[var(--border-gold)] flex items-center justify-between gap-3 shadow-lg"
+          >
+            <div className="flex items-center gap-3 text-xs sm:text-sm font-semibold text-white">
+              <div className="w-8 h-8 rounded-xl bg-[var(--accent-gold)]/20 border border-[var(--border-gold)] flex items-center justify-center text-[var(--accent-gold)] shrink-0 shadow-sm">
+                <Sparkles className="w-4 h-4" />
+              </div>
+              <span>
+                {language === 'ar'
+                  ? 'تم تفصيل خطتكم السينمائية بنجاح! 3 مسارات متناسقة جاهزة لطلعتكم.'
+                  : 'Your cinematic outing is ready! 3 balanced itineraries tailored for you.'}
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setShowCelebrationBanner(false)}
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer shrink-0"
+              aria-label="Dismiss banner"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* 1. Header & 3-Variant Switcher */}
       <div className="space-y-3 sm:space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -238,8 +313,38 @@ export const PlanResultsView: React.FC = () => {
           </button>
         </div>
 
-        {/* Right Actions: Split Bill, Group Vote, Export */}
-        <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
+        {/* Right Actions: Save, Saved List, Split Bill, Group Vote, Export */}
+        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-between sm:justify-start">
+          {/* Save Current Plan Button */}
+          <button
+            type="button"
+            onClick={handleSavePlan}
+            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-white hover:text-[#E5C378] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95"
+            title="احفظ هذه الخطة في جهازك"
+          >
+            <Bookmark className="w-4 h-4 text-[#E5C378]" />
+            <span>{language === 'ar' ? 'احفظ خطتي' : 'Save Plan'}</span>
+          </button>
+
+          {/* View Saved Plans Button */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              setIsSavedPlansModalOpen(true);
+            }}
+            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            title="استعراض الخطط المحفوظة"
+          >
+            <FolderHeart className="w-4 h-4 text-rose-400" />
+            <span className="hidden sm:inline">{language === 'ar' ? 'المحفوظات' : 'Saved'}</span>
+            {savedPlans.length > 0 && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E5C378]/20 text-[#E5C378] border border-[#E5C378]/40 font-black">
+                {savedPlans.length}
+              </span>
+            )}
+          </button>
+
           <button
             type="button"
             onClick={() => {
@@ -281,59 +386,54 @@ export const PlanResultsView: React.FC = () => {
         </div>
       </div>
 
-      {/* 3. Financial Summary Bar */}
-      <div className="p-3.5 sm:p-5 rounded-2xl bg-abyss-900/90 border border-white/10 shadow-md">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
-          <div className="p-2.5 sm:p-3 rounded-xl bg-abyss-950/80 border border-white/5 space-y-0.5 sm:space-y-1">
-            <span className="text-[10px] sm:text-[11px] text-pearl-muted font-bold flex items-center gap-1">
-              <Utensils className="w-3.5 h-3.5 text-gold-400" />
-              <span>{language === 'ar' ? 'الأكل والمقاهي' : 'Food & Coffee'}</span>
-            </span>
-            <span className="text-xs sm:text-base font-black text-pearl block">~{foodShare} ر.س</span>
-          </div>
+      {/* Save Success Toast */}
+      <AnimatePresence>
+        {saveToast && (
+          <motion.div
+            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -8, scale: 0.98 }}
+            className="p-3 sm:p-4 rounded-2xl bg-emerald-950/70 border border-emerald-500/40 text-emerald-200 text-xs sm:text-sm font-bold flex items-center justify-between gap-3 shadow-lg"
+          >
+            <div className="flex items-center gap-2">
+              <Bookmark className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span>{language === 'ar' ? 'تم حفظ الخطة في جهازك بنجاح! يمكنك الرجوع إليها بأي وقت بدون إنترنت.' : 'Plan saved to your device! Available offline anytime.'}</span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsSavedPlansModalOpen(true)}
+              className="px-3 py-1 rounded-lg bg-emerald-500/20 text-emerald-300 hover:text-white border border-emerald-500/40 text-xs font-black shrink-0 transition-colors cursor-pointer"
+            >
+              {language === 'ar' ? 'عرض المحفوظات' : 'View Saved'}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-          <div className="p-2.5 sm:p-3 rounded-xl bg-abyss-950/80 border border-white/5 space-y-0.5 sm:space-y-1">
-            <span className="text-[10px] sm:text-[11px] text-pearl-muted font-bold flex items-center gap-1">
-              <Ticket className="w-3.5 h-3.5 text-coral-400" />
-              <span>{language === 'ar' ? 'التذاكر والأنشطة' : 'Tickets & Activities'}</span>
-            </span>
-            <span className="text-xs sm:text-base font-black text-pearl block">~{ticketsShare} ر.س</span>
-          </div>
+      {/* 3. High-Performance SVG Budget Donut Chart */}
+      <BudgetDonutChart
+        totalPerPersonSAR={totalPerPerson}
+        foodShareSAR={foodShare}
+        ticketsShareSAR={ticketsShare}
+        transitShareSAR={uberShare}
+      />
 
-          <div className="p-2.5 sm:p-3 rounded-xl bg-abyss-950/80 border border-white/5 space-y-0.5 sm:space-y-1">
-            <span className="text-[10px] sm:text-[11px] text-pearl-muted font-bold flex items-center gap-1">
-              <Car className="w-3.5 h-3.5 text-teal-400" />
-              <span>{language === 'ar' ? 'مشاوير أوبر' : 'Uber Transit'}</span>
-            </span>
-            <span className="text-xs sm:text-base font-black text-pearl block">~{uberShare} ر.س</span>
-          </div>
-
-          <div className="p-2.5 sm:p-3 rounded-xl bg-gold-500/15 border border-gold-500/40 space-y-0.5 sm:space-y-1">
-            <span className="text-[10px] sm:text-[11px] text-gold-400 font-bold flex items-center gap-1">
-              <Coins className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'المجموع / شخص' : 'Total / Person'}</span>
-            </span>
-            <span className="text-xs sm:text-base font-black text-gold-300 block">~{totalPerPerson} ر.س</span>
-          </div>
-        </div>
-      </div>
-
-      {/* 4. Mobile Segmented Control */}
-      <div className="lg:hidden flex items-center p-1.5 rounded-2xl bg-abyss-950 border border-white/10 shadow-inner">
+      {/* 4. Mobile Segmented Control (Zero Emojis, Pure Lucide SVGs) */}
+      <div className="lg:hidden flex items-center p-1.5 rounded-2xl bg-[#080B11]/90 border border-[var(--border-subtle)] shadow-inner">
         <button
           type="button"
           onClick={() => {
             soundEngine.playClick();
             setMobileViewMode('timeline');
           }}
-          className={`flex-1 min-h-[44px] py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation ${
+          className={`flex-1 min-h-[44px] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation ${
             mobileViewMode === 'timeline'
-              ? 'bg-abyss-800 text-gold-400 border border-gold-500/40 shadow-glow-gold'
-              : 'text-pearl-muted hover:text-pearl'
+              ? 'bg-[#12151C] text-[var(--accent-gold)] border border-[var(--border-gold)] shadow-sm'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Clock className="w-4 h-4" />
-          <span>{language === 'ar' ? '⏱️ الجدول الزمني' : '⏱️ Timeline Stream'}</span>
+          <Clock className="w-4 h-4 text-[var(--accent-gold)]" />
+          <span>{language === 'ar' ? 'الجدول الزمني' : 'Timeline Stream'}</span>
         </button>
 
         <button
@@ -342,14 +442,14 @@ export const PlanResultsView: React.FC = () => {
             soundEngine.playClick();
             setMobileViewMode('map');
           }}
-          className={`flex-1 min-h-[44px] py-2.5 rounded-xl font-black text-xs flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation ${
+          className={`flex-1 min-h-[44px] py-2.5 rounded-xl font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation ${
             mobileViewMode === 'map'
-              ? 'bg-abyss-800 text-teal-300 border border-teal-400/40 shadow-glow-teal'
-              : 'text-pearl-muted hover:text-pearl'
+              ? 'bg-[#12151C] text-teal-300 border border-teal-400/40 shadow-sm'
+              : 'text-slate-400 hover:text-white'
           }`}
         >
-          <MapIcon className="w-4 h-4" />
-          <span>{language === 'ar' ? '🗺️ الخريطة التفاعلية' : '🗺️ Interactive Map'}</span>
+          <MapIcon className="w-4 h-4 text-teal-400" />
+          <span>{language === 'ar' ? 'الخريطة التفاعلية' : 'Interactive Map'}</span>
         </button>
       </div>
 
@@ -359,7 +459,7 @@ export const PlanResultsView: React.FC = () => {
         <div className={`lg:col-span-7 space-y-6 ${mobileViewMode === 'map' ? 'hidden lg:block' : 'block'}`}>
           <div className="relative">
             {/* Vertical Glowing Timeline Line */}
-            <div className="absolute top-6 bottom-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-0.5 bg-gradient-to-b from-teal-400 via-gold-400 to-coral-400 z-0 opacity-70" />
+            <div className="absolute top-6 bottom-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-0.5 bg-gradient-to-b from-[#E5C378] via-[#2DD4BF] to-[#DF9F3D] z-0 opacity-70" />
 
             <div className="space-y-6 relative z-10">
               {currentVariantData?.stops?.map((stop, index) => {
@@ -388,7 +488,7 @@ export const PlanResultsView: React.FC = () => {
 
         {/* Interactive Map Column */}
         <div className={`lg:col-span-5 lg:sticky lg:top-24 space-y-4 ${mobileViewMode === 'timeline' ? 'hidden lg:block' : 'block'}`}>
-          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-cyan-500/30 shadow-cinematic bg-[#070B14] min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative">
+          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-[var(--border-subtle)] shadow-cinematic bg-[#070B14] min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative">
             <BorderBeam size={280} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
             <InteractiveMap
               stops={currentVariantData?.stops || []}
@@ -405,10 +505,10 @@ export const PlanResultsView: React.FC = () => {
                   soundEngine.playClick();
                   setSelectedPlaceForModal(stop.place);
                 }}
-                className="snap-center shrink-0 w-[280px] p-3.5 rounded-2xl bg-abyss-900 border border-white/15 text-start cursor-pointer space-y-2 shadow-md active:scale-98 transition-transform"
+                className="snap-center shrink-0 w-[280px] p-3.5 rounded-2xl card-surface border border-[var(--border-subtle)] text-start cursor-pointer space-y-2 shadow-md active:scale-98 transition-transform"
               >
                 <div className="flex items-center justify-between text-xs">
-                  <span className="px-2 py-0.5 rounded-lg bg-gold-500 text-abyss-950 font-black">
+                  <span className="px-2 py-0.5 rounded-lg bg-[var(--accent-gold)] text-[#080B11] font-black">
                     #{idx + 1} • {stop.timeSlot}
                   </span>
                   <span className="text-teal-300 font-bold">
@@ -419,10 +519,10 @@ export const PlanResultsView: React.FC = () => {
                       : 'Free'}
                   </span>
                 </div>
-                <h4 className="text-sm font-black text-pearl truncate">
+                <h4 className="text-sm font-bold text-white truncate">
                   {language === 'ar' ? stop.place.nameAr : stop.place.nameEn}
                 </h4>
-                <p className="text-[11px] text-pearl-muted line-clamp-1">
+                <p className="text-[11px] text-slate-400 line-clamp-1">
                   {language === 'ar' ? stop.place.districtNameAr : stop.place.districtNameEn}
                 </p>
               </div>

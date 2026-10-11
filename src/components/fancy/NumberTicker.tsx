@@ -14,8 +14,8 @@ interface NumberTickerProps {
 
 /**
  * NumberTicker - High-Performance Smooth Number Odometer with IntersectionObserver
- * Starts counting from a realistic baseline when the element enters the viewport,
- * never displaying a jarring "0" on initial paint.
+ * SSR-friendly: displays the final target value in initial SSR HTML, then animates
+ * smoothly on the client when entering the viewport.
  */
 export const NumberTicker: React.FC<NumberTickerProps> = ({
   value,
@@ -26,24 +26,28 @@ export const NumberTicker: React.FC<NumberTickerProps> = ({
   suffix = '',
   startValue,
 }) => {
-  // Realistic initial display value (never zero for non-zero metrics)
-  const initialBase = startValue !== undefined
-    ? startValue
-    : direction === 'down'
-      ? value
-      : value > 100
-        ? Math.floor(value * 0.82)
-        : Math.max(1, Math.floor(value * 0.5));
-
-  const [displayValue, setDisplayValue] = useState<number>(initialBase);
+  // SSR-friendly: default state is the real final value so static HTML & bots see the exact value
+  const [displayValue, setDisplayValue] = useState<number>(value);
   const [hasAnimated, setHasAnimated] = useState<boolean>(false);
   const ref = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
-    // If user prefers reduced motion, jump straight to target value
+    // If user prefers reduced motion, leave as target value
     if (typeof window !== 'undefined' && window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches) {
-      setDisplayValue(value);
       return;
+    }
+
+    const startNum = startValue !== undefined
+      ? startValue
+      : direction === 'down'
+        ? value
+        : value > 100
+          ? Math.floor(value * 0.82)
+          : Math.max(1, Math.floor(value * 0.5));
+
+    // Reset to start baseline before rolling
+    if (!hasAnimated) {
+      setDisplayValue(startNum);
     }
 
     const element = ref.current;
@@ -65,7 +69,6 @@ export const NumberTicker: React.FC<NumberTickerProps> = ({
 
           const duration = 1600; // 1.6s smooth glide
           let startTime: number | null = null;
-          const startNum = initialBase;
 
           const timeout = setTimeout(() => {
             const step = (timestamp: number) => {
@@ -98,7 +101,7 @@ export const NumberTicker: React.FC<NumberTickerProps> = ({
       observer.disconnect();
       cancelAnimationFrame(animationFrameId);
     };
-  }, [value, delay, hasAnimated, initialBase]);
+  }, [value, delay, hasAnimated, startValue, direction]);
 
   return (
     <span ref={ref} className={`inline-block tabular-nums font-mono ${className}`}>

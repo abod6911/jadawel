@@ -108,8 +108,10 @@ const config: Config = {
         },
       },
       fontFamily: {
-        arabic: ["var(--font-readex-pro)", "var(--font-ibm-plex-sans-arabic)", "'Cairo'", "'Almarai'", "sans-serif"],
-        sans: ["var(--font-jakarta)", "var(--font-inter)", "sans-serif"],
+        heading: ["var(--font-heading)", "'Cairo'", "sans-serif"],
+        body: ["var(--font-body)", "sans-serif"],
+        arabic: ["var(--font-body)", "var(--font-heading)", "sans-serif"],
+        sans: ["var(--font-body)", "sans-serif"],
       },
       backgroundImage: {
         'gold-gradient': 'linear-gradient(135deg, #E5C378 0%, #C8A452 100%)',

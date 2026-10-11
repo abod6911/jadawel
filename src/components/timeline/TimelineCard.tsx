@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import {
   Clock,
   Star,
@@ -42,34 +43,40 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
   const place = stop.place;
 
   return (
-    <div className="relative group text-start">
-      {/* Node pin circle on glowing timeline */}
-      <div className="absolute top-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-9 h-9 rounded-full bg-gradient-to-tr from-gold-500 to-gold-400 text-abyss-950 font-black text-xs sm:text-sm flex items-center justify-center shadow-glow-gold z-20 border-2 border-abyss-950">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-60px' }}
+      transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      className="relative group text-start select-none"
+    >
+      {/* Numbered Node on Glowing Timeline */}
+      <div className="absolute top-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#DF9F3D] to-[#E5C378] text-[#080B11] font-black text-xs sm:text-sm flex items-center justify-center shadow-[0_0_15px_rgba(229,195,120,0.5)] z-20 border-2 border-[var(--bg-base)]">
         {stop.order}
       </div>
 
-      {/* Card Body */}
-      <div className="ms-10 sm:ms-14 bg-[#0A1224]/90 backdrop-blur-xl rounded-[2rem] p-4 sm:p-7 border border-cyan-500/20 shadow-cinematic hover:border-gold-500/50 transition-all duration-300">
-        {/* Top Header Bar: Time Slot, District, & Order Controls */}
+      {/* Card Surface Container (Zero Blur to Preserve 60fps Mobile Scrolling) */}
+      <div className="ms-10 sm:ms-14 card-surface p-4 sm:p-6 border border-[var(--border-subtle)] hover:border-[var(--border-gold)] transition-all duration-300">
+        {/* Top Header Bar: Time Slot, District, & Stop Reorder Controls */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="px-3 py-1.5 rounded-xl bg-gold-500/15 text-gold-400 border border-gold-500/40 text-xs font-black flex items-center gap-1.5 shadow-sm">
+            <span className="px-3 py-1 rounded-xl bg-[var(--accent-gold-soft)] text-[var(--accent-gold)] border border-[var(--border-gold)] text-xs font-bold flex items-center gap-1.5 shadow-sm">
               <Clock className="w-3.5 h-3.5" />
               <span>{stop.timeSlot}</span>
             </span>
 
-            <span className="px-2.5 py-1 rounded-xl bg-teal-500/15 text-teal-300 border border-teal-400/30 text-xs font-bold flex items-center gap-1">
+            <span className="px-2.5 py-1 rounded-xl bg-teal-500/10 text-teal-300 border border-teal-500/20 text-xs font-medium flex items-center gap-1">
               <MapPin className="w-3 h-3" />
               <span>{language === 'ar' ? place.districtNameAr : place.districtNameEn}</span>
             </span>
 
-            <span className="text-xs text-pearl-muted font-medium">
+            <span className="text-xs text-slate-400 font-medium">
               ({place.dwellTimeMinutes || 60} {language === 'ar' ? 'دقيقة جلسة' : 'mins'})
             </span>
           </div>
 
-          {/* Quick Stop Order & Swap Controls */}
-          <div className="flex items-center gap-1 bg-abyss-950/80 p-1 rounded-xl border border-white/10">
+          {/* Reorder and Swap Toolbar */}
+          <div className="flex items-center gap-1 bg-white/[0.03] p-1 rounded-xl border border-white/5">
             <button
               type="button"
               onClick={() => {
@@ -77,7 +84,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 moveStopUp(stop.id);
               }}
               disabled={isFirst}
-              className="p-1.5 rounded-lg text-pearl-muted hover:text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
               title="تقديم المحطة"
               aria-label="Move Stop Up"
             >
@@ -90,7 +97,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 moveStopDown(stop.id);
               }}
               disabled={isLast}
-              className="p-1.5 rounded-lg text-pearl-muted hover:text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-white disabled:opacity-20 disabled:cursor-not-allowed hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
               title="تأخير المحطة"
               aria-label="Move Stop Down"
             >
@@ -102,8 +109,8 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 soundEngine.playClick();
                 openSwapModal(stop);
               }}
-              className="p-1.5 rounded-lg text-gold-400 hover:text-gold-300 hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
-              title="تبديل المكان ببديل قريب"
+              className="p-1.5 rounded-lg text-[var(--accent-gold)] hover:brightness-110 hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+              title="تبديل المحطة ببديل مناسب"
               aria-label="Swap Stop"
             >
               <RefreshCw className="w-3.5 h-3.5" />
@@ -114,7 +121,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 soundEngine.playClick();
                 removeStop(stop.id);
               }}
-              className="p-1.5 rounded-lg text-red-400/80 hover:text-red-400 hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
+              className="p-1.5 rounded-lg text-rose-400/80 hover:text-rose-400 hover:bg-white/10 transition-colors cursor-pointer min-h-[32px] min-w-[32px] flex items-center justify-center"
               title="حذف المحطة"
               aria-label="Remove Stop"
             >
@@ -123,22 +130,22 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
           </div>
         </div>
 
-        {/* Place Main Information */}
+        {/* Place Content Grid (16:9 Visual + Details) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-          {/* Visual Thumbnail */}
-          <div className="md:col-span-4 relative aspect-[16/11] rounded-2xl overflow-hidden bg-abyss-950 border border-white/10 group-hover:border-gold-500/30 transition-colors">
+          {/* Visual Thumbnail (Aspect 16:9 on mobile, 4:3 on desktop with 1.04 hover zoom) */}
+          <div className="md:col-span-4 relative aspect-[16/10] rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/10 group-hover:border-[var(--border-gold)] transition-colors">
             <img
               src={getAssetUrl(place.imageUrl)}
               alt={place.nameEn}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-abyss-950/80 via-transparent to-transparent pointer-events-none" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 
             {/* Price Badge */}
             <div className="absolute top-2.5 start-2.5">
-              <span className="px-3 py-1 rounded-xl bg-abyss-950/90 backdrop-blur-md text-gold-400 font-black text-xs border border-gold-500/40 shadow-md">
+              <span className="px-3 py-1 rounded-xl bg-[#080B11]/90 text-[var(--accent-gold)] font-black text-xs border border-[var(--border-gold)] shadow-md">
                 {place.averageCostSAR > 0
                   ? `${place.averageCostSAR} ر.س`
                   : language === 'ar'
@@ -147,27 +154,27 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
               </span>
             </div>
 
-            {/* Open Status Badge */}
+            {/* Open Now Tag */}
             <div className="absolute bottom-2.5 start-2.5">
-              <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 backdrop-blur-md text-emerald-300 font-bold text-[11px] border border-emerald-500/40 flex items-center gap-1">
+              <span className="px-2.5 py-0.5 rounded-lg bg-emerald-500/20 text-emerald-300 font-bold text-[11px] border border-emerald-500/40 flex items-center gap-1">
                 <CheckCircle2 className="w-3 h-3" />
-                <span>{language === 'ar' ? 'مفتوح' : 'Open'}</span>
+                <span>{language === 'ar' ? 'مفتوح للزيارة' : 'Open'}</span>
               </span>
             </div>
           </div>
 
-          {/* Details & AI Rationale */}
+          {/* Details & Curated Reasoning */}
           <div className="md:col-span-8 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-1 text-xs text-gold-400 font-black">
-                <Star className="w-4 h-4 fill-gold-400" />
+              <div className="flex items-center gap-1 text-xs text-[var(--accent-gold)] font-bold">
+                <Star className="w-3.5 h-3.5 fill-[var(--accent-gold)]" />
                 <span>{place.rating}</span>
-                <span className="text-[11px] text-pearl-muted font-normal">
+                <span className="text-[11px] text-slate-400 font-normal">
                   ({(place.reviewsCount || 1000).toLocaleString()})
                 </span>
               </div>
 
-              <div className="text-[11px] text-pearl-muted font-semibold">
+              <div className="text-[11px] text-slate-400 font-medium">
                 <span>{language === 'ar' ? place.openingHoursAr : place.openingHoursEn}</span>
               </div>
             </div>
@@ -177,23 +184,23 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 soundEngine.playClick();
                 setSelectedPlaceForModal(place);
               }}
-              className="text-lg sm:text-xl font-black text-pearl hover:text-gold-400 transition-colors cursor-pointer leading-snug"
+              className="text-lg sm:text-xl font-bold text-white hover:text-[var(--accent-gold)] transition-colors cursor-pointer leading-snug"
             >
               {language === 'ar' ? place.nameAr : place.nameEn}
             </h3>
 
-            <p className="text-xs sm:text-sm text-pearl-muted leading-relaxed line-clamp-2 font-medium">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed line-clamp-2 font-normal">
               {language === 'ar' ? place.descriptionAr : place.descriptionEn}
             </p>
 
-            {/* "لماذا اقترحنا هذا المكان؟" (AI Rationale) */}
-            <div className="p-3 rounded-2xl bg-teal-500/10 border border-teal-400/20 text-xs font-semibold text-teal-300 flex items-start gap-2">
-              <Compass className="w-4 h-4 text-gold-400 shrink-0 mt-0.5" />
+            {/* AI Curated Rationale */}
+            <div className="p-3 rounded-xl bg-[var(--accent-gold-soft)] border border-[var(--border-gold)] text-xs flex items-start gap-2">
+              <Compass className="w-4 h-4 text-[var(--accent-gold)] shrink-0 mt-0.5" />
               <div className="space-y-0.5">
-                <span className="text-[11px] font-black text-gold-400 block">
-                  {language === 'ar' ? 'لماذا اقترحنا هذا المكان؟' : 'Why this spot?'}
+                <span className="text-[11px] font-bold text-[var(--text-gold)] block">
+                  {language === 'ar' ? 'لماذا اخترنا هذه المحطة؟' : 'Why this spot?'}
                 </span>
-                <p className="text-pearl-muted text-xs leading-relaxed font-normal">
+                <p className="text-slate-300 text-xs leading-relaxed font-normal">
                   {place.aiReasoning
                     ? language === 'ar'
                       ? place.aiReasoning.ar
@@ -205,23 +212,23 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
               </div>
             </div>
 
-            {/* Weather / Timing Notice */}
+            {/* Weather Notice if applicable */}
             {stop.weatherNotice && (
-              <div className="p-2.5 rounded-xl bg-gold-500/10 border border-gold-500/25 text-xs font-semibold text-gold-400 flex items-center gap-2">
-                <Sun className="w-4 h-4 shrink-0 text-coral-400" />
+              <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-xs font-medium text-amber-300 flex items-center gap-2">
+                <Sun className="w-3.5 h-3.5 shrink-0 text-amber-400" />
                 <span>{language === 'ar' ? stop.weatherNotice.textAr : stop.weatherNotice.textEn}</span>
               </div>
             )}
 
-            {/* Quick Action Footer */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs border-t border-white/10">
+            {/* Action Bar with Google Maps Direct Link */}
+            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs border-t border-[var(--border-subtle)]">
               <button
                 type="button"
                 onClick={() => {
                   soundEngine.playClick();
                   setSelectedPlaceForModal(place);
                 }}
-                className="text-gold-400 font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
+                className="text-[var(--accent-gold)] font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
               >
                 <Info className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? 'نصائح أهل جدة وتفاصيل المكان' : 'Insider Tips & Info'}</span>
@@ -234,18 +241,19 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                     soundEngine.playClick();
                     openSwapModal(stop);
                   }}
-                  className="text-pearl-muted hover:text-gold-400 font-bold flex items-center gap-1 cursor-pointer transition-colors"
+                  className="text-slate-400 hover:text-white font-medium flex items-center gap-1 cursor-pointer transition-colors"
                 >
                   <RefreshCw className="w-3 h-3" />
-                  <span>{language === 'ar' ? 'تبديل المكان' : 'Swap Spot'}</span>
+                  <span>{language === 'ar' ? 'تبديل المحطة' : 'Swap'}</span>
                 </button>
 
                 <a
                   href={place.googleMapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-teal-300 font-bold hover:underline flex items-center gap-1"
+                  className="px-3 py-1 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 font-bold flex items-center gap-1.5 transition-colors"
                 >
+                  <MapPin className="w-3.5 h-3.5 text-teal-400" />
                   <span>{language === 'ar' ? 'خرائط Google' : 'Google Maps'}</span>
                   <ExternalLink className="w-3 h-3" />
                 </a>
@@ -254,7 +262,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

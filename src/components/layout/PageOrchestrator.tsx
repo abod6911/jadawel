@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
@@ -14,13 +14,49 @@ import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
 import { CursorGlow } from '@/components/ui/CursorGlow';
+import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
+import { reconstructPlanFromUrl } from '@/services/shareService';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
 export const PageOrchestrator: React.FC = () => {
   const activeNavTab = useItineraryStore((state) => state.activeNavTab);
+  const theme = useItineraryStore((state) => state.theme);
+
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      const root = document.documentElement;
+      root.classList.remove('dark', 'light');
+      root.classList.add(theme);
+      root.setAttribute('data-theme', theme);
+      root.style.colorScheme = theme;
+    }
+  }, [theme]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const search = window.location.search;
+    if (!search) return;
+
+    try {
+      const params = new URLSearchParams(search);
+      if (params.has('stops') || params.has('share')) {
+        const reconstructed = reconstructPlanFromUrl(params);
+        if (reconstructed) {
+          useItineraryStore.setState({
+            currentItinerary: reconstructed.itinerary,
+            wizardPreferences: reconstructed.preferences,
+            activeVariant: 'balanced',
+            activeNavTab: 'timeline',
+          });
+        }
+      }
+    } catch (e) {
+      console.warn('Failed to parse shared plan URL:', e);
+    }
+  }, []);
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col bg-[#0B0D12] text-[#FBFBFA] selection:bg-[#E5C378]/30 selection:text-[#E5C378] overflow-x-hidden">
+    <div className="relative min-h-[100dvh] flex flex-col bg-[var(--bg-base)] text-[var(--text-heading)] selection:bg-[#E5C378]/30 selection:text-[#E5C378] overflow-x-hidden transition-colors duration-300">
       {/* LUXURY FLUID CURSOR SPOTLIGHT AMBIENT TRAIL */}
       <CursorGlow />
 
@@ -121,6 +157,9 @@ export const PageOrchestrator: React.FC = () => {
             )}
           </AnimatePresence>
         </main>
+
+        {/* Global Modals */}
+        <SavedPlansModal />
 
         {/* Footer */}
         <Footer />

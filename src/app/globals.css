@@ -8,19 +8,27 @@
 
 html {
   scroll-behavior: smooth;
-  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
 }
 
+html[data-theme='dark'] {
+  color-scheme: dark;
+}
+
+html[data-theme='light'] {
+  color-scheme: light;
+}
+
 body {
-  font-family: var(--font-readex-pro), var(--font-ibm-plex-sans-arabic), 'Cairo', 'Almarai', 'Alexandria', var(--font-jakarta), system-ui, -apple-system, sans-serif;
-  background-color: #0B0D12;
-  color: #FFFFFF;
+  font-family: var(--font-body), system-ui, -apple-system, sans-serif;
+  background-color: var(--bg-base);
+  color: var(--text-heading);
   min-height: 100dvh;
   overflow-x: hidden;
   -webkit-tap-highlight-color: transparent;
   text-rendering: optimizeLegibility;
   touch-action: manipulation;
+  transition: background-color 0.25s ease, color 0.25s ease;
 }
 
 /* Touch Action & Native Mobile Responsiveness */
@@ -37,13 +45,15 @@ button, a, select, input, [role="button"] {
 
 /* Typography Guardrails (Zero Text Overlap & Zero Clipping) */
 h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), var(--font-body), system-ui, sans-serif;
   text-wrap: balance;
   letter-spacing: normal;
-  color: #FFFFFF;
+  color: var(--text-heading);
 }
 
 p {
   line-height: 1.75;
+  color: var(--text-body);
 }
 
 /* Mobile input font-size safety (Eliminates iOS Auto-Zoom) */

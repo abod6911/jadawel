@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://abod6911.github.io/jadawel/sitemap.xml

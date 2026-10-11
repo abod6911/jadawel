@@ -31,6 +31,8 @@ export const Navbar: React.FC = () => {
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
   const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
   const setAtmospherePhase = useItineraryStore((state) => state.setAtmospherePhase);
+  const theme = useItineraryStore((state) => state.theme);
+  const toggleTheme = useItineraryStore((state) => state.toggleTheme);
   const [isMuted, setIsMuted] = useState(soundEngine.isSoundMuted());
   const { atmosphere } = useJeddahWeather(atmospherePhase);
 
@@ -233,8 +235,26 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* 4. UTILITIES (Sound & Language Switcher) */}
+        {/* 4. UTILITIES (Sound, Theme & Language Switcher) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
+          {/* Theme Toggle (Dark "ليل جدة" / Light "رمل وبحر") */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              toggleTheme();
+            }}
+            className="p-2 sm:p-2.5 rounded-full bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-white/80 hover:text-gold-400 transition-colors flex items-center justify-center cursor-pointer touch-manipulation"
+            title={theme === 'dark' ? (language === 'ar' ? 'التحويل إلى وضع رمل وبحر (فاتح)' : 'Switch to Sand & Sea (Light)') : (language === 'ar' ? 'التحويل إلى وضع ليل جدة الذهبي (داكن)' : 'Switch to Golden Jeddah Night (Dark)')}
+            aria-label="Toggle Theme"
+          >
+            {theme === 'dark' ? (
+              <Sun className="w-3.5 h-3.5 text-gold-400" />
+            ) : (
+              <Moon className="w-3.5 h-3.5 text-blue-400" />
+            )}
+          </button>
+
           {/* Sound Toggle (Mobile / Compact) */}
           <button
             type="button"
