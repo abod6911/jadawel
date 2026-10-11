@@ -8,9 +8,6 @@ import {
   Users,
   Coins,
   Clock,
-  Waves,
-  Sunset,
-  Film,
   Check,
   ChevronDown,
   Coffee,
@@ -20,17 +17,12 @@ import {
   Smile,
   Zap,
   Compass,
-  Volume2,
-  VolumeX,
-  Eye,
-  EyeOff,
 } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
-import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 
 // ==========================================
 // 1. DATA DEFINITIONS & SHOWCASE DESTINATIONS
@@ -214,22 +206,9 @@ export const HeroSection: React.FC = () => {
   // Popover State (which pillar is currently opened)
   const [activePopover, setActivePopover] = useState<'district' | 'companions' | 'budget' | 'duration' | 'vibe' | null>(null);
 
-  // Atmosphere & Video
-  const [atmosphere] = useState(getJeddahAtmosphere());
-  const [isVideoPlaying, setIsVideoPlaying] = useState(false);
-  const [isVideoMuted, setIsVideoMuted] = useState(true);
-  const [cinemaIntroActive, setCinemaIntroActive] = useState(true);
-  const [cinemaManualMode, setCinemaManualMode] = useState(false);
+  // Ambient Background Video Ref & Search Bar Ref
   const videoRef = useRef<HTMLVideoElement>(null);
   const searchBarRef = useRef<HTMLDivElement>(null);
-
-  // Cinematic Intro: Showcase video clearly first, then reveal UI and text
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setCinemaIntroActive(false);
-    }, 3400);
-    return () => clearTimeout(timer);
-  }, []);
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -242,7 +221,7 @@ export const HeroSection: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // HTML5 Video Autoplay Lifecycle (Direct DOM property assignment to defeat browser blocks)
+  // HTML5 Video Autoplay Lifecycle (Direct DOM property assignment for smooth ambient background)
   useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
@@ -257,52 +236,39 @@ export const HeroSection: React.FC = () => {
       video.muted = true;
       const promise = video.play();
       if (promise !== undefined) {
-        promise
-          .then(() => setIsVideoPlaying(true))
-          .catch(() => setIsVideoPlaying(false));
+        promise.catch(() => {});
       }
     };
 
     tryPlay();
 
-    const handlePlaying = () => setIsVideoPlaying(true);
-    const handlePause = () => setIsVideoPlaying(false);
     const handleEnded = () => {
       video.currentTime = 0;
       tryPlay();
     };
 
-    video.addEventListener('playing', handlePlaying);
-    video.addEventListener('play', handlePlaying);
-    video.addEventListener('pause', handlePause);
     video.addEventListener('ended', handleEnded);
 
     // Gesture unlock fallback for strict mobile browser policies
     const unlockOnGesture = () => {
       if (video.paused) {
         video.muted = true;
-        video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
+        video.play().catch(() => {});
       }
       window.removeEventListener('pointerdown', unlockOnGesture);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('scroll', unlockOnGesture);
-      window.removeEventListener('keydown', unlockOnGesture);
     };
 
     window.addEventListener('pointerdown', unlockOnGesture, { passive: true });
     window.addEventListener('touchstart', unlockOnGesture, { passive: true });
     window.addEventListener('scroll', unlockOnGesture, { passive: true });
-    window.addEventListener('keydown', unlockOnGesture, { passive: true });
 
     return () => {
-      video.removeEventListener('playing', handlePlaying);
-      video.removeEventListener('play', handlePlaying);
-      video.removeEventListener('pause', handlePause);
       video.removeEventListener('ended', handleEnded);
       window.removeEventListener('pointerdown', unlockOnGesture);
       window.removeEventListener('touchstart', unlockOnGesture);
       window.removeEventListener('scroll', unlockOnGesture);
-      window.removeEventListener('keydown', unlockOnGesture);
     };
   }, []);
 
@@ -327,27 +293,7 @@ export const HeroSection: React.FC = () => {
     setCompanions(preset.companions);
   };
 
-  const handleToggleVideo = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    if (video.paused) {
-      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
-    } else {
-      video.pause();
-      setIsVideoPlaying(false);
-    }
-  };
 
-  const handleToggleSound = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    const nextMuted = !video.muted;
-    video.muted = nextMuted;
-    setIsVideoMuted(nextMuted);
-    if (!nextMuted && video.paused) {
-      video.play().then(() => setIsVideoPlaying(true)).catch(() => {});
-    }
-  };
 
   const handleBuildPlan = () => {
     soundEngine.playSuccess();
@@ -393,9 +339,7 @@ export const HeroSection: React.FC = () => {
 
         {/* Deep Obsidian & Luminous Golden Amber Ambient Glows (Smooth 60fps GPU Crossfade) */}
         <div
-          className={`absolute inset-0 transition-opacity duration-700 ease-in-out pointer-events-none ${
-            cinemaIntroActive || cinemaManualMode ? 'opacity-20' : 'opacity-85'
-          } bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90`}
+          className="absolute inset-0 bg-gradient-to-t from-[#0B0F15] via-[#0B0F15]/75 to-[#0B0F15]/90 pointer-events-none"
         />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(245,158,11,0.18)_0%,transparent_60%)] pointer-events-none" />
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,rgba(30,41,59,0.35)_0%,transparent_70%)] pointer-events-none" />
@@ -419,187 +363,13 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* ======================================================== */}
-      {/* 2. ATMOSPHERE & VIDEO FLOATING STATUS BAR                */}
-      {/* ======================================================== */}
-      <div className="relative z-20 w-full max-w-4xl mx-auto mb-8 sm:mb-12">
-        <div className="glass-specular flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-2.5 rounded-2xl bg-[#0F141C]/80 backdrop-blur-2xl border border-white/[0.08] shadow-[0_8px_32px_rgba(0,0,0,0.5)] text-xs text-white">
-          <div className="flex flex-wrap items-center gap-3 sm:gap-5">
-            {/* Live Waterfront Weather */}
-            <div className="flex items-center gap-2 text-teal-300 font-bold">
-              <Waves className="w-4 h-4 text-teal-400 shrink-0" />
-              <span>{language === 'ar' ? 'الكورنيش:' : 'Corniche:'}</span>
-              <span className="font-mono font-black text-white" dir="ltr">{atmosphere.temperatureC}°C</span>
-              <span className="text-[11px] text-teal-200/80 font-normal">
-                • {language === 'ar' ? atmosphere.weatherConditionAr : atmosphere.weatherConditionEn}
-              </span>
-            </div>
-
-            {/* Sunset Countdown */}
-            <div className="flex items-center gap-2 text-gold-400 font-bold">
-              <Sunset className="w-4 h-4 text-gold-400 shrink-0" />
-              <span>{language === 'ar' ? atmosphere.sunsetCountdownTextAr : atmosphere.sunsetCountdownTextEn}</span>
-            </div>
-          </div>
-
-          {/* Video Playback & Sound Controls */}
-          <div className="flex items-center gap-2">
-            {/* Video Playback Toggle Pill */}
-            <button
-              type="button"
-              onClick={handleToggleVideo}
-              className={`px-3 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-2 transition-all cursor-pointer ${
-                isVideoPlaying
-                  ? 'bg-teal-500/10 hover:bg-teal-500/20 border-teal-500/30 text-teal-300 shadow-[0_0_15px_rgba(45,212,191,0.15)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/60 hover:text-white'
-              }`}
-              title={language === 'ar' ? 'تشغيل / إيقاف فيديو كورنيش جدة' : 'Toggle Jeddah Corniche Video'}
-            >
-              <span className="relative flex h-2 w-2">
-                {isVideoPlaying && <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-teal-400 opacity-75" />}
-                <span className={`relative inline-flex rounded-full h-2 w-2 ${isVideoPlaying ? 'bg-teal-400' : 'bg-slate-500'}`} />
-              </span>
-              <Film className={`w-3.5 h-3.5 ${isVideoPlaying ? 'text-teal-400' : 'text-slate-400'}`} />
-              <span className="text-[11px]">
-                {language === 'ar' ? (isVideoPlaying ? 'فيديو جدة' : 'تشغيل الفيديو ▶') : (isVideoPlaying ? 'Jeddah Live' : 'Play Video ▶')}
-              </span>
-            </button>
-
-            {/* Video Sound Toggle Pill */}
-            <button
-              type="button"
-              onClick={handleToggleSound}
-              className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                !isVideoMuted
-                  ? 'bg-gold-500/15 hover:bg-gold-500/25 border-gold-500/35 text-gold-300 shadow-[0_0_15px_rgba(229,169,98,0.2)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/50 hover:text-white'
-              }`}
-              title={language === 'ar' ? (isVideoMuted ? 'تشغيل صوت الفيديو' : 'كتم صوت الفيديو') : (isVideoMuted ? 'Unmute Video' : 'Mute Video')}
-            >
-              {isVideoMuted ? (
-                <VolumeX className="w-3.5 h-3.5 text-white/50" />
-              ) : (
-                <Volume2 className="w-3.5 h-3.5 text-gold-400 animate-pulse" />
-              )}
-              <span className="text-[11px] hidden sm:inline">
-                {language === 'ar' ? (isVideoMuted ? 'صوت' : 'مسموع') : (isVideoMuted ? 'Mute' : 'Sound')}
-              </span>
-            </button>
-
-            {/* Cinema Mode Toggle Pill */}
-            <button
-              type="button"
-              onClick={() => {
-                soundEngine.playClick();
-                setCinemaManualMode(!cinemaManualMode);
-              }}
-              className={`px-2.5 py-1.5 rounded-xl border text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
-                cinemaManualMode
-                  ? 'bg-amber-500/20 hover:bg-amber-500/30 border-amber-500/40 text-amber-300 shadow-[0_0_15px_rgba(245,158,11,0.25)]'
-                  : 'bg-white/5 hover:bg-white/10 border-white/15 text-white/50 hover:text-white'
-              }`}
-              title={language === 'ar' ? (cinemaManualMode ? 'العودة لواجهة التخطيط' : 'مشاهدة الفيديو سينمائياً بدون نصوص') : (cinemaManualMode ? 'Exit Cinema' : 'Cinema Mode')}
-            >
-              {cinemaManualMode ? (
-                <EyeOff className="w-3.5 h-3.5 text-amber-400" />
-              ) : (
-                <Eye className="w-3.5 h-3.5 text-white/60" />
-              )}
-              <span className="text-[11px] hidden sm:inline">
-                {language === 'ar' ? (cinemaManualMode ? 'إنهاء السينما ✕' : 'وضع السينما 🎬') : (cinemaManualMode ? 'Exit ✕' : 'Cinema 🎬')}
-              </span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* 2.5 CINEMATIC INTRO & STANDALONE CINEMA VIEW OVERLAY     */}
-      {/* ======================================================== */}
-      <AnimatePresence>
-        {(cinemaIntroActive || cinemaManualMode) && (
-          <motion.div
-            key="cinema-intro-view"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 0.5 } }}
-            className="absolute inset-0 z-30 flex flex-col items-center justify-center text-center px-4 py-8 space-y-6 select-none bg-black/25 backdrop-blur-[1px] pointer-events-auto"
-          >
-            {/* Ambient Pulsing Cinema Tag */}
-            <motion.div
-              initial={{ opacity: 0, y: -12 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.15, duration: 0.5 }}
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full backdrop-blur-2xl bg-black/60 border border-white/15 text-xs text-white/90 font-medium shadow-[0_8px_25px_rgba(0,0,0,0.6)]"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold-400 opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-gold-400" />
-              </span>
-              <Compass className="w-3.5 h-3.5 text-gold-400" />
-              <span>{language === 'ar' ? 'عروس البحر الأحمر • مشهد سينمائي حي' : 'Bride of the Red Sea • Live Cinema View'}</span>
-            </motion.div>
-
-            {/* Cinematic Centerpiece */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.96 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.35, duration: 0.7 }}
-              className="space-y-3 max-w-xl mx-auto"
-            >
-              <h2 className="text-3xl sm:text-5xl md:text-6xl font-bold text-white drop-shadow-[0_8px_32px_rgba(0,0,0,0.9)]">
-                {language === 'ar' ? 'جداول جدة' : 'Jadawel Jeddah'}
-              </h2>
-              <p className="text-sm sm:text-base text-white/85 font-medium drop-shadow-[0_4px_16px_rgba(0,0,0,0.85)] leading-relaxed">
-                {cinemaManualMode
-                  ? (language === 'ar' ? 'أنت الآن في وضع السينما.. استمتع بجمال كورنيش وبحر جدة' : 'Cinema Mode Active • Enjoy the scenery')
-                  : (language === 'ar' ? 'عِش سحر المدينة.. لحظات وتظهر خيارات طلعتك المتكاملة' : 'Experience the magic • Your itinerary options will appear shortly')}
-              </p>
-            </motion.div>
-
-            {/* Direct Action Controls */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6, duration: 0.5 }}
-              className="pt-2 flex flex-wrap items-center justify-center gap-3"
-            >
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setCinemaIntroActive(false);
-                  setCinemaManualMode(false);
-                }}
-                className="px-6 py-3 rounded-full backdrop-blur-2xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 hover:from-gold-400 hover:to-amber-300 text-[#090B0E] font-bold text-xs sm:text-sm flex items-center gap-2 shadow-[0_0_35px_rgba(229,169,98,0.55)] transition-all transform hover:scale-105 cursor-pointer touch-manipulation"
-              >
-                <span>{cinemaManualMode ? (language === 'ar' ? 'العودة للجدول ✕' : 'Exit Cinema ✕') : (language === 'ar' ? 'ابدأ التخطيط مباشرة' : 'Explore Itineraries')}</span>
-                <ChevronDown className="w-4 h-4 animate-bounce" />
-              </button>
-
-              <button
-                type="button"
-                onClick={handleToggleSound}
-                className="px-4 py-3 rounded-full backdrop-blur-2xl bg-black/60 hover:bg-black/80 border border-white/20 text-white/90 text-xs font-bold flex items-center gap-2 transition-all cursor-pointer shadow-lg"
-              >
-                {isVideoMuted ? <VolumeX className="w-4 h-4 text-white/60" /> : <Volume2 className="w-4 h-4 text-gold-400 animate-pulse" />}
-                <span>{language === 'ar' ? (isVideoMuted ? 'تشغيل الصوت' : 'كتم الصوت') : (isVideoMuted ? 'Sound On' : 'Mute')}</span>
-              </button>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ======================================================== */}
-      {/* 3. INTERACTIVE HERO EXPERIENCE (STAGGERED REVEAL)         */}
+      {/* 2. INTERACTIVE HERO EXPERIENCE                           */}
       {/* ======================================================== */}
       <motion.div
         key="hero-interactive-content"
-        animate={{
-          opacity: (cinemaIntroActive || cinemaManualMode) ? 0 : 1,
-          y: (cinemaIntroActive || cinemaManualMode) ? 24 : 0,
-          pointerEvents: (cinemaIntroActive || cinemaManualMode) ? 'none' : 'auto',
-        }}
-        transition={{ duration: 0.75, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
         className="relative z-10 w-full flex flex-col items-center"
       >
         {/* EDITORIAL HERO HEADLINE & INSPIRING VALUE PROP */}
