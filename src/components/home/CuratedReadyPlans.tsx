@@ -88,7 +88,7 @@ export const CuratedReadyPlans: React.FC = () => {
   };
 
   return (
-    <div className="space-y-10 sm:space-y-12 text-start">
+    <div className="space-y-10 sm:space-y-12 text-start pb-28 sm:pb-8">
       {/* Ready Plans Section */}
       <div className="space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-2">
@@ -118,7 +118,7 @@ export const CuratedReadyPlans: React.FC = () => {
                 <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
               )}
               <div>
-                <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0D12]">
+                <div className="relative h-40 sm:h-52 overflow-hidden bg-[#0B0D12]">
                   <img
                     src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
@@ -132,8 +132,8 @@ export const CuratedReadyPlans: React.FC = () => {
                   </span>
                 </div>
 
-                <div className="p-5 space-y-3">
-                  <h3 className="text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors">
+                <div className="p-4 sm:p-5 space-y-2.5">
+                  <h3 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors">
                     {language === 'ar' ? plan.titleAr : plan.titleEn}
                   </h3>
                   <p className="text-xs text-slate-300 leading-relaxed line-clamp-2 font-medium">
@@ -143,7 +143,7 @@ export const CuratedReadyPlans: React.FC = () => {
                   {(() => {
                     const range = getPlanBudgetRange(plan);
                     return (
-                      <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-3 border-t border-white/10">
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-2.5 border-t border-white/10">
                         <span className="flex items-center gap-1.5 text-teal-300 font-bold">
                           <Clock className="w-3.5 h-3.5" />
                           <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
@@ -162,7 +162,7 @@ export const CuratedReadyPlans: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-5 pt-0">
+              <div className="p-4 sm:p-5 pt-0">
                 <MagneticButton distance={0.2} className="w-full">
                   <button
                     type="button"

@@ -183,7 +183,7 @@ export const PlanResultsView: React.FC = () => {
     : Math.max(15, totalPerPerson - foodShare - ticketsShare);
 
   return (
-    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-20 lg:pb-8 text-start select-none">
+    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-32 lg:pb-12 text-start select-none">
       {/* 0. Celebration Announcement Banner */}
       <AnimatePresence>
         {showCelebrationBanner && (

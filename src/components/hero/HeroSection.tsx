@@ -233,7 +233,7 @@ const DestinationTiltCard: React.FC<{
         }`,
         transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative group h-52 sm:h-60 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
+      className={`relative group h-44 sm:h-60 rounded-3xl overflow-hidden cursor-pointer border transition-colors duration-300 shadow-2xl select-none ${
         isSelected
           ? 'border-[#E5C378]/70 shadow-[0_12px_36px_rgba(0,0,0,0.6)] ring-1 ring-[#E5C378]/40'
           : 'border-white/10 hover:border-[#E5C378]/30 shadow-[0_8px_30px_rgba(0,0,0,0.5)]'
@@ -641,15 +641,15 @@ export const HeroSection: React.FC = () => {
           )}
         </h1>
 
-        {/* Generous Subheading in Refined Light Platinum Font */}
+        {/* Generous Subheading in Refined Light Platinum Font (Shortened on Mobile) */}
         <p className="text-xs sm:text-base md:text-lg text-[#E2E8F0] max-w-2xl mx-auto font-normal leading-relaxed tracking-wide drop-shadow-[0_2px_8px_rgba(0,0,0,0.8)] pt-0.5 px-2">
           {language === 'ar'
-            ? 'من شواطئ ونوادي أبحر إلى أزقة البلد التاريخية – اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
-            : 'From Obhur beach clubs to historic Al-Balad alleys – choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
+            ? 'اختر مودك وميزانيتك، وسنصنع لك مساراً سينمائياً متكاملاً بدقة متناهية.'
+            : 'Choose your vibe and budget, and let our engine orchestrate a seamless luxury itinerary.'}
         </p>
 
         {/* Quick Mood Chips (Smooth Horizontal Swipe Rail on Mobile, Centered Flex on Desktop) */}
-        <div className="w-full max-w-full min-w-0 flex items-center justify-start sm:justify-center gap-2 sm:gap-3.5 pt-2 sm:pt-3 overflow-x-auto sm:overflow-visible pb-1.5 sm:pb-0 scrollbar-none px-1">
+        <div className="w-full max-w-full min-w-0 flex items-center justify-start sm:justify-center gap-2 sm:gap-3.5 pt-1.5 sm:pt-3 overflow-x-auto sm:overflow-visible pb-1 sm:pb-0 scrollbar-none px-1">
           {QUICK_MOODS.map((mood) => {
             const isActive = activeMoodId === mood.id;
             return (
@@ -671,11 +671,143 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* ======================================================== */}
-      {/* 3. CENTRAL TRIP ENGINE COCKPIT (FRONT & CENTER LUXURY)   */}
+      {/* 3A. MOBILE COMPACT SMART CARD (TAILORED FOR PHONE SCREENS) */}
+      {/* Fits comfortably above the fold on all smartphones!        */}
+      {/* ======================================================== */}
+      <div className="md:hidden w-full max-w-md mx-auto mb-6 px-1 relative z-30">
+        <div className="relative p-4 rounded-3xl bg-[#090D14]/90 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-3">
+          
+          {/* Row 1: Starting District Selector */}
+          <div className="space-y-1 text-start">
+            <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#E5C378]" />
+              <span>{language === 'ar' ? 'منطقة الانطلاق في جدة:' : 'Starting District:'}</span>
+            </label>
+            <div className="relative">
+              <select
+                value={district}
+                onChange={(e) => {
+                  soundEngine.playClick();
+                  setDistrict(e.target.value as DistrictId | 'all_jeddah');
+                }}
+                className="w-full h-11 px-3 py-2 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
+              >
+                {DISTRICT_OPTIONS.map((d) => (
+                  <option key={d.id} value={d.id} className="bg-[#0B0D12] text-white">
+                    {d.icon} {language === 'ar' ? d.nameAr : d.nameEn}
+                  </option>
+                ))}
+              </select>
+              <ChevronDown className="w-4 h-4 text-[#E5C378] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+          </div>
+
+          {/* Row 2: Companions & Budget Quick Selectors */}
+          <div className="grid grid-cols-2 gap-2 text-start">
+            {/* Companions */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
+                <Users className="w-3.5 h-3.5 text-[#E5C378]" />
+                <span>{language === 'ar' ? 'الرفقة:' : 'Companions:'}</span>
+              </label>
+              <div className="relative">
+                <select
+                  value={companions}
+                  onChange={(e) => {
+                    soundEngine.playClick();
+                    setCompanions(e.target.value as CompanionType);
+                  }}
+                  className="w-full h-10 px-2.5 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
+                >
+                  {COMPANION_OPTIONS.map((c) => (
+                    <option key={c.id} value={c.id} className="bg-[#0B0D12] text-white">
+                      {language === 'ar' ? c.labelAr : c.labelEn}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-[#E5C378] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+
+            {/* Budget */}
+            <div className="space-y-1">
+              <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
+                <Coins className="w-3.5 h-3.5 text-[#E5C378]" />
+                <span>{language === 'ar' ? 'الميزانية:' : 'Budget:'}</span>
+              </label>
+              <div className="relative">
+                <select
+                  value={budget}
+                  onChange={(e) => {
+                    soundEngine.playClick();
+                    setBudget(e.target.value as BudgetTier);
+                  }}
+                  className="w-full h-10 px-2.5 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
+                >
+                  {BUDGET_OPTIONS.map((b) => (
+                    <option key={b.id} value={b.id} className="bg-[#0B0D12] text-white">
+                      {language === 'ar'
+                        ? b.id === 'moderate'
+                          ? '⚖️ متوسطة'
+                          : b.id === 'free'
+                          ? '🆓 مجانية'
+                          : b.id === 'economy'
+                          ? '🏷️ اقتصادية'
+                          : '👑 فاخرة VIP'
+                        : b.labelEn}
+                    </option>
+                  ))}
+                </select>
+                <ChevronDown className="w-3.5 h-3.5 text-[#E5C378] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
+              </div>
+            </div>
+          </div>
+
+          {/* Row 3: PRIMARY SHOW-STOPPING CTA BUTTON */}
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={handleBuildPlan}
+              disabled={isGeneratingPlan}
+              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(229,195,120,0.4)] active:scale-[0.98] transition-all cursor-pointer"
+            >
+              {isGeneratingPlan ? (
+                <>
+                  <div className="w-4 h-4 border-2 border-[#0B0D12] border-t-transparent rounded-full animate-spin" />
+                  <span>{language === 'ar' ? 'جاري هندسة خطتك في جدة...' : 'Building Itinerary...'}</span>
+                </>
+              ) : (
+                <>
+                  <span>{language === 'ar' ? 'ابنِ خطتي لجدة بنقرة واحدة ✨' : 'Build My Plan in 1-Click ✨'}</span>
+                  <ArrowLeft className="w-4 h-4 text-[#0B0D12]" />
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* Helper Quick Switcher to Wizard */}
+          <div className="pt-0.5 text-center">
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                useItineraryStore.getState().setActiveNavTab('quick-plan');
+              }}
+              className="text-[11px] text-[#E5C378]/90 hover:text-[#E5C378] font-bold inline-flex items-center gap-1 cursor-pointer"
+            >
+              <span>{language === 'ar' ? 'أو خصص خطتك خطوة بخطوة بالصانع الذكي ✦' : 'Or tailor step-by-step with Smart Wizard ✦'}</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      {/* ======================================================== */}
+      {/* 3B. DESKTOP CENTRAL TRIP ENGINE COCKPIT (FRONT & CENTER) */}
       {/* ======================================================== */}
       <div
         ref={searchBarRef}
-        className="relative z-30 w-full max-w-5xl min-w-0 mx-auto mb-12 sm:mb-16"
+        className="hidden md:block relative z-30 w-full max-w-5xl min-w-0 mx-auto mb-12 sm:mb-16"
       >
         {/* Ambient Halo Behind Cockpit */}
         <div className="absolute -inset-2 bg-gradient-to-r from-[#E5C378]/10 via-[#DF9F3D]/5 to-[#C8A452]/10 rounded-[2.8rem] blur-2xl -z-10 pointer-events-none opacity-40" />

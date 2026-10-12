@@ -66,7 +66,7 @@ export const PageOrchestrator: React.FC = () => {
         <Navbar />
 
         {/* Main Application Content Container */}
-        <main className="flex-1 w-full mx-auto py-2 sm:py-4 mb-20 md:mb-10">
+        <main className="flex-1 w-full mx-auto py-2 sm:py-4 pb-32 md:pb-12">
           <AnimatePresence mode="wait">
             {/* TAB 1: Home Screen */}
             {activeNavTab === 'home' && (

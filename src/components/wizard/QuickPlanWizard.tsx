@@ -332,7 +332,7 @@ export const QuickPlanWizard: React.FC = () => {
             >
               {/* STEP 1: STARTING DISTRICT */}
               {currentStep === 1 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                   {DISTRICT_OPTIONS.map((item) => {
                     const isSelected = wizardPreferences.startingDistrict === item.id;
                     const Icon = item.icon;
@@ -345,7 +345,7 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ startingDistrict: item.id });
                         }}
-                        className={`text-start p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] ${
                           isSelected
                             ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
                             : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
@@ -354,13 +354,13 @@ export const QuickPlanWizard: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--accent-gold)]' : 'text-slate-400'}`} />
-                            <span className="text-sm font-bold text-white">
+                            <span className="text-xs sm:text-sm font-bold text-white">
                               {language === 'ar' ? item.nameAr : item.nameEn}
                             </span>
                           </div>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--accent-gold)] shrink-0" />}
                         </div>
-                        <p className="text-[11px] text-slate-400 font-normal leading-relaxed">
+                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -371,7 +371,7 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 2: COMPANIONS */}
               {currentStep === 2 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 max-w-2xl mx-auto">
+                <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5 sm:gap-3.5 max-w-2xl mx-auto">
                   {COMPANION_OPTIONS.map((item) => {
                     const isSelected = wizardPreferences.companions === item.id;
                     const Icon = item.icon;
@@ -384,24 +384,24 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ companions: item.id });
                         }}
-                        className={`text-start p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-3 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2.5 touch-manipulation active:scale-[0.98] ${
                           isSelected
                             ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
                             : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`p-2 rounded-xl ${isSelected ? 'bg-[var(--accent-gold)] text-[#090C12]' : 'bg-white/5 text-slate-300'}`}>
-                              <Icon className="w-5 h-5" />
+                          <div className="flex items-center gap-2">
+                            <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl ${isSelected ? 'bg-[var(--accent-gold)] text-[#090C12]' : 'bg-white/5 text-slate-300'}`}>
+                              <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
                             </div>
-                            <span className="text-base font-bold text-white">
+                            <span className="text-xs sm:text-base font-bold text-white">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
-                          {isSelected && <CheckCircle2 className="w-5 h-5 text-[var(--accent-gold)] shrink-0" />}
+                          {isSelected && <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--accent-gold)] shrink-0" />}
                         </div>
-                        <p className="text-xs text-slate-400 font-normal leading-relaxed">
+                        <p className="text-[10px] sm:text-xs text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -412,7 +412,7 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 3: VIBE & MOOD */}
               {currentStep === 3 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
                   {VIBE_OPTIONS.map((item) => {
                     const isSelected = (wizardPreferences.vibe as any) === item.id;
                     const Icon = item.icon;
@@ -425,7 +425,7 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ vibe: item.id as any });
                         }}
-                        className={`text-start p-4 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] ${
                           isSelected
                             ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
                             : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
@@ -434,13 +434,13 @@ export const QuickPlanWizard: React.FC = () => {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--accent-gold)]' : 'text-slate-400'}`} />
-                            <span className="text-sm font-bold text-white">
+                            <span className="text-xs sm:text-sm font-bold text-white">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
                           {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--accent-gold)] shrink-0" />}
                         </div>
-                        <p className="text-[11px] text-slate-400 font-normal leading-relaxed">
+                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -451,14 +451,14 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 4: BUDGET & DURATION COMBINED */}
               {currentStep === 4 && (
-                <div className="space-y-6">
+                <div className="space-y-5 sm:space-y-6">
                   {/* Budget Rail */}
-                  <div className="space-y-2.5">
+                  <div className="space-y-2 sm:space-y-2.5">
                     <span className="text-xs font-bold text-[var(--accent-gold)] flex items-center gap-1.5 px-1">
                       <Coins className="w-4 h-4" />
                       <span>{language === 'ar' ? 'الميزانية التقديرية للشخص:' : 'Budget Tier per Person:'}</span>
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
                       {BUDGET_OPTIONS.map((item) => {
                         const isSelected = wizardPreferences.budgetTier === (item.id === 'premium' ? 'luxury' : item.id);
                         const Icon = item.icon;
@@ -471,7 +471,7 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ budgetTier: item.id === 'premium' ? ('luxury' as any) : item.id });
                             }}
-                            className={`text-start p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
+                            className={`text-start p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
                               isSelected
                                 ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_15px_rgba(229,195,120,0.25)]'
                                 : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
@@ -493,12 +493,12 @@ export const QuickPlanWizard: React.FC = () => {
                   </div>
 
                   {/* Duration Rail */}
-                  <div className="space-y-2.5 pt-2 border-t border-[var(--border-subtle)]">
+                  <div className="space-y-2 sm:space-y-2.5 pt-2 border-t border-[var(--border-subtle)]">
                     <span className="text-xs font-bold text-[var(--accent-gold)] flex items-center gap-1.5 px-1">
                       <Clock className="w-4 h-4" />
                       <span>{language === 'ar' ? 'المدة المتاحة للطلعة:' : 'Available Outing Duration:'}</span>
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
                       {DURATION_OPTIONS.map((item) => {
                         const isSelected = wizardPreferences.duration === item.id;
                         const Icon = item.icon;
@@ -511,7 +511,7 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ duration: item.id });
                             }}
-                            className={`text-start p-3.5 rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
+                            className={`text-start p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
                               isSelected
                                 ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_15px_rgba(229,195,120,0.25)]'
                                 : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
@@ -538,7 +538,7 @@ export const QuickPlanWizard: React.FC = () => {
         </div>
 
         {/* 3. DESKTOP / INLINE CONTROLS BAR */}
-        <div className="pt-5 border-t border-[var(--border-subtle)] flex items-center justify-between gap-3 relative z-10">
+        <div className="pt-5 border-t border-[var(--border-subtle)] hidden md:flex items-center justify-between gap-3 relative z-10">
           <button
             type="button"
             onClick={prevStep}
@@ -554,7 +554,7 @@ export const QuickPlanWizard: React.FC = () => {
           </button>
 
           {/* Desktop Summary Pill */}
-          <div className="hidden md:flex items-center gap-2 text-xs text-slate-400 font-medium">
+          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
             <span className="text-[var(--accent-gold)] font-bold">{activeDistrictName}</span>
             <span>•</span>
             <span>{activeCompanionLabel}</span>
@@ -580,23 +580,6 @@ export const QuickPlanWizard: React.FC = () => {
             </span>
             {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
           </button>
-        </div>
-      </div>
-
-      {/* 4. MOBILE STICKY SUMMARY PILL (At Bottom of Viewport) */}
-      <div className="md:hidden sticky bottom-18 inset-x-0 z-30 pt-3">
-        <div className="p-3 rounded-2xl bg-[#080B11]/95 border border-[var(--border-gold)] shadow-xl flex items-center justify-between text-xs backdrop-blur-md">
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-300 font-medium truncate max-w-[230px]">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent-gold)] shrink-0" />
-            <span className="font-bold text-[var(--accent-gold)] truncate">{activeDistrictName}</span>
-            <span>•</span>
-            <span className="truncate">{activeCompanionLabel}</span>
-            <span>•</span>
-            <span className="truncate">{activeVibeLabel}</span>
-          </div>
-          <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[var(--accent-gold-soft)] text-[var(--accent-gold)] shrink-0">
-            {currentStep}/4
-          </span>
         </div>
       </div>
     </div>

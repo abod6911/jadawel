@@ -68,7 +68,7 @@ export const ExploreDirectory: React.FC = () => {
   }, [searchQuery, selectedCategory, selectedDistrict, features]);
 
   return (
-    <div className="max-w-7xl w-full mx-auto space-y-6 sm:space-y-8 pb-12">
+    <div className="max-w-7xl w-full mx-auto space-y-6 sm:space-y-8 pb-32 sm:pb-16">
       {/* Header Container with Smoky Obsidian Glass */}
       <div className="bg-[#0E1118]/85 backdrop-blur-3xl rounded-3xl p-5 sm:p-8 border border-[#E5C378]/30 shadow-[0_24px_70px_rgba(0,0,0,0.9)] space-y-6 relative overflow-hidden">
         <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
