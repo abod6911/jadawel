@@ -9,7 +9,7 @@ try {
     Write-Host "Tree: $tree"
     $parent = (git rev-parse origin/gh-pages).Trim()
     Write-Host "Parent: $parent"
-    $commit = (git commit-tree $tree -p $parent -m "deploy: restore original video @r07qxo and beloved Jeddawi hero cockpit").Trim()
+    $commit = (git commit-tree $tree -p $parent -m "deploy: overhaul mobile UI/UX ergonomics & integrate AnimatedPathText wave ribbon and VIP orbit card").Trim()
     Write-Host "New Commit: $commit"
     git push origin "$commit`:refs/heads/gh-pages" --force
     Write-Host "Successfully pushed to origin/gh-pages!"

@@ -671,26 +671,31 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* ======================================================== */}
-      {/* 3A. MOBILE COMPACT SMART CARD (TAILORED FOR PHONE SCREENS) */}
-      {/* Fits comfortably above the fold on all smartphones!        */}
+      {/* 3A. MOBILE ULTRA-SLEEK GLASS COCKPIT (TOUCH-FIRST & SLIM) */}
+      {/* Reduced footprint allows pure video breathing room!       */}
       {/* ======================================================== */}
-      <div className="md:hidden w-full max-w-md mx-auto mb-6 px-1 relative z-30">
-        <div className="relative p-4 rounded-3xl bg-[#090D14]/90 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-3">
+      <div className="md:hidden w-full max-w-md mx-auto mb-5 px-1 relative z-30">
+        <div className="relative p-3 rounded-2xl bg-[#090D14]/90 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.8)] space-y-2.5">
           
-          {/* Row 1: Starting District Selector */}
-          <div className="space-y-1 text-start">
-            <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
-              <MapPin className="w-3.5 h-3.5 text-[#E5C378]" />
-              <span>{language === 'ar' ? 'منطقة الانطلاق في جدة:' : 'Starting District:'}</span>
-            </label>
-            <div className="relative">
+          {/* Segmented Quick Bar with 3 Elegant Interactive Touch Pills */}
+          <div className="grid grid-cols-3 gap-1.5 p-1 rounded-xl bg-white/[0.04] border border-white/10">
+            {/* District Pill */}
+            <div className="relative flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-white/[0.04] border border-white/10 active:bg-white/[0.1] transition-all">
+              <span className="text-[10px] text-[#E5C378] font-bold flex items-center gap-1">
+                <MapPin className="w-2.5 h-2.5" />
+                <span>{language === 'ar' ? 'الوجهة' : 'Zone'}</span>
+              </span>
+              <span className="text-xs font-black text-white truncate max-w-full px-0.5 mt-0.5">
+                {currentDistrictObj.nameAr.split(' ')[0]}
+              </span>
               <select
                 value={district}
                 onChange={(e) => {
                   soundEngine.playClick();
                   setDistrict(e.target.value as DistrictId | 'all_jeddah');
                 }}
-                className="w-full h-11 px-3 py-2 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label={language === 'ar' ? 'الوجهة' : 'Destination'}
               >
                 {DISTRICT_OPTIONS.map((d) => (
                   <option key={d.id} value={d.id} className="bg-[#0B0D12] text-white">
@@ -698,78 +703,76 @@ export const HeroSection: React.FC = () => {
                   </option>
                 ))}
               </select>
-              <ChevronDown className="w-4 h-4 text-[#E5C378] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
+            </div>
+
+            {/* Companions Pill */}
+            <div className="relative flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-white/[0.04] border border-white/10 active:bg-white/[0.1] transition-all">
+              <span className="text-[10px] text-[#E5C378] font-bold flex items-center gap-1">
+                <Users className="w-2.5 h-2.5" />
+                <span>{language === 'ar' ? 'الرفقة' : 'Who'}</span>
+              </span>
+              <span className="text-xs font-black text-white truncate max-w-full px-0.5 mt-0.5">
+                {language === 'ar' ? currentCompanionObj.labelAr : currentCompanionObj.labelEn}
+              </span>
+              <select
+                value={companions}
+                onChange={(e) => {
+                  soundEngine.playClick();
+                  setCompanions(e.target.value as CompanionType);
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label={language === 'ar' ? 'الرفقة' : 'Companions'}
+              >
+                {COMPANION_OPTIONS.map((c) => (
+                  <option key={c.id} value={c.id} className="bg-[#0B0D12] text-white">
+                    {language === 'ar' ? c.labelAr : c.labelEn}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* Budget Pill */}
+            <div className="relative flex flex-col items-center justify-center py-2 px-1 rounded-lg bg-white/[0.04] border border-white/10 active:bg-white/[0.1] transition-all">
+              <span className="text-[10px] text-[#E5C378] font-bold flex items-center gap-1">
+                <Coins className="w-2.5 h-2.5" />
+                <span>{language === 'ar' ? 'الميزانية' : 'Budget'}</span>
+              </span>
+              <span className="text-xs font-black text-white truncate max-w-full px-0.5 mt-0.5">
+                {language === 'ar'
+                  ? currentBudgetObj.id === 'moderate'
+                    ? 'متوسطة'
+                    : currentBudgetObj.id === 'free'
+                    ? 'مجانية'
+                    : currentBudgetObj.id === 'economy'
+                    ? 'اقتصادية'
+                    : 'VIP فاخرة'
+                  : currentBudgetObj.labelEn}
+              </span>
+              <select
+                value={budget}
+                onChange={(e) => {
+                  soundEngine.playClick();
+                  setBudget(e.target.value as BudgetTier);
+                }}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                aria-label={language === 'ar' ? 'الميزانية' : 'Budget'}
+              >
+                {BUDGET_OPTIONS.map((b) => (
+                  <option key={b.id} value={b.id} className="bg-[#0B0D12] text-white">
+                    {language === 'ar' ? b.labelAr : b.labelEn}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
-          {/* Row 2: Companions & Budget Quick Selectors */}
-          <div className="grid grid-cols-2 gap-2 text-start">
-            {/* Companions */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
-                <Users className="w-3.5 h-3.5 text-[#E5C378]" />
-                <span>{language === 'ar' ? 'الرفقة:' : 'Companions:'}</span>
-              </label>
-              <div className="relative">
-                <select
-                  value={companions}
-                  onChange={(e) => {
-                    soundEngine.playClick();
-                    setCompanions(e.target.value as CompanionType);
-                  }}
-                  className="w-full h-10 px-2.5 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
-                >
-                  {COMPANION_OPTIONS.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-[#0B0D12] text-white">
-                      {language === 'ar' ? c.labelAr : c.labelEn}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#E5C378] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-
-            {/* Budget */}
-            <div className="space-y-1">
-              <label className="text-[11px] font-bold text-[#E5C378] flex items-center gap-1.5">
-                <Coins className="w-3.5 h-3.5 text-[#E5C378]" />
-                <span>{language === 'ar' ? 'الميزانية:' : 'Budget:'}</span>
-              </label>
-              <div className="relative">
-                <select
-                  value={budget}
-                  onChange={(e) => {
-                    soundEngine.playClick();
-                    setBudget(e.target.value as BudgetTier);
-                  }}
-                  className="w-full h-10 px-2.5 py-1.5 rounded-xl bg-white/[0.06] border border-white/15 text-white font-bold text-xs appearance-none focus:outline-none focus:border-[#E5C378] transition-colors cursor-pointer"
-                >
-                  {BUDGET_OPTIONS.map((b) => (
-                    <option key={b.id} value={b.id} className="bg-[#0B0D12] text-white">
-                      {language === 'ar'
-                        ? b.id === 'moderate'
-                          ? '⚖️ متوسطة'
-                          : b.id === 'free'
-                          ? '🆓 مجانية'
-                          : b.id === 'economy'
-                          ? '🏷️ اقتصادية'
-                          : '👑 فاخرة VIP'
-                        : b.labelEn}
-                    </option>
-                  ))}
-                </select>
-                <ChevronDown className="w-3.5 h-3.5 text-[#E5C378] absolute left-2 top-1/2 -translate-y-1/2 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-
-          {/* Row 3: PRIMARY SHOW-STOPPING CTA BUTTON */}
-          <div className="pt-1">
+          {/* PRIMARY SHOW-STOPPING CTA BUTTON */}
+          <div>
             <button
               type="button"
               onClick={handleBuildPlan}
               disabled={isGeneratingPlan}
-              className="w-full h-12 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(229,195,120,0.4)] active:scale-[0.98] transition-all cursor-pointer"
+              className="w-full h-11 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-sm flex items-center justify-center gap-2 shadow-[0_8px_24px_rgba(229,195,120,0.4)] active:scale-[0.98] transition-all cursor-pointer"
             >
               {isGeneratingPlan ? (
                 <>
@@ -786,7 +789,7 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Helper Quick Switcher to Wizard */}
-          <div className="pt-0.5 text-center">
+          <div className="text-center pt-0.5">
             <button
               type="button"
               onClick={() => {

@@ -13,6 +13,8 @@ import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
 import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
+import { RedSeaWaveRibbon } from '@/components/home/RedSeaWaveRibbon';
+import { VipPathCard } from '@/components/home/VipPathCard';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
@@ -83,6 +85,11 @@ export const PageOrchestrator: React.FC = () => {
                   <HeroSection />
                 </div>
 
+                {/* Text Along Path: Red Sea Wave Ribbon */}
+                <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 overflow-hidden">
+                  <RedSeaWaveRibbon />
+                </div>
+
                 {/* 2. Main Content Sections */}
                 <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
                   {/* Live Social Proof Marquee Bar */}
@@ -96,6 +103,9 @@ export const PageOrchestrator: React.FC = () => {
 
                   {/* Curated Ready Plans & Exclusive Partner Deals */}
                   <CuratedReadyPlans />
+
+                  {/* VIP Experience & Concierge with Animated Orbiting Path */}
+                  <VipPathCard />
                 </div>
               </motion.div>
             )}
