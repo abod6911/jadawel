@@ -488,11 +488,11 @@ export const PlanResultsView: React.FC = () => {
 
         {/* Interactive Map Column */}
         <div className={`lg:col-span-5 lg:sticky lg:top-24 space-y-4 ${mobileViewMode === 'timeline' ? 'hidden lg:block' : 'block'}`}>
-          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-[var(--border-subtle)] shadow-cinematic bg-[#070B14] min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative">
+          <div className="rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden border border-[var(--border-subtle)] shadow-cinematic bg-[#070B14] h-[480px] sm:h-[540px] lg:h-[620px] min-h-[440px] relative">
             <BorderBeam size={280} duration={14} borderWidth={1.5} colorFrom="#F59E0B" colorTo="#06B6D4" />
             <InteractiveMap
               stops={currentVariantData?.stops || []}
-              className="w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px]"
+              className="w-full h-full min-h-[440px]"
             />
           </div>
 

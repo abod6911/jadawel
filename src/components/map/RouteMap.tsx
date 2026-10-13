@@ -154,7 +154,7 @@ const LeafletMap = dynamic(() => import('./LeafletMapContent'), {
 
 export const RouteMap: React.FC<RouteMapProps> = ({
   stops,
-  className = 'h-full min-h-[480px] w-full',
+  className = 'w-full h-full min-h-[440px]',
   showPolyline = true,
 }) => {
   const [isClient, setIsClient] = useState(false);
@@ -176,7 +176,7 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   }
 
   return (
-    <div className={`w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-cinematic border border-gold-500/30 ${className}`}>
+    <div className={`w-full h-full min-h-[440px] rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-cinematic border border-gold-500/30 ${className}`}>
       <MapErrorBoundary
         key={`map-boundary-${retryKey}`}
         fallbackUrl={googleMapsUrl}

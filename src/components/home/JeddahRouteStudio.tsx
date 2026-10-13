@@ -316,9 +316,9 @@ export const JeddahRouteStudio: React.FC = () => {
       {/* 3. DUAL-PANE ROUTE CANVAS & STATION DRAWER */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-[#E5C378]/25 shadow-2xl relative min-h-[460px] sm:min-h-[520px]">
+        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-[#E5C378]/25 shadow-2xl relative h-[480px] sm:h-[540px] min-h-[440px]">
           <BorderBeam size={220} duration={10} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
-          <RouteMap stops={stops} className="w-full h-full min-h-[460px] sm:min-h-[520px]" showPolyline={true} />
+          <RouteMap stops={stops} className="w-full h-full min-h-[440px]" showPolyline={true} />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
           <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#0B0D12]/90 backdrop-blur-xl border border-[#E5C378]/30 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">

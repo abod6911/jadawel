@@ -22,7 +22,7 @@ interface LeafletMapContentProps {
   showPolyline?: boolean;
 }
 
-type MapStyleKey = 'streets' | 'satellite' | 'topo';
+type MapStyleKey = 'streets' | 'satellite' | 'dark';
 
 const MAP_TILES: Record<
   MapStyleKey,
@@ -40,10 +40,19 @@ const MAP_TILES: Record<
     nameAr: 'شوارع ومعالم',
     nameEn: 'Streets',
     icon: '🗺️',
-    url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    attribution: '&copy; OpenStreetMap contributors',
-    subdomains: 'abc',
-    maxZoom: 19,
+    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
+    attribution: '&copy; CartoDB &copy; OpenStreetMap contributors',
+    subdomains: 'abcd',
+    maxZoom: 20,
+  },
+  dark: {
+    nameAr: 'ليلي فاخر',
+    nameEn: 'Dark Luxury',
+    icon: '✨',
+    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
+    attribution: '&copy; CartoDB &copy; OpenStreetMap contributors',
+    subdomains: 'abcd',
+    maxZoom: 20,
   },
   satellite: {
     nameAr: 'قمر صناعي',
@@ -51,15 +60,6 @@ const MAP_TILES: Record<
     icon: '🛰️',
     url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
     attribution: '&copy; Esri World Imagery',
-    subdomains: '',
-    maxZoom: 19,
-  },
-  topo: {
-    nameAr: 'تضاريس وساحل',
-    nameEn: 'Coast Topo',
-    icon: '🌊',
-    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    attribution: '&copy; Esri World Topo',
     subdomains: '',
     maxZoom: 19,
   },
@@ -74,14 +74,14 @@ function createNumberedGlowingPin(order: number, nameAr: string, isHovered: bool
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        transform: translate(-18px, -18px);
         pointer-events: auto;
         white-space: nowrap;
+        user-select: none;
       ">
         <div style="
           position: relative;
-          width: 36px;
-          height: 36px;
+          width: 34px;
+          height: 34px;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -91,40 +91,39 @@ function createNumberedGlowingPin(order: number, nameAr: string, isHovered: bool
             position: absolute;
             inset: -4px;
             border-radius: 50%;
-            background: ${isHovered ? 'rgba(245, 158, 11, 0.6)' : 'rgba(245, 158, 11, 0.35)'};
+            background: ${isHovered ? 'rgba(245, 158, 11, 0.7)' : 'rgba(229, 195, 120, 0.35)'};
             animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
           "></div>
           <div style="
             position: relative;
-            background: ${isHovered ? 'linear-gradient(135deg, #FBBF24, #F59E0B)' : 'linear-gradient(135deg, #F59E0B, #D97706)'};
+            background: ${isHovered ? 'linear-gradient(135deg, #FBBF24, #F59E0B)' : 'linear-gradient(135deg, #E5C378, #DF9F3D)'};
             width: 32px;
             height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2.5px solid #ffffff;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.7), 0 0 12px rgba(245,158,11,0.6);
+            border: 2px solid #ffffff;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.7), 0 0 12px rgba(229,195,120,0.6);
             color: #090B0E;
             font-weight: 900;
             font-size: 13px;
-            font-family: inherit;
           ">
             ${order}
           </div>
         </div>
         <div style="
-          background: rgba(9, 11, 14, 0.92);
+          background: rgba(10, 13, 20, 0.94);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(245, 158, 11, 0.45);
-          border-radius: 10px;
+          border: 1px solid rgba(229, 195, 120, 0.45);
+          border-radius: 8px;
           padding: 3px 8px;
           color: #ffffff;
           font-size: 11px;
           font-weight: 800;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.6);
-          max-width: 150px;
+          box-shadow: 0 6px 18px rgba(0,0,0,0.7);
+          max-width: 140px;
           overflow: hidden;
           text-overflow: ellipsis;
         ">
@@ -132,27 +131,53 @@ function createNumberedGlowingPin(order: number, nameAr: string, isHovered: bool
         </div>
       </div>
     `,
-    iconSize: [36, 36],
-    iconAnchor: [18, 18],
-    popupAnchor: [0, -20],
+    iconSize: [34, 34],
+    iconAnchor: [17, 17],
+    popupAnchor: [0, -22],
   });
 }
 
-// Map Bounds Auto-Fitter component
-function MapBoundsUpdater({ stops, triggerReset }: { stops: MapStop[]; triggerReset: number }) {
+// Resilient Map Dimensions & Bounds Auto-Controller
+function MapController({ stops, triggerReset }: { stops: MapStop[]; triggerReset: number }) {
   const map = useMap();
 
   useEffect(() => {
-    if (stops.length > 0) {
-      const validCoords = stops
-        .filter((s) => s.place?.coordinates?.lat && s.place?.coordinates?.lng)
-        .map((s) => [s.place.coordinates.lat, s.place.coordinates.lng] as [number, number]);
+    const validCoords = stops
+      .filter((s) => s.place?.coordinates?.lat && s.place?.coordinates?.lng)
+      .map((s) => [s.place.coordinates.lat, s.place.coordinates.lng] as [number, number]);
 
-      if (validCoords.length > 0) {
-        const bounds = L.latLngBounds(validCoords);
-        map.fitBounds(bounds, { padding: [60, 60], maxZoom: 15 });
+    const updateMap = () => {
+      try {
+        map.invalidateSize();
+
+        if (validCoords.length >= 2) {
+          const bounds = L.latLngBounds(validCoords);
+          map.fitBounds(bounds, { padding: [55, 55], maxZoom: 15, animate: true });
+        } else if (validCoords.length === 1) {
+          map.setView(validCoords[0], 14, { animate: true });
+        } else {
+          map.setView([21.5433, 39.1728], 12, { animate: true });
+        }
+      } catch (err) {
+        console.warn('MapController update warning:', err);
       }
-    }
+    };
+
+    // Staggered triggers to account for Framer Motion animation / dynamic loading
+    updateMap();
+    const t1 = setTimeout(updateMap, 150);
+    const t2 = setTimeout(updateMap, 450);
+
+    const onResize = () => {
+      map.invalidateSize();
+    };
+    window.addEventListener('resize', onResize);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener('resize', onResize);
+    };
   }, [stops, triggerReset, map]);
 
   return null;
@@ -208,7 +233,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   const currentTileConfig = MAP_TILES[mapStyle];
 
   return (
-    <div className="w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[580px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#080B10]">
+    <div className="w-full h-full min-h-[440px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#080B10]">
       {/* FLOATING TOP BAR: Route Info Badge + Map Style Switcher + Recenter + Google Maps Route */}
       <div className="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-3.5 z-[400] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pointer-events-none">
         
@@ -285,8 +310,8 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                   <span className="font-bold whitespace-nowrap">
                     {language === 'ar' ? (
                       <>
-                        <span>{key === 'streets' ? 'شوارع' : key === 'satellite' ? 'قمر' : 'ساحل'}</span>
-                        <span className="hidden sm:inline">{key === 'streets' ? ' ومعالم' : key === 'satellite' ? ' صناعي' : ' وتضاريس'}</span>
+                        <span>{key === 'streets' ? 'شوارع' : key === 'satellite' ? 'قمر' : 'ليلي'}</span>
+                        <span className="hidden sm:inline">{key === 'streets' ? ' ومعالم' : key === 'satellite' ? ' صناعي' : ' فاخر'}</span>
                       </>
                     ) : (
                       tile.nameEn
@@ -301,11 +326,11 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
       </div>
 
       <MapContainer
-        key={`leaflet-map-${validStops.map((s) => s.place?.id || s.place?.slug).join('_')}-${mapStyle}`}
         center={polylineCoords[0] || center}
         zoom={zoom}
         scrollWheelZoom={false}
-        className="w-full h-full z-10"
+        style={{ width: '100%', height: '100%', minHeight: '440px' }}
+        className="w-full h-full min-h-[440px] z-10"
       >
         {/* Crystal Clear TileLayer with dynamic switcher and NO API keys */}
         <TileLayer
@@ -316,7 +341,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
           maxZoom={currentTileConfig.maxZoom}
         />
 
-        <MapBoundsUpdater stops={validStops} triggerReset={recenterCount} />
+        <MapController stops={validStops} triggerReset={recenterCount} />
 
         {/* Connected Glowing Luxury Route Line (Dual Layer: Ambient Glow + Radiant Core) */}
         {showPolyline && polylineCoords.length > 1 && (
