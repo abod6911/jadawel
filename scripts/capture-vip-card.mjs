@@ -72,14 +72,6 @@ server.listen(3699, async () => {
       console.log('Captured mobile VIP card');
     }
 
-    const showcaseSection = mobilePage.locator('section[aria-label="Text Along Path Showcase"]');
-    if (await showcaseSection.count() > 0) {
-      await showcaseSection.scrollIntoViewIfNeeded();
-      await mobilePage.waitForTimeout(1000);
-      await mobilePage.screenshot({ path: 'scripts/mobile-showcase.png' });
-      console.log('Captured mobile showcase');
-    }
-
     // 2. Desktop Capture
     const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-SA' });
     const desktopPage = await desktopContext.newPage();
@@ -92,14 +84,6 @@ server.listen(3699, async () => {
       await desktopPage.waitForTimeout(1000);
       await desktopPage.screenshot({ path: 'scripts/desktop-vip-card.png' });
       console.log('Captured desktop VIP card');
-    }
-
-    const desktopShowcase = desktopPage.locator('section[aria-label="Text Along Path Showcase"]');
-    if (await desktopShowcase.count() > 0) {
-      await desktopShowcase.scrollIntoViewIfNeeded();
-      await desktopPage.waitForTimeout(1000);
-      await desktopPage.screenshot({ path: 'scripts/desktop-showcase.png' });
-      console.log('Captured desktop showcase');
     }
 
   } catch (err) {

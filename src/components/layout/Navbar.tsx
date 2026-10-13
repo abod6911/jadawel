@@ -128,28 +128,8 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* 3. UTILITIES (Theme & Language Switcher & Studio Link) */}
+        {/* 3. UTILITIES (Theme & Language Switcher Only - Clean & Uncluttered) */}
         <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Quick Jump to Text Along Path Showcase */}
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              setActiveNavTab('home');
-              setTimeout(() => {
-                const el = document.getElementById('text-along-path-studio');
-                if (el) {
-                  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-              }, 120);
-            }}
-            className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#DF9F3D]/15 via-[#E5C378]/20 to-[#DF9F3D]/15 hover:from-[#DF9F3D]/25 hover:to-[#E5C378]/30 border border-[#E5C378]/35 text-[#F5E2B3] text-xs font-bold transition-all shadow-sm cursor-pointer select-none"
-            title={language === 'ar' ? 'استعراض مكوّن النصوص المتحركة' : 'Text Along Path Showcase'}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
-            <span>{language === 'ar' ? 'استوديو النصوص' : 'Path Studio'}</span>
-          </button>
-
           {/* Theme Toggle */}
           <button
             type="button"
