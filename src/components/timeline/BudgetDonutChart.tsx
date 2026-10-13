@@ -158,7 +158,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
   const centerData = getCenterData();
 
   return (
-    <div className="relative rounded-[2rem] sm:rounded-[2.5rem] p-6 sm:p-8 lg:p-9 bg-gradient-to-b from-[#111622]/95 via-[#0C1018]/95 to-[#090C12]/98 backdrop-blur-3xl border border-white/[0.08] shadow-[0_30px_90px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.12)] space-y-7 select-none text-start overflow-hidden">
+    <div className="relative rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-8 lg:p-9 bg-gradient-to-b from-[#111622]/95 via-[#0C1018]/95 to-[#090C12]/98 backdrop-blur-3xl border border-white/[0.08] shadow-[0_30px_90px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.12)] space-y-5 sm:space-y-7 select-none text-start overflow-hidden">
       
       {/* Top Specular Gold Reflection Accent */}
       <div className="absolute top-0 inset-x-12 h-px bg-gradient-to-r from-transparent via-[#E5C378]/50 to-transparent pointer-events-none" />
@@ -215,7 +215,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
         
         {/* PANE 1: Luxury Gauge Pod & Donut Hub (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-gradient-to-b from-[#131924]/70 to-[#0B0E15]/90 border border-white/[0.07] p-6 shadow-xl relative overflow-hidden text-center group">
+        <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-gradient-to-b from-[#131924]/70 to-[#0B0E15]/90 border border-white/[0.07] p-4 sm:p-6 shadow-xl relative overflow-hidden text-center group">
           
           {/* Subtle Pod Corner Highlight */}
           <div className="absolute top-0 right-0 w-36 h-36 bg-[#E5C378]/5 rounded-full blur-2xl pointer-events-none" />

@@ -156,6 +156,7 @@ export const JeddahRouteStudio: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const [activeRouteId, setActiveRouteId] = useState<string>(STUDIO_ROUTES[0].id);
   const [selectedStopIdx, setSelectedStopIdx] = useState<number>(0);
+  const [mobileStudioView, setMobileStudioView] = useState<'stations' | 'map'>('stations');
 
   const loadCuratedPlan = useItineraryStore((state) => state.loadCuratedPlan);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
@@ -256,10 +257,11 @@ export const JeddahRouteStudio: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => soundEngine.playClick()}
-              className="px-4 py-2.5 rounded-full bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/35 hover:border-[#E5C378]/70 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
+              className="px-3.5 sm:px-4 py-2 sm:py-2.5 rounded-full bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/35 hover:border-[#E5C378]/70 text-white text-xs font-black transition-all flex items-center gap-2 cursor-pointer shadow-lg active:scale-95"
             >
               <Navigation className="w-4 h-4 text-[#E5C378]" />
-              <span>{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
+              <span className="hidden sm:inline">{language === 'ar' ? 'فتح كامل المسار في Google Maps' : 'Open Route in Google Maps'}</span>
+              <span className="sm:hidden">{language === 'ar' ? 'مسار Google Maps' : 'Google Maps'}</span>
               <ExternalLink className="w-3.5 h-3.5 text-[#E5C378]" />
             </a>
           </MagneticButton>
@@ -313,12 +315,46 @@ export const JeddahRouteStudio: React.FC = () => {
         })}
       </div>
 
+      {/* Mobile Segmented Toggle: Stations vs Map */}
+      <div className="flex lg:hidden items-center justify-center p-1 bg-[#131722] rounded-2xl border border-white/10 max-w-xs mx-auto w-full">
+        <button
+          type="button"
+          onClick={() => {
+            soundEngine.playClick();
+            setMobileStudioView('stations');
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
+            mobileStudioView === 'stations'
+              ? 'bg-gradient-to-r from-[#DF9F3D] to-[#E5C378] text-[#0A0D12] shadow-md font-black'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Navigation className="w-3.5 h-3.5" />
+          <span>{language === 'ar' ? 'المحطات والتفاصيل' : 'Stations'}</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            soundEngine.playClick();
+            setMobileStudioView('map');
+          }}
+          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
+            mobileStudioView === 'map'
+              ? 'bg-gradient-to-r from-[#DF9F3D] to-[#E5C378] text-[#0A0D12] shadow-md font-black'
+              : 'text-slate-400 hover:text-white'
+          }`}
+        >
+          <Compass className="w-3.5 h-3.5" />
+          <span>{language === 'ar' ? 'الخريطة التفاعلية' : 'Route Map'}</span>
+        </button>
+      </div>
+
       {/* 3. DUAL-PANE ROUTE CANVAS & STATION DRAWER */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
-        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-[#E5C378]/25 shadow-2xl relative h-[480px] sm:h-[540px] min-h-[440px]">
+        <div className={`lg:col-span-7 ${mobileStudioView === 'map' ? 'flex' : 'hidden lg:flex'} flex-col rounded-3xl overflow-hidden border border-[#E5C378]/25 shadow-2xl relative h-[360px] sm:h-[540px] min-h-[340px]`}>
           <BorderBeam size={220} duration={10} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
-          <RouteMap stops={stops} className="w-full h-full min-h-[440px]" showPolyline={true} />
+          <RouteMap stops={stops} className="w-full h-full min-h-[340px]" showPolyline={true} />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
           <div className="absolute bottom-3 inset-x-3 z-[400] bg-[#0B0D12]/90 backdrop-blur-xl border border-[#E5C378]/30 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 shadow-2xl">
@@ -343,7 +379,7 @@ export const JeddahRouteStudio: React.FC = () => {
         </div>
 
         {/* PANE 2: Stations Breakdown, Transit Details & 1-Click Load CTA (5 Cols) */}
-        <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-[#12151C]/90 border border-[#E5C378]/20 p-5 sm:p-6 space-y-5">
+        <div className={`lg:col-span-5 ${mobileStudioView === 'stations' ? 'flex' : 'hidden lg:flex'} flex-col justify-between rounded-3xl bg-[#12151C]/90 border border-[#E5C378]/20 p-4 sm:p-6 space-y-4 sm:space-y-5`}>
           {/* Top Route Overview Card */}
           <div className="space-y-3 text-start">
             <div className="flex items-center justify-between">

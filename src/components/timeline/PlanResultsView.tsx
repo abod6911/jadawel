@@ -243,8 +243,41 @@ export const PlanResultsView: React.FC = () => {
           </button>
         </div>
 
-        {/* 3 Variant Cards Grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3.5">
+        {/* Mobile Variant Segmented Selector (sm:hidden) */}
+        <div className="flex sm:hidden items-center p-1 bg-[#0A0D14] rounded-2xl border border-white/10 gap-1 shadow-inner">
+          {variantTabs.map((tab) => {
+            const Icon = tab.icon;
+            const isActive = activeVariant === tab.id;
+            const variantData = (variants as any)[tab.id];
+
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                onClick={() => {
+                  soundEngine.playClick();
+                  setActiveVariant(tab.id);
+                }}
+                className={`flex-1 py-2 px-1.5 rounded-xl text-xs font-bold transition-all flex flex-col items-center justify-center gap-0.5 text-center cursor-pointer touch-manipulation ${
+                  isActive
+                    ? 'bg-gradient-to-r from-[#DF9F3D] to-[#E5C378] text-[#0A0D12] shadow-lg font-black'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <div className="flex items-center gap-1">
+                  <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#0A0D12]' : tab.color}`} />
+                  <span className="truncate max-w-[85px]">{language === 'ar' ? tab.title : tab.titleEn}</span>
+                </div>
+                <span className={`text-[10px] ${isActive ? 'text-[#0A0D12]/80 font-black' : 'text-slate-500 font-medium'}`}>
+                  ~{variantData?.financials?.totalPerPersonSAR ?? 0} ر.س
+                </span>
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Desktop 3 Variant Cards Grid (hidden sm:grid) */}
+        <div className="hidden sm:grid grid-cols-3 gap-3.5">
           {variantTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeVariant === tab.id;
@@ -285,8 +318,8 @@ export const PlanResultsView: React.FC = () => {
       </div>
 
       {/* 2. Interactive Action Toolbar */}
-      <div className="p-3.5 sm:p-4 rounded-2xl bg-[#0E1118]/90 backdrop-blur-xl border border-[#E5C378]/30 shadow-2xl flex flex-wrap items-center justify-between gap-2.5 sm:gap-3">
-        {/* Left Action: Start Live Outing */}
+      <div className="p-3 sm:p-4 rounded-2xl bg-[#0E1118]/90 backdrop-blur-xl border border-[#E5C378]/30 shadow-2xl flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
+        {/* Primary Row: Start Live Outing + Story Pass */}
         <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             type="button"
@@ -294,7 +327,7 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               openLiveOuting();
             }}
-            className="flex-1 sm:flex-initial min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(229,195,120,0.45)] flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
+            className="flex-1 sm:flex-initial min-h-[46px] sm:min-h-[48px] px-4 sm:px-5 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0D12] font-black text-xs sm:text-sm shadow-[0_0_25px_rgba(229,195,120,0.45)] flex items-center justify-center gap-2 transition-all cursor-pointer touch-manipulation active:scale-95"
           >
             <Play className="w-4 h-4 fill-[#0B0D12]" />
             <span>{language === 'ar' ? 'بدء الطلعة (Live Mode)' : 'Start Live Outing'}</span>
@@ -306,24 +339,24 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               setIsStoryPassOpen(true);
             }}
-            className="min-h-[48px] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-[#E5C378] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 shrink-0"
+            className="min-h-[46px] sm:min-h-[48px] px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-[#E5C378] font-bold text-xs sm:text-sm flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95 shrink-0"
           >
             <Ticket className="w-4 h-4" />
             <span>{language === 'ar' ? 'بطاقة 9:16' : 'Pass 9:16'}</span>
           </button>
         </div>
 
-        {/* Right Actions: Save, Saved List, Split Bill, Group Vote, Export */}
-        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap justify-between sm:justify-start">
+        {/* Secondary Utility Actions (5-column compact grid on mobile, flex row on desktop) */}
+        <div className="grid grid-cols-5 sm:flex sm:items-center gap-1.5 sm:gap-2 w-full sm:w-auto">
           {/* Save Current Plan Button */}
           <button
             type="button"
             onClick={handleSavePlan}
-            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-white hover:text-[#E5C378] font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95"
+            className="min-h-[42px] sm:min-h-[44px] py-2 px-1 sm:px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-[#E5C378]/40 text-white hover:text-[#E5C378] font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer touch-manipulation active:scale-95"
             title="احفظ هذه الخطة في جهازك"
           >
-            <Bookmark className="w-4 h-4 text-[#E5C378]" />
-            <span>{language === 'ar' ? 'احفظ خطتي' : 'Save Plan'}</span>
+            <Bookmark className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E5C378]" />
+            <span>{language === 'ar' ? 'حفظ' : 'Save'}</span>
           </button>
 
           {/* View Saved Plans Button */}
@@ -333,55 +366,58 @@ export const PlanResultsView: React.FC = () => {
               soundEngine.playClick();
               setIsSavedPlansModalOpen(true);
             }}
-            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            className="relative min-h-[42px] sm:min-h-[44px] py-2 px-1 sm:px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer touch-manipulation"
             title="استعراض الخطط المحفوظة"
           >
-            <FolderHeart className="w-4 h-4 text-rose-400" />
-            <span className="hidden sm:inline">{language === 'ar' ? 'المحفوظات' : 'Saved'}</span>
+            <FolderHeart className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-rose-400" />
+            <span>{language === 'ar' ? 'محفوظات' : 'Saved'}</span>
             {savedPlans.length > 0 && (
-              <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-[#E5C378]/20 text-[#E5C378] border border-[#E5C378]/40 font-black">
+              <span className="absolute -top-1 -right-1 text-[9px] px-1.5 py-0.2 rounded-full bg-[#E5C378] text-[#0A0D12] font-black">
                 {savedPlans.length}
               </span>
             )}
           </button>
 
+          {/* Split Bill Button */}
           <button
             type="button"
             onClick={() => {
               soundEngine.playClick();
               setIsSplitBillOpen(true);
             }}
-            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            className="min-h-[42px] sm:min-h-[44px] py-2 px-1 sm:px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer touch-manipulation"
             title="حاسبة تقسيم الفاتورة"
           >
-            <Coins className="w-4 h-4 text-[#E5C378]" />
-            <span>{language === 'ar' ? 'حسبة القطة' : 'Split Bill'}</span>
+            <Coins className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E5C378]" />
+            <span>{language === 'ar' ? 'القطة' : 'Split'}</span>
           </button>
 
+          {/* Group Poll Button */}
           <button
             type="button"
             onClick={() => {
               soundEngine.playClick();
               setIsVotingModalOpen(true);
             }}
-            className="min-h-[44px] flex-1 sm:flex-initial px-3 sm:px-3.5 py-2 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-pearl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            className="min-h-[42px] sm:min-h-[44px] py-2 px-1 sm:px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer touch-manipulation"
             title="تصويت الشلة"
           >
-            <Vote className="w-4 h-4 text-teal-400" />
-            <span>{language === 'ar' ? 'تصويت الشلة' : 'Group Poll'}</span>
+            <Vote className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-teal-400" />
+            <span>{language === 'ar' ? 'تصويت' : 'Poll'}</span>
           </button>
 
+          {/* Export / Share Button */}
           <button
             type="button"
             onClick={() => {
               soundEngine.playClick();
               setIsExportModalOpen(true);
             }}
-            className="min-h-[44px] px-3 sm:px-3.5 py-2 rounded-xl bg-abyss-800 hover:bg-abyss-700 border border-white/10 text-pearl font-bold text-xs flex items-center justify-center gap-1.5 transition-all cursor-pointer touch-manipulation"
+            className="min-h-[42px] sm:min-h-[44px] py-2 px-1 sm:px-3 rounded-xl bg-[#131722] hover:bg-[#1A1F2C] border border-white/10 text-white font-bold text-[11px] sm:text-xs flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-1.5 transition-all cursor-pointer touch-manipulation"
             title="مشاركة وتصدير"
           >
-            <Share2 className="w-4 h-4 text-coral-400" />
-            <span className="hidden sm:inline">{language === 'ar' ? 'مشاركة وتصدير' : 'Share'}</span>
+            <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-coral-400" />
+            <span>{language === 'ar' ? 'مشاركة' : 'Share'}</span>
           </button>
         </div>
       </div>

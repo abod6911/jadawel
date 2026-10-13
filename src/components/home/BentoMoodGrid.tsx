@@ -173,19 +173,19 @@ export const BentoMoodGrid: React.FC = () => {
         </p>
       </div>
 
-      {/* Asymmetrical Bento Grid with 3D Tilt Physics */}
-      <div className="grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-5">
-        {/* 1. Large Hero Bento Cell: Beaches & Sunset (7 Cols) */}
+      {/* Asymmetrical Bento Grid with 3D Tilt Physics (2-Col on Mobile, 12-Col on Desktop) */}
+      <div className="grid grid-cols-2 md:grid-cols-12 gap-3 sm:gap-5">
+        {/* 1. Large Hero Bento Cell: Beaches & Sunset (Full Width on Mobile, 7 Cols on Desktop) */}
         <BentoTiltCard
-          colSpanClass="md:col-span-7"
-          minHeightClass="min-h-[250px] md:min-h-[360px]"
+          colSpanClass="col-span-2 md:col-span-7"
+          minHeightClass="min-h-[200px] sm:min-h-[250px] md:min-h-[360px]"
           hasBorderBeam={true}
           imageSrc={getAssetUrl('/images/moods/mood-beach.jpg')}
           onClick={() => handleMoodSelect('beach_sunset')}
           accentColorClass="text-teal-300"
           borderColorHoverClass="hover:border-teal-400/60"
           badgeNode={
-            <span className="px-3 py-1 rounded-xl bg-teal-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
+            <span className="px-2.5 sm:px-3 py-1 rounded-xl bg-teal-500/80 text-white text-[11px] sm:text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(45,212,191,0.35)] border border-teal-300/40">
               <Wind className="w-3.5 h-3.5" />
               <span>{language === 'ar' ? 'نسيم البحر • روقان الغروب' : 'Sea Breeze • Sunset Vibe'}</span>
             </span>
@@ -199,16 +199,16 @@ export const BentoMoodGrid: React.FC = () => {
           actionText={language === 'ar' ? 'عرض وتوليد المسارات البحرية' : 'View Coastal Plans'}
         />
 
-        {/* 2. Secondary Bento Cell: Cafes & Fine Dining (5 Cols) */}
+        {/* 2. Secondary Bento Cell: Cafes & Fine Dining (Full Width on Mobile, 5 Cols on Desktop) */}
         <BentoTiltCard
-          colSpanClass="md:col-span-5"
-          minHeightClass="min-h-[250px] md:min-h-[360px]"
+          colSpanClass="col-span-2 md:col-span-5"
+          minHeightClass="min-h-[190px] sm:min-h-[250px] md:min-h-[360px]"
           imageSrc={getAssetUrl('/images/moods/mood-food.jpg')}
           onClick={() => handleMoodSelect('food')}
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3 py-1 rounded-xl bg-[#E5C378] text-[#080B11] text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
+            <span className="px-2.5 sm:px-3 py-1 rounded-xl bg-[#E5C378] text-[#080B11] text-[11px] sm:text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(229,195,120,0.4)] border border-[#FFF1CC]">
               <Star className="w-3.5 h-3.5 fill-current" />
               <span>{language === 'ar' ? 'أعلى تقييماً 4.9' : 'Top Rated 4.9'}</span>
             </span>
@@ -222,18 +222,18 @@ export const BentoMoodGrid: React.FC = () => {
           actionText={language === 'ar' ? 'استكشف وجهات القهوة والتذوق' : 'Explore Dining Tracks'}
         />
 
-        {/* 3. Bento Cell: UNESCO Heritage (6 Cols) */}
+        {/* 3. Bento Cell: UNESCO Heritage (1 Col on Mobile, 6 Cols on Desktop) */}
         <BentoTiltCard
-          colSpanClass="md:col-span-6"
-          minHeightClass="min-h-[220px] md:min-h-[300px]"
+          colSpanClass="col-span-1 md:col-span-6"
+          minHeightClass="min-h-[170px] sm:min-h-[220px] md:min-h-[300px]"
           imageSrc={getAssetUrl('/images/moods/mood-heritage.jpg')}
           onClick={() => handleMoodSelect('heritage_arts')}
           accentColorClass="text-[#E5C378]"
           borderColorHoverClass="hover:border-[#E5C378]/60"
           badgeNode={
-            <span className="px-3 py-1 rounded-xl bg-[#E5C378]/20 text-[#F5E2B3] text-xs font-bold flex items-center gap-1.5 border border-[#E5C378]/40 shadow-sm">
-              <Landmark className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'تراث اليونسكو' : 'UNESCO Heritage'}</span>
+            <span className="px-2 sm:px-3 py-1 rounded-xl bg-[#E5C378]/20 text-[#F5E2B3] text-[10px] sm:text-xs font-bold flex items-center gap-1 border border-[#E5C378]/40 shadow-sm">
+              <Landmark className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>{language === 'ar' ? 'تراث اليونسكو' : 'UNESCO'}</span>
             </span>
           }
           title={language === 'ar' ? 'تراث وأزقة البلد العتيقة' : 'Historic Al-Balad Trail'}
@@ -245,21 +245,21 @@ export const BentoMoodGrid: React.FC = () => {
           actionText={language === 'ar' ? 'انطلق في مسار التراث' : 'Explore Heritage Trail'}
         />
 
-        {/* 4. Bento Cell: Entertainment & Adrenaline (6 Cols) */}
+        {/* 4. Bento Cell: Entertainment & Adrenaline (1 Col on Mobile, 6 Cols on Desktop) */}
         <BentoTiltCard
-          colSpanClass="md:col-span-6"
-          minHeightClass="min-h-[220px] md:min-h-[300px]"
+          colSpanClass="col-span-1 md:col-span-6"
+          minHeightClass="min-h-[170px] sm:min-h-[220px] md:min-h-[300px]"
           imageSrc={getAssetUrl('/images/moods/mood-gaming.jpg')}
           onClick={() => handleMoodSelect('gaming_challenges')}
           accentColorClass="text-rose-300"
           borderColorHoverClass="hover:border-rose-400/60"
           badgeNode={
-            <span className="px-3.5 py-1.5 rounded-xl bg-rose-500/80 text-white text-xs font-bold flex items-center gap-1.5 shadow-[0_0_15px_rgba(244,63,94,0.35)] border border-rose-300/40">
-              <Gamepad2 className="w-3.5 h-3.5" />
-              <span>{language === 'ar' ? 'طاقة وحماس' : 'Action & Challenges'}</span>
+            <span className="px-2 sm:px-3.5 py-1 rounded-xl bg-rose-500/80 text-white text-[10px] sm:text-xs font-bold flex items-center gap-1 shadow-[0_0_15px_rgba(244,63,94,0.35)] border border-rose-300/40">
+              <Gamepad2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+              <span>{language === 'ar' ? 'طاقة وحماس' : 'Action'}</span>
             </span>
           }
-          title={language === 'ar' ? 'تحديات وفعاليات حماسية' : 'Gaming, Bowling & Fun'}
+          title={language === 'ar' ? 'تحديات وفعاليات حماسية' : 'Gaming & Fun'}
           description={
             language === 'ar'
               ? 'حلبات الكارتينج، صالات البولينج والسينما، ومراكز الترفيه الجماعي للشلة والعائلة.'

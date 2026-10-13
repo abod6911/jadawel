@@ -76,7 +76,7 @@ export const PageOrchestrator: React.FC = () => {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
                 transition={{ duration: 0.25 }}
-                className="space-y-20 sm:space-y-28 lg:space-y-36"
+                className="space-y-10 sm:space-y-24 lg:space-y-32"
               >
                 {/* 1. Grand Widescreen Atmospheric Hero */}
                 <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
@@ -84,7 +84,7 @@ export const PageOrchestrator: React.FC = () => {
                 </div>
 
                 {/* 2. Main Content Sections */}
-                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-20 sm:space-y-28 lg:space-y-36">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-24 lg:space-y-32">
                   {/* Live Social Proof Marquee Bar */}
                   <SocialProofBar />
 

@@ -288,7 +288,131 @@ export const HeroSection: React.FC = () => {
         {/* 3. THE FLOATING CONCIERGE SEARCH CONSOLE (LINEAR LUXURY) */}
         {/* ======================================================== */}
         <div ref={consoleRef} className="w-full max-w-4xl mx-auto mt-6 sm:mt-14 relative z-30">
-          <div className="p-2 sm:p-2.5 rounded-3xl sm:rounded-full bg-[#0E131A]/90 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 transition-all">
+          {/* A. MOBILE-NATIVE TOUCH CONCIERGE CARD (<640px) */}
+          <div className="sm:hidden w-full rounded-3xl bg-[#0E131A]/95 backdrop-blur-2xl border border-white/10 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.85)] space-y-3.5 text-start">
+            {/* Step 1: Horizontal Chip Scroll for District */}
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-1.5 text-slate-300">
+                  <MapPin className="w-3.5 h-3.5 text-[#E5C378]" />
+                  <span>{language === 'ar' ? 'المنطقة في جدة' : 'District'}</span>
+                </span>
+                <span className="text-[10px] text-[#E5C378] font-bold">
+                  {language === 'ar' ? selectedDistrictObj.nameAr : selectedDistrictObj.nameEn}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1 snap-x">
+                {DISTRICT_OPTIONS.map((item) => {
+                  const isSelected = district === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setDistrict(item.id);
+                      }}
+                      className={`min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1.5 transition-all cursor-pointer snap-start active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-[#E5C378] text-[#080B11] shadow-[0_0_15px_rgba(229,195,120,0.4)]'
+                          : 'bg-white/[0.05] text-slate-300 border border-white/10 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-sm leading-none">{item.icon}</span>
+                      <span>{language === 'ar' ? item.nameAr.split(' ')[0] : item.nameEn.split(' ')[0]}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Step 2: Horizontal Chip Scroll for Vibe */}
+            <div className="space-y-1.5 pt-1.5 border-t border-white/5">
+              <div className="flex items-center justify-between text-xs font-bold text-slate-400">
+                <span className="flex items-center gap-1.5 text-slate-300">
+                  <Sparkles className="w-3.5 h-3.5 text-teal-400" />
+                  <span>{language === 'ar' ? 'المود والجو' : 'Vibe & Atmosphere'}</span>
+                </span>
+                <span className="text-[10px] text-teal-300 font-bold">
+                  {language === 'ar' ? selectedVibeObj.labelAr : selectedVibeObj.labelEn}
+                </span>
+              </div>
+              <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none -mx-1 px-1 snap-x">
+                {VIBE_OPTIONS.map((item) => {
+                  const isSelected = vibe === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setVibe(item.id);
+                      }}
+                      className={`min-h-[38px] px-3.5 py-1.5 rounded-full text-xs font-bold shrink-0 flex items-center gap-1.5 transition-all cursor-pointer snap-start active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-teal-400 text-[#080B11] shadow-[0_0_15px_rgba(45,212,191,0.4)]'
+                          : 'bg-white/[0.05] text-slate-300 border border-white/10 hover:text-white'
+                      }`}
+                    >
+                      <span className="text-sm leading-none">{item.icon}</span>
+                      <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Step 3: Companions (Compact 4-Pill Touch Selector) */}
+            <div className="space-y-1 pt-1.5 border-t border-white/5">
+              <span className="text-[11px] font-bold text-slate-400 block">
+                {language === 'ar' ? 'طبيعة الرفقة' : 'Companions'}
+              </span>
+              <div className="grid grid-cols-4 gap-1.5">
+                {COMPANION_OPTIONS.map((item) => {
+                  const isSelected = companions === item.id;
+                  const Icon = item.icon;
+                  return (
+                    <button
+                      key={item.id}
+                      type="button"
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setCompanions(item.id);
+                      }}
+                      className={`min-h-[44px] p-2 rounded-xl text-[11px] font-bold flex flex-col items-center justify-center gap-1 transition-all cursor-pointer active:scale-95 touch-manipulation ${
+                        isSelected
+                          ? 'bg-[#E5C378]/20 border border-[#E5C378]/50 text-[#F5E2B3] shadow-sm'
+                          : 'bg-white/[0.03] border border-white/5 text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span className="truncate max-w-full">{language === 'ar' ? item.labelAr.replace('مع ', '') : item.labelEn}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Primary Mobile Action Button */}
+            <button
+              type="button"
+              onClick={handleGeneratePlan}
+              disabled={isGeneratingPlan}
+              className="w-full h-12 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0B0E14] font-black text-sm flex items-center justify-center gap-2 active:scale-95 transition-all shadow-[0_4px_20px_rgba(229,195,120,0.4)] cursor-pointer disabled:opacity-50 touch-manipulation"
+            >
+              {isGeneratingPlan ? (
+                <div className="w-5 h-5 border-2 border-[#0B0E14] border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <>
+                  <span>{language === 'ar' ? 'ابتكر مسار طلعتي ✨' : 'Curate My Route ✨'}</span>
+                  {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                </>
+              )}
+            </button>
+          </div>
+
+          {/* B. DESKTOP FLOATING CONCIERGE DOCK (>=640px) */}
+          <div className="hidden sm:flex p-2.5 rounded-full bg-[#0E131A]/90 backdrop-blur-2xl border border-white/10 shadow-[0_20px_50px_rgba(0,0,0,0.85)] items-center justify-between gap-2 transition-all">
             
             {/* Segment 1: District Picker */}
             <div className="relative flex-1">
@@ -522,27 +646,27 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* ======================================================== */}
-        {/* 4. CURATED DESTINATION SHOWCASE CARDS (QUIET LUXURY)     */}
+        {/* 4. CURATED DESTINATION SHOWCASE CARDS (HORIZONTAL SNAP ON MOBILE) */}
         {/* ======================================================== */}
-        <div className="w-full max-w-5xl mx-auto mt-14 sm:mt-20">
+        <div className="w-full max-w-5xl mx-auto mt-8 sm:mt-20">
           
-          <div className="flex items-center justify-between mb-6 px-1">
+          <div className="flex items-center justify-between mb-3.5 sm:mb-6 px-1">
             <div className="space-y-0.5">
-              <span className="text-[11px] font-bold text-[#E5C378] tracking-widest uppercase block">
+              <span className="text-[10px] sm:text-[11px] font-bold text-[#E5C378] tracking-widest uppercase block">
                 {language === 'ar' ? '✦ مسارات مختارة مسبقاً' : '✦ Signature Highlights'}
               </span>
-              <h3 className="text-lg sm:text-xl font-bold text-white">
+              <h3 className="text-base sm:text-xl font-bold text-white">
                 {language === 'ar' ? 'انطلق مباشرة في أبرز تجارب جدة' : 'Launch Premier Handcrafted Experiences'}
               </h3>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-6 overflow-x-auto md:overflow-visible pb-3 -mx-2 px-2 scrollbar-none snap-x snap-mandatory">
             {DESTINATIONS.map((dest) => (
               <div
                 key={dest.id}
                 onClick={() => handleLaunchDestination(dest)}
-                className="group relative h-56 sm:h-64 rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-[#E5C378]/40 transition-all duration-300 shadow-[0_12px_32px_rgba(0,0,0,0.6)] select-none flex flex-col justify-between p-5"
+                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none group relative h-56 sm:h-64 rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-[#E5C378]/40 transition-all duration-300 shadow-[0_12px_32px_rgba(0,0,0,0.6)] select-none flex flex-col justify-between p-4.5 sm:p-5 touch-manipulation active:scale-[0.98]"
               >
                 {/* Background Image */}
                 <img
