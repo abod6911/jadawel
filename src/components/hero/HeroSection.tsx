@@ -242,46 +242,65 @@ export const HeroSection: React.FC = () => {
       <div className="relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-8 pb-14 sm:py-24 lg:py-28 flex flex-col items-center">
         
         {/* EDITORIAL HERO HEADER */}
-        <div className="w-full max-w-4xl mx-auto text-center space-y-3 sm:space-y-6">
+        <div className="w-full max-w-4xl mx-auto text-center space-y-3.5 sm:space-y-6">
           
           {/* Eyebrow Capsule */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] backdrop-blur-md text-[#E5C378] text-xs font-semibold tracking-wide shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] border-t-white/20 backdrop-blur-md text-[#E5C378] text-xs font-semibold tracking-wide shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
             <span>
               {language === 'ar'
-                ? `عروس البحر الأحمر • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
-                : `Red Sea Bride • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+                ? `✦ المنصة المعتمدة لطلعات جدة • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
+                : `✦ Curated Red Sea Bride • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
             </span>
           </div>
 
-          {/* Master Headline */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.25rem] font-black text-white tracking-tight leading-[1.2] max-w-4xl mx-auto">
+          {/* Master Headline with Metallic Shimmer */}
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-black text-white tracking-tight leading-[1.18] max-w-4xl mx-auto drop-shadow-md">
             {language === 'ar' ? (
               <>
-                <span>جدة.. كما لم تعشها من قبل</span>
-                <span className="block text-slate-300 font-bold text-2xl sm:text-4xl md:text-5xl mt-2 font-sans">
-                  مسارك اليومي بدقة استثنائية
+                <span className="block">جدة.. كما لم تعشها من قبل</span>
+                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-sans">
+                  <span className="text-slate-300">مسارك اليومي </span>
+                  <span className="text-shimmer-champagne">بدقة استثنائية</span>
                 </span>
               </>
             ) : (
               <>
-                <span>Jeddah.. Curated Like Never Before</span>
-                <span className="block text-slate-300 font-bold text-2xl sm:text-4xl md:text-5xl mt-2">
-                  Bespoke Itineraries at Your Fingertips
+                <span className="block">Jeddah.. Curated Like Never Before</span>
+                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold">
+                  <span className="text-slate-300">Bespoke Itineraries </span>
+                  <span className="text-shimmer-champagne">At Your Fingertips</span>
                 </span>
               </>
             )}
           </h1>
 
           {/* Elegant Subtitle */}
-          <p className="text-sm sm:text-lg text-slate-300/90 font-normal leading-relaxed max-w-2xl mx-auto pt-1">
+          <p className="text-sm sm:text-lg text-slate-300 font-normal leading-relaxed max-w-2xl mx-auto pt-1">
             {language === 'ar'
-              ? 'من رواشين البلد التاريخية إلى نوادي يخوت أبحر الفارهة. صمّم طلعتك المثالية بحسب مودك وميزانيتك بضغطة زر واحدة.'
+              ? 'من رواشين البلد التاريخية إلى نوادي يخوت أبحر الفارهة. صمّم طلعتك المثالية بحسب مودك، رفقائك، وميزانيتك بدقة ثانية بثانية.'
               : 'From historic Al-Balad coral alleys to Obhur private yacht clubs. Orchestrate your day seamlessly with one click.'}
           </p>
+
+          {/* Quiet Luxury Micro-Details & Trust Badges */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-[11px] sm:text-xs text-slate-400 font-medium">
+            <span className="flex items-center gap-1.5 text-[#E5C378]">
+              <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
+              <span>{language === 'ar' ? 'توليد فوري بـ 3 مسارات' : 'Instant 3-Track Curations'}</span>
+            </span>
+            <span className="text-white/20">•</span>
+            <span className="flex items-center gap-1.5 text-teal-300">
+              <Compass className="w-3.5 h-3.5 text-teal-400" />
+              <span>{language === 'ar' ? 'ربط خرائط Google متعدد المحطات' : 'Multi-stop Google Maps'}</span>
+            </span>
+            <span className="text-white/20 hidden sm:inline">•</span>
+            <span className="hidden sm:flex items-center gap-1.5 text-slate-300">
+              <span>{language === 'ar' ? 'تقدير مالي واقعي بالريال' : 'SAR Budget Accuracy'}</span>
+            </span>
+          </div>
         </div>
 
         {/* ======================================================== */}
@@ -666,31 +685,40 @@ export const HeroSection: React.FC = () => {
               <div
                 key={dest.id}
                 onClick={() => handleLaunchDestination(dest)}
-                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none group relative h-56 sm:h-64 rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-[#E5C378]/40 transition-all duration-300 shadow-[0_12px_32px_rgba(0,0,0,0.6)] select-none flex flex-col justify-between p-4.5 sm:p-5 touch-manipulation active:scale-[0.98]"
+                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none group relative h-60 sm:h-68 rounded-3xl overflow-hidden cursor-pointer border border-white/10 border-t-white/25 hover:border-[#E5C378]/60 transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.7)] select-none flex flex-col justify-between p-4.5 sm:p-5 touch-manipulation active:scale-[0.98]"
               >
                 {/* Background Image */}
                 <img
                   src={dest.bgImage}
                   alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover brightness-[0.55] transition-transform duration-700 group-hover:scale-105"
+                  className="absolute inset-0 w-full h-full object-cover brightness-[0.55] transition-transform duration-700 group-hover:scale-108"
                 />
 
                 {/* Ambient Dark Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0D12] via-[#0A0D12]/40 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0D12] via-[#0A0D12]/45 to-transparent" />
 
-                {/* Top Badge */}
-                <div className="relative z-10 flex items-center justify-between">
-                  <span className="px-3 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] font-bold text-[#F5E2B3]">
+                {/* Top Badges Row */}
+                <div className="relative z-10 flex items-center justify-between gap-2">
+                  <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-bold text-[#F5E2B3] shadow-sm">
                     {language === 'ar' ? dest.badge : dest.badgeEn}
                   </span>
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-[#E5C378] font-black">
+                    <span>★ 4.9</span>
+                    <span className="text-white/40">•</span>
+                    <span className="text-slate-300">{language === 'ar' ? 'مسار معتمد' : 'Verified'}</span>
+                  </div>
                 </div>
 
                 {/* Bottom Content */}
-                <div className="relative z-10 space-y-1.5">
-                  <h4 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors">
+                <div className="relative z-10 space-y-1.5 text-start">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-teal-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    <span>{language === 'ar' ? '3 محطات • بدون زحمة' : '3 Stops • Optimal Flow'}</span>
+                  </div>
+                  <h4 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors leading-snug">
                     {language === 'ar' ? dest.name : dest.nameEn}
                   </h4>
-                  <p className="text-xs text-slate-300/80 font-normal line-clamp-1">
+                  <p className="text-xs text-slate-300/85 font-normal line-clamp-1">
                     {language === 'ar' ? dest.tagline : dest.taglineEn}
                   </p>
                   <div className="pt-2 flex items-center gap-1.5 text-xs font-bold text-[#E5C378] group-hover:translate-x-[-4px] transition-transform">

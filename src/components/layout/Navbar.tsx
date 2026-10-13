@@ -29,6 +29,28 @@ export const Navbar: React.FC = () => {
   const toggleTheme = useItineraryStore((state) => state.toggleTheme);
   const { atmosphere } = useJeddahWeather(atmospherePhase);
 
+  const [jeddahTime, setJeddahTime] = React.useState<string>('');
+
+  React.useEffect(() => {
+    const updateTime = () => {
+      try {
+        const now = new Date();
+        const formatter = new Intl.DateTimeFormat(language === 'ar' ? 'ar-SA' : 'en-US', {
+          timeZone: 'Asia/Riyadh',
+          hour: 'numeric',
+          minute: '2-digit',
+          hour12: true,
+        });
+        setJeddahTime(formatter.format(now));
+      } catch (e) {
+        setJeddahTime('');
+      }
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 30000);
+    return () => clearInterval(interval);
+  }, [language]);
+
   const navItems = [
     { id: 'home' as const, labelAr: 'الرئيسية', labelEn: 'Home', icon: Flame },
     { id: 'quick-plan' as const, labelAr: 'صانع الجداول', labelEn: 'Planner', icon: Navigation },
@@ -45,8 +67,8 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="sticky top-3 sm:top-5 z-50 w-full max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300">
-      {/* Sleek Translucent Dark Glass - Minimalist Luxury without Neon Noise */}
-      <div className="relative backdrop-blur-xl bg-[#090D14]/85 border border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.6)] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6">
+      {/* Sleek Translucent Dark Glass - Minimalist Luxury with Specular Rim Light */}
+      <div className="relative backdrop-blur-2xl bg-[#080B11]/90 border border-white/10 border-t-white/25 shadow-[0_12px_44px_rgba(0,0,0,0.75)] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6">
         
         {/* 1. BRAND LOGO & IDENTITY */}
         <div className="flex items-center gap-3 shrink-0">
@@ -62,28 +84,36 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-lg font-bold text-white group-hover:text-[#F3DA9C] transition-colors">
+              <span className="text-base sm:text-lg font-black text-white group-hover:text-[#F3DA9C] transition-colors tracking-tight">
                 {language === 'ar' ? 'جداول' : 'Jadawel'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-white/[0.05] text-[#E5C378] font-bold border border-[#E5C378]/25">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-black border border-[#E5C378]/30 shadow-sm">
                 {language === 'ar' ? 'جدة' : 'Jeddah'}
               </span>
             </div>
           </div>
 
-          {/* Discreet Weather Status Pill */}
-          <div className="hidden lg:flex items-center gap-2 px-3 py-1 rounded-full bg-white/[0.03] border border-white/[0.06] text-xs">
+          {/* Discreet Weather & Real-time Live Clock Status Pill */}
+          <div className="hidden lg:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
             <span className="text-[11px] font-medium text-slate-300">
-              {atmosphere.phaseNameAr}
+              {language === 'ar' ? atmosphere.phaseNameAr : atmosphere.phaseNameEn}
             </span>
             <span className="text-white/20">•</span>
             <span className="text-[11px] font-mono text-slate-300 font-bold" dir="ltr">
               {atmosphere.temperatureC}°C
             </span>
+            {jeddahTime && (
+              <>
+                <span className="text-white/20">•</span>
+                <span className="text-[11px] font-semibold text-[#E5C378]">
+                  {language === 'ar' ? `توقيت جدة: ${jeddahTime}` : `Jeddah: ${jeddahTime}`}
+                </span>
+              </>
+            )}
           </div>
         </div>
 

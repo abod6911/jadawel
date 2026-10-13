@@ -112,28 +112,42 @@ export const CuratedReadyPlans: React.FC = () => {
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0E1118]/85 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 transition-all duration-300"
+              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0E1118]/90 backdrop-blur-xl border border-white/10 border-t-white/25 overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 hover:shadow-[0_20px_50px_rgba(229,195,120,0.15)] transition-all duration-300"
             >
               {idx === 0 && (
                 <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
               )}
               <div>
-                <div className="relative h-40 sm:h-52 overflow-hidden bg-[#0B0D12]">
+                <div className="relative h-44 sm:h-52 overflow-hidden bg-[#0B0D12]">
                   <img
                     src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E1118] via-black/30 to-transparent" />
-                  <span className="absolute top-3 start-3 px-3 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-[#F5E2B3] text-xs font-black border border-[#E5C378]/40 shadow-sm">
-                    {language === 'ar' ? plan.badgeAr : plan.badgeEn}
-                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E1118] via-black/35 to-transparent" />
+                  
+                  {/* Top Badges */}
+                  <div className="absolute top-3 inset-x-3 flex items-center justify-between">
+                    <span className="px-3 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-[#F5E2B3] text-xs font-black border border-[#E5C378]/40 shadow-sm">
+                      {language === 'ar' ? plan.badgeAr : plan.badgeEn}
+                    </span>
+                    <span className="px-2.5 py-1 rounded-xl bg-black/70 backdrop-blur-md text-emerald-300 text-[11px] font-black border border-emerald-500/30 shadow-sm flex items-center gap-1">
+                      <span>★ 4.9</span>
+                      <span className="text-white/40">•</span>
+                      <span>{plan.placesIds.length} {language === 'ar' ? 'محطات' : 'stops'}</span>
+                    </span>
+                  </div>
                 </div>
 
                 <div className="p-4 sm:p-5 space-y-2.5">
-                  <h3 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors">
+                  <div className="flex items-center gap-1.5 text-[11px] font-bold text-teal-300">
+                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
+                    <span>{language === 'ar' ? 'مسار محسوب بالدقيقة • ربط مباشر' : 'Optimized Timing • Multi-stop'}</span>
+                  </div>
+
+                  <h3 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors leading-snug">
                     {language === 'ar' ? plan.titleAr : plan.titleEn}
                   </h3>
                   <p className="text-xs text-slate-300 leading-relaxed line-clamp-2 font-medium">
@@ -144,16 +158,16 @@ export const CuratedReadyPlans: React.FC = () => {
                     const range = getPlanBudgetRange(plan);
                     return (
                       <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-2.5 border-t border-white/10">
-                        <span className="flex items-center gap-1.5 text-teal-300 font-bold">
-                          <Clock className="w-3.5 h-3.5" />
+                        <span className="flex items-center gap-1.5 text-[#E5C378] font-bold">
+                          <Clock className="w-3.5 h-3.5 text-[#E5C378]" />
                           <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
                         </span>
                         <div className="text-end">
-                          <span className="text-[#E5C378] font-black block text-sm">
+                          <span className="text-emerald-400 font-black block text-sm">
                             {range.min}–{range.max} {language === 'ar' ? 'ر.س / شخص' : 'SAR / pers'}
                           </span>
                           <span className="text-[10px] text-slate-400 font-normal">
-                            {language === 'ar' ? 'تقدير تقريبي للميزانية' : 'Realistic SAR estimate'}
+                            {language === 'ar' ? 'الميزانية التقديرية' : 'Estimated budget'}
                           </span>
                         </div>
                       </div>
@@ -167,9 +181,9 @@ export const CuratedReadyPlans: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleLoadPlan(plan.id)}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_20px_rgba(223,159,61,0.25)] active:scale-[0.98]"
+                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_20px_rgba(223,159,61,0.25)] active:scale-[0.98]"
                   >
-                    <span>{language === 'ar' ? 'تحميل هذا الجدول' : 'Load This Plan'}</span>
+                    <span>{language === 'ar' ? 'تحميل واعتماد هذا الجدول' : 'Load This Plan'}</span>
                     {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                   </button>
                 </MagneticButton>
