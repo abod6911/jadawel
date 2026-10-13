@@ -47,32 +47,63 @@ server.listen(3699, async () => {
   let browser;
   try {
     browser = await chromium.launch({ channel: 'chrome', headless: true }).catch(() => chromium.launch({ channel: 'msedge', headless: true }));
+    
+    // 1. Mobile iPhone Capture
     const iPhone = devices['iPhone 14 Pro'];
-    const context = await browser.newContext({ ...iPhone, locale: 'ar-SA' });
-    const page = await context.newPage();
+    const mobileContext = await browser.newContext({ ...iPhone, locale: 'ar-SA' });
+    const mobilePage = await mobileContext.newPage();
 
-    await page.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
-    await page.waitForTimeout(2000);
+    await mobilePage.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
+    await mobilePage.waitForTimeout(2000);
 
-    const vipSection = page.locator('section[aria-label="VIP Concierge Experience"]');
-    if (await vipSection.count() > 0) {
-      await vipSection.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(1000);
-      await page.screenshot({ path: 'scripts/mobile-vip-card.png' });
-      console.log('Captured mobile VIP card');
-    } else {
-      console.log('VIP section not found');
-    }
-
-    const waveRibbon = page.locator('section[aria-label="Red Sea Animated Ribbon"]');
+    const waveRibbon = mobilePage.locator('section[aria-label="Red Sea Animated Ribbon"]');
     if (await waveRibbon.count() > 0) {
       await waveRibbon.scrollIntoViewIfNeeded();
-      await page.waitForTimeout(1000);
-      await page.screenshot({ path: 'scripts/mobile-wave-ribbon.png' });
+      await mobilePage.waitForTimeout(1000);
+      await mobilePage.screenshot({ path: 'scripts/mobile-wave-ribbon.png' });
       console.log('Captured mobile wave ribbon');
     }
+
+    const vipSection = mobilePage.locator('section[aria-label="VIP Concierge Experience"]');
+    if (await vipSection.count() > 0) {
+      await vipSection.scrollIntoViewIfNeeded();
+      await mobilePage.waitForTimeout(1000);
+      await mobilePage.screenshot({ path: 'scripts/mobile-vip-card.png' });
+      console.log('Captured mobile VIP card');
+    }
+
+    const showcaseSection = mobilePage.locator('section[aria-label="Text Along Path Showcase"]');
+    if (await showcaseSection.count() > 0) {
+      await showcaseSection.scrollIntoViewIfNeeded();
+      await mobilePage.waitForTimeout(1000);
+      await mobilePage.screenshot({ path: 'scripts/mobile-showcase.png' });
+      console.log('Captured mobile showcase');
+    }
+
+    // 2. Desktop Capture
+    const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-SA' });
+    const desktopPage = await desktopContext.newPage();
+    await desktopPage.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
+    await desktopPage.waitForTimeout(2000);
+
+    const desktopVip = desktopPage.locator('section[aria-label="VIP Concierge Experience"]');
+    if (await desktopVip.count() > 0) {
+      await desktopVip.scrollIntoViewIfNeeded();
+      await desktopPage.waitForTimeout(1000);
+      await desktopPage.screenshot({ path: 'scripts/desktop-vip-card.png' });
+      console.log('Captured desktop VIP card');
+    }
+
+    const desktopShowcase = desktopPage.locator('section[aria-label="Text Along Path Showcase"]');
+    if (await desktopShowcase.count() > 0) {
+      await desktopShowcase.scrollIntoViewIfNeeded();
+      await desktopPage.waitForTimeout(1000);
+      await desktopPage.screenshot({ path: 'scripts/desktop-showcase.png' });
+      console.log('Captured desktop showcase');
+    }
+
   } catch (err) {
-    console.error('Error:', err);
+    console.error('Error during capture:', err);
   } finally {
     if (browser) await browser.close();
     server.close();

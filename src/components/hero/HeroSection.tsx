@@ -20,6 +20,7 @@ import {
   Film,
   Volume2,
   VolumeX,
+  Sparkles,
 } from 'lucide-react';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -667,6 +668,29 @@ export const HeroSection: React.FC = () => {
               </button>
             );
           })}
+        </div>
+
+        {/* Direct link pill to Animated Path Text Studio */}
+        <div className="pt-2 sm:pt-4 flex items-center justify-center">
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              const el = document.getElementById('text-along-path-studio');
+              if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }
+            }}
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.06] hover:bg-white/[0.12] border border-[#E5C378]/40 hover:border-[#E5C378] text-[#F5E2B3] text-xs font-bold transition-all shadow-sm cursor-pointer group"
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
+            <span>
+              {language === 'ar'
+                ? '✦ جديد: استوديو النصوص المتحركة وقائمة الانتظار (Text Along Path)'
+                : '✦ New: Animated Text Along Path Studio & Waitlist'}
+            </span>
+            <ArrowLeft className="w-3.5 h-3.5 group-hover:-translate-x-1 transition-transform" />
+          </button>
         </div>
       </div>
 

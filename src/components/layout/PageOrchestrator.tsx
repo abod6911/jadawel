@@ -15,6 +15,7 @@ import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
 import { RedSeaWaveRibbon } from '@/components/home/RedSeaWaveRibbon';
 import { VipPathCard } from '@/components/home/VipPathCard';
+import { TextAlongPathShowcase } from '@/components/home/TextAlongPathShowcase';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
@@ -94,6 +95,11 @@ export const PageOrchestrator: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-12 sm:space-y-16">
                   {/* Live Social Proof Marquee Bar */}
                   <SocialProofBar />
+
+                  {/* Text Along Path Interactive Studio Showcase (Prominently featured) */}
+                  <div id="text-along-path-studio" className="scroll-mt-24">
+                    <TextAlongPathShowcase />
+                  </div>
 
                   {/* 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
                   <JeddahRouteStudio />
