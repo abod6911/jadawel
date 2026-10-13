@@ -14,7 +14,6 @@ import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
 import { RedSeaWaveRibbon } from '@/components/home/RedSeaWaveRibbon';
-import { VipPathCard } from '@/components/home/VipPathCard';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
@@ -103,9 +102,6 @@ export const PageOrchestrator: React.FC = () => {
 
                   {/* Curated Ready Plans & Exclusive Partner Deals */}
                   <CuratedReadyPlans />
-
-                  {/* VIP Experience & Concierge with Animated Orbiting Path */}
-                  <VipPathCard />
                 </div>
               </motion.div>
             )}

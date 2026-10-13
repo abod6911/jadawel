@@ -64,27 +64,11 @@ server.listen(3699, async () => {
       console.log('Captured mobile wave ribbon');
     }
 
-    const vipSection = mobilePage.locator('section[aria-label="VIP Concierge Experience"]');
-    if (await vipSection.count() > 0) {
-      await vipSection.scrollIntoViewIfNeeded();
-      await mobilePage.waitForTimeout(1000);
-      await mobilePage.screenshot({ path: 'scripts/mobile-vip-card.png' });
-      console.log('Captured mobile VIP card');
-    }
-
     // 2. Desktop Capture
     const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-SA' });
     const desktopPage = await desktopContext.newPage();
     await desktopPage.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
     await desktopPage.waitForTimeout(2000);
-
-    const desktopVip = desktopPage.locator('section[aria-label="VIP Concierge Experience"]');
-    if (await desktopVip.count() > 0) {
-      await desktopVip.scrollIntoViewIfNeeded();
-      await desktopPage.waitForTimeout(1000);
-      await desktopPage.screenshot({ path: 'scripts/desktop-vip-card.png' });
-      console.log('Captured desktop VIP card');
-    }
 
   } catch (err) {
     console.error('Error during capture:', err);
