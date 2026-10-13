@@ -128,8 +128,20 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* 3. UTILITIES (Theme & Language Switcher Only - Clean & Uncluttered) */}
-        <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* 3. UTILITIES (Planner CTA, Theme & Language) */}
+        <div className="flex items-center gap-1.5 sm:gap-2.5">
+          {/* Quick CTA to Planner */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              setActiveNavTab('quick-plan');
+            }}
+            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 hover:bg-[#E5C378]/25 border border-[#E5C378]/30 text-[#F5E2B3] text-xs font-bold transition-all shadow-sm cursor-pointer select-none"
+          >
+            <span>{language === 'ar' ? 'صانع الجداول ✦' : 'Plan Trip ✦'}</span>
+          </button>
+
           {/* Theme Toggle */}
           <button
             type="button"

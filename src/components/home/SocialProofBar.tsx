@@ -42,9 +42,9 @@ export const SocialProofBar: React.FC = () => {
   };
 
   return (
-    <div className="card-surface p-4 sm:p-6 border border-[var(--border-subtle)] space-y-5 select-none text-start">
+    <div className="rounded-3xl p-5 sm:p-7 bg-[#0E131A]/70 backdrop-blur-xl border border-white/[0.07] shadow-[0_16px_40px_rgba(0,0,0,0.5)] space-y-6 select-none text-start">
       {/* 1. LIVE ACTIVE METRICS STRIP */}
-      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-[var(--border-subtle)] pb-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-white/[0.07] pb-5">
         {/* Live Active Travelers */}
         <div className="flex items-center gap-2">
           <span className="relative flex h-2.5 w-2.5">
@@ -86,13 +86,13 @@ export const SocialProofBar: React.FC = () => {
         {TESTIMONIALS.slice(0, 3).map((t) => (
           <div
             key={t.id}
-            className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-[var(--border-gold)] transition-colors duration-200 space-y-3"
+            className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none p-5 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-[#E5C378]/30 transition-all duration-300 space-y-3.5"
           >
             {/* Reviewer Header */}
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2.5">
                 {/* Monogram Initial Avatar */}
-                <div className="w-9 h-9 rounded-xl bg-[var(--accent-gold-soft)] border border-[var(--border-gold)] text-[var(--text-gold)] font-bold text-xs flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-[#E5C378]/15 border border-[#E5C378]/30 text-[#F5E2B3] font-bold text-xs flex items-center justify-center shrink-0">
                   {getMonogram(language === 'ar' ? t.nameAr : t.nameEn)}
                 </div>
                 <div>

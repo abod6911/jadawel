@@ -221,7 +221,7 @@ export const JeddahRouteStudio: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full rounded-[2.5rem] bg-[#0E1118]/85 border border-[#E5C378]/30 shadow-[0_24px_70px_rgba(0,0,0,0.9)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
+    <section className="relative w-full rounded-[2.5rem] bg-[#0A0D12]/90 backdrop-blur-2xl border border-white/[0.08] shadow-[0_24px_70px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
       {/* Animated Traveling Border Laser Beam */}
       <BorderBeam size={360} duration={14} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
 
@@ -234,9 +234,9 @@ export const JeddahRouteStudio: React.FC = () => {
       {/* 1. SECTION HEADER WITH LUXURY EYEBROW */}
       <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4">
         <div className="space-y-2 text-start">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/40 text-[#E5C378] text-xs font-black shadow-[0_0_15px_rgba(229,195,120,0.25)]">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#E5C378] text-xs font-semibold shadow-sm">
             <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
-            <span>{language === 'ar' ? 'استوديو مسارات جدة الذكية 3D' : 'Jeddah 3D Route Studio'}</span>
+            <span>{language === 'ar' ? 'استوديو مسارات جدة الذكية' : 'Jeddah Route Studio'}</span>
           </div>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
             {language === 'ar' ? 'خرائط ومسارات طلعتك المعتمدة' : 'Curated Geographic Outing Tracks'}

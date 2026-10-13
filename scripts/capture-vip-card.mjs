@@ -56,19 +56,17 @@ server.listen(3699, async () => {
     await mobilePage.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
     await mobilePage.waitForTimeout(2000);
 
-    const waveRibbon = mobilePage.locator('section[aria-label="Red Sea Animated Ribbon"]');
-    if (await waveRibbon.count() > 0) {
-      await waveRibbon.scrollIntoViewIfNeeded();
-      await mobilePage.waitForTimeout(1000);
-      await mobilePage.screenshot({ path: 'scripts/mobile-wave-ribbon.png' });
-      console.log('Captured mobile wave ribbon');
-    }
+    await mobilePage.screenshot({ path: 'scripts/new-mobile-hero.png' });
+    console.log('Captured mobile hero');
 
     // 2. Desktop Capture
     const desktopContext = await browser.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-SA' });
     const desktopPage = await desktopContext.newPage();
     await desktopPage.goto('http://localhost:3699/jadawel/', { waitUntil: 'load', timeout: 15000 });
     await desktopPage.waitForTimeout(2000);
+
+    await desktopPage.screenshot({ path: 'scripts/new-desktop-hero.png' });
+    console.log('Captured desktop hero');
 
   } catch (err) {
     console.error('Error during capture:', err);

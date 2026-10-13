@@ -41,7 +41,7 @@ html[data-theme='dark'],
   /* 5. Shadows */
   --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55);
   --shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.70);
-  --shadow-gold-glow: 0 0 24px rgba(229, 195, 120, 0.35);
+  --shadow-gold-glow: 0 8px 24px rgba(229, 195, 120, 0.15);
 
   /* 6. Blur Overlays (Header & Dock Only) */
   --header-glass-bg: rgba(11, 14, 20, 0.78);

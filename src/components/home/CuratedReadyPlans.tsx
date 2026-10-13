@@ -167,7 +167,7 @@ export const CuratedReadyPlans: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleLoadPlan(plan.id)}
-                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:brightness-110 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_0_20px_rgba(229,195,120,0.4)] active:scale-[0.98]"
+                    className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_20px_rgba(223,159,61,0.25)] active:scale-[0.98]"
                   >
                     <span>{language === 'ar' ? 'تحميل هذا الجدول' : 'Load This Plan'}</span>
                     {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}

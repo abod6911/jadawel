@@ -83,7 +83,7 @@ const BentoTiltCard: React.FC<BentoTiltCardProps> = ({
         }`,
         transition: tilt.isHovered ? 'transform 0.08s ease-out' : 'transform 0.5s ease-out',
       }}
-      className={`relative group ${colSpanClass} ${minHeightClass} rounded-[2rem] overflow-hidden border border-white/10 ${borderColorHoverClass} transition-colors duration-300 cursor-pointer shadow-[0_20px_50px_rgba(0,0,0,0.85)] select-none`}
+      className={`relative group ${colSpanClass} ${minHeightClass} rounded-3xl overflow-hidden border border-white/[0.08] hover:border-white/20 transition-all duration-500 cursor-pointer shadow-[0_16px_40px_rgba(0,0,0,0.6)] select-none`}
     >
       {hasBorderBeam && (
         <BorderBeam size={340} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
@@ -158,7 +158,7 @@ export const BentoMoodGrid: React.FC = () => {
       {/* Section Header */}
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-3">
         <div className="space-y-1.5">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/35 text-[#E5C378] text-xs font-black shadow-[0_0_15px_rgba(229,195,120,0.25)]">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#E5C378] text-xs font-semibold shadow-sm">
             <Compass className="w-3.5 h-3.5" />
             <span>{language === 'ar' ? 'مود اليوم وش جوك؟' : 'What is your vibe today?'}</span>
           </div>
