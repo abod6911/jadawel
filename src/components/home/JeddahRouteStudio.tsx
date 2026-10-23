@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Compass,
@@ -154,7 +154,11 @@ export const JeddahRouteStudio: React.FC = () => {
   const [activeRouteId, setActiveRouteId] = useState<string>(STUDIO_ROUTES[0].id);
   const [selectedStopIdx, setSelectedStopIdx] = useState<number>(0);
   const [hoveredStopIdx, setHoveredStopIdx] = useState<number | null>(null);
-  const [mobileStudioView, setMobileStudioView] = useState<'stations' | 'map'>('stations');
+
+  // References for mobile horizontal carousel
+  const carouselRef = useRef<HTMLDivElement>(null);
+  const stopCardRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const isProgrammaticScroll = useRef<boolean>(false);
 
   const loadCuratedPlan = useItineraryStore((state) => state.loadCuratedPlan);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
@@ -186,6 +190,48 @@ export const JeddahRouteStudio: React.FC = () => {
     });
     return list;
   }, [activeRoute]);
+
+  // Scroll active mobile stop card smoothly into view
+  const scrollToStopCard = useCallback((idx: number) => {
+    isProgrammaticScroll.current = true;
+    const target = stopCardRefs.current[idx];
+    if (target) {
+      target.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+    setTimeout(() => {
+      isProgrammaticScroll.current = false;
+    }, 500);
+  }, []);
+
+  // Listen to mobile carousel horizontal scroll to dynamically track active stop
+  const handleCarouselScroll = useCallback(() => {
+    if (!carouselRef.current || isProgrammaticScroll.current) return;
+    const container = carouselRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const containerCenter = containerRect.left + containerRect.width / 2;
+
+    let closestIdx = 0;
+    let minDiff = Infinity;
+
+    stopCardRefs.current.forEach((el, idx) => {
+      if (!el) return;
+      const cardRect = el.getBoundingClientRect();
+      const cardCenter = cardRect.left + cardRect.width / 2;
+      const diff = Math.abs(cardCenter - containerCenter);
+      if (diff < minDiff) {
+        minDiff = diff;
+        closestIdx = idx;
+      }
+    });
+
+    if (closestIdx !== selectedStopIdx) {
+      setSelectedStopIdx(closestIdx);
+    }
+  }, [selectedStopIdx]);
 
   // Generate Google Maps Multi-Stop directions link
   const generateGoogleMapsMultiStopUrl = () => {
@@ -220,7 +266,7 @@ export const JeddahRouteStudio: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full rounded-[2.5rem] bg-[#0A0C10]/95 backdrop-blur-2xl border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.85)] p-5 sm:p-8 lg:p-10 space-y-8 overflow-hidden">
+    <section className="relative w-full rounded-[28px] lg:rounded-[2.5rem] bg-[#16181D]/75 lg:bg-[#0A0C10]/95 backdrop-blur-2xl saturate-150 lg:saturate-100 border border-white/[0.12] lg:border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.45)] lg:shadow-[0_24px_70px_rgba(0,0,0,0.85)] p-4 sm:p-6 lg:p-10 space-y-5 lg:space-y-8 overflow-hidden overflow-x-hidden">
       {/* Animated Traveling Border Laser Beam */}
       <BorderBeam size={360} duration={14} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
 
@@ -231,26 +277,26 @@ export const JeddahRouteStudio: React.FC = () => {
       <div className="absolute -bottom-32 -left-32 w-96 h-96 rounded-full bg-gradient-to-tr from-[#D4AF37]/10 via-transparent to-transparent blur-3xl pointer-events-none" />
 
       {/* 1. SECTION HEADER: Right (Title & Eyebrow) / Left (Google Maps Multi-Stop Action) */}
-      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-5">
-        <div className="space-y-2 text-start">
+      <div className="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-4 sm:gap-5">
+        <div className="space-y-1.5 sm:space-y-2 text-start">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-black shadow-sm">
             <Compass className="w-3.5 h-3.5 text-amber-400" />
             <span>{language === 'ar' ? 'استوديو مسارات جدة الذكية' : 'Jeddah Route Studio'}</span>
           </div>
 
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-white">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold lg:font-black text-white tracking-tight leading-snug">
             {language === 'ar' ? 'خرائط ومسارات طلعتك المعتمدة' : 'Curated Geographic Outing Tracks'}
           </h2>
 
-          <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-2xl leading-relaxed">
+          <p className="hidden lg:block text-xs sm:text-sm text-slate-300 font-medium max-w-2xl leading-relaxed">
             {language === 'ar'
               ? 'تصفح مسارات جدة الجغرافية المحسوبة بالمتر والدقيقة، مع الربط المباشر بخرائط جوجل متعددة المحطات ومحاكاة الميزانية.'
               : 'Explore verified geographic itineraries optimized for traffic flow with multi-stop Google Maps integration.'}
           </p>
         </div>
 
-        {/* Global Multi-Stop Navigation Shortcut */}
-        <div className="flex items-center gap-3 shrink-0 self-start md:self-auto">
+        {/* Global Multi-Stop Navigation Shortcut (Desktop only in header, mobile has native FAB on map) */}
+        <div className="hidden lg:flex items-center gap-3 shrink-0 self-start md:self-auto">
           <MagneticButton distance={0.25}>
             <a
               href={generateGoogleMapsMultiStopUrl()}
@@ -267,8 +313,8 @@ export const JeddahRouteStudio: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. ROUTE SELECTOR TABS (Apple Segmented Glass Rail) */}
-      <div className="relative z-10 flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none">
+      {/* 2. ROUTE SELECTOR TABS (Apple Wallet Horizontal Scroller) */}
+      <div className="relative z-10 flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-none no-scrollbar snap-x snap-mandatory px-1 -mx-1 lg:snap-none lg:px-0 lg:mx-0">
         {STUDIO_ROUTES.map((route) => {
           const isActive = route.id === activeRouteId;
           return (
@@ -280,8 +326,9 @@ export const JeddahRouteStudio: React.FC = () => {
                 setActiveRouteId(route.id);
                 setSelectedStopIdx(0);
                 setHoveredStopIdx(null);
+                scrollToStopCard(0);
               }}
-              className={`relative px-4 sm:px-5 py-3.5 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-3 shrink-0 cursor-pointer select-none border text-start ${
+              className={`relative min-w-[260px] lg:min-w-0 snap-center rounded-[22px] lg:rounded-2xl p-3.5 sm:p-4 lg:px-5 lg:py-3.5 text-xs sm:text-sm font-black transition-all flex items-center gap-3 shrink-0 cursor-pointer select-none border text-start active:scale-[0.97] duration-150 ${
                 isActive
                   ? 'border-amber-500/80 bg-gradient-to-b from-amber-500/15 via-[#161B26] to-[#0E121A] text-white shadow-[0_0_25px_-5px_rgba(245,158,11,0.3)] ring-1 ring-amber-500/40'
                   : 'border-white/10 bg-[#12151C]/80 text-slate-300 hover:text-white hover:bg-[#181D26] hover:border-white/20'
@@ -290,8 +337,8 @@ export const JeddahRouteStudio: React.FC = () => {
               {isActive && (
                 <motion.div
                   layoutId="activeRouteStudioIndicator"
-                  className="absolute inset-0 rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-amber-600/10 -z-10"
-                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                  className="absolute inset-0 rounded-[22px] lg:rounded-2xl bg-gradient-to-r from-amber-500/20 via-yellow-500/15 to-amber-600/10 -z-10"
+                  transition={{ type: 'spring', stiffness: 320, damping: 28 }}
                 />
               )}
 
@@ -320,49 +367,205 @@ export const JeddahRouteStudio: React.FC = () => {
         })}
       </div>
 
-      {/* Mobile Segmented Toggle: Stations vs Map */}
-      <div className="flex lg:hidden items-center justify-center p-1 bg-[#12151C] rounded-2xl border border-white/10 max-w-xs mx-auto w-full">
-        <button
-          type="button"
-          onClick={() => {
-            soundEngine.playClick();
-            setMobileStudioView('stations');
-          }}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
-            mobileStudioView === 'stations'
-              ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md font-black'
-              : 'text-slate-400 hover:text-white'
-          }`}
+      {/* 3. MOBILE ARCHITECTURE (< 1024px): Apple Maps + Horizontal Snap Carousel */}
+      <div className="flex flex-col lg:hidden space-y-4 relative z-10">
+        
+        {/* A. Mobile Apple Maps Viewport (h-[420px] sm:h-[460px] with Floating Actions) */}
+        <div className="relative w-full h-[420px] sm:h-[460px] rounded-[28px] overflow-hidden border border-[#D4AF37]/35 shadow-[0_8px_32px_rgba(0,0,0,0.5)] bg-[#06090F]">
+          <BorderBeam size={280} duration={10} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
+          <RouteMap
+            stops={stops}
+            className="w-full h-full min-h-[360px]"
+            showPolyline={true}
+            activeStopIdx={selectedStopIdx}
+            hoveredStopIdx={hoveredStopIdx}
+            onSelectStop={(idx) => {
+              setSelectedStopIdx(idx);
+              scrollToStopCard(idx);
+            }}
+            onHoverStop={(idx) => setHoveredStopIdx(idx)}
+            routeBadge={language === 'ar' ? activeRoute.badgeAr : activeRoute.badgeEn}
+          />
+        </div>
+
+        {/* B. iOS Summary Pill Bar: Single Unified Glass Capsule */}
+        <div className="w-full bg-[#16181D]/75 backdrop-blur-2xl saturate-150 border border-white/[0.12] rounded-[20px] py-2.5 px-3 sm:px-4 flex justify-between items-center divide-x divide-x-reverse divide-white/10 shadow-[0_8px_24px_rgba(0,0,0,0.35)] select-none">
+          {/* Stops Count */}
+          <div className="flex-1 text-center px-1">
+            <span className="text-[10px] text-slate-400 block font-medium">
+              {language === 'ar' ? 'المحطات' : 'Stops'}
+            </span>
+            <span className="text-xs sm:text-sm font-black text-white flex items-center justify-center gap-1 mt-0.5">
+              <MapPin className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>{stops.length} {language === 'ar' ? 'محطات' : 'stops'}</span>
+            </span>
+          </div>
+
+          {/* Duration */}
+          <div className="flex-1 text-center px-1">
+            <span className="text-[10px] text-slate-400 block font-medium">
+              {language === 'ar' ? 'المدة' : 'Duration'}
+            </span>
+            <span className="text-xs sm:text-sm font-black text-amber-300 flex items-center justify-center gap-1 mt-0.5">
+              <Clock className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+              <span>{language === 'ar' ? activeRoute.totalDurationAr : activeRoute.totalDurationEn}</span>
+            </span>
+          </div>
+
+          {/* Budget */}
+          <div className="flex-1 text-center px-1">
+            <span className="text-[10px] text-slate-400 block font-medium">
+              {language === 'ar' ? 'الميزانية' : 'Budget'}
+            </span>
+            <span className="text-xs sm:text-sm font-black text-emerald-400 flex items-center justify-center gap-1 mt-0.5">
+              <Coins className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+              <span>~{activeRoute.estimatedCostSAR} {language === 'ar' ? 'ر.س' : 'SAR'}</span>
+            </span>
+          </div>
+        </div>
+
+        {/* C. Apple Maps Horizontal Snap Carousel (Stop Cards) */}
+        <div
+          ref={carouselRef}
+          onScroll={handleCarouselScroll}
+          className="flex overflow-x-auto snap-x snap-mandatory gap-3 pb-2 pt-1 scrollbar-none no-scrollbar px-4 -mx-4 scroll-smooth"
         >
-          <Navigation className="w-3.5 h-3.5" />
-          <span>{language === 'ar' ? 'المحطات والتفاصيل' : 'Stations'}</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            soundEngine.playClick();
-            setMobileStudioView('map');
-          }}
-          className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 cursor-pointer touch-manipulation ${
-            mobileStudioView === 'map'
-              ? 'bg-gradient-to-r from-amber-500 to-yellow-500 text-stone-950 shadow-md font-black'
-              : 'text-slate-400 hover:text-white'
-          }`}
-        >
-          <Compass className="w-3.5 h-3.5" />
-          <span>{language === 'ar' ? 'الخريطة التفاعلية' : 'Route Map'}</span>
-        </button>
+          {stops.map((stop, idx) => {
+            const p = stop.place;
+            const isSelected = selectedStopIdx === idx;
+            const cleanStationName = (language === 'ar' ? p.nameAr : p.nameEn)
+              .replace(/\s*\(.*?\)\s*/g, '')
+              .trim();
+
+            return (
+              <div
+                key={`${p.id}-${idx}`}
+                ref={(el) => {
+                  stopCardRefs.current[idx] = el;
+                }}
+                onClick={() => {
+                  soundEngine.playClick();
+                  setSelectedStopIdx(idx);
+                  scrollToStopCard(idx);
+                }}
+                className={`w-[88%] shrink-0 snap-center rounded-[22px] p-3.5 border transition-all cursor-pointer flex items-center gap-3.5 active:scale-[0.97] duration-150 select-none ${
+                  isSelected
+                    ? 'bg-[#181D2A] border-amber-500/70 shadow-[0_8px_24px_rgba(212,175,55,0.25)] ring-1 ring-amber-500/40'
+                    : 'bg-[#16181D]/75 backdrop-blur-2xl border-white/[0.10] hover:border-white/20'
+                }`}
+              >
+                {/* Thumbnail + Number Badge */}
+                <div className="relative shrink-0">
+                  <img
+                    src={p.imageUrl ? getAssetUrl(p.imageUrl) : getAssetUrl('/images/places/indigo-beach.jpg')}
+                    alt={cleanStationName}
+                    loading="lazy"
+                    decoding="async"
+                    className="w-[72px] h-[72px] rounded-[18px] object-cover border border-white/10"
+                  />
+                  <div className="absolute -top-1.5 -start-1.5 w-6 h-6 rounded-full bg-gradient-to-br from-amber-300 via-amber-400 to-amber-600 text-stone-950 font-black text-xs flex items-center justify-center shadow-[0_2px_8px_rgba(0,0,0,0.6)] border border-white/40">
+                    {idx + 1}
+                  </div>
+                </div>
+
+                {/* Station Info */}
+                <div className="flex-1 min-w-0 space-y-1 text-start">
+                  <div className="flex items-center justify-between gap-1">
+                    <span className="text-[11px] font-bold text-amber-300/90 truncate">
+                      {stop.timeSlot || `${language === 'ar' ? 'المحطة' : 'Stop'} ${idx + 1}`}
+                    </span>
+                    {p.averageCostSAR !== undefined && (
+                      <span className="text-[11px] text-emerald-400 font-black shrink-0">
+                        {p.averageCostSAR > 0 ? `${p.averageCostSAR} ر.س` : (language === 'ar' ? 'دخول مجاني' : 'Free')}
+                      </span>
+                    )}
+                  </div>
+
+                  <h4 className="text-sm font-black text-white leading-tight line-clamp-1">
+                    {cleanStationName}
+                  </h4>
+
+                  <div className="flex items-center gap-1.5 text-[11px] text-slate-400 font-medium pt-0.5">
+                    <span className="text-teal-300 font-bold truncate">
+                      {language === 'ar' ? p.districtNameAr : p.districtNameEn}
+                    </span>
+                    <span>•</span>
+                    <span className="text-amber-300/80 font-bold shrink-0">
+                      {p.dwellTimeMinutes || p.durationMinutes || 60} {language === 'ar' ? 'دقيقة' : 'mins'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Single Stop Navigation Shortcut (Apple HIG 44x44px touch area) */}
+                <a
+                  href={
+                    p.googleMapsUrl ||
+                    `https://www.google.com/maps/search/?api=1&query=${p.coordinates?.lat},${p.coordinates?.lng}`
+                  }
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    soundEngine.playClick();
+                  }}
+                  className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-white/[0.06] hover:bg-amber-400 hover:text-stone-950 text-amber-400 border border-white/10 shrink-0 transition-all flex items-center justify-center active:scale-95 self-center"
+                  title={language === 'ar' ? 'فتح المحطة في Google Maps' : 'Open in Google Maps'}
+                  aria-label="Open stop in Google Maps"
+                >
+                  <ExternalLink className="w-4 h-4" />
+                </a>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Pagination Dots (Apple iOS Style) */}
+        <div className="flex items-center justify-center gap-2 pt-1 pb-1">
+          <span className="text-[11px] font-bold text-slate-400 ms-1">
+            {selectedStopIdx + 1} {language === 'ar' ? `من ${stops.length}` : `of ${stops.length}`}
+          </span>
+          <div className="flex items-center gap-1.5">
+            {stops.map((_, dotIdx) => (
+              <button
+                key={dotIdx}
+                type="button"
+                onClick={() => {
+                  setSelectedStopIdx(dotIdx);
+                  scrollToStopCard(dotIdx);
+                }}
+                className={`transition-all duration-300 rounded-full cursor-pointer ${
+                  selectedStopIdx === dotIdx
+                    ? 'w-6 h-1.5 bg-gradient-to-r from-amber-400 to-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.7)]'
+                    : 'w-1.5 h-1.5 bg-white/20 hover:bg-white/40'
+                }`}
+                aria-label={`Go to stop ${dotIdx + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* D. iOS Sticky Glass Action Dock */}
+        <div className="w-full pt-1">
+          <div className="relative group w-full">
+            <div className="absolute -inset-1 rounded-[20px] bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 opacity-60 blur-md group-hover:opacity-100 group-hover:blur-lg transition-all duration-300" />
+            <button
+              type="button"
+              onClick={handleApplyRoute}
+              className="relative w-full h-14 rounded-[20px] bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-stone-950 text-sm sm:text-base font-black shadow-[0_4px_24px_rgba(245,158,11,0.5),inset_0_1px_1px_rgba(255,255,255,0.4)] active:scale-95 transition-all flex items-center justify-center gap-2.5 cursor-pointer touch-manipulation"
+            >
+              <Sparkles className="w-4 h-4 text-stone-950 shrink-0" />
+              <span>{language === 'ar' ? 'اعتماد هذا المسار في خطتي' : 'Load This Route Into My Plan'}</span>
+            </button>
+          </div>
+        </div>
+
       </div>
 
-      {/* 3. DUAL-PANE ROUTE CANVAS & STATION DRAWER */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
+      {/* 4. DESKTOP ARCHITECTURE (lg:grid): 100% Preserved for Desktop Screens (>= 1024px) */}
+      <div className="hidden lg:grid relative z-10 grid-cols-12 gap-6 items-stretch">
         
         {/* PANE 1: Interactive Leaflet Route Map (7 Cols) */}
-        <div
-          className={`lg:col-span-7 ${
-            mobileStudioView === 'map' ? 'flex' : 'hidden lg:flex'
-          } flex-col rounded-3xl overflow-hidden border border-[#D4AF37]/35 shadow-2xl relative h-[380px] sm:h-[560px] min-h-[360px] bg-[#06090F]`}
-        >
+        <div className="lg:col-span-7 flex flex-col rounded-3xl overflow-hidden border border-[#D4AF37]/35 shadow-2xl relative h-[380px] sm:h-[560px] min-h-[360px] bg-[#06090F]">
           <BorderBeam size={240} duration={10} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
 
           <RouteMap
@@ -373,6 +576,7 @@ export const JeddahRouteStudio: React.FC = () => {
             hoveredStopIdx={hoveredStopIdx}
             onSelectStop={(idx) => setSelectedStopIdx(idx)}
             onHoverStop={(idx) => setHoveredStopIdx(idx)}
+            routeBadge={language === 'ar' ? activeRoute.badgeAr : activeRoute.badgeEn}
           />
 
           {/* Floating Route Summary Overlay at Map Bottom */}
@@ -399,11 +603,7 @@ export const JeddahRouteStudio: React.FC = () => {
         </div>
 
         {/* PANE 2: Stations Breakdown, Connected Timeline & 1-Click Load CTA (5 Cols) */}
-        <div
-          className={`lg:col-span-5 ${
-            mobileStudioView === 'stations' ? 'flex' : 'hidden lg:flex'
-          } flex-col rounded-3xl bg-[#12151C]/90 border border-white/10 p-4 sm:p-6 gap-4 shadow-xl`}
-        >
+        <div className="lg:col-span-5 flex flex-col rounded-3xl bg-[#12151C]/90 border border-white/10 p-4 sm:p-6 gap-4 shadow-xl">
           {/* Top Route Overview Card */}
           <div className="space-y-3 text-start shrink-0">
             <div className="flex items-center justify-between gap-2 flex-wrap">

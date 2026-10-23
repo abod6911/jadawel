@@ -25,6 +25,7 @@ export interface LeafletMapContentProps {
   hoveredStopIdx?: number | null;
   onSelectStop?: (idx: number) => void;
   onHoverStop?: (idx: number | null) => void;
+  routeBadge?: string;
 }
 
 type MapStyleKey = 'dark' | 'streets' | 'satellite';
@@ -276,12 +277,21 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   hoveredStopIdx,
   onSelectStop,
   onHoverStop,
+  routeBadge,
 }) => {
   const { language } = useLanguage();
   const focusedStopId = useItineraryStore((state) => state.focusedStopId);
   const [internalHoverIdx, setInternalHoverIdx] = useState<number | null>(null);
   const [mapStyle, setMapStyle] = useState<MapStyleKey>('dark');
   const [recenterCount, setRecenterCount] = useState<number>(0);
+
+  const cycleMapStyle = () => {
+    soundEngine.playClick();
+    const styleKeys: MapStyleKey[] = ['dark', 'streets', 'satellite'];
+    const currentIdx = styleKeys.indexOf(mapStyle);
+    const nextIdx = (currentIdx + 1) % styleKeys.length;
+    setMapStyle(styleKeys[nextIdx]);
+  };
 
   const effectiveHoverIdx = hoveredStopIdx !== undefined && hoveredStopIdx !== null ? hoveredStopIdx : internalHoverIdx;
 
@@ -324,16 +334,16 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   const currentTileConfig = MAP_TILES[mapStyle];
 
   return (
-    <div className="w-full h-full min-h-[440px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#06090F]">
+    <div className="w-full h-full min-h-[360px] sm:min-h-[440px] relative rounded-[28px] lg:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#06090F]">
       {/* VIGNETTE / INNER SHADOW OVERLAY: Blends map edges smoothly into deep dark background */}
-      <div className="pointer-events-none absolute inset-0 z-[380] shadow-[inset_0_0_55px_rgba(6,9,15,0.92)] rounded-[2rem] sm:rounded-[2.5rem]" />
+      <div className="pointer-events-none absolute inset-0 z-[380] shadow-[inset_0_0_55px_rgba(6,9,15,0.92)] rounded-[28px] lg:rounded-[2.5rem]" />
 
-      {/* UNIFIED COMPACT FLOATING HUD: Fits comfortably without clipping or overflowing */}
-      <div className="absolute top-2.5 sm:top-3.5 left-2.5 right-2.5 sm:left-3.5 sm:right-3.5 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
+      {/* 1. DESKTOP FLOATING HUD: 100% Preserved for Desktop Screens (>= 1024px) */}
+      <div className="hidden lg:flex absolute top-3.5 left-3.5 right-3.5 z-[400] flex-wrap items-center justify-between gap-2 pointer-events-none">
         
         {/* Right Capsule (RTL Start): Active Route Badge */}
         <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          <div className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-amber-500/40 shadow-[0_10px_28px_rgba(0,0,0,0.85)] text-white text-[11px] sm:text-xs font-bold flex items-center gap-2">
+          <div className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-amber-500/40 shadow-[0_10px_28px_rgba(0,0,0,0.85)] text-white text-xs font-bold flex items-center gap-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 ring-2 ring-emerald-400/40" />
@@ -351,7 +361,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
         {/* Left Capsule (RTL End): Compact Style Buttons + Recenter + Google Maps Action */}
         <div className="flex items-center gap-1.5 pointer-events-auto shrink-0 flex-wrap justify-end">
           {/* Style Pills */}
-          <div className="flex items-center p-0.5 sm:p-1 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-white/15 shadow-[0_10px_28px_rgba(0,0,0,0.85)] gap-0.5 sm:gap-1">
+          <div className="flex items-center p-1 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-white/15 shadow-[0_10px_28px_rgba(0,0,0,0.85)] gap-1">
             {(Object.keys(MAP_TILES) as MapStyleKey[]).map((key) => {
               const tile = MAP_TILES[key];
               const isSelected = mapStyle === key;
@@ -363,7 +373,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     soundEngine.playClick();
                     setMapStyle(key);
                   }}
-                  className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap ${
                     isSelected
                       ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-black shadow-sm'
                       : 'text-slate-300 hover:text-white hover:bg-white/10'
@@ -383,7 +393,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
               soundEngine.playClick();
               setRecenterCount((c) => c + 1);
             }}
-            className="p-1.5 sm:p-2 rounded-xl bg-[#0A0D14]/92 hover:bg-[#141A28] backdrop-blur-xl border border-white/15 hover:border-amber-400/50 text-amber-400 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] cursor-pointer flex items-center justify-center shrink-0"
+            className="p-2 rounded-xl bg-[#0A0D14]/92 hover:bg-[#141A28] backdrop-blur-xl border border-white/15 hover:border-amber-400/50 text-amber-400 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] cursor-pointer flex items-center justify-center shrink-0"
             title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
           >
             <Crosshair className="w-3.5 h-3.5" />
@@ -395,15 +405,76 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => soundEngine.playClick()}
-            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 hover:bg-[#0D241E] backdrop-blur-xl border border-emerald-400/50 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-[11px] sm:text-xs font-black shadow-[0_10px_28px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+            className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 hover:bg-[#0D241E] backdrop-blur-xl border border-emerald-400/50 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-xs font-black shadow-[0_10px_28px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
             title={language === 'ar' ? 'فتح المسار في خرائط جوجل' : 'Open in Google Maps'}
           >
             <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
             <span className="whitespace-nowrap">Google Maps</span>
-            <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 hidden sm:inline" />
+            <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 inline" />
           </a>
         </div>
 
+      </div>
+
+      {/* 2. MOBILE APPLE MAPS FLOATING ACTION HUD: Native iOS 18 Design (< 1024px) */}
+      <div className="flex lg:hidden absolute top-3 inset-x-3 z-[400] items-center justify-between pointer-events-none">
+        {/* Top Right (RTL Start): Small Glass Status Capsule */}
+        <div className="pointer-events-auto shrink-0">
+          <div className="px-3 py-2 rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.5)] text-white text-[11px] font-black flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 ring-2 ring-emerald-400/40" />
+            </span>
+            <span className="text-white font-bold whitespace-nowrap">
+              {validStops.length} {language === 'ar' ? 'محطات' : 'stops'}
+            </span>
+            <span className="text-white/30">•</span>
+            <span className="text-amber-300 font-black whitespace-nowrap">
+              {routeBadge || (language === 'ar' ? 'فاخر VIP' : 'VIP')}
+            </span>
+          </div>
+        </div>
+
+        {/* Top Left (RTL End): Apple Maps Circular Action Buttons (min 44x44px Touch Target) */}
+        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
+          {/* Circular Map Style Toggle Button */}
+          <button
+            type="button"
+            onClick={cycleMapStyle}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center text-base active:scale-95 transition-transform cursor-pointer"
+            title={language === 'ar' ? `نمط: ${currentTileConfig.nameAr}` : `Style: ${currentTileConfig.nameEn}`}
+            aria-label="Toggle map style"
+          >
+            <span className="select-none leading-none">{currentTileConfig.icon}</span>
+          </button>
+
+          {/* Circular Recenter Button */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              setRecenterCount((c) => c + 1);
+            }}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+            title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
+            aria-label="Recenter map"
+          >
+            <Crosshair className="w-4 h-4" />
+          </button>
+
+          {/* Circular Google Maps Shortcut */}
+          <a
+            href={generateGoogleMapsRouteUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => soundEngine.playClick()}
+            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-emerald-400/40 text-emerald-400 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+            title={language === 'ar' ? 'فتح المسار في Google Maps' : 'Open in Google Maps'}
+            aria-label="Open route in Google Maps"
+          >
+            <Navigation className="w-4 h-4" />
+          </a>
+        </div>
       </div>
 
       <MapContainer
@@ -412,8 +483,8 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
         zoom={zoom}
         scrollWheelZoom={false}
         zoomControl={false}
-        style={{ width: '100%', height: '100%', minHeight: '440px' }}
-        className={`w-full h-full min-h-[440px] z-10 ${mapStyle === 'dark' ? 'leaflet-map-dark-luxury' : ''}`}
+        style={{ width: '100%', height: '100%', minHeight: '360px' }}
+        className={`w-full h-full min-h-[360px] sm:min-h-[440px] z-10 ${mapStyle === 'dark' ? 'leaflet-map-dark-luxury' : ''}`}
       >
         {/* Free, Reliable TileLayer without ANY API key or watermark */}
         <TileLayer
