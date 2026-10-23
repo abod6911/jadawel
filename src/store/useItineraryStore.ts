@@ -472,8 +472,8 @@ export const useItineraryStore = create<ItineraryState>()(
       variants: {
         fastest: {
           id: 'fastest',
-          titleAr: '⚡ الأقرب والأسرع',
-          titleEn: '⚡ Shortest Transit',
+          titleAr: 'الأقرب والأسرع',
+          titleEn: 'Shortest Transit',
           taglineAr: 'خطة جاهزة سريعة',
           taglineEn: 'Fast curated plan',
           badgeAr: 'سريعة',
@@ -500,8 +500,8 @@ export const useItineraryStore = create<ItineraryState>()(
         },
         luxury: {
           id: 'luxury',
-          titleAr: '💎 النسخة الفخمة',
-          titleEn: '💎 Luxury Edition',
+          titleAr: 'النسخة الفخمة',
+          titleEn: 'Luxury Edition',
           taglineAr: 'ترقية فاخرة لنفس المسار',
           taglineEn: 'Luxury upgrade for this route',
           badgeAr: 'فخامة VIP',

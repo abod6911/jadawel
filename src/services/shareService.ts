@@ -142,9 +142,9 @@ export function reconstructPlanFromUrl(
     daysCount: 1,
     activeVariant: 'balanced',
     variants: {
-      fastest: { ...baseVariant, id: 'fastest', titleAr: '⚡ المسار السريع', titleEn: '⚡ Fast Route', badgeAr: 'سريعة', badgeEn: 'Fast', icon: 'Zap' },
+      fastest: { ...baseVariant, id: 'fastest', titleAr: 'المسار السريع', titleEn: 'Fast Route', badgeAr: 'سريعة', badgeEn: 'Fast', icon: 'Zap' },
       balanced: baseVariant,
-      luxury: { ...baseVariant, id: 'luxury', titleAr: '💎 المسار الفاخر VIP', titleEn: '💎 VIP Signature', badgeAr: 'VIP', badgeEn: 'VIP', icon: 'Crown' },
+      luxury: { ...baseVariant, id: 'luxury', titleAr: 'المسار الفاخر VIP', titleEn: 'VIP Signature', badgeAr: 'VIP', badgeEn: 'VIP', icon: 'Crown' },
     },
     stops,
     financials,

@@ -548,8 +548,8 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
 
   const fastestVariant: PlanVariant = {
     id: 'fastest',
-    titleAr: '⚡ الأقرب والأسرع',
-    titleEn: '⚡ Shortest Transit & Proximity',
+    titleAr: 'الأقرب والأسرع',
+    titleEn: 'Shortest Transit & Proximity',
     taglineAr: 'مسار متقارب جغرافياً يوفّر وقت المشاوير وزحام الطرق',
     taglineEn: 'Optimized to minimize driving time with tightly clustered venues',
     badgeAr: 'أقل وقت تنقل (~15 دقيقة)',
@@ -568,12 +568,12 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
 
   const balancedVariant: PlanVariant = {
     id: 'balanced',
-    titleAr: '⚖️ الخطة الموزونة',
-    titleEn: '⚖️ The Balanced Experience',
+    titleAr: 'الخطة الموزونة',
+    titleEn: 'The Balanced Experience',
     taglineAr: 'المزيج المثالي بين المشي، القهوة، وأجواء العشاء والغروب',
     taglineEn: 'The ideal mix of scenic strolls, specialty coffee, and signature dining',
-    badgeAr: 'الخيار الموصى به ⭐',
-    badgeEn: 'Recommended Choice ⭐',
+    badgeAr: 'الخيار الموصى به',
+    badgeEn: 'Recommended Choice',
     icon: 'Scale',
     stops: balancedStops,
     financials: balancedFinancials,
@@ -591,12 +591,12 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
 
   const freeVariant: PlanVariant = {
     id: 'free',
-    titleAr: '🆓 خطة الروقان المجانية (0 ر.س)',
-    titleEn: '🆓 100% Free Outing (0 SAR)',
+    titleAr: 'خطة الروقان المجانية',
+    titleEn: '100% Free Outing (0 SAR)',
     taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
     taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
-    badgeAr: 'مجانية 100% (0 ر.س) 🆓',
-    badgeEn: '100% Free (0 SAR) 🆓',
+    badgeAr: 'مجانية 100%',
+    badgeEn: '100% Free (0 SAR)',
     icon: 'Compass',
     stops: isFreePlanMode ? thirdStops : generateVariantStops('free', preferences, startCoords),
     financials: isFreePlanMode ? thirdFinancials : calculateFinancials(generateVariantStops('free', preferences, startCoords), 2),
@@ -606,8 +606,8 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
 
   const luxuryVariant: PlanVariant = {
     id: 'luxury',
-    titleAr: '💎 التجربة الفخمة VIP',
-    titleEn: '💎 VIP Luxury Signature',
+    titleAr: 'التجربة الفخمة VIP',
+    titleEn: 'VIP Luxury Signature',
     taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
     taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
     badgeAr: 'فخامة VIP',

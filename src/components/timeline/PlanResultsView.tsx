@@ -46,6 +46,15 @@ import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { soundEngine } from '@/utils/audioEngine';
 import { PlanVariant, ItineraryStop } from '@/types';
 
+const cleanEmoji = (text?: string): string => {
+  if (!text) return '';
+  return text
+    .replace(/[⚡⚖️💎⭐🆓]/g, '')
+    .replace(/[�-�][�-�]/g, '')
+    .replace(/[☀-➿]/g, '')
+    .trim();
+};
+
 export const PlanResultsView: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
@@ -273,7 +282,7 @@ export const PlanResultsView: React.FC = () => {
               >
                 <div className="flex items-center gap-1">
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#0A0D12]' : tab.color}`} />
-                  <span className="truncate max-w-[85px]">{language === 'ar' ? tab.title : tab.titleEn}</span>
+                  <span className="truncate max-w-[85px]">{cleanEmoji(language === 'ar' ? tab.title : tab.titleEn)}</span>
                 </div>
                 <div className={`text-[10px] flex items-center gap-1 font-mono ${isActive ? 'text-[#0A0D12]/90 font-black' : 'text-slate-400 font-medium'}`}>
                   <span dir="ltr">~{variantData?.financials?.totalPerPersonSAR ?? 0}</span>
@@ -308,11 +317,11 @@ export const PlanResultsView: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <Icon className={`w-4 h-4 sm:w-5 sm:h-5 ${isActive ? 'text-[#E5C378]' : tab.color}`} />
                     <h3 className="text-xs sm:text-sm font-black text-white">
-                      {language === 'ar' ? tab.title : tab.titleEn}
+                      {cleanEmoji(language === 'ar' ? tab.title : tab.titleEn)}
                     </h3>
                   </div>
                   <span className={`text-[9px] sm:text-[10px] px-2 py-0.5 rounded-full font-bold border ${isActive ? 'bg-[#E5C378]/20 text-[#F5E2B3] border-[#E5C378]/40' : 'bg-white/5 text-slate-400 border-white/10'}`}>
-                    {language === 'ar' ? tab.badge : tab.badgeEn}
+                    {cleanEmoji(language === 'ar' ? tab.badge : tab.badgeEn)}
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 font-medium pt-0.5 sm:pt-1">
