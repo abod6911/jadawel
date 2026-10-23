@@ -232,84 +232,158 @@ export const QuickPlanWizard: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#080B11]/92 backdrop-blur-xl"
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#06090F]/95 backdrop-blur-2xl"
           >
-            <div className="w-full max-w-md p-6 sm:p-8 rounded-3xl card-surface border border-[var(--border-gold)] text-center space-y-6 shadow-2xl relative overflow-hidden">
-              <RawashinPattern className="text-[var(--accent-gold)]" opacity={0.04} />
+            <div className="w-full max-w-md p-8 sm:p-10 rounded-3xl bg-[#0B111E]/90 border border-[#D4AF37]/40 text-center space-y-6 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.9)] relative overflow-hidden">
+              <RawashinPattern className="text-[#D4AF37]" opacity={0.06} />
 
-              <div className="relative w-20 h-20 mx-auto flex items-center justify-center">
-                <div className="absolute inset-0 rounded-full bg-[var(--accent-gold)]/20 animate-ping" />
-                <div className="w-16 h-16 rounded-full border-2 border-[var(--accent-gold)] border-t-transparent animate-spin flex items-center justify-center shadow-lg">
-                  <Sparkles className="w-7 h-7 text-[var(--accent-gold)]" />
+              {/* Ultra-Luxury Golden Compass & Radar Radar Animation */}
+              <div className="relative w-36 h-36 mx-auto flex items-center justify-center">
+                {/* Outer Glow Ring */}
+                <div className="absolute inset-0 rounded-full border border-[#D4AF37]/20 shadow-[0_0_30px_rgba(212,175,55,0.2)]" />
+                
+                {/* Secondary Concentric Dashed Ring */}
+                <div className="absolute inset-3 rounded-full border border-dashed border-[#D4AF37]/30 animate-[spin_20s_linear_infinite]" />
+
+                {/* Inner Ring */}
+                <div className="absolute inset-7 rounded-full border border-[#D4AF37]/40" />
+
+                {/* Radar Sweeping Beam */}
+                <div
+                  className="absolute inset-0 rounded-full animate-radar-sweep pointer-events-none"
+                  style={{
+                    background: 'conic-gradient(from 0deg, transparent 0deg, transparent 270deg, rgba(212, 175, 55, 0.08) 320deg, rgba(212, 175, 55, 0.45) 360deg)',
+                  }}
+                />
+
+                {/* Pulsing Concentric Waves */}
+                <div className="absolute inset-8 rounded-full bg-[#D4AF37]/15 animate-ping" />
+
+                {/* Center Glowing Compass Rose */}
+                <div className="relative z-10 w-14 h-14 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] p-[2px] shadow-[0_0_25px_rgba(212,175,55,0.6)] flex items-center justify-center">
+                  <div className="w-full h-full rounded-full bg-[#06090F] flex items-center justify-center">
+                    <Compass className="w-7 h-7 text-[#F5D07A] animate-[spin_12s_linear_infinite]" />
+                  </div>
                 </div>
+
+                {/* Cardinal Tick Points */}
+                <span className="absolute top-1 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-[#F5D07A]/70">N</span>
+                <span className="absolute bottom-1 left-1/2 -translate-x-1/2 text-[9px] font-mono font-bold text-[#F5D07A]/70">S</span>
+                <span className="absolute right-1 top-1/2 -translate-y-1/2 text-[9px] font-mono font-bold text-[#F5D07A]/70">E</span>
+                <span className="absolute left-1 top-1/2 -translate-y-1/2 text-[9px] font-mono font-bold text-[#F5D07A]/70">W</span>
               </div>
 
               <div className="space-y-2">
-                <h3 className="text-lg sm:text-xl font-bold text-white">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#F5D07A] text-[11px] font-bold">
+                  <Sparkles className="w-3.5 h-3.5 animate-pulse" />
+                  <span>{language === 'ar' ? 'ذكاء جداول الحجازي' : 'Jadawel AI Synthesis'}</span>
+                </div>
+                <h3 className="text-xl sm:text-2xl font-black text-white">
                   {language === 'ar' ? 'نرتّب لك الطلعة على أصولها..' : 'Crafting Your Tailored Outing..'}
                 </h3>
-                <p className="text-xs sm:text-sm text-[var(--accent-gold)] font-medium transition-all duration-300 min-h-[40px] flex items-center justify-center">
+                <p className="text-xs sm:text-sm text-[#F5D07A] font-medium transition-all duration-300 min-h-[44px] flex items-center justify-center max-w-sm mx-auto">
                   {language === 'ar' ? SYNTHESIS_STAGES[synthesisStageIndex].ar : SYNTHESIS_STAGES[synthesisStageIndex].en}
                 </p>
               </div>
 
               {/* Progress Track */}
-              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <motion.div
-                  className="h-full bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] rounded-full"
-                  initial={{ width: '15%' }}
-                  animate={{ width: `${(synthesisStageIndex + 1) * 33}%` }}
-                  transition={{ duration: 0.8, ease: 'easeInOut' }}
-                />
+              <div className="space-y-1.5">
+                <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden p-0.5 border border-white/10">
+                  <motion.div
+                    className="h-full bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] rounded-full shadow-[0_0_12px_rgba(212,175,55,0.7)]"
+                    initial={{ width: '20%' }}
+                    animate={{ width: `${(synthesisStageIndex + 1) * 33.3}%` }}
+                    transition={{ duration: 0.8, ease: 'easeInOut' }}
+                  />
+                </div>
+                <div className="flex justify-between text-[10px] text-slate-400 font-mono">
+                  <span>{language === 'ar' ? 'استكشاف الأماكن' : 'Venue Search'}</span>
+                  <span className="text-[#F5D07A] font-bold">{Math.round(((synthesisStageIndex + 1) / 3) * 100)}%</span>
+                  <span>{language === 'ar' ? 'اعتماد المسار' : 'Route Lock'}</span>
+                </div>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* MAIN WIZARD SHELL (Zero Heavy Backdrop Blur for Mobile Performance) */}
-      <div className="card-surface p-4 sm:p-8 md:p-10 relative overflow-hidden flex flex-col justify-between min-h-[520px] sm:min-h-[580px]">
+      {/* MAIN WIZARD SHELL */}
+      <div className="card-surface p-4 sm:p-8 md:p-10 relative overflow-hidden flex flex-col justify-between min-h-[540px] sm:min-h-[600px] border border-white/[0.08] rounded-3xl bg-[#0B111E]/75 backdrop-blur-xl shadow-2xl">
         {/* Subtle Rawasheen Accent in Background */}
-        <RawashinPattern className="text-[var(--accent-gold)]" opacity={0.03} />
+        <RawashinPattern className="text-[#D4AF37]" opacity={0.03} />
 
-        {/* 1. HEADER & 4-STEP CLEAR PROGRESS INDICATOR (1/4) */}
-        <div className="space-y-3 pb-5 border-b border-[var(--border-subtle)] relative z-10">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent-gold)] animate-pulse" />
-              <span className="text-xs sm:text-sm font-black text-[var(--text-gold)]">
-                {language === 'ar' ? `الخطوة ${currentStep} من 4` : `Step ${currentStep} of 4`}
-              </span>
+        {/* 1. HEADER & 4-STEP ILLUMINATED PROGRESS TRACK */}
+        <div className="space-y-5 pb-6 border-b border-white/[0.08] relative z-10">
+          {/* Interactive Stepper Track */}
+          <div className="relative px-2 sm:px-6">
+            {/* Connecting Track Line */}
+            <div className="absolute top-4 sm:top-5 inset-x-8 sm:inset-x-12 h-1 bg-white/10 -z-0 rounded-full overflow-hidden">
+              <motion.div
+                className="h-full bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] shadow-[0_0_10px_#D4AF37]"
+                initial={false}
+                animate={{ width: `${((currentStep - 1) / 3) * 100}%` }}
+                transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+              />
             </div>
-            <span className="text-xs font-mono font-bold text-slate-400">
-              {Math.round((currentStep / 4) * 100)}%
-            </span>
-          </div>
 
-          {/* 4-Segment Progress Bar */}
-          <div className="grid grid-cols-4 gap-2">
-            {[1, 2, 3, 4].map((stepIdx) => {
-              const isFilled = stepIdx <= currentStep;
-              const isCurrent = stepIdx === currentStep;
+            {/* Stepper Nodes */}
+            <div className="flex items-center justify-between relative z-10">
+              {WIZARD_STEPS.map((stepMeta) => {
+                const stepIdx = stepMeta.stepNumber;
+                const isCompleted = stepIdx < currentStep;
+                const isCurrent = stepIdx === currentStep;
+                const StepIcon = stepMeta.icon;
 
-              return (
-                <div
-                  key={stepIdx}
-                  onClick={() => goToStep(stepIdx)}
-                  className={`h-2 rounded-full cursor-pointer transition-all duration-300 ${
-                    isFilled
-                      ? 'bg-gradient-to-r from-[#DF9F3D] to-[#E5C378] shadow-[0_0_8px_rgba(229,195,120,0.4)]'
-                      : 'bg-white/10 hover:bg-white/20'
-                  } ${isCurrent ? 'ring-2 ring-[var(--accent-gold)]/40' : ''}`}
-                  title={`Step ${stepIdx}`}
-                />
-              );
-            })}
+                return (
+                  <button
+                    key={stepIdx}
+                    type="button"
+                    onClick={() => goToStep(stepIdx)}
+                    className="flex flex-col items-center gap-1.5 cursor-pointer group focus:outline-none"
+                  >
+                    <div
+                      className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm transition-all duration-300 relative ${
+                        isCompleted
+                          ? 'bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] shadow-[0_0_15px_rgba(212,175,55,0.4)]'
+                          : isCurrent
+                          ? 'bg-[#06090F] border-2 border-[#F5D07A] text-[#F5D07A] shadow-[0_0_20px_rgba(212,175,55,0.6)] ring-4 ring-[#D4AF37]/20 scale-110'
+                          : 'bg-[#101726] border border-white/15 text-slate-400 group-hover:border-white/30 group-hover:text-slate-200'
+                      }`}
+                    >
+                      {isCompleted ? (
+                        <Check className="w-4 h-4 stroke-[3]" />
+                      ) : (
+                        <StepIcon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isCurrent ? 'text-[#F5D07A]' : 'text-slate-400'}`} />
+                      )}
+
+                      {/* Active Node Pulse Ring */}
+                      {isCurrent && (
+                        <span className="absolute -inset-1 rounded-full border border-[#F5D07A]/60 animate-ping opacity-60 pointer-events-none" />
+                      )}
+                    </div>
+
+                    <span
+                      className={`text-[10px] sm:text-xs font-bold transition-colors hidden xs:block ${
+                        isCurrent
+                          ? 'text-[#F5D07A]'
+                          : isCompleted
+                          ? 'text-slate-300'
+                          : 'text-slate-500 group-hover:text-slate-400'
+                      }`}
+                    >
+                      {language === 'ar'
+                        ? stepIdx === 1 ? 'الانطلاق' : stepIdx === 2 ? 'الرفقة' : stepIdx === 3 ? 'الجو' : 'الميزانية'
+                        : stepIdx === 1 ? 'Start' : stepIdx === 2 ? 'Group' : stepIdx === 3 ? 'Vibe' : 'Budget'}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
           {/* Step Meta Headline & Description */}
-          <div className="text-center pt-2 sm:pt-4 space-y-1">
-            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
+          <div className="text-center pt-1 sm:pt-2 space-y-1">
+            <h2 className="text-xl sm:text-2xl md:text-3xl font-black text-white tracking-tight">
               {language === 'ar' ? currentStepMeta.titleAr : currentStepMeta.titleEn}
             </h2>
             <p className="text-xs sm:text-sm text-slate-300 max-w-lg mx-auto font-normal leading-relaxed">
@@ -332,7 +406,7 @@ export const QuickPlanWizard: React.FC = () => {
             >
               {/* STEP 1: STARTING DISTRICT */}
               {currentStep === 1 && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
                   {DISTRICT_OPTIONS.map((item) => {
                     const isSelected = wizardPreferences.startingDistrict === item.id;
                     const Icon = item.icon;
@@ -345,22 +419,33 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ startingDistrict: item.id });
                         }}
-                        className={`text-start p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
-                            ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
-                            : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
+                            ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
+                            : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--accent-gold)]' : 'text-slate-400'}`} />
+                          <div className="flex items-center gap-2.5">
+                            <div className={`p-2 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
                             <span className="text-xs sm:text-sm font-bold text-white">
                               {language === 'ar' ? item.nameAr : item.nameEn}
                             </span>
                           </div>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--accent-gold)] shrink-0" />}
+                          {isSelected && (
+                            <motion.div
+                              initial={{ scale: 0, rotate: -20 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                            >
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </motion.div>
+                          )}
                         </div>
-                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
+                        <p className="text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -371,7 +456,7 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 2: COMPANIONS */}
               {currentStep === 2 && (
-                <div className="grid grid-cols-2 sm:grid-cols-2 gap-2.5 sm:gap-3.5 max-w-2xl mx-auto">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 max-w-2xl mx-auto">
                   {COMPANION_OPTIONS.map((item) => {
                     const isSelected = wizardPreferences.companions === item.id;
                     const Icon = item.icon;
@@ -384,24 +469,33 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ companions: item.id });
                         }}
-                        className={`text-start p-3 sm:p-5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2.5 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation relative overflow-hidden group ${
                           isSelected
-                            ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
-                            : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
+                            ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
+                            : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <div className={`p-1.5 sm:p-2 rounded-lg sm:rounded-xl ${isSelected ? 'bg-[var(--accent-gold)] text-[#090C12]' : 'bg-white/5 text-slate-300'}`}>
-                              <Icon className="w-4 h-4 sm:w-5 sm:h-5" />
+                          <div className="flex items-center gap-3">
+                            <div className={`p-2.5 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                              <Icon className="w-5 h-5" />
                             </div>
-                            <span className="text-xs sm:text-base font-bold text-white">
+                            <span className="text-sm sm:text-base font-bold text-white">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--accent-gold)] shrink-0" />}
+                          {isSelected && (
+                            <motion.div
+                              initial={{ scale: 0, rotate: -20 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                            >
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </motion.div>
+                          )}
                         </div>
-                        <p className="text-[10px] sm:text-xs text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
+                        <p className="text-xs text-slate-400 font-normal leading-relaxed">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -412,7 +506,7 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 3: VIBE & MOOD */}
               {currentStep === 3 && (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
                   {VIBE_OPTIONS.map((item) => {
                     const isSelected = (wizardPreferences.vibe as any) === item.id;
                     const Icon = item.icon;
@@ -425,22 +519,33 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ vibe: item.id as any });
                         }}
-                        className={`text-start p-3 sm:p-4 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1.5 sm:gap-2 touch-manipulation active:scale-[0.98] ${
+                        className={`text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
-                            ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_18px_rgba(229,195,120,0.25)]'
-                            : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
+                            ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
+                            : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
                         <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <Icon className={`w-4 h-4 ${isSelected ? 'text-[var(--accent-gold)]' : 'text-slate-400'}`} />
+                          <div className="flex items-center gap-2.5">
+                            <div className={`p-2 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                              <Icon className="w-4 h-4" />
+                            </div>
                             <span className="text-xs sm:text-sm font-bold text-white">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
-                          {isSelected && <CheckCircle2 className="w-4 h-4 text-[var(--accent-gold)] shrink-0" />}
+                          {isSelected && (
+                            <motion.div
+                              initial={{ scale: 0, rotate: -20 }}
+                              animate={{ scale: 1, rotate: 0 }}
+                              transition={{ type: 'spring', stiffness: 500, damping: 25 }}
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                            >
+                              <Check className="w-3 h-3 stroke-[3]" />
+                            </motion.div>
+                          )}
                         </div>
-                        <p className="text-[10px] sm:text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
+                        <p className="text-[11px] text-slate-400 font-normal leading-relaxed line-clamp-1 sm:line-clamp-none">
                           {language === 'ar' ? item.descAr : item.descEn}
                         </p>
                       </button>
@@ -451,17 +556,16 @@ export const QuickPlanWizard: React.FC = () => {
 
               {/* STEP 4: BUDGET & DURATION COMBINED */}
               {currentStep === 4 && (
-                <div className="space-y-5 sm:space-y-6">
+                <div className="space-y-6">
                   {/* Budget Rail */}
-                  <div className="space-y-2 sm:space-y-2.5">
-                    <span className="text-xs font-bold text-[var(--accent-gold)] flex items-center gap-1.5 px-1">
+                  <div className="space-y-3">
+                    <span className="text-xs font-bold text-[#F5D07A] flex items-center gap-1.5 px-1">
                       <Coins className="w-4 h-4" />
                       <span>{language === 'ar' ? 'الميزانية التقديرية للشخص:' : 'Budget Tier per Person:'}</span>
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                       {BUDGET_OPTIONS.map((item) => {
                         const isSelected = wizardPreferences.budgetTier === (item.id === 'premium' ? 'luxury' : item.id);
-                        const Icon = item.icon;
 
                         return (
                           <button
@@ -471,19 +575,27 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ budgetTier: item.id === 'premium' ? ('luxury' as any) : item.id });
                             }}
-                            className={`text-start p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
+                            className={`text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
-                                ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_15px_rgba(229,195,120,0.25)]'
-                                : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
+                                ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
+                                : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-xs sm:text-sm font-bold text-white">
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0" />}
+                              {isSelected && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0"
+                                >
+                                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                </motion.div>
+                              )}
                             </div>
-                            <span className="text-[10px] text-slate-400 font-medium">
+                            <span className="text-[11px] text-[#F5D07A]/80 font-medium">
                               {language === 'ar' ? item.priceAr : item.priceEn}
                             </span>
                           </button>
@@ -493,15 +605,14 @@ export const QuickPlanWizard: React.FC = () => {
                   </div>
 
                   {/* Duration Rail */}
-                  <div className="space-y-2 sm:space-y-2.5 pt-2 border-t border-[var(--border-subtle)]">
-                    <span className="text-xs font-bold text-[var(--accent-gold)] flex items-center gap-1.5 px-1">
+                  <div className="space-y-3 pt-3 border-t border-white/[0.08]">
+                    <span className="text-xs font-bold text-[#F5D07A] flex items-center gap-1.5 px-1">
                       <Clock className="w-4 h-4" />
                       <span>{language === 'ar' ? 'المدة المتاحة للطلعة:' : 'Available Outing Duration:'}</span>
                     </span>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-2.5">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                       {DURATION_OPTIONS.map((item) => {
                         const isSelected = wizardPreferences.duration === item.id;
-                        const Icon = item.icon;
 
                         return (
                           <button
@@ -511,19 +622,27 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ duration: item.id });
                             }}
-                            className={`text-start p-2.5 sm:p-3.5 rounded-xl sm:rounded-2xl border transition-all duration-200 cursor-pointer flex flex-col justify-between gap-1 touch-manipulation active:scale-[0.98] ${
+                            className={`text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
-                                ? 'bg-[var(--accent-gold-soft)] border-[var(--border-gold-active)] ring-2 ring-[var(--accent-gold)]/30 shadow-[0_0_15px_rgba(229,195,120,0.25)]'
-                                : 'bg-[var(--bg-surface-card)] border-[var(--border-subtle)] hover:border-[var(--border-gold)] hover:bg-[var(--bg-surface-elevated)]'
+                                ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
+                                : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
                             }`}
                           >
                             <div className="flex items-center justify-between">
                               <span className="text-xs sm:text-sm font-bold text-white">
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
-                              {isSelected && <Check className="w-3.5 h-3.5 text-[var(--accent-gold)] shrink-0" />}
+                              {isSelected && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0"
+                                >
+                                  <Check className="w-2.5 h-2.5 stroke-[3]" />
+                                </motion.div>
+                              )}
                             </div>
-                            <span className="text-[10px] text-slate-400 font-medium">
+                            <span className="text-[11px] text-slate-400 font-medium">
                               {language === 'ar' ? item.subAr : item.subEn}
                             </span>
                           </button>
@@ -537,16 +656,16 @@ export const QuickPlanWizard: React.FC = () => {
           </AnimatePresence>
         </div>
 
-        {/* 3. DESKTOP / INLINE CONTROLS BAR */}
-        <div className="pt-5 border-t border-[var(--border-subtle)] hidden md:flex items-center justify-between gap-3 relative z-10">
+        {/* 3. RESPONSIVE CONTROLS BAR (Mobile & Desktop) */}
+        <div className="pt-6 border-t border-white/[0.08] flex items-center justify-between gap-3 relative z-10">
           <button
             type="button"
             onClick={prevStep}
             disabled={currentStep === 1}
-            className={`min-h-[46px] px-5 py-2.5 rounded-xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
+            className={`min-h-[46px] px-4 sm:px-6 py-2.5 rounded-2xl text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer ${
               currentStep === 1
-                ? 'opacity-25 cursor-not-allowed text-slate-600'
-                : 'bg-white/5 hover:bg-white/10 text-slate-300 hover:text-white border border-white/10'
+                ? 'opacity-20 cursor-not-allowed text-slate-600'
+                : 'bg-white/5 hover:bg-white/10 text-slate-200 hover:text-white border border-white/10'
             }`}
           >
             {isRTL ? <ArrowRight className="w-4 h-4" /> : <ArrowLeft className="w-4 h-4" />}
@@ -554,8 +673,8 @@ export const QuickPlanWizard: React.FC = () => {
           </button>
 
           {/* Desktop Summary Pill */}
-          <div className="flex items-center gap-2 text-xs text-slate-400 font-medium">
-            <span className="text-[var(--accent-gold)] font-bold">{activeDistrictName}</span>
+          <div className="hidden lg:flex items-center gap-2 text-xs text-slate-400 font-medium px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/5">
+            <span className="text-[#F5D07A] font-bold">{activeDistrictName}</span>
             <span>•</span>
             <span>{activeCompanionLabel}</span>
             <span>•</span>
@@ -567,7 +686,7 @@ export const QuickPlanWizard: React.FC = () => {
           <button
             type="button"
             onClick={nextStep}
-            className="min-h-[46px] px-7 py-3 rounded-xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#080B11] text-xs sm:text-sm font-black flex items-center gap-2 shadow-[0_0_20px_rgba(229,195,120,0.4)] hover:brightness-105 active:scale-95 transition-all cursor-pointer"
+            className="min-h-[46px] px-6 sm:px-8 py-3 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] text-xs sm:text-sm font-black flex items-center gap-2.5 shadow-[0_0_25px_rgba(212,175,55,0.4)] hover:brightness-110 active:scale-95 transition-all cursor-pointer"
           >
             <span>
               {currentStep === 4
@@ -578,7 +697,7 @@ export const QuickPlanWizard: React.FC = () => {
                 ? 'التالي'
                 : 'Next'}
             </span>
-            {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+            {isRTL ? <ArrowLeft className="w-4 h-4 stroke-[3]" /> : <ArrowRight className="w-4 h-4 stroke-[3]" />}
           </button>
         </div>
       </div>

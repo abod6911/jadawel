@@ -24,6 +24,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
+import { RawashinPattern } from '@/components/ui/RawashinPattern';
 import { DistrictId, CompanionType, BudgetTier, DurationOption, VibeType } from '@/types';
 
 // ==========================================
@@ -123,7 +124,87 @@ const VIBE_OPTIONS: { id: VibeType; labelAr: string; labelEn: string; icon: stri
 ];
 
 // ==========================================
-// 2. MAIN HERO SECTION (QUIET LUXURY ARCHITECTURE)
+// 2. SPOTLIGHT DESTINATION CARD
+// ==========================================
+
+const DestinationSpotlightCard: React.FC<{
+  dest: Destination;
+  onClick: () => void;
+  language: string;
+  isRTL: boolean;
+}> = ({ dest, onClick, language, isRTL }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+    const rect = cardRef.current.getBoundingClientRect();
+    setMousePos({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
+
+  return (
+    <div
+      ref={cardRef}
+      onClick={onClick}
+      onMouseMove={handleMouseMove}
+      className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none group relative h-64 sm:h-72 rounded-3xl overflow-hidden cursor-pointer border border-white/10 hover:border-[rgba(212,175,55,0.6)] transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.85)] hover:shadow-[0_24px_55px_rgba(0,0,0,0.95),0_0_30px_rgba(212,175,55,0.25)] select-none flex flex-col justify-between p-4.5 sm:p-5 touch-manipulation hover:-translate-y-1.5 active:scale-[0.98]"
+    >
+      {/* Radial Spotlight Hover Glow following cursor */}
+      <div
+        className="pointer-events-none absolute -inset-px rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10"
+        style={{
+          background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212, 175, 55, 0.22), transparent 70%)`,
+        }}
+      />
+
+      {/* Background Image with 600ms scale(1.07) */}
+      <img
+        src={dest.bgImage}
+        alt={dest.name}
+        className="absolute inset-0 w-full h-full object-cover brightness-[0.55] transition-transform duration-[600ms] ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-[1.07]"
+      />
+
+      {/* Ambient Dark Gradient */}
+      <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-[#06090F]/45 to-transparent z-[1]" />
+
+      {/* Top Badges Row */}
+      <div className="relative z-10 flex items-center justify-between gap-2">
+        <span className="px-3 py-1 rounded-full bg-black/75 backdrop-blur-md border border-white/15 text-[10px] font-bold text-[#F5D07A] shadow-sm">
+          {language === 'ar' ? dest.badge : dest.badgeEn}
+        </span>
+        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/65 backdrop-blur-md border border-white/10 text-[10px] text-[#F5D07A] font-black">
+          <span>★ 4.9</span>
+          <span className="text-white/40">•</span>
+          <span className="text-slate-300">{language === 'ar' ? 'مسار معتمد' : 'Verified'}</span>
+        </div>
+      </div>
+
+      {/* Bottom Content */}
+      <div className="relative z-10 space-y-1.5 text-start">
+        <div className="flex items-center gap-2 text-[10px] font-bold text-teal-300">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+          <span>{language === 'ar' ? '3 محطات • بدون زحمة' : '3 Stops • Optimal Flow'}</span>
+        </div>
+        <h4 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5D07A] transition-colors leading-snug">
+          {language === 'ar' ? dest.name : dest.nameEn}
+        </h4>
+        <p className="text-xs text-slate-300/85 font-normal line-clamp-1">
+          {language === 'ar' ? dest.tagline : dest.taglineEn}
+        </p>
+        <div className="pt-2 flex items-center gap-1.5 text-xs font-bold text-[#F5D07A] group-hover:translate-x-[-4px] transition-transform">
+          <span>{language === 'ar' ? 'تشغيل هذا المسار' : 'Launch Route'}</span>
+          {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ==========================================
+// 3. MAIN HERO SECTION (QUIET LUXURY ARCHITECTURE)
 // ==========================================
 
 export const HeroSection: React.FC = () => {
@@ -212,7 +293,7 @@ export const HeroSection: React.FC = () => {
   const selectedBudgetObj = BUDGET_OPTIONS.find((b) => b.id === budget) || BUDGET_OPTIONS[2];
 
   return (
-    <section className="relative w-full rounded-[2.5rem] overflow-hidden bg-[#0A0D12] border border-white/[0.07] shadow-[0_32px_90px_rgba(0,0,0,0.85)] select-none">
+    <section className="relative w-full rounded-[2.5rem] overflow-hidden bg-gradient-to-b from-[#06090F] via-[#090E17] to-[#0B111E] border border-white/[0.08] shadow-[0_32px_90px_rgba(0,0,0,0.85)] select-none">
       
       {/* ======================================================== */}
       {/* 1. ATMOSPHERIC CINEMA BACKDROP (MUTED SAPPHIRE NOIR)      */}
@@ -230,10 +311,15 @@ export const HeroSection: React.FC = () => {
           className="w-full h-full object-cover brightness-[0.38] contrast-[1.15] saturate-[0.85] transition-opacity duration-1000"
         />
 
+        {/* Subtle Rawashin Historical Motif Background with Parallax Feel */}
+        <div className="absolute inset-0 opacity-[0.045] pointer-events-none">
+          <RawashinPattern className="text-[#D4AF37]" opacity={0.045} />
+        </div>
+
         {/* Ambient Dark Gradient Layering */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0A0D12] via-[#0A0D12]/60 to-[#0A0D12]/30" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_50%_at_50%_0%,rgba(223,159,61,0.12),transparent_70%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#0A0D12] to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-[#06090F]/60 to-[#06090F]/30" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_50%_at_50%_0%,rgba(212,175,55,0.14),transparent_70%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#06090F] to-transparent" />
       </div>
 
       {/* ======================================================== */}
@@ -245,7 +331,7 @@ export const HeroSection: React.FC = () => {
         <div className="w-full max-w-4xl mx-auto text-center space-y-3.5 sm:space-y-6">
           
           {/* Eyebrow Capsule */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] border-t-white/20 backdrop-blur-md text-[#E5C378] text-xs font-semibold tracking-wide shadow-sm">
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] border-t-white/20 backdrop-blur-md text-[#F5D07A] text-xs font-semibold tracking-wide shadow-sm">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
@@ -258,10 +344,12 @@ export const HeroSection: React.FC = () => {
           </div>
 
           {/* Master Headline with Metallic Shimmer */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-black text-white tracking-tight leading-[1.18] max-w-4xl mx-auto drop-shadow-md">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-black tracking-tight leading-[1.18] max-w-4xl mx-auto drop-shadow-md">
             {language === 'ar' ? (
               <>
-                <span className="block">جدة.. كما لم تعشها من قبل</span>
+                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent">
+                  جدة.. كما لم تعشها من قبل
+                </span>
                 <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-sans">
                   <span className="text-slate-300">مسارك اليومي </span>
                   <span className="text-shimmer-champagne">بدقة استثنائية</span>
@@ -269,7 +357,9 @@ export const HeroSection: React.FC = () => {
               </>
             ) : (
               <>
-                <span className="block">Jeddah.. Curated Like Never Before</span>
+                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent">
+                  Jeddah.. Curated Like Never Before
+                </span>
                 <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold">
                   <span className="text-slate-300">Bespoke Itineraries </span>
                   <span className="text-shimmer-champagne">At Your Fingertips</span>
@@ -287,8 +377,8 @@ export const HeroSection: React.FC = () => {
 
           {/* Quiet Luxury Micro-Details & Trust Badges */}
           <div className="flex flex-wrap items-center justify-center gap-3 pt-1 text-[11px] sm:text-xs text-slate-400 font-medium">
-            <span className="flex items-center gap-1.5 text-[#E5C378]">
-              <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
+            <span className="flex items-center gap-1.5 text-[#F5D07A]">
+              <Sparkles className="w-3.5 h-3.5 text-[#F5D07A]" />
               <span>{language === 'ar' ? 'توليد فوري بـ 3 مسارات' : 'Instant 3-Track Curations'}</span>
             </span>
             <span className="text-white/20">•</span>
@@ -306,7 +396,7 @@ export const HeroSection: React.FC = () => {
         {/* ======================================================== */}
         {/* 3. THE FLOATING CONCIERGE SEARCH CONSOLE (LINEAR LUXURY) */}
         {/* ======================================================== */}
-        <div ref={consoleRef} className="w-full max-w-4xl mx-auto mt-6 sm:mt-14 relative z-30">
+        <div ref={consoleRef} className="w-full max-w-4xl mx-auto mt-6 sm:mt-14 relative z-[100]">
           {/* A. MOBILE-NATIVE TOUCH CONCIERGE CARD (<640px) */}
           <div className="sm:hidden w-full rounded-3xl bg-[#0E131A]/95 backdrop-blur-2xl border border-white/10 p-4 shadow-[0_16px_40px_rgba(0,0,0,0.85)] space-y-3.5 text-start">
             {/* Step 1: Horizontal Chip Scroll for District */}
@@ -460,11 +550,11 @@ export const HeroSection: React.FC = () => {
               <AnimatePresence>
                 {activePopover === 'district' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full mt-2 inset-x-0 sm:w-80 rounded-2xl bg-[#0F141C]/98 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.9)] p-2 z-50 space-y-1 max-h-72 overflow-y-auto scrollbar-thin"
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="dropdown-menu absolute top-full mt-2 inset-x-0 sm:w-80 rounded-2xl bg-[rgba(10,15,26,0.96)] backdrop-blur-[24px] border border-[#D4AF37]/35 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.85)] p-2.5 z-[9999] space-y-1.5 max-h-72 overflow-y-auto scrollbar-thin"
                   >
                     {DISTRICT_OPTIONS.map((item) => (
                       <button
@@ -476,14 +566,14 @@ export const HeroSection: React.FC = () => {
                           setActivePopover(null);
                         }}
                         className={`w-full text-start p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
-                          district === item.id ? 'bg-[#E5C378]/15 text-[#F5E2B3] font-bold' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+                          district === item.id ? 'bg-[#D4AF37]/20 text-[#F5D07A] font-bold' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2">
                           <span>{item.icon}</span>
                           <span>{language === 'ar' ? item.nameAr : item.nameEn}</span>
                         </div>
-                        {district === item.id && <Check className="w-3.5 h-3.5 text-[#E5C378]" />}
+                        {district === item.id && <Check className="w-3.5 h-3.5 text-[#F5D07A]" />}
                       </button>
                     ))}
                   </motion.div>
@@ -502,7 +592,7 @@ export const HeroSection: React.FC = () => {
                   setActivePopover(activePopover === 'vibe' ? null : 'vibe');
                 }}
                 className={`w-full text-start px-5 py-3 sm:py-3.5 rounded-2xl sm:rounded-full transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                  activePopover === 'vibe' ? 'bg-white/[0.08] ring-1 ring-[#E5C378]/30' : 'hover:bg-white/[0.04]'
+                  activePopover === 'vibe' ? 'bg-white/[0.08] ring-1 ring-[#D4AF37]/40' : 'hover:bg-white/[0.04]'
                 }`}
               >
                 <div className="space-y-0.5 min-w-0">
@@ -520,11 +610,11 @@ export const HeroSection: React.FC = () => {
               <AnimatePresence>
                 {activePopover === 'vibe' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full mt-2 inset-x-0 sm:w-80 rounded-2xl bg-[#0F141C]/98 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.9)] p-2 z-50 space-y-1"
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="dropdown-menu absolute top-full mt-2 inset-x-0 sm:w-80 rounded-2xl bg-[rgba(10,15,26,0.96)] backdrop-blur-[24px] border border-[#D4AF37]/35 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.85)] p-2.5 z-[9999] space-y-1.5 max-h-72 overflow-y-auto scrollbar-thin"
                   >
                     {VIBE_OPTIONS.map((item) => (
                       <button
@@ -536,14 +626,14 @@ export const HeroSection: React.FC = () => {
                           setActivePopover(null);
                         }}
                         className={`w-full text-start p-2.5 rounded-xl text-xs font-semibold flex items-center justify-between transition-colors cursor-pointer ${
-                          vibe === item.id ? 'bg-[#E5C378]/15 text-[#F5E2B3] font-bold' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
+                          vibe === item.id ? 'bg-[#D4AF37]/20 text-[#F5D07A] font-bold' : 'text-slate-300 hover:bg-white/[0.06] hover:text-white'
                         }`}
                       >
                         <div className="flex items-center gap-2">
                           <span>{item.icon}</span>
                           <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
                         </div>
-                        {vibe === item.id && <Check className="w-3.5 h-3.5 text-[#E5C378]" />}
+                        {vibe === item.id && <Check className="w-3.5 h-3.5 text-[#F5D07A]" />}
                       </button>
                     ))}
                   </motion.div>
@@ -562,7 +652,7 @@ export const HeroSection: React.FC = () => {
                   setActivePopover(activePopover === 'prefs' ? null : 'prefs');
                 }}
                 className={`w-full text-start px-5 py-3 sm:py-3.5 rounded-2xl sm:rounded-full transition-all cursor-pointer flex items-center justify-between gap-3 ${
-                  activePopover === 'prefs' ? 'bg-white/[0.08] ring-1 ring-[#E5C378]/30' : 'hover:bg-white/[0.04]'
+                  activePopover === 'prefs' ? 'bg-white/[0.08] ring-1 ring-[#D4AF37]/40' : 'hover:bg-white/[0.04]'
                 }`}
               >
                 <div className="space-y-0.5 min-w-0">
@@ -582,11 +672,11 @@ export const HeroSection: React.FC = () => {
               <AnimatePresence>
                 {activePopover === 'prefs' && (
                   <motion.div
-                    initial={{ opacity: 0, y: 10, scale: 0.98 }}
+                    initial={{ opacity: 0, y: -8, scale: 0.97 }}
                     animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: 10, scale: 0.98 }}
-                    transition={{ duration: 0.15 }}
-                    className="absolute top-full mt-2 inset-x-0 sm:w-96 rounded-2xl bg-[#0F141C]/98 backdrop-blur-2xl border border-white/10 shadow-[0_16px_40px_rgba(0,0,0,0.9)] p-4 z-50 space-y-4"
+                    exit={{ opacity: 0, y: -8, scale: 0.97 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                    className="dropdown-menu absolute top-full mt-2 inset-x-0 sm:w-96 rounded-2xl bg-[rgba(10,15,26,0.96)] backdrop-blur-[24px] border border-[#D4AF37]/35 shadow-[0_25px_50px_-12px_rgba(0,0,0,0.85)] p-4 z-[9999] space-y-4 max-h-80 overflow-y-auto scrollbar-thin"
                   >
                     {/* Companion selection */}
                     <div className="space-y-1.5">
@@ -604,7 +694,7 @@ export const HeroSection: React.FC = () => {
                             }}
                             className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                               companions === item.id
-                                ? 'bg-[#E5C378]/20 border border-[#E5C378]/40 text-[#F5E2B3]'
+                                ? 'bg-[#D4AF37]/20 border border-[#D4AF37]/45 text-[#F5D07A]'
                                 : 'bg-white/[0.03] border border-white/[0.06] text-slate-300 hover:text-white'
                             }`}
                           >
@@ -630,7 +720,7 @@ export const HeroSection: React.FC = () => {
                             }}
                             className={`p-2 rounded-xl text-xs font-semibold flex items-center gap-2 transition-all cursor-pointer ${
                               budget === item.id
-                                ? 'bg-[#E5C378]/20 border border-[#E5C378]/40 text-[#F5E2B3]'
+                                ? 'bg-[#D4AF37]/20 border border-[#D4AF37]/45 text-[#F5D07A]'
                                 : 'bg-white/[0.03] border border-white/[0.06] text-slate-300 hover:text-white'
                             }`}
                           >
@@ -682,51 +772,13 @@ export const HeroSection: React.FC = () => {
 
           <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-6 overflow-x-auto md:overflow-visible pb-3 -mx-2 px-2 scrollbar-none snap-x snap-mandatory">
             {DESTINATIONS.map((dest) => (
-              <div
+              <DestinationSpotlightCard
                 key={dest.id}
+                dest={dest}
                 onClick={() => handleLaunchDestination(dest)}
-                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none group relative h-60 sm:h-68 rounded-3xl overflow-hidden cursor-pointer border border-white/10 border-t-white/25 hover:border-[#E5C378]/60 transition-all duration-300 shadow-[0_16px_40px_rgba(0,0,0,0.7)] select-none flex flex-col justify-between p-4.5 sm:p-5 touch-manipulation active:scale-[0.98]"
-              >
-                {/* Background Image */}
-                <img
-                  src={dest.bgImage}
-                  alt={dest.name}
-                  className="absolute inset-0 w-full h-full object-cover brightness-[0.55] transition-transform duration-700 group-hover:scale-108"
-                />
-
-                {/* Ambient Dark Gradient */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A0D12] via-[#0A0D12]/45 to-transparent" />
-
-                {/* Top Badges Row */}
-                <div className="relative z-10 flex items-center justify-between gap-2">
-                  <span className="px-3 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-bold text-[#F5E2B3] shadow-sm">
-                    {language === 'ar' ? dest.badge : dest.badgeEn}
-                  </span>
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/10 text-[10px] text-[#E5C378] font-black">
-                    <span>★ 4.9</span>
-                    <span className="text-white/40">•</span>
-                    <span className="text-slate-300">{language === 'ar' ? 'مسار معتمد' : 'Verified'}</span>
-                  </div>
-                </div>
-
-                {/* Bottom Content */}
-                <div className="relative z-10 space-y-1.5 text-start">
-                  <div className="flex items-center gap-2 text-[10px] font-bold text-teal-300">
-                    <span className="w-1.5 h-1.5 rounded-full bg-teal-400" />
-                    <span>{language === 'ar' ? '3 محطات • بدون زحمة' : '3 Stops • Optimal Flow'}</span>
-                  </div>
-                  <h4 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors leading-snug">
-                    {language === 'ar' ? dest.name : dest.nameEn}
-                  </h4>
-                  <p className="text-xs text-slate-300/85 font-normal line-clamp-1">
-                    {language === 'ar' ? dest.tagline : dest.taglineEn}
-                  </p>
-                  <div className="pt-2 flex items-center gap-1.5 text-xs font-bold text-[#E5C378] group-hover:translate-x-[-4px] transition-transform">
-                    <span>{language === 'ar' ? 'تشغيل هذا المسار' : 'Launch Route'}</span>
-                    {isRTL ? <ArrowLeft className="w-3.5 h-3.5" /> : <ArrowRight className="w-3.5 h-3.5" />}
-                  </div>
-                </div>
-              </div>
+                language={language}
+                isRTL={isRTL}
+              />
             ))}
           </div>
 

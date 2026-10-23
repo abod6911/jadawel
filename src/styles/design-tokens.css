@@ -9,45 +9,51 @@ html[data-theme='dark'],
 .dark {
   color-scheme: dark;
 
-  /* 1. Base Surfaces — "ليل جدة الذهبي" (Deep Oceanic Obsidian) */
-  --bg-base: #080B11;
-  --bg-surface: #0F1420;
-  --bg-surface-elevated: #161D2E;
-  --bg-surface-card: #101522;
-  --bg-surface-subtle: #0B0E17;
+  /* 1. Base Surfaces — "ليل البحر الأحمر الفاخر" (Ultra-Luxury Red Sea Night) */
+  --bg-base: #06090F;
+  --bg-base-end: #0B111E;
+  --bg-surface: rgba(16, 23, 38, 0.65);
+  --bg-surface-elevated: #101726;
+  --bg-surface-card: rgba(16, 23, 38, 0.65);
+  --bg-surface-subtle: #080C14;
 
   /* 2. Typography Colors (Dark Mode) */
   --text-heading: #FFFFFF;
   --text-body: #CBD5E1;
   --text-muted: #94A3B8;
-  --text-gold: #E5C378;          /* 12.3:1 contrast against #080B11 (AAA) */
-  --text-inverse: #080B11;
+  --text-gold: #F5D07A;          /* High specular champagne gold */
+  --text-inverse: #06090F;
 
-  /* 3. Brand & Accent Colors */
-  --accent-gold: #E5C378;        /* Dominant Champagne Gold */
-  --accent-gold-hover: #C8A452;
-  --accent-gold-light: #F5E2B3;
-  --accent-gold-soft: rgba(229, 195, 120, 0.12);
-  --accent-gold-border: rgba(229, 195, 120, 0.25);
-  --accent-teal: #0D9488;        /* Muted Red Sea Teal (Used with restraint) */
-  --accent-teal-soft: rgba(13, 148, 136, 0.14);
+  /* 3. Brand & Accent Colors — الحجازي الذهبي ومرجان البحر الأحمر */
+  --accent-gold: #D4AF37;        /* Hijazi Metallic Gold */
+  --accent-gold-hover: #AA7C11;
+  --accent-gold-light: #F5D07A;
+  --accent-gold-soft: rgba(212, 175, 55, 0.12);
+  --accent-gold-border: rgba(212, 175, 55, 0.35);
+  --accent-gold-gradient: linear-gradient(135deg, #F5D07A 0%, #D4AF37 50%, #AA7C11 100%);
+  --accent-teal: #10B981;        /* Red Sea Emerald Teal */
+  --accent-cyan: #0EA5E9;        /* Deep Marine Cyan */
+  --accent-teal-soft: rgba(16, 185, 129, 0.14);
 
-  /* 4. Borders & Dividers */
+  /* 4. Specular Borders & Dividers */
   --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-gold: rgba(229, 195, 120, 0.22);
-  --border-gold-active: #E5C378;
-  --border-card: rgba(255, 255, 255, 0.07);
+  --border-gold: rgba(212, 175, 55, 0.35);
+  --border-gold-active: #D4AF37;
+  --border-card: rgba(255, 255, 255, 0.08);
+  --border-card-hover: rgba(212, 175, 55, 0.45);
 
-  /* 5. Shadows */
-  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.55);
-  --shadow-card-hover: 0 16px 44px rgba(0, 0, 0, 0.70);
-  --shadow-gold-glow: 0 8px 24px rgba(229, 195, 120, 0.15);
+  /* 5. Luxury Shadows & Glows */
+  --shadow-card: 0 16px 40px -10px rgba(0, 0, 0, 0.85);
+  --shadow-card-hover: 0 24px 60px -12px rgba(0, 0, 0, 0.95), 0 0 35px rgba(212, 175, 55, 0.25);
+  --shadow-gold-glow: 0 8px 30px -4px rgba(212, 175, 55, 0.35);
 
-  /* 6. Blur Overlays (Header & Dock Only) */
-  --header-glass-bg: rgba(11, 14, 20, 0.78);
-  --header-glass-border: rgba(229, 195, 120, 0.25);
-  --dock-glass-bg: rgba(11, 14, 20, 0.90);
-  --dock-glass-border: rgba(229, 195, 120, 0.28);
+  /* 6. Blur Overlays & Dropdowns */
+  --header-glass-bg: rgba(6, 9, 15, 0.82);
+  --header-glass-border: rgba(212, 175, 55, 0.25);
+  --dock-glass-bg: rgba(6, 9, 15, 0.92);
+  --dock-glass-border: rgba(212, 175, 55, 0.30);
+  --dropdown-glass-bg: rgba(10, 15, 26, 0.96);
+  --dropdown-glass-blur: blur(24px);
 
   /* Compatibility Aliases with Existing UI */
   --bg-obsidian: var(--bg-base);
@@ -148,9 +154,11 @@ html[data-theme='light'],
   border: 1px solid var(--dock-glass-border);
 }
 
-/* Content Cards (Zero Blur to save mobile GPU passes and guarantee 60fps) */
+/* Ultra-Luxury Content Cards & Glassmorphism Surfaces */
 .card-surface {
-  background-color: var(--bg-surface);
+  background: var(--bg-surface);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
   border: 1px solid var(--border-card);
   box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);
@@ -159,8 +167,15 @@ html[data-theme='light'],
               border-color var(--duration-fast) var(--ease-smooth);
 }
 
+.card-surface:hover {
+  border-color: var(--border-card-hover);
+  box-shadow: var(--shadow-card-hover);
+}
+
 .card-surface-elevated {
-  background-color: var(--bg-surface-elevated);
+  background: var(--bg-surface-elevated);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border: 1px solid var(--border-card);
   box-shadow: var(--shadow-card);
   border-radius: var(--radius-card);

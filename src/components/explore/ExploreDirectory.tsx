@@ -4,7 +4,7 @@ import React, { useState, useMemo } from 'react';
 import { Search, Compass, MapPin, Navigation } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
-import { PlaceCategory, DistrictId, Place } from '@/types';
+import { PlaceCategory, DistrictId, Place, PlaceTierFilter } from '@/types';
 import { FilterBar } from './FilterBar';
 import { PlaceCard } from './PlaceCard';
 import { PlaceDetailModal } from './PlaceDetailModal';
@@ -18,6 +18,7 @@ export const ExploreDirectory: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<PlaceCategory | 'all'>('all');
   const [selectedDistrict, setSelectedDistrict] = useState<DistrictId | 'all'>('all');
+  const [selectedTier, setSelectedTier] = useState<PlaceTierFilter>('all');
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
   const [features, setFeatures] = useState({
@@ -47,17 +48,42 @@ export const ExploreDirectory: React.FC = () => {
         }
       }
 
-      // 2. Normalized Category matching
+      // 2. Google Maps Tier Collections (Trending / Famous / Budget / Luxury)
+      if (selectedTier === 'trending') {
+        const isTrending = place.tags?.includes('trending');
+        if (!isTrending) return false;
+      } else if (selectedTier === 'famous') {
+        const isFamous =
+          place.tags?.includes('famous') ||
+          place.tags?.includes('popular') ||
+          Boolean(place.reviewsCount && place.reviewsCount >= 10000);
+        if (!isFamous) return false;
+      } else if (selectedTier === 'budget') {
+        const isBudget =
+          place.tags?.includes('budget_gem') ||
+          place.priceTier === '$' ||
+          place.averageCostSAR <= 35;
+        if (!isBudget) return false;
+      } else if (selectedTier === 'luxury') {
+        const isLuxury =
+          place.tags?.includes('luxury_vip') ||
+          place.tags?.includes('michelin_guide') ||
+          place.priceTier === '$$$$' ||
+          place.averageCostSAR >= 250;
+        if (!isLuxury) return false;
+      }
+
+      // 3. Normalized Category matching
       if (!doesPlaceMatchCategory(place.category, selectedCategory)) {
         return false;
       }
 
-      // 3. Normalized District matching
+      // 4. Normalized District matching
       if (!doesPlaceMatchDistrict(place.district as string, selectedDistrict)) {
         return false;
       }
 
-      // 4. Feature toggles
+      // 5. Feature toggles
       if (features.freeOnly && place.averageCostSAR > 0) return false;
       if (features.familyOnly && !place.features?.familyFriendly) return false;
       if (features.seaViewOnly && !place.features?.seaView) return false;
@@ -65,7 +91,7 @@ export const ExploreDirectory: React.FC = () => {
 
       return true;
     });
-  }, [searchQuery, selectedCategory, selectedDistrict, features]);
+  }, [searchQuery, selectedCategory, selectedDistrict, selectedTier, features]);
 
   return (
     <div className="max-w-7xl w-full mx-auto space-y-6 sm:space-y-8 pb-32 sm:pb-16">
@@ -95,6 +121,8 @@ export const ExploreDirectory: React.FC = () => {
           onCategoryChange={setSelectedCategory}
           selectedDistrict={selectedDistrict}
           onDistrictChange={setSelectedDistrict}
+          selectedTier={selectedTier}
+          onTierChange={setSelectedTier}
           activeFeatures={features}
           onFeatureToggle={handleFeatureToggle}
           viewMode={viewMode}
@@ -133,6 +161,7 @@ export const ExploreDirectory: React.FC = () => {
                   setSearchQuery('');
                   setSelectedCategory('all');
                   setSelectedDistrict('all');
+                  setSelectedTier('all');
                   setFeatures({ freeOnly: false, familyOnly: false, seaViewOnly: false, indoorOnly: false });
                 }}
                 className="px-6 py-2.5 rounded-xl bg-gold-500 text-abyss-950 font-black text-xs hover:bg-gold-400 transition-colors cursor-pointer"

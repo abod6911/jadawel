@@ -15,6 +15,10 @@ export interface RouteMapProps {
   stops: MapStop[];
   className?: string;
   showPolyline?: boolean;
+  activeStopIdx?: number | null;
+  hoveredStopIdx?: number | null;
+  onSelectStop?: (idx: number) => void;
+  onHoverStop?: (idx: number | null) => void;
 }
 
 // 1. Sleek Skeleton Loader during Lazy Dynamic Import
@@ -156,6 +160,10 @@ export const RouteMap: React.FC<RouteMapProps> = ({
   stops,
   className = 'w-full h-full min-h-[440px]',
   showPolyline = true,
+  activeStopIdx,
+  hoveredStopIdx,
+  onSelectStop,
+  onHoverStop,
 }) => {
   const [isClient, setIsClient] = useState(false);
   const [retryKey, setRetryKey] = useState(0);
@@ -182,7 +190,14 @@ export const RouteMap: React.FC<RouteMapProps> = ({
         fallbackUrl={googleMapsUrl}
         onRetry={() => setRetryKey((k) => k + 1)}
       >
-        <LeafletMap stops={stops} showPolyline={showPolyline} />
+        <LeafletMap
+          stops={stops}
+          showPolyline={showPolyline}
+          activeStopIdx={activeStopIdx}
+          hoveredStopIdx={hoveredStopIdx}
+          onSelectStop={onSelectStop}
+          onHoverStop={onHoverStop}
+        />
       </MapErrorBoundary>
     </div>
   );

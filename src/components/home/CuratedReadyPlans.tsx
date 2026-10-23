@@ -112,25 +112,25 @@ export const CuratedReadyPlans: React.FC = () => {
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0E1118]/90 backdrop-blur-xl border border-white/10 border-t-white/25 overflow-hidden shadow-2xl flex flex-col justify-between group hover:border-[#E5C378]/50 hover:shadow-[0_20px_50px_rgba(229,195,120,0.15)] transition-all duration-300"
+              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0B111E]/80 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col justify-between group hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.2)] hover:-translate-y-1.5 transition-all duration-300"
             >
               {idx === 0 && (
-                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
+                <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
               )}
               <div>
-                <div className="relative h-44 sm:h-52 overflow-hidden bg-[#0B0D12]">
+                <div className="relative h-44 sm:h-52 overflow-hidden bg-[#06090F]">
                   <img
                     src={getAssetUrl(plan.heroImage)}
                     alt={plan.titleEn}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-108 transition-transform duration-700"
+                    className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0E1118] via-black/35 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B111E] via-black/35 to-transparent" />
                   
                   {/* Top Badges */}
                   <div className="absolute top-3 inset-x-3 flex items-center justify-between">
-                    <span className="px-3 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-[#F5E2B3] text-xs font-black border border-[#E5C378]/40 shadow-sm">
+                    <span className="px-3 py-1 rounded-xl bg-[#06090F]/85 backdrop-blur-md text-[#F5D07A] text-xs font-black border border-[#D4AF37]/40 shadow-sm">
                       {language === 'ar' ? plan.badgeAr : plan.badgeEn}
                     </span>
                     <span className="px-2.5 py-1 rounded-xl bg-black/70 backdrop-blur-md text-emerald-300 text-[11px] font-black border border-emerald-500/30 shadow-sm flex items-center gap-1">
@@ -147,7 +147,7 @@ export const CuratedReadyPlans: React.FC = () => {
                     <span>{language === 'ar' ? 'مسار محسوب بالدقيقة • ربط مباشر' : 'Optimized Timing • Multi-stop'}</span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5E2B3] transition-colors leading-snug">
+                  <h3 className="text-base sm:text-lg font-black text-white group-hover:text-[#F5D07A] transition-colors leading-snug">
                     {language === 'ar' ? plan.titleAr : plan.titleEn}
                   </h3>
                   <p className="text-xs text-slate-300 leading-relaxed line-clamp-2 font-medium">
@@ -157,9 +157,9 @@ export const CuratedReadyPlans: React.FC = () => {
                   {(() => {
                     const range = getPlanBudgetRange(plan);
                     return (
-                      <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-2.5 border-t border-white/10">
-                        <span className="flex items-center gap-1.5 text-[#E5C378] font-bold">
-                          <Clock className="w-3.5 h-3.5 text-[#E5C378]" />
+                      <div className="flex items-center justify-between text-xs font-bold text-slate-400 pt-2.5 border-t border-white/[0.08]">
+                        <span className="flex items-center gap-1.5 text-[#F5D07A] font-bold">
+                          <Clock className="w-3.5 h-3.5 text-[#F5D07A]" />
                           <span>{language === 'ar' ? plan.durationHoursTextAr : plan.durationHoursTextEn}</span>
                         </span>
                         <div className="text-end">
@@ -181,10 +181,10 @@ export const CuratedReadyPlans: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleLoadPlan(plan.id)}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0D12] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_20px_rgba(223,159,61,0.25)] active:scale-[0.98]"
+                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] hover:brightness-110 text-[#06090F] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.35)] active:scale-[0.98]"
                   >
                     <span>{language === 'ar' ? 'تحميل واعتماد هذا الجدول' : 'Load This Plan'}</span>
-                    {isRTL ? <ArrowLeft className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
+                    {isRTL ? <ArrowLeft className="w-4 h-4 stroke-[3]" /> : <ArrowRight className="w-4 h-4 stroke-[3]" />}
                   </button>
                 </MagneticButton>
               </div>

@@ -19,6 +19,9 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
   const toggleFavoritePlace = useItineraryStore((state) => state.toggleFavoritePlace);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
 
+  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
+  const [isHovered, setIsHovered] = React.useState(false);
+
   const isFavorite = favoritePlaceIds.includes(place.id);
   const isAlreadyInPlan = currentItinerary?.stops.some((s) => s.place.id === place.id);
 
@@ -27,14 +30,34 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       ? `${place.dwellTimeMinutes} دقيقة`
       : `${place.dwellTimeMinutes} mins`;
 
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
   return (
-    <div className="group bg-[#0E1118]/85 rounded-3xl overflow-hidden border border-white/[0.08] shadow-2xl hover:border-[#E5C378]/50 hover:shadow-[0_20px_50px_rgba(0,0,0,0.85)] transition-all duration-300 flex flex-col justify-between">
+    <div
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className="group relative bg-[#0B111E]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+    >
+      {/* Radial Spotlight Hover Glow */}
+      {isHovered && (
+        <div
+          className="pointer-events-none absolute -inset-px rounded-3xl transition-opacity duration-300 opacity-100 z-10"
+          style={{
+            background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212, 175, 55, 0.12), transparent 80%)`,
+          }}
+        />
+      )}
+
       {/* Image Banner */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-[#0B0D12]">
+      <div className="relative aspect-[16/10] overflow-hidden bg-[#06090F]">
         <img
           src={getAssetUrl(place.imageUrl)}
           alt={place.nameEn}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600"
           loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');
@@ -43,11 +66,43 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
 
         {/* Top Badges overlay */}
         <div className="absolute top-3 inset-x-3 flex items-center justify-between pointer-events-none">
-          <div className="flex items-center gap-1.5 pointer-events-auto">
-            <span className="px-2.5 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white text-xs font-black flex items-center gap-1 border border-white/10">
+          <div className="flex items-center gap-1.5 pointer-events-auto flex-wrap">
+            <span className="px-2.5 py-1 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white text-xs font-black flex items-center gap-1 border border-white/10 shadow-sm">
               <Star className="w-3.5 h-3.5 text-[#E5C378] fill-[#E5C378]" />
               <span>{place.rating}</span>
+              {place.reviewsCount ? (
+                <span className="text-[10px] text-pearl-muted font-bold">
+                  ({place.reviewsCount >= 1000 ? `${(place.reviewsCount / 1000).toFixed(place.reviewsCount >= 10000 ? 0 : 1)}k` : place.reviewsCount})
+                </span>
+              ) : null}
             </span>
+
+            {/* Special Badges */}
+            {place.tags?.includes('trending') && (
+              <span className="px-2 py-0.5 rounded-lg bg-rose-950/80 backdrop-blur-md text-rose-300 text-[10px] font-black border border-rose-500/40">
+                {language === 'ar' ? '🔥 ترند' : 'Trending'}
+              </span>
+            )}
+            {place.tags?.includes('michelin_guide') && (
+              <span className="px-2 py-0.5 rounded-lg bg-red-950/80 backdrop-blur-md text-red-300 text-[10px] font-black border border-red-500/40">
+                {language === 'ar' ? '⭐ ميشلان' : 'Michelin'}
+              </span>
+            )}
+            {place.tags?.includes('luxury_vip') && !place.tags?.includes('michelin_guide') && (
+              <span className="px-2 py-0.5 rounded-lg bg-amber-950/80 backdrop-blur-md text-amber-300 text-[10px] font-black border border-amber-500/40">
+                👑 VIP
+              </span>
+            )}
+            {place.tags?.includes('famous') && !place.tags?.includes('trending') && (
+              <span className="px-2 py-0.5 rounded-lg bg-blue-950/80 backdrop-blur-md text-blue-300 text-[10px] font-black border border-blue-500/40">
+                {language === 'ar' ? '⭐ أيقوني' : 'Iconic'}
+              </span>
+            )}
+            {place.tags?.includes('budget_gem') && !place.tags?.includes('trending') && (
+              <span className="px-2 py-0.5 rounded-lg bg-emerald-950/80 backdrop-blur-md text-emerald-300 text-[10px] font-black border border-emerald-500/40">
+                {language === 'ar' ? '💰 توفيري' : 'Budget'}
+              </span>
+            )}
           </div>
 
           <button

@@ -83,47 +83,93 @@ input, select, textarea {
 }
 
 ::-webkit-scrollbar-track {
-  background: #0B0D12;
+  background: #06090F;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #171B24;
+  background: #101726;
   border-radius: 6px;
-  border: 1px solid rgba(229, 195, 120, 0.25);
+  border: 1px solid rgba(212, 175, 55, 0.35);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #E5C378;
+  background: #D4AF37;
 }
 
-/* Custom Leaflet Map styling for Dark Luxury Theme */
+/* Custom Leaflet Map styling for Ultra-Luxury Red Sea Night Theme */
 .leaflet-container {
   width: 100% !important;
   height: 100% !important;
   min-height: 440px !important;
   border-radius: 2rem;
-  background-color: #0B0D12 !important;
+  background-color: #06090F !important;
   font-family: inherit;
+  outline: none !important;
+}
+
+/* Dark Luxury Night Mode Filter for OpenStreetMap tiles - Free, zero watermark */
+.leaflet-map-dark-luxury .leaflet-tile-pane {
+  filter: invert(100%) hue-rotate(180deg) brightness(85%) contrast(110%) saturate(80%) !important;
+}
+
+.leaflet-control-attribution {
+  background: rgba(10, 15, 26, 0.75) !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+  font-size: 9px !important;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 8px !important;
+  margin: 6px !important;
+  padding: 2px 8px !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-control-attribution a {
+  color: #D4AF37 !important;
+  text-decoration: none !important;
+  opacity: 0.75;
+}
+
+.leaflet-control-attribution a:hover {
+  text-decoration: underline !important;
+  opacity: 1;
 }
 
 .leaflet-popup-content-wrapper {
-  background: rgba(14, 17, 24, 0.96) !important;
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
+  background: rgba(10, 15, 26, 0.96) !important;
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   color: #FFFFFF !important;
-  border: 1px solid rgba(229, 195, 120, 0.5) !important;
+  border: 1px solid rgba(212, 175, 55, 0.45) !important;
   border-radius: 1.25rem !important;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.85) !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85) !important;
   padding: 0 !important;
 }
 
 .leaflet-popup-tip {
-  background: rgba(14, 17, 24, 0.96) !important;
+  background: rgba(10, 15, 26, 0.96) !important;
 }
 
 .custom-leaflet-pin-wrapper {
   background: transparent !important;
   border: none !important;
+}
+
+/* Animated Golden Polyline Route */
+@keyframes routeDashStroke {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+.leaflet-animated-polyline {
+  stroke-dasharray: 12 8 !important;
+  animation: routeDashStroke 2s linear infinite !important;
+  filter: drop-shadow(0 0 6px rgba(212, 175, 55, 0.85));
 }
 
 @media (max-width: 640px) {
@@ -141,7 +187,7 @@ input, select, textarea {
   position: absolute;
   inset: -1px;
   border-radius: inherit;
-  background: linear-gradient(135deg, rgba(229, 195, 120, 0.45) 0%, rgba(20, 184, 166, 0.25) 100%);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.45) 0%, rgba(16, 185, 129, 0.25) 100%);
   z-index: -1;
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -164,19 +210,80 @@ input, select, textarea {
 .text-shimmer-champagne {
   background: linear-gradient(
     135deg,
-    #E5C378 0%,
-    #FFF1CC 25%,
-    #F5E2B3 50%,
-    #FFF8E7 75%,
-    #C8A452 100%
+    #FFFFFF 0%,
+    #F5D07A 25%,
+    #D4AF37 50%,
+    #FFF1CC 75%,
+    #AA7C11 100%
   );
   background-size: 200% auto;
-  color: #E5C378;
+  color: #D4AF37;
   -webkit-text-fill-color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   animation: metallicShimmer 6s linear infinite;
   display: inline;
+}
+
+/* Ambient Slow Floating Mesh Gradients */
+@keyframes ambientOrb1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+    opacity: 0.10;
+  }
+  50% {
+    transform: translate3d(80px, -50px, 0) scale(1.18);
+    opacity: 0.22;
+  }
+}
+
+@keyframes ambientOrb2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1.1);
+    opacity: 0.08;
+  }
+  50% {
+    transform: translate3d(-70px, 60px, 0) scale(0.92);
+    opacity: 0.16;
+  }
+}
+
+.animate-ambient-orb-1 {
+  animation: ambientOrb1 20s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+.animate-ambient-orb-2 {
+  animation: ambientOrb2 25s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* VIP Boarding Pass Specular Shimmer Sweep */
+@keyframes boardingPassShimmer {
+  0% {
+    transform: translateX(-150%) rotate(25deg);
+  }
+  40%, 100% {
+    transform: translateX(250%) rotate(25deg);
+  }
+}
+
+.animate-boarding-pass-shimmer {
+  animation: boardingPassShimmer 4s ease-in-out infinite;
+}
+
+/* Radar & Compass Sweeper Animation */
+@keyframes radarSweep {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-radar-sweep {
+  animation: radarSweep 3.5s linear infinite;
 }
 
 /* Conic Spin Keyframe */

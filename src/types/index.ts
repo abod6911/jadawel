@@ -32,6 +32,7 @@ export type PlaceCategory =
   | 'beach_resorts';
 
 export type PriceTier = 'free' | '$' | '$$' | '$$$' | '$$$$';
+export type PlaceTierFilter = 'all' | 'trending' | 'famous' | 'budget' | 'luxury';
 
 export type BestTimeToVisit = 'morning' | 'midday_indoor' | 'sunset_golden_hour' | 'night' | 'anytime';
 

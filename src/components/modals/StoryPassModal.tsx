@@ -71,74 +71,95 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
           </p>
         </div>
 
-        {/* The 9:16 Vertical Story Pass - Luxury Boarding Pass Style */}
+        {/* The 9:16 Vertical Story Pass - Ultra-Luxury VIP First Class Boarding Pass */}
         <div
           ref={storyCardRef}
-          className="relative w-full max-w-[360px] sm:max-w-[380px] mx-auto rounded-[2.5rem] overflow-hidden bg-gradient-to-b from-abyss-850 via-abyss-900 to-abyss-950 border-2 border-gold-500/40 p-6 flex flex-col justify-between text-start text-pearl shadow-cinematic transition-all duration-300"
+          className="relative w-full max-w-[360px] sm:max-w-[390px] mx-auto rounded-[2.5rem] overflow-hidden bg-gradient-to-b from-[#0B111E] via-[#0E1524] to-[#06090F] border border-[#D4AF37]/45 p-6 flex flex-col justify-between text-start text-white shadow-[0_30px_90px_rgba(0,0,0,0.85)] transition-all duration-300 relative group"
         >
-          {/* Ambient Lighting Layers */}
-          <div className="absolute -top-20 -end-20 w-48 h-48 rounded-full bg-gold-500/20 blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-20 -start-20 w-48 h-48 rounded-full bg-teal-500/20 blur-3xl pointer-events-none" />
-          <div className="absolute inset-0 opacity-[0.03] rawashin-lattice pointer-events-none" />
+          {/* Diagonal Glass Specular Shimmer Sweep */}
+          <div className="absolute inset-0 w-1/2 bg-gradient-to-r from-transparent via-white/[0.07] to-transparent pointer-events-none animate-boarding-pass-shimmer z-30" />
 
-          {/* 1. Header Section: Brand & Verification */}
-          <div className="relative z-10 flex items-center justify-between pb-4 border-b border-white/10">
+          {/* Ambient Lighting Layers */}
+          <div className="absolute -top-20 -end-20 w-48 h-48 rounded-full bg-[#D4AF37]/15 blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -start-20 w-48 h-48 rounded-full bg-[#0EA5E9]/15 blur-3xl pointer-events-none" />
+
+          {/* 1. Header Section: VIP Airline / Boarding Pass Brand */}
+          <div className="relative z-10 flex items-center justify-between pb-4 border-b border-white/[0.08]">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 flex items-center justify-center shrink-0">
                 <JadawelLogo className="w-10 h-10" />
               </div>
               <div>
-                <span className="text-base font-black text-pearl block leading-tight">جداول | Jadawel</span>
-                <span className="text-[10px] text-gold-400 font-bold">صانع مسارات جدة الذكي</span>
+                <span className="text-sm font-black text-white block leading-tight tracking-wide">جداول • JADAWEL</span>
+                <span className="text-[10px] text-[#F5D07A] font-bold">درجة أولى VIP • First Class</span>
               </div>
             </div>
 
-            <div className="px-3 py-1 rounded-xl bg-coral-500/20 text-coral-400 text-xs font-black border border-coral-500/40 flex items-center gap-1 shadow-sm">
+            <div className="px-3 py-1 rounded-full bg-gradient-to-r from-[#F5D07A]/20 to-[#D4AF37]/30 text-[#F5D07A] text-[10px] font-black border border-[#D4AF37]/50 flex items-center gap-1 shadow-sm uppercase tracking-wider">
               <span>{language === 'ar' ? currentPlan.badgeAr : currentPlan.badgeEn}</span>
             </div>
           </div>
 
           {/* 2. Middle Body: Plan Title, Vibe & Stops Timeline */}
-          <div className="relative z-10 py-5 space-y-4">
+          <div className="relative z-10 py-4 space-y-3.5">
             {/* Title & Tagline */}
             <div className="space-y-1">
-              <h4 className="text-lg sm:text-xl font-black text-pearl leading-snug">
+              <span className="text-[10px] font-mono font-bold text-[#F5D07A] uppercase tracking-wider flex items-center gap-1">
+                <span>BOARDING PASS • JED-2026</span>
+              </span>
+              <h4 className="text-lg sm:text-xl font-black text-white leading-snug">
                 {language === 'ar' ? currentPlan.titleAr : currentPlan.titleEn}
               </h4>
-              <p className="text-xs text-pearl-muted font-medium leading-relaxed">
+              <p className="text-xs text-slate-300 font-medium leading-relaxed">
                 {language === 'ar' ? currentPlan.taglineAr : currentPlan.taglineEn}
               </p>
             </div>
 
+            {/* Flight / Outing Metadata Pill Strip */}
+            <div className="grid grid-cols-3 gap-2 py-2 px-3 rounded-xl bg-white/[0.03] border border-white/[0.06] text-center text-[10px]">
+              <div>
+                <span className="text-slate-400 block font-mono">GATE</span>
+                <span className="font-bold text-[#F5D07A]">JEDDAH</span>
+              </div>
+              <div className="border-x border-white/10">
+                <span className="text-slate-400 block font-mono">CLASS</span>
+                <span className="font-bold text-white">VIP GOLD</span>
+              </div>
+              <div>
+                <span className="text-slate-400 block font-mono">STOPS</span>
+                <span className="font-bold text-[#0EA5E9]">{currentPlan.stops.length} STATIONS</span>
+              </div>
+            </div>
+
             {/* Stops list with spacious layout & zero text clipping */}
-            <div className="space-y-2.5">
+            <div className="space-y-2">
               {currentPlan.stops.map((stop, idx) => (
                 <div
                   key={stop.id}
-                  className="p-3.5 rounded-2xl bg-abyss-800/90 border border-white/10 flex items-center justify-between gap-3 shadow-md hover:border-gold-500/40 transition-colors"
+                  className="p-3 rounded-2xl bg-[#101726]/80 border border-white/[0.08] flex items-center justify-between gap-3 shadow-md hover:border-[#D4AF37]/40 transition-colors"
                 >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-7 h-7 rounded-xl bg-gold-500 text-abyss-950 text-xs font-black flex items-center justify-center shrink-0 shadow-sm">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-6 h-6 rounded-lg bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] text-[11px] font-black flex items-center justify-center shrink-0 shadow-sm">
                       {idx + 1}
                     </div>
 
                     <div className="min-w-0 space-y-0.5">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs font-black text-gold-400">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[11px] font-bold text-[#F5D07A]">
                           {stop.timeSlot}
                         </span>
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-pearl-muted font-bold">
+                        <span className="text-[9px] px-1.5 py-0.2 rounded bg-white/10 text-slate-300 font-medium">
                           {language === 'ar' ? stop.place.districtNameAr : stop.place.districtNameEn}
                         </span>
                       </div>
-                      <h5 className="text-xs sm:text-sm font-bold text-pearl leading-tight truncate">
+                      <h5 className="text-xs font-bold text-white leading-tight truncate">
                         {language === 'ar' ? stop.place.nameAr : stop.place.nameEn}
                       </h5>
                     </div>
                   </div>
 
                   <div className="text-end shrink-0 ps-1">
-                    <span className="text-xs font-black text-teal-300 block">
+                    <span className="text-[11px] font-bold text-[#10B981] block">
                       {stop.place.averageCostSAR > 0 ? `${stop.place.averageCostSAR} ر.س` : (language === 'ar' ? 'مجاني' : 'Free')}
                     </span>
                   </div>
@@ -147,25 +168,47 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
             </div>
           </div>
 
-          {/* 3. Bottom Summary & Boarding Pass Details */}
-          <div className="relative z-10 pt-4 border-t border-white/10 space-y-3">
-            {/* Stats Pills */}
+          {/* Semicircular Ticket Notches & Perforation Cutout Line */}
+          <div className="relative my-1 -mx-6 flex items-center justify-between pointer-events-none">
+            {/* Left Notch */}
+            <div className="w-6 h-6 rounded-full bg-[#06090F] border-r border-[#D4AF37]/45 -translate-x-3" />
+            {/* Dashed Perforation Line */}
+            <div className="flex-1 border-b-2 border-dashed border-[#D4AF37]/35 mx-1" />
+            {/* Right Notch */}
+            <div className="w-6 h-6 rounded-full bg-[#06090F] border-l border-[#D4AF37]/45 translate-x-3" />
+          </div>
+
+          {/* 3. Bottom Perforated Stub: Barcode & QR Code Section */}
+          <div className="relative z-10 pt-3 space-y-3">
+            {/* Stats Summary Pills */}
             <div className="grid grid-cols-2 gap-2 text-xs font-bold">
-              <div className="p-2.5 rounded-xl bg-abyss-900/90 border border-gold-500/25 flex items-center gap-2 text-gold-400">
-                <Coins className="w-4 h-4 shrink-0" />
+              <div className="p-2.5 rounded-xl bg-[#06090F]/80 border border-[#D4AF37]/30 flex items-center gap-2 text-[#F5D07A]">
+                <Coins className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">~{currentPlan.financials.totalPerPersonSAR} ر.س / شخص</span>
               </div>
 
-              <div className="p-2.5 rounded-xl bg-abyss-900/90 border border-teal-500/25 flex items-center gap-2 text-teal-300">
-                <Clock className="w-4 h-4 shrink-0" />
+              <div className="p-2.5 rounded-xl bg-[#06090F]/80 border border-[#0EA5E9]/30 flex items-center gap-2 text-[#0EA5E9]">
+                <Clock className="w-3.5 h-3.5 shrink-0" />
                 <span className="truncate">~{currentPlan.totalTransitMinutes} د مشاوير</span>
               </div>
             </div>
 
-            {/* Authenticity Watermark */}
-            <div className="flex items-center justify-between text-[10px] text-pearl-muted font-medium pt-1">
-              <span>jadawel.app • عروس البحر الأحمر 🌊🌴</span>
-              <span className="font-mono text-gold-400/90 font-bold">JDW-2026-PASS</span>
+            {/* QR Code & Barcode Mockup */}
+            <div className="flex items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/[0.03] border border-white/[0.08]">
+              <div className="space-y-0.5">
+                <span className="text-[9px] font-mono text-slate-400 block">ELECTRONIC PASS</span>
+                <span className="text-xs font-mono font-bold text-[#F5D07A]">JDW-VIP-9942</span>
+                <span className="text-[9px] text-slate-500 block">jadawel.app • عروس البحر</span>
+              </div>
+
+              {/* Styled QR Code Box with Golden Corners */}
+              <div className="relative p-2 rounded-xl bg-white/5 border border-[#D4AF37]/40 flex items-center justify-center">
+                <QrCode className="w-9 h-9 text-[#F5D07A]" />
+                <span className="absolute -top-1 -start-1 w-2 h-2 border-t-2 border-s-2 border-[#F5D07A]" />
+                <span className="absolute -top-1 -end-1 w-2 h-2 border-t-2 border-e-2 border-[#F5D07A]" />
+                <span className="absolute -bottom-1 -start-1 w-2 h-2 border-b-2 border-s-2 border-[#F5D07A]" />
+                <span className="absolute -bottom-1 -end-1 w-2 h-2 border-b-2 border-e-2 border-[#F5D07A]" />
+              </div>
             </div>
           </div>
         </div>

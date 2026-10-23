@@ -11,27 +11,27 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        // Obsidian Noir & Champagne Gold VIP Concierge Palette
+        // Red Sea Night Obsidian & Hijazi Metallic Gold Palette
         obsidian: {
-          DEFAULT: "#0B0D12", // Smoky Obsidian Noir Base
-          950: "#06070A",     // Deepest Noir Pitch
-          900: "#0B0D12",     // Primary Obsidian Noir
-          850: "#12151C",     // Elevated Charcoal Noir
-          800: "#171B24",     // Smoky Charcoal Glass
-          700: "#222734",     // Subdued Graphite
-          600: "#2D3445",
+          DEFAULT: "#06090F", // Deepest Red Sea Night Base
+          950: "#04060A",     // Deep Pitch
+          900: "#06090F",     // Primary Red Sea Night Base
+          850: "#0B111E",     // Elevated Oceanic Noir
+          800: "#101726",     // Deep Marine Glass
+          700: "#172238",     // Subdued Graphite Navy
+          600: "#22314D",
         },
         surface: {
-          DEFAULT: "#12151C",
-          card: "rgba(14, 17, 24, 0.72)",     // Smoky Glassmorphism 70-75%
-          cardHover: "rgba(20, 24, 34, 0.88)",
+          DEFAULT: "#0B111E",
+          card: "rgba(16, 23, 38, 0.65)",     // Ultra-Luxury Glassmorphism
+          cardHover: "rgba(22, 32, 52, 0.85)",
         },
         champagne: {
-          DEFAULT: "#E5C378", // Metallic Champagne Gold
-          light: "#F5E2B3",   // Light Champagne
-          shimmer: "#FFF1CC", // High-Luminance Specular
-          dark: "#C8A452",    // Rich Bronze Gold
-          deep: "#947328",    // Antique Deep Gold
+          DEFAULT: "#D4AF37", // Hijazi Metallic Gold
+          light: "#F5D07A",   // High-Specular Gold
+          shimmer: "#FFF1CC", // Specular Core
+          dark: "#AA7C11",    // Antique Deep Gold
+          deep: "#8A6409",
         },
         platinum: {
           DEFAULT: "#E2E8F0", // Refined Light Platinum
@@ -40,31 +40,31 @@ const config: Config = {
           subtle: "#64748B",
         },
         abyss: {
-          DEFAULT: "#0B0D12",
-          950: "#06070A",
-          900: "#0B0D12",
-          850: "#12151C",
-          800: "#171B24",
-          700: "#222734",
-          600: "#2D3445",
+          DEFAULT: "#06090F",
+          950: "#04060A",
+          900: "#06090F",
+          850: "#0B111E",
+          800: "#101726",
+          700: "#172238",
+          600: "#22314D",
         },
         navy: {
-          DEFAULT: "#0E1118",
-          950: "#06070A",
-          900: "#0B0D12",
-          850: "#12151C",
-          800: "#171B24",
-          700: "#222734",
-          600: "#2D3445",
+          DEFAULT: "#0B111E",
+          950: "#04060A",
+          900: "#06090F",
+          850: "#0B111E",
+          800: "#101726",
+          700: "#172238",
+          600: "#22314D",
         },
         gold: {
-          primary: "#E5C378", // Luminous Metallic Champagne Gold
-          hover: "#C8A452",   // Deep Champagne Bronze
-          300: "#FFF1CC",     // High-Specular Gold
-          400: "#F5E2B3",     // Light Champagne
-          500: "#E5C378",     // Primary Champagne Gold
-          600: "#C8A452",     // Rich Warm Gold
-          700: "#947328",
+          primary: "#D4AF37", // Hijazi Metallic Gold
+          hover: "#AA7C11",   // Deep Gold
+          300: "#FFF1CC",     // High-Specular Light
+          400: "#F5D07A",     // Luminous Gold
+          500: "#D4AF37",     // Primary Hijazi Gold
+          600: "#AA7C11",     // Rich Warm Gold
+          700: "#8A6409",
         },
         coral: {
           300: "#FDA4AF",
@@ -74,12 +74,12 @@ const config: Config = {
           700: "#BE123C",
         },
         teal: {
-          mist: "#2DD4BF",    // Luminescent Marine Teal Accent
-          300: "#5EEAD4",
-          400: "#2DD4BF",
-          500: "#14B8A6",
-          600: "#0D9488",
-          light: "rgba(20, 184, 166, 0.15)",
+          mist: "#10B981",    // Red Sea Emerald Teal
+          300: "#6EE7B7",
+          400: "#34D399",
+          500: "#10B981",
+          600: "#059669",
+          light: "rgba(16, 185, 129, 0.15)",
         },
         pearl: {
           DEFAULT: "#FFFFFF", // Crisp Pure White
@@ -92,18 +92,18 @@ const config: Config = {
         text: {
           pure: "#FFFFFF",
           subtle: "#CBD5E1",
-          gold: "#E5C378",
+          gold: "#F5D07A",
           pearl: "#FFFFFF",
           muted: "#94A3B8",
-          dark: "#0B0D12",
+          dark: "#06090F",
           lightPrimary: "#FFFFFF",
           lightSecondary: "#E2E8F0",
-          darkPrimary: "#0B0D12",
+          darkPrimary: "#06090F",
           darkSecondary: "#64748B",
         },
         status: {
-          success: "#22C55E",
-          warning: "#E5C378",
+          success: "#10B981",
+          warning: "#D4AF37",
           error: "#EF4444",
         },
       },
@@ -114,19 +114,19 @@ const config: Config = {
         sans: ["var(--font-body)", "sans-serif"],
       },
       backgroundImage: {
-        'gold-gradient': 'linear-gradient(135deg, #E5C378 0%, #C8A452 100%)',
-        'champagne-gradient': 'linear-gradient(135deg, #F5E2B3 0%, #E5C378 50%, #C8A452 100%)',
-        'sunset-gradient': 'linear-gradient(135deg, #FFF1CC 0%, #E5C378 50%, #14B8A6 100%)',
-        'teal-gradient': 'linear-gradient(135deg, #2DD4BF 0%, #14B8A6 100%)',
+        'gold-gradient': 'linear-gradient(135deg, #F5D07A 0%, #D4AF37 50%, #AA7C11 100%)',
+        'champagne-gradient': 'linear-gradient(135deg, #F5D07A 0%, #D4AF37 50%, #AA7C11 100%)',
+        'sunset-gradient': 'linear-gradient(135deg, #FFF1CC 0%, #D4AF37 50%, #10B981 100%)',
+        'teal-gradient': 'linear-gradient(135deg, #34D399 0%, #10B981 100%)',
         'glass-gradient': 'linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%)',
       },
       boxShadow: {
-        'glow-gold': '0 0 30px -2px rgba(229, 195, 120, 0.45)',
-        'glow-champagne': '0 0 30px -2px rgba(229, 195, 120, 0.50)',
-        'glow-teal': '0 0 30px -2px rgba(20, 184, 166, 0.35)',
-        'glow-coral': '0 0 30px -2px rgba(229, 195, 120, 0.45)',
-        'cinematic': '0 24px 60px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(229, 195, 120, 0.18)',
-        'card-dark': '0 15px 35px -10px rgba(0, 0, 0, 0.8)',
+        'glow-gold': '0 8px 30px -4px rgba(212, 175, 55, 0.35)',
+        'glow-champagne': '0 8px 30px -4px rgba(212, 175, 55, 0.45)',
+        'glow-teal': '0 0 25px -2px rgba(16, 185, 129, 0.35)',
+        'glow-coral': '0 8px 30px -4px rgba(212, 175, 55, 0.35)',
+        'cinematic': '0 24px 60px -10px rgba(0, 0, 0, 0.85), 0 0 35px rgba(212, 175, 55, 0.20)',
+        'card-dark': '0 16px 40px -10px rgba(0, 0, 0, 0.85)',
       },
       transitionDuration: {
         instant: '75ms',

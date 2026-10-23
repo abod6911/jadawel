@@ -30,6 +30,16 @@ export const Navbar: React.FC = () => {
   const { atmosphere } = useJeddahWeather(atmospherePhase);
 
   const [jeddahTime, setJeddahTime] = React.useState<string>('');
+  const [isScrolled, setIsScrolled] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 15);
+    };
+    handleScroll();
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   React.useEffect(() => {
     const updateTime = () => {
@@ -66,9 +76,13 @@ export const Navbar: React.FC = () => {
   ];
 
   return (
-    <header className="sticky top-3 sm:top-5 z-50 w-full max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300">
-      {/* Sleek Translucent Dark Glass - Minimalist Luxury with Specular Rim Light */}
-      <div className="relative backdrop-blur-2xl bg-[#080B11]/90 border border-white/10 border-t-white/25 shadow-[0_12px_44px_rgba(0,0,0,0.75)] rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6">
+    <header className="sticky top-[12px] z-50 w-full max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300">
+      {/* Floating Pill Navbar - Ultra-Luxury Red Sea Night Palette with Specular Rim */}
+      <div className={`relative backdrop-blur-2xl rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 border transition-all duration-300 ${
+        isScrolled
+          ? 'bg-[#06090F]/94 border-[rgba(212,175,55,0.35)] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.9),0_0_25px_rgba(212,175,55,0.18)]'
+          : 'bg-[#06090F]/85 border-white/10 border-t-white/20 shadow-[0_12px_36px_rgba(0,0,0,0.75)]'
+      }`}>
         
         {/* 1. BRAND LOGO & IDENTITY */}
         <div className="flex items-center gap-3 shrink-0">
@@ -84,10 +98,10 @@ export const Navbar: React.FC = () => {
             </div>
 
             <div className="flex items-center gap-1.5">
-              <span className="text-base sm:text-lg font-black text-white group-hover:text-[#F3DA9C] transition-colors tracking-tight">
+              <span className="text-base sm:text-lg font-black text-white group-hover:text-[#F5D07A] transition-colors tracking-tight">
                 {language === 'ar' ? 'جداول' : 'Jadawel'}
               </span>
-              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#E5C378]/15 text-[#F5E2B3] font-black border border-[#E5C378]/30 shadow-sm">
+              <span className="text-[10px] px-2 py-0.5 rounded-full bg-[#D4AF37]/15 text-[#F5D07A] font-black border border-[#D4AF37]/35 shadow-sm">
                 {language === 'ar' ? 'جدة' : 'Jeddah'}
               </span>
             </div>
@@ -109,7 +123,7 @@ export const Navbar: React.FC = () => {
             {jeddahTime && (
               <>
                 <span className="text-white/20">•</span>
-                <span className="text-[11px] font-semibold text-[#E5C378]">
+                <span className="text-[11px] font-semibold text-[#F5D07A]">
                   {language === 'ar' ? `توقيت جدة: ${jeddahTime}` : `Jeddah: ${jeddahTime}`}
                 </span>
               </>
@@ -133,23 +147,25 @@ export const Navbar: React.FC = () => {
                 }}
                 className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer z-10 ${
                   isActive
-                    ? 'text-white'
+                    ? 'text-white font-bold'
                     : 'text-slate-400 hover:text-slate-200'
                 }`}
               >
-                {/* Clean Subtle Active Indicator */}
+                {/* Sliding Gold Indicator with Specular Bottom Bar */}
                 {isActive && (
                   <motion.div
                     layoutId="activeNavTabIndicator"
-                    className="absolute inset-0 rounded-full bg-white/[0.1] border border-white/15 shadow-sm -z-10"
-                    transition={{ type: 'spring', stiffness: 500, damping: 35 }}
-                  />
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#D4AF37]/15 via-[#D4AF37]/25 to-[#D4AF37]/15 border border-[#D4AF37]/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] -z-10"
+                    transition={{ type: 'spring', stiffness: 480, damping: 34 }}
+                  >
+                    <span className="absolute bottom-1 inset-x-3 h-0.5 rounded-full bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#F5D07A] shadow-[0_0_8px_#D4AF37]" />
+                  </motion.div>
                 )}
 
-                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#E5C378]' : 'text-slate-500'}`} />
+                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#F5D07A]' : 'text-slate-500'}`} />
                 <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
                 {item.badge !== undefined && (
-                  <span className="w-4 h-4 rounded-full bg-[#E5C378] text-[#0B0D12] text-[9px] font-black flex items-center justify-center">
+                  <span className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] text-[9px] font-black flex items-center justify-center shadow-sm">
                     {item.badge}
                   </span>
                 )}
@@ -167,7 +183,7 @@ export const Navbar: React.FC = () => {
               soundEngine.playClick();
               setActiveNavTab('quick-plan');
             }}
-            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#E5C378]/15 hover:bg-[#E5C378]/25 border border-[#E5C378]/30 text-[#F5E2B3] text-xs font-bold transition-all shadow-sm cursor-pointer select-none"
+            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#F5D07A]/20 via-[#D4AF37]/25 to-[#AA7C11]/20 hover:brightness-110 border border-[#D4AF37]/45 text-[#F5D07A] text-xs font-bold transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] cursor-pointer select-none"
           >
             <span>{language === 'ar' ? 'صانع الجداول ✦' : 'Plan Trip ✦'}</span>
           </button>

@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Search, MapPin, LayoutGrid, Map as MapIcon, X, Compass, Filter } from 'lucide-react';
+import { Search, MapPin, LayoutGrid, Map as MapIcon, X, Compass, Filter, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { PlaceCategory, DistrictId } from '@/types';
+import { PlaceCategory, DistrictId, PlaceTierFilter } from '@/types';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
 import { soundEngine } from '@/utils/audioEngine';
 
@@ -14,6 +14,8 @@ interface FilterBarProps {
   onCategoryChange: (cat: PlaceCategory | 'all') => void;
   selectedDistrict: DistrictId | 'all';
   onDistrictChange: (d: DistrictId | 'all') => void;
+  selectedTier?: PlaceTierFilter;
+  onTierChange?: (tier: PlaceTierFilter) => void;
   activeFeatures: {
     freeOnly: boolean;
     familyOnly: boolean;
@@ -33,6 +35,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onCategoryChange,
   selectedDistrict,
   onDistrictChange,
+  selectedTier = 'all',
+  onTierChange,
   activeFeatures,
   onFeatureToggle,
   viewMode,
@@ -144,7 +148,41 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </div>
       </div>
 
-      {/* 2. Category Filter Pills */}
+      {/* 2. Google Maps Curated Collections (الأشهر، الأرخص، الأغلى) */}
+      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
+        <span className="text-[11px] font-black text-[#E5C378] shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#E5C378]/10 border border-[#E5C378]/25">
+          <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
+          <span>{language === 'ar' ? 'مجموعات Google Maps:' : 'Google Maps:'}</span>
+        </span>
+        {[
+          { id: 'all' as const, labelAr: 'الكل ✨', labelEn: 'All ✨' },
+          { id: 'trending' as const, labelAr: 'ترند حالياً 🔥', labelEn: 'Trending Now 🔥' },
+          { id: 'famous' as const, labelAr: 'الأشهر والأيقونية ⭐', labelEn: 'Most Famous ⭐' },
+          { id: 'budget' as const, labelAr: 'الأرخص وتوفير الجيب 💰', labelEn: 'Budget Gems (≤ 35 SAR) 💰' },
+          { id: 'luxury' as const, labelAr: 'الأفخم والأغلى VIP 👑', labelEn: 'Ultra-Luxury VIP 👑' },
+        ].map((tier) => {
+          const isSelected = selectedTier === tier.id;
+          return (
+            <button
+              key={tier.id}
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                onTierChange?.(tier.id);
+              }}
+              className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer border ${
+                isSelected
+                  ? 'bg-gradient-to-r from-[#DF9F3D]/25 via-[#E5C378]/30 to-[#C8A452]/25 text-[#F5E2B3] border-[#E5C378]/80 shadow-[0_0_15px_rgba(229,195,120,0.3)] scale-[1.02]'
+                  : 'bg-abyss-950/70 text-pearl-muted border-white/10 hover:border-white/20 hover:text-pearl'
+              }`}
+            >
+              <span>{language === 'ar' ? tier.labelAr : tier.labelEn}</span>
+            </button>
+          );
+        })}
+      </div>
+
+      {/* 3. Category Filter Pills */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat.id;

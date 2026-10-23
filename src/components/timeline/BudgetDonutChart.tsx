@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Utensils, Ticket, Car, Wallet, Sparkles, Users, Coins, Info, CheckCircle2 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -15,11 +15,51 @@ interface BudgetDonutChartProps {
 type CategoryKey = 'food' | 'tickets' | 'transit';
 
 /**
- * BudgetDonutChart — World-Class Quiet Luxury Financial Breakdown
- * Elevated to ultra-luxury Swiss horology & Apple Card fintech standards.
- * Features ambient glowing pedestal, horological dial track, sculpted monetary typography,
- * interactive category synchronization, and executive group metrics.
+ * AnimatedNumber — Smooth Counting Ticker with ease-out cubic interpolation
  */
+export const AnimatedNumber: React.FC<{
+  value: number;
+  duration?: number;
+  prefix?: string;
+  suffix?: string;
+  className?: string;
+}> = ({ value, duration = 0.8, prefix = '', suffix = '', className = '' }) => {
+  const [displayValue, setDisplayValue] = useState(value);
+
+  useEffect(() => {
+    let startTime: number | null = null;
+    const startVal = displayValue;
+    const diff = value - startVal;
+
+    if (diff === 0) return;
+
+    let frameId: number;
+    const step = (timestamp: number) => {
+      if (!startTime) startTime = timestamp;
+      const elapsed = (timestamp - startTime) / 1000;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out cubic
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      setDisplayValue(Math.round(startVal + diff * easeProgress));
+
+      if (progress < 1) {
+        frameId = requestAnimationFrame(step);
+      }
+    };
+
+    frameId = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(frameId);
+  }, [value, duration]);
+
+  return (
+    <span className={className}>
+      {prefix}
+      {displayValue.toLocaleString()}
+      {suffix}
+    </span>
+  );
+};
+
 export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
   totalPerPersonSAR,
   foodShareSAR,
@@ -201,7 +241,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
               {language === 'ar' ? 'المعدل للفرد:' : 'Per Person:'}
             </span>
             <span className="text-xs sm:text-sm font-black text-[#F5E2B3]">
-              ~{totalPerPersonSAR} {language === 'ar' ? 'ر.س' : 'SAR'}
+              ~<AnimatedNumber value={totalPerPersonSAR} /> {language === 'ar' ? 'ر.س' : 'SAR'}
             </span>
           </div>
 
@@ -303,6 +343,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeDasharray={`${foodStroke} ${circumference}`}
                     strokeDashoffset={foodOffset}
                     strokeLinecap="round"
+                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('food')}
                     onMouseLeave={() => setActiveHover(null)}
@@ -321,6 +362,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeDasharray={`${ticketsStroke} ${circumference}`}
                     strokeDashoffset={ticketsOffset}
                     strokeLinecap="round"
+                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('tickets')}
                     onMouseLeave={() => setActiveHover(null)}
@@ -339,6 +381,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeDasharray={`${transitStroke} ${circumference}`}
                     strokeDashoffset={transitOffset}
                     strokeLinecap="round"
+                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('transit')}
                     onMouseLeave={() => setActiveHover(null)}
@@ -354,7 +397,18 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
                 <div className="flex items-baseline justify-center gap-1 my-0.5">
                   <span className={`text-2xl sm:text-3xl font-black tracking-tight ${centerData.color} transition-colors duration-200`}>
-                    {centerData.value}
+                    {isFree ? (
+                      centerData.value
+                    ) : (
+                      <AnimatedNumber
+                        value={
+                          typeof centerData.value === 'number'
+                            ? centerData.value
+                            : parseInt(String(centerData.value).replace(/[^0-9]/g, '')) || totalPerPersonSAR
+                        }
+                        prefix={activeHover ? '' : '~'}
+                      />
+                    )}
                   </span>
                   {!isFree && (
                     <span className="text-xs font-black text-[#E5C378]">
@@ -430,7 +484,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                           {cat.name}
                         </span>
                         <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${cat.badgeBg} shrink-0`}>
-                          {cat.percentage}%
+                          <AnimatedNumber value={cat.percentage} suffix="%" />
                         </span>
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/[0.03] text-slate-400 border border-white/[0.05] hidden sm:inline-block">
                           {cat.highlightTag}
@@ -446,7 +500,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                   <div className="text-end shrink-0 pt-0.5">
                     <div className="flex items-baseline justify-end gap-1">
                       <span className="text-base sm:text-lg font-black text-white tracking-tight">
-                        ~{cat.amount}
+                        ~<AnimatedNumber value={cat.amount} />
                       </span>
                       <span className="text-xs font-black text-[#E5C378]">
                         {language === 'ar' ? 'ر.س' : 'SAR'}

@@ -5,9 +5,10 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from 'react-
 import L from 'leaflet';
 import { Place } from '@/types';
 import { useLanguage } from '@/hooks/useLanguage';
-import { Navigation, MapPin, ExternalLink, Layers, Crosshair, Clock, Coins } from 'lucide-react';
+import { Navigation, MapPin, ExternalLink, Crosshair, Clock, Coins } from 'lucide-react';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { useItineraryStore } from '@/store/useItineraryStore';
 
 interface MapStop {
   place: Place;
@@ -15,14 +16,18 @@ interface MapStop {
   timeSlot?: string;
 }
 
-interface LeafletMapContentProps {
+export interface LeafletMapContentProps {
   stops: MapStop[];
   center?: [number, number];
   zoom?: number;
   showPolyline?: boolean;
+  activeStopIdx?: number | null;
+  hoveredStopIdx?: number | null;
+  onSelectStop?: (idx: number) => void;
+  onHoverStop?: (idx: number | null) => void;
 }
 
-type MapStyleKey = 'streets' | 'satellite' | 'dark';
+type MapStyleKey = 'dark' | 'streets' | 'satellite';
 
 const MAP_TILES: Record<
   MapStyleKey,
@@ -36,23 +41,23 @@ const MAP_TILES: Record<
     maxZoom: number;
   }
 > = {
-  streets: {
-    nameAr: 'شوارع ومعالم',
-    nameEn: 'Streets',
-    icon: '🗺️',
-    url: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png',
-    attribution: '&copy; CartoDB &copy; OpenStreetMap contributors',
-    subdomains: 'abcd',
-    maxZoom: 20,
-  },
   dark: {
     nameAr: 'ليلي فاخر',
     nameEn: 'Dark Luxury',
     icon: '✨',
-    url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png',
-    attribution: '&copy; CartoDB &copy; OpenStreetMap contributors',
-    subdomains: 'abcd',
-    maxZoom: 20,
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: 'abc',
+    maxZoom: 19,
+  },
+  streets: {
+    nameAr: 'شوارع ومعالم',
+    nameEn: 'Streets',
+    icon: '🗺️',
+    url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    subdomains: 'abc',
+    maxZoom: 19,
   },
   satellite: {
     nameAr: 'قمر صناعي',
@@ -65,82 +70,162 @@ const MAP_TILES: Record<
   },
 };
 
-// Custom Numbered Glowing Pin Maker with Place Name Badge
-function createNumberedGlowingPin(order: number, nameAr: string, isHovered: boolean = false): L.DivIcon {
+// Strips English parentheses like (Beach Resort ...) to leave clean Arabic name
+function getCleanPlaceName(rawName: string): string {
+  if (!rawName) return '';
+  return rawName.replace(/\s*\(.*?\)\s*/g, '').trim();
+}
+
+// Custom Numbered Glowing Pin Maker with Place Name Badge & Active Pulse Ring
+function createNumberedGlowingPin(
+  order: number,
+  rawName: string,
+  isHovered: boolean = false,
+  isActive: boolean = false
+): L.DivIcon {
+  const isHighlighted = isHovered || isActive;
+  const cleanName = getCleanPlaceName(rawName);
+
   return L.divIcon({
     className: 'custom-leaflet-pin-wrapper',
     html: `
       <div style="
         display: inline-flex;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         pointer-events: auto;
         white-space: nowrap;
         user-select: none;
+        transform: ${isHighlighted ? 'scale(1.12) translateY(-2px)' : 'scale(1)'};
+        transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+        z-index: ${isHighlighted ? '9999' : '100'};
       ">
         <div style="
           position: relative;
-          width: 34px;
-          height: 34px;
+          width: ${isHighlighted ? '38px' : '32px'};
+          height: ${isHighlighted ? '38px' : '32px'};
           display: flex;
           align-items: center;
           justify-content: center;
           flex-shrink: 0;
+          transition: width 0.2s, height 0.2s;
         ">
+          <!-- Animated Pulse Halo for Active / Hovered Stop -->
           <div style="
             position: absolute;
-            inset: -4px;
+            inset: -7px;
             border-radius: 50%;
-            background: ${isHovered ? 'rgba(245, 158, 11, 0.7)' : 'rgba(229, 195, 120, 0.35)'};
-            animation: ping 2.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            background: ${isHighlighted ? 'rgba(212, 175, 55, 0.6)' : 'rgba(212, 175, 55, 0.2)'};
+            animation: ping ${isHighlighted ? '1.5s' : '3s'} cubic-bezier(0, 0, 0.2, 1) infinite;
           "></div>
+          
+          <!-- Outer Specular Ring -->
+          <div style="
+            position: absolute;
+            inset: -2px;
+            border-radius: 50%;
+            border: ${isHighlighted ? '2px solid #F5D07A' : '1.5px solid rgba(212, 175, 55, 0.6)'};
+            box-shadow: 0 0 20px ${isHighlighted ? 'rgba(212, 175, 55, 0.95)' : 'rgba(212, 175, 55, 0.35)'};
+          "></div>
+
+          <!-- Metallic Golden Coin Marker -->
           <div style="
             position: relative;
-            background: ${isHovered ? 'linear-gradient(135deg, #FBBF24, #F59E0B)' : 'linear-gradient(135deg, #E5C378, #DF9F3D)'};
-            width: 32px;
-            height: 32px;
+            background: ${
+              isHighlighted
+                ? 'linear-gradient(135deg, #FFF6D6 0%, #F5D07A 40%, #D4AF37 70%, #996F0E 100%)'
+                : 'linear-gradient(135deg, #F5D07A 0%, #D4AF37 50%, #AA7C11 100%)'
+            };
+            width: 100%;
+            height: 100%;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 2px solid #ffffff;
-            box-shadow: 0 4px 14px rgba(0,0,0,0.7), 0 0 12px rgba(229,195,120,0.6);
-            color: #090B0E;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.9), 0 0 16px rgba(212,175,55,0.7);
+            color: #06090F;
             font-weight: 900;
-            font-size: 13px;
+            font-size: ${isHighlighted ? '14px' : '12px'};
+            letter-spacing: -0.5px;
           ">
             ${order}
           </div>
         </div>
+
+        <!-- Glass Station Name Badge: Clean Arabic Name without truncation -->
         <div style="
-          background: rgba(10, 13, 20, 0.94);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(229, 195, 120, 0.45);
-          border-radius: 8px;
-          padding: 3px 8px;
-          color: #ffffff;
+          background: rgba(10, 14, 24, 0.94);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
+          border: 1px solid ${isHighlighted ? 'rgba(245, 208, 122, 0.95)' : 'rgba(212, 175, 55, 0.4)'};
+          border-radius: 12px;
+          padding: 4px 12px;
+          color: #FFFFFF;
           font-size: 11px;
           font-weight: 800;
-          box-shadow: 0 6px 18px rgba(0,0,0,0.7);
-          max-width: 140px;
-          overflow: hidden;
-          text-overflow: ellipsis;
+          box-shadow: 0 10px 28px rgba(0,0,0,0.85);
+          white-space: nowrap;
+          line-height: 1.3;
         ">
-          ${nameAr}
+          ${cleanName}
         </div>
       </div>
     `,
-    iconSize: [34, 34],
-    iconAnchor: [17, 17],
-    popupAnchor: [0, -22],
+    iconSize: [38, 38],
+    iconAnchor: [19, 19],
+    popupAnchor: [0, -26],
   });
 }
 
-// Resilient Map Dimensions & Bounds Auto-Controller
-function MapController({ stops, triggerReset }: { stops: MapStop[]; triggerReset: number }) {
+// Resilient Map Dimensions, Bounds & FlyTo Auto-Controller
+function MapController({
+  stops,
+  triggerReset,
+  activeStopIdx,
+  hoveredStopIdx,
+}: {
+  stops: MapStop[];
+  triggerReset: number;
+  activeStopIdx?: number | null;
+  hoveredStopIdx?: number | null;
+}) {
   const map = useMap();
+  const focusedStopCoords = useItineraryStore((state) => state.focusedStopCoords);
 
+  // Smooth flyTo when user hovers or clicks a specific stop in the timeline
+  useEffect(() => {
+    const targetIdx = hoveredStopIdx ?? activeStopIdx;
+    if (typeof targetIdx === 'number' && stops[targetIdx]?.place?.coordinates) {
+      const coords = stops[targetIdx].place.coordinates;
+      if (typeof coords.lat === 'number' && typeof coords.lng === 'number') {
+        try {
+          map.flyTo([coords.lat, coords.lng], 15, {
+            duration: 1.1,
+            easeLinearity: 0.25,
+          });
+        } catch (err) {
+          console.warn('Map flyTo station warning:', err);
+        }
+      }
+    }
+  }, [hoveredStopIdx, activeStopIdx, stops, map]);
+
+  // Smooth flyTo when user inspects via global store focusedStopCoords
+  useEffect(() => {
+    if (focusedStopCoords && typeof focusedStopCoords[0] === 'number') {
+      try {
+        map.flyTo(focusedStopCoords, 15, {
+          duration: 1.2,
+          easeLinearity: 0.25,
+        });
+      } catch (err) {
+        console.warn('Map flyTo warning:', err);
+      }
+    }
+  }, [focusedStopCoords, map]);
+
+  // Fit bounds when stops change or when user clicks recenter
   useEffect(() => {
     const validCoords = stops
       .filter((s) => s.place?.coordinates?.lat && s.place?.coordinates?.lng)
@@ -152,7 +237,7 @@ function MapController({ stops, triggerReset }: { stops: MapStop[]; triggerReset
 
         if (validCoords.length >= 2) {
           const bounds = L.latLngBounds(validCoords);
-          map.fitBounds(bounds, { padding: [55, 55], maxZoom: 15, animate: true });
+          map.fitBounds(bounds, { padding: [60, 60], maxZoom: 15, animate: true });
         } else if (validCoords.length === 1) {
           map.setView(validCoords[0], 14, { animate: true });
         } else {
@@ -163,7 +248,6 @@ function MapController({ stops, triggerReset }: { stops: MapStop[]; triggerReset
       }
     };
 
-    // Staggered triggers to account for Framer Motion animation / dynamic loading
     updateMap();
     const t1 = setTimeout(updateMap, 150);
     const t2 = setTimeout(updateMap, 450);
@@ -188,11 +272,18 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   center = [21.5433, 39.1728],
   zoom = 12,
   showPolyline = true,
+  activeStopIdx,
+  hoveredStopIdx,
+  onSelectStop,
+  onHoverStop,
 }) => {
   const { language } = useLanguage();
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
-  const [mapStyle, setMapStyle] = useState<MapStyleKey>('streets');
+  const focusedStopId = useItineraryStore((state) => state.focusedStopId);
+  const [internalHoverIdx, setInternalHoverIdx] = useState<number | null>(null);
+  const [mapStyle, setMapStyle] = useState<MapStyleKey>('dark');
   const [recenterCount, setRecenterCount] = useState<number>(0);
+
+  const effectiveHoverIdx = hoveredStopIdx !== undefined && hoveredStopIdx !== null ? hoveredStopIdx : internalHoverIdx;
 
   const validStops = useMemo(
     () => stops.filter((s) => s.place && s.place.coordinates && typeof s.place.coordinates.lat === 'number'),
@@ -233,62 +324,34 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
   const currentTileConfig = MAP_TILES[mapStyle];
 
   return (
-    <div className="w-full h-full min-h-[440px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#080B10]">
-      {/* FLOATING TOP BAR: Route Info Badge + Map Style Switcher + Recenter + Google Maps Route */}
-      <div className="absolute top-2.5 sm:top-3.5 inset-x-2.5 sm:inset-x-3.5 z-[400] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pointer-events-none">
+    <div className="w-full h-full min-h-[440px] relative rounded-[2rem] sm:rounded-[2.5rem] overflow-hidden shadow-2xl bg-[#06090F]">
+      {/* VIGNETTE / INNER SHADOW OVERLAY: Blends map edges smoothly into deep dark background */}
+      <div className="pointer-events-none absolute inset-0 z-[380] shadow-[inset_0_0_55px_rgba(6,9,15,0.92)] rounded-[2rem] sm:rounded-[2.5rem]" />
+
+      {/* UNIFIED COMPACT FLOATING HUD: Fits comfortably without clipping or overflowing */}
+      <div className="absolute top-2.5 sm:top-3.5 left-2.5 right-2.5 sm:left-3.5 sm:right-3.5 z-[400] flex flex-wrap items-center justify-between gap-2 pointer-events-none">
         
-        {/* Row 1 on mobile: Route Badge + Recenter Button + Google Maps Shortcut */}
-        <div className="flex items-center justify-between sm:justify-start gap-1.5 sm:gap-2 pointer-events-auto w-full sm:w-auto">
-          <div className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#0B0F17] border border-amber-500/50 shadow-[0_8px_24px_rgba(0,0,0,0.85)] text-white text-xs font-bold flex items-center gap-1.5 sm:gap-2">
-            <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-emerald-400 ring-2 ring-emerald-400/40 animate-pulse shrink-0" />
-            <span>
-              {language === 'ar' ? (
-                <>
-                  <span>مسار جدة • </span>
-                  <span className="text-amber-300 font-black">{validStops.length} محطات</span>
-                </>
-              ) : (
-                <>
-                  <span>Route • </span>
-                  <span className="text-amber-300 font-black">{validStops.length} Stops</span>
-                </>
-              )}
+        {/* Right Capsule (RTL Start): Active Route Badge */}
+        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
+          <div className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-amber-500/40 shadow-[0_10px_28px_rgba(0,0,0,0.85)] text-white text-[11px] sm:text-xs font-bold flex items-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 ring-2 ring-emerald-400/40" />
             </span>
-          </div>
-
-          <div className="flex items-center gap-1.5">
-            <button
-              type="button"
-              onClick={() => {
-                soundEngine.playClick();
-                setRecenterCount((c) => c + 1);
-              }}
-              className="p-2 sm:p-2.5 rounded-xl bg-[#0B0F17] hover:bg-[#162032] border border-white/25 text-white transition-all shadow-[0_8px_24px_rgba(0,0,0,0.85)] cursor-pointer"
-              title={language === 'ar' ? 'إعادة تركيز الخريطة على كامل المسار' : 'Recenter map'}
-            >
-              <Crosshair className="w-4 h-4 text-amber-400" />
-            </button>
-
-            {/* Google Maps Route Link */}
-            <a
-              href={generateGoogleMapsRouteUrl()}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={() => soundEngine.playClick()}
-              className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-[#0B0F17] hover:bg-[#0E241E] border border-emerald-400/60 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-xs font-bold shadow-[0_8px_24px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer"
-              title="فتح المسار في خرائط جوجل"
-            >
-              <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-              <span className="font-bold">{language === 'ar' ? 'Google Maps' : 'Google Maps'}</span>
-              <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 hidden sm:inline" />
-            </a>
+            <span className="flex items-center gap-1.5 whitespace-nowrap">
+              <span className="text-slate-300 font-medium">{language === 'ar' ? 'المسار' : 'Route'}</span>
+              <span className="text-slate-600">•</span>
+              <span className="text-amber-300 font-black">
+                {validStops.length} {language === 'ar' ? 'محطات' : 'Stops'}
+              </span>
+            </span>
           </div>
         </div>
 
-        {/* Row 2 on mobile, Right side on desktop: 3-Layer Map Style Switcher */}
-        <div className="flex items-center justify-center sm:justify-end pointer-events-auto w-full sm:w-auto">
-          {/* Map Style Pills */}
-          <div className="flex items-center p-0.5 sm:p-1 rounded-xl bg-[#0B0F17] border border-white/25 shadow-[0_8px_24px_rgba(0,0,0,0.85)] gap-1 w-full sm:w-auto justify-between sm:justify-start">
+        {/* Left Capsule (RTL End): Compact Style Buttons + Recenter + Google Maps Action */}
+        <div className="flex items-center gap-1.5 pointer-events-auto shrink-0 flex-wrap justify-end">
+          {/* Style Pills */}
+          <div className="flex items-center p-0.5 sm:p-1 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-white/15 shadow-[0_10px_28px_rgba(0,0,0,0.85)] gap-0.5 sm:gap-1">
             {(Object.keys(MAP_TILES) as MapStyleKey[]).map((key) => {
               const tile = MAP_TILES[key];
               const isSelected = mapStyle === key;
@@ -300,39 +363,59 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     soundEngine.playClick();
                     setMapStyle(key);
                   }}
-                  className={`flex-1 sm:flex-initial px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center justify-center gap-1 sm:gap-1.5 cursor-pointer ${
+                  className={`px-2 sm:px-2.5 py-1 rounded-lg text-[10px] sm:text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap ${
                     isSelected
-                      ? 'bg-amber-400 text-stone-950 font-black shadow-md'
-                      : 'bg-white/[0.06] hover:bg-white/[0.14] text-white hover:text-white border border-transparent hover:border-white/20'
+                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-black shadow-sm'
+                      : 'text-slate-300 hover:text-white hover:bg-white/10'
                   }`}
                 >
-                  <span className="text-sm leading-none">{tile.icon}</span>
-                  <span className="font-bold whitespace-nowrap">
-                    {language === 'ar' ? (
-                      <>
-                        <span>{key === 'streets' ? 'شوارع' : key === 'satellite' ? 'قمر' : 'ليلي'}</span>
-                        <span className="hidden sm:inline">{key === 'streets' ? ' ومعالم' : key === 'satellite' ? ' صناعي' : ' فاخر'}</span>
-                      </>
-                    ) : (
-                      tile.nameEn
-                    )}
-                  </span>
+                  <span className="text-[11px] leading-none">{tile.icon}</span>
+                  <span>{language === 'ar' ? tile.nameAr : tile.nameEn}</span>
                 </button>
               );
             })}
           </div>
+
+          {/* Recenter Button */}
+          <button
+            type="button"
+            onClick={() => {
+              soundEngine.playClick();
+              setRecenterCount((c) => c + 1);
+            }}
+            className="p-1.5 sm:p-2 rounded-xl bg-[#0A0D14]/92 hover:bg-[#141A28] backdrop-blur-xl border border-white/15 hover:border-amber-400/50 text-amber-400 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] cursor-pointer flex items-center justify-center shrink-0"
+            title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
+          >
+            <Crosshair className="w-3.5 h-3.5" />
+          </button>
+
+          {/* Google Maps Button */}
+          <a
+            href={generateGoogleMapsRouteUrl()}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => soundEngine.playClick()}
+            className="px-2.5 sm:px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 hover:bg-[#0D241E] backdrop-blur-xl border border-emerald-400/50 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-[11px] sm:text-xs font-black shadow-[0_10px_28px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
+            title={language === 'ar' ? 'فتح المسار في خرائط جوجل' : 'Open in Google Maps'}
+          >
+            <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+            <span className="whitespace-nowrap">Google Maps</span>
+            <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 hidden sm:inline" />
+          </a>
         </div>
 
       </div>
 
       <MapContainer
+        key={`map-container-${mapStyle}`}
         center={polylineCoords[0] || center}
         zoom={zoom}
         scrollWheelZoom={false}
+        zoomControl={false}
         style={{ width: '100%', height: '100%', minHeight: '440px' }}
-        className="w-full h-full min-h-[440px] z-10"
+        className={`w-full h-full min-h-[440px] z-10 ${mapStyle === 'dark' ? 'leaflet-map-dark-luxury' : ''}`}
       >
-        {/* Crystal Clear TileLayer with dynamic switcher and NO API keys */}
+        {/* Free, Reliable TileLayer without ANY API key or watermark */}
         <TileLayer
           key={mapStyle}
           attribution={currentTileConfig.attribution}
@@ -341,31 +424,38 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
           maxZoom={currentTileConfig.maxZoom}
         />
 
-        <MapController stops={validStops} triggerReset={recenterCount} />
+        <MapController
+          stops={validStops}
+          triggerReset={recenterCount}
+          activeStopIdx={activeStopIdx}
+          hoveredStopIdx={effectiveHoverIdx}
+        />
 
-        {/* Connected Glowing Luxury Route Line (Dual Layer: Ambient Glow + Radiant Core) */}
+        {/* Connected Glowing Luxury Route Line (Dual Layer: Ambient Glow + Radiant Moving Core) */}
         {showPolyline && polylineCoords.length > 1 && (
           <>
             {/* Outer Halo Glow */}
             <Polyline
               positions={polylineCoords}
               pathOptions={{
-                color: '#F59E0B',
+                color: '#AA7C11',
                 weight: 8,
                 opacity: 0.35,
                 lineCap: 'round',
                 lineJoin: 'round',
               }}
             />
-            {/* Core Solid Line */}
+            {/* Core Animated Dashed Golden Line */}
             <Polyline
               positions={polylineCoords}
               pathOptions={{
-                color: '#FBBF24',
+                color: '#F5D07A',
                 weight: 4,
                 opacity: 0.95,
                 lineCap: 'round',
                 lineJoin: 'round',
+                dashArray: '10 10',
+                className: 'leaflet-animated-polyline',
               }}
             />
           </>
@@ -374,9 +464,12 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
         {/* Numbered Interactive Pins with Location Names */}
         {validStops.map((stop, idx) => {
           const orderNum = stop.order || idx + 1;
-          const isHovered = hoveredIdx === idx;
-          const placeName = language === 'ar' ? stop.place.nameAr : stop.place.nameEn;
-          const icon = createNumberedGlowingPin(orderNum, placeName, isHovered);
+          const isHovered = effectiveHoverIdx === idx;
+          const isActive = activeStopIdx === idx;
+          const isFocused = focusedStopId === stop.place.id;
+          const rawName = language === 'ar' ? stop.place.nameAr : stop.place.nameEn;
+          const cleanName = getCleanPlaceName(rawName);
+          const icon = createNumberedGlowingPin(orderNum, rawName, isHovered, isActive || isFocused);
 
           return (
             <Marker
@@ -384,24 +477,33 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
               position={[stop.place.coordinates.lat, stop.place.coordinates.lng]}
               icon={icon}
               eventHandlers={{
-                mouseover: () => setHoveredIdx(idx),
-                mouseout: () => setHoveredIdx(null),
-                click: () => soundEngine.playClick(),
+                mouseover: () => {
+                  setInternalHoverIdx(idx);
+                  onHoverStop?.(idx);
+                },
+                mouseout: () => {
+                  setInternalHoverIdx(null);
+                  onHoverStop?.(null);
+                },
+                click: () => {
+                  soundEngine.playClick();
+                  onSelectStop?.(idx);
+                },
               }}
             >
               <Popup className="custom-luxury-popup">
-                <div className="p-2 text-start font-sans min-w-[220px] max-w-[260px] space-y-2 select-none">
+                <div className="p-2 text-start font-sans min-w-[230px] max-w-[270px] space-y-2 select-none">
                   {/* Photo Thumbnail */}
                   {stop.place.imageUrl && (
                     <img
                       src={getAssetUrl(stop.place.imageUrl)}
-                      alt={placeName}
+                      alt={cleanName}
                       className="w-full h-24 object-cover rounded-xl border border-white/10"
                     />
                   )}
 
                   <div className="flex items-center justify-between text-[11px] font-black">
-                    <span className="px-2 py-0.5 rounded-lg bg-gold-500 text-stone-950 font-bold">
+                    <span className="px-2 py-0.5 rounded-lg bg-amber-500 text-stone-950 font-black">
                       المحطة #{orderNum} • {stop.timeSlot || `${4 + idx * 2}:00 PM`}
                     </span>
                     <span className="text-emerald-400 font-bold">
@@ -412,7 +514,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                   </div>
 
                   <h4 className="text-sm font-black text-white leading-tight">
-                    {placeName}
+                    {cleanName}
                   </h4>
 
                   <div className="flex items-center gap-2 text-[11px] text-white/80">
@@ -433,7 +535,7 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-2 w-full py-2 px-3 rounded-xl bg-gradient-to-r from-gold-500 via-amber-400 to-gold-500 text-stone-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md hover:brightness-110 transition-all"
+                    className="mt-2 w-full py-2 px-3 rounded-xl bg-gradient-to-r from-amber-500 via-yellow-500 to-amber-600 text-stone-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md hover:brightness-110 transition-all"
                   >
                     <span>{language === 'ar' ? 'فتح في خرائط جوجل' : 'Open in Google Maps'}</span>
                     <ExternalLink className="w-3.5 h-3.5" />

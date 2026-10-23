@@ -13,6 +13,7 @@ import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
 import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
+import { TrendingPlacesShowcase } from '@/components/home/TrendingPlacesShowcase';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
@@ -60,7 +61,13 @@ export const PageOrchestrator: React.FC = () => {
       {/* LUXURY FLUID CURSOR SPOTLIGHT AMBIENT TRAIL */}
       <CursorGlow />
 
-      {/* PERSISTENT APP SHELL - ZERO DELAY FIRST RENDER */}
+      {/* Ultra-Luxury Ambient Mesh Gradients (Slow-Floating Metallic Gold & Red Sea Teal/Cyan) */}
+      <div className="fixed inset-0 pointer-events-none overflow-hidden -z-0">
+        <div className="absolute -top-[10%] -start-[10%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] rounded-full bg-gradient-to-br from-[#D4AF37]/16 to-[#F5D07A]/04 blur-[130px] animate-ambient-orb-1" />
+        <div className="absolute top-[35%] -end-[10%] w-[50vw] h-[50vw] max-w-[620px] max-h-[620px] rounded-full bg-gradient-to-tl from-[#0EA5E9]/12 to-[#10B981]/05 blur-[140px] animate-ambient-orb-2" />
+      </div>
+
+      {/* PERSISTENT APP SHELL */}
       <div className="flex-1 flex flex-col w-full relative z-10">
         {/* Navigation Bar */}
         <Navbar />
@@ -72,10 +79,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'home' && (
               <motion.div
                 key="home"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="space-y-10 sm:space-y-24 lg:space-y-32"
               >
                 {/* 1. Grand Widescreen Atmospheric Hero */}
@@ -87,6 +94,9 @@ export const PageOrchestrator: React.FC = () => {
                 <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-24 lg:space-y-32">
                   {/* Live Social Proof Marquee Bar */}
                   <SocialProofBar />
+
+                  {/* Viral Trending Hotspots & Top Google Maps Places (Al-Khal, BART, Kuuru, etc.) */}
+                  <TrendingPlacesShowcase />
 
                   {/* 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
                   <JeddahRouteStudio />
@@ -104,10 +114,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'quick-plan' && (
               <motion.div
                 key="quick-plan"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanGeneratorWizard />
@@ -118,10 +128,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'timeline' && (
               <motion.div
                 key="timeline"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanResultsView />
@@ -132,10 +142,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'explore' && (
               <motion.div
                 key="explore"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <ExploreDirectory />
@@ -146,10 +156,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'curated' && (
               <motion.div
                 key="curated"
-                initial={{ opacity: 0, y: 10 }}
+                initial={{ opacity: 0, y: 18 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                transition={{ duration: 0.25 }}
+                exit={{ opacity: 0, y: -12 }}
+                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <CuratedReadyPlans />

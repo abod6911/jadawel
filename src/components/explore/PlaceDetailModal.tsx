@@ -58,6 +58,31 @@ export const PlaceDetailModal: React.FC = () => {
                 <MapPin className="w-3.5 h-3.5" />
                 <span>{language === 'ar' ? selectedPlace.districtNameAr : selectedPlace.districtNameEn}</span>
               </span>
+              {selectedPlace.tags?.includes('trending') && (
+                <span className="px-3 py-1 rounded-xl bg-rose-950/90 backdrop-blur-md text-rose-300 text-xs font-black border border-rose-500/50">
+                  {language === 'ar' ? '🔥 ترند حالياً في جدة' : 'Trending in Jeddah'}
+                </span>
+              )}
+              {selectedPlace.tags?.includes('michelin_guide') && (
+                <span className="px-3 py-1 rounded-xl bg-red-950/90 backdrop-blur-md text-red-300 text-xs font-black border border-red-500/50">
+                  {language === 'ar' ? '⭐ مختار في دليل ميشلان' : 'Michelin Guide Selected'}
+                </span>
+              )}
+              {selectedPlace.tags?.includes('luxury_vip') && !selectedPlace.tags?.includes('michelin_guide') && (
+                <span className="px-3 py-1 rounded-xl bg-amber-950/90 backdrop-blur-md text-amber-300 text-xs font-black border border-amber-500/50">
+                  👑 VIP Fine Dining
+                </span>
+              )}
+              {selectedPlace.tags?.includes('famous') && (
+                <span className="px-3 py-1 rounded-xl bg-blue-950/90 backdrop-blur-md text-blue-300 text-xs font-black border border-blue-500/50">
+                  {language === 'ar' ? '🔥 من أشهر معالم جدة' : 'Jeddah Iconic Landmark'}
+                </span>
+              )}
+              {selectedPlace.tags?.includes('budget_gem') && (
+                <span className="px-3 py-1 rounded-xl bg-emerald-950/90 backdrop-blur-md text-emerald-300 text-xs font-black border border-emerald-500/50">
+                  {language === 'ar' ? '💰 خيار شعبي واقتصادي' : 'Budget Local Gem'}
+                </span>
+              )}
             </div>
 
             <h2 className="text-xl sm:text-3xl font-black text-pearl drop-shadow-md">

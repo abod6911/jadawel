@@ -40,7 +40,19 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
   const moveStopUp = useItineraryStore((state) => state.moveStopUp);
   const moveStopDown = useItineraryStore((state) => state.moveStopDown);
 
+  const focusedStopId = useItineraryStore((state) => state.focusedStopId);
+  const setFocusedStopId = useItineraryStore((state) => state.setFocusedStopId);
+  const setFocusedStopCoords = useItineraryStore((state) => state.setFocusedStopCoords);
+
   const place = stop.place;
+  const isFocused = focusedStopId === place.id;
+
+  const handleCardFocus = () => {
+    setFocusedStopId(place.id);
+    if (place.coordinates) {
+      setFocusedStopCoords([place.coordinates.lat, place.coordinates.lng]);
+    }
+  };
 
   return (
     <motion.div
@@ -48,15 +60,32 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-60px' }}
       transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+      onMouseEnter={handleCardFocus}
+      onClick={handleCardFocus}
       className="relative group text-start select-none"
     >
-      {/* Numbered Node on Glowing Timeline */}
-      <div className="absolute top-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-tr from-[#DF9F3D] to-[#E5C378] text-[#080B11] font-black text-xs sm:text-sm flex items-center justify-center shadow-[0_0_15px_rgba(229,195,120,0.5)] z-20 border-2 border-[var(--bg-base)]">
+      {/* Numbered Node on Glowing Timeline with Active Pulse */}
+      <div
+        className={`absolute top-6 start-4 sm:start-6 -translate-x-1/2 rtl:translate-x-1/2 w-8 h-8 sm:w-10 sm:h-10 rounded-full font-black text-xs sm:text-sm flex items-center justify-center z-20 border-2 border-[#06090F] transition-all duration-300 ${
+          isFocused
+            ? 'bg-gradient-to-tr from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] shadow-[0_0_25px_rgba(212,175,55,0.85)] scale-110 ring-4 ring-[#D4AF37]/30'
+            : 'bg-gradient-to-tr from-[#DF9F3D] to-[#E5C378] text-[#080B11] shadow-[0_0_15px_rgba(229,195,120,0.5)]'
+        }`}
+      >
         {stop.order}
+        {isFocused && (
+          <span className="absolute -inset-1 rounded-full border border-[#F5D07A] animate-ping opacity-75 pointer-events-none" />
+        )}
       </div>
 
-      {/* Card Surface Container (Zero Blur to Preserve 60fps Mobile Scrolling) */}
-      <div className="ms-10 sm:ms-14 card-surface p-4 sm:p-6 border border-[var(--border-subtle)] hover:border-[var(--border-gold)] transition-all duration-300">
+      {/* Card Surface Container */}
+      <div
+        className={`ms-10 sm:ms-14 rounded-2xl sm:rounded-3xl p-4 sm:p-6 transition-all duration-300 border ${
+          isFocused
+            ? 'bg-[#0E1524]/90 border-[#D4AF37]/80 shadow-[0_15px_40px_-10px_rgba(212,175,55,0.25)] ring-1 ring-[#D4AF37]/40 -translate-y-1'
+            : 'bg-[#0B111E]/70 backdrop-blur-xl border-white/[0.08] hover:border-[#D4AF37]/50 hover:bg-[#0E1524]/80'
+        }`}
+      >
         {/* Top Header Bar: Time Slot, District, & Stop Reorder Controls */}
         <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
           <div className="flex flex-wrap items-center gap-2">

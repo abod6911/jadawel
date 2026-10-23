@@ -50,13 +50,17 @@ interface ItineraryState {
   isLiveOutingOpen: boolean;
   activeLiveStopIndex: number;
 
-  // Modals
+  // Modals & Map Focus
   isSplitBillOpen: boolean;
   isVotingModalOpen: boolean;
   selectedPlaceForModal: Place | null;
   stopToSwap: ItineraryStop | null;
+  focusedStopId: string | null;
+  focusedStopCoords: [number, number] | null;
 
   // Actions
+  setFocusedStopId: (id: string | null) => void;
+  setFocusedStopCoords: (coords: [number, number] | null) => void;
   setLanguage: (lang: Language) => void;
   toggleLanguage: () => void;
   setTheme: (theme: Theme) => void;
@@ -228,6 +232,11 @@ export const useItineraryStore = create<ItineraryState>()(
       isVotingModalOpen: false,
       selectedPlaceForModal: null,
       stopToSwap: null,
+      focusedStopId: null,
+      focusedStopCoords: null,
+
+      setFocusedStopId: (focusedStopId) => set({ focusedStopId }),
+      setFocusedStopCoords: (focusedStopCoords) => set({ focusedStopCoords }),
 
   setLanguage: (language) => {
     set({ language });
