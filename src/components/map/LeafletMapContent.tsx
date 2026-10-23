@@ -43,8 +43,8 @@ const MAP_TILES: Record<
   }
 > = {
   dark: {
-    nameAr: 'ليلي فاخر',
-    nameEn: 'Dark Luxury',
+    nameAr: 'ليلي',
+    nameEn: 'Dark',
     icon: '✨',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
@@ -52,7 +52,7 @@ const MAP_TILES: Record<
     maxZoom: 19,
   },
   streets: {
-    nameAr: 'شوارع ومعالم',
+    nameAr: 'شوارع',
     nameEn: 'Streets',
     icon: '🗺️',
     url: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -338,143 +338,101 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
       {/* VIGNETTE / INNER SHADOW OVERLAY: Blends map edges smoothly into deep dark background */}
       <div className="pointer-events-none absolute inset-0 z-[380] shadow-[inset_0_0_55px_rgba(6,9,15,0.92)] rounded-[28px] lg:rounded-[2.5rem]" />
 
-      {/* 1. DESKTOP FLOATING HUD: 100% Preserved for Desktop Screens (>= 1024px) */}
-      <div className="hidden lg:flex absolute top-3.5 left-3.5 right-3.5 z-[400] flex-wrap items-center justify-between gap-2 pointer-events-none">
-        
-        {/* Right Capsule (RTL Start): Active Route Badge */}
-        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          <div className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-amber-500/40 shadow-[0_10px_28px_rgba(0,0,0,0.85)] text-white text-xs font-bold flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 ring-2 ring-emerald-400/40" />
-            </span>
-            <span className="flex items-center gap-1.5 whitespace-nowrap">
-              <span className="text-slate-300 font-medium">{language === 'ar' ? 'المسار' : 'Route'}</span>
-              <span className="text-slate-600">•</span>
-              <span className="text-amber-300 font-black">
-                {validStops.length} {language === 'ar' ? 'محطات' : 'Stops'}
-              </span>
-            </span>
-          </div>
+      {/* 1. DESKTOP FLOATING HUD: Ultra-Clean & Minimal (< 1024px hidden) */}
+      <div className="hidden lg:flex absolute top-3.5 end-3.5 z-[400] items-center gap-1.5 pointer-events-auto">
+        {/* Style Pills */}
+        <div className="flex items-center p-1 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-white/15 shadow-[0_10px_28px_rgba(0,0,0,0.85)] gap-1">
+          {(Object.keys(MAP_TILES) as MapStyleKey[]).map((key) => {
+            const tile = MAP_TILES[key];
+            const isSelected = mapStyle === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                onClick={() => {
+                  soundEngine.playClick();
+                  setMapStyle(key);
+                }}
+                className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap ${
+                  isSelected
+                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-black shadow-sm'
+                    : 'text-slate-300 hover:text-white hover:bg-white/10'
+                }`}
+              >
+                <span className="text-[11px] leading-none">{tile.icon}</span>
+                <span>{language === 'ar' ? tile.nameAr : tile.nameEn}</span>
+              </button>
+            );
+          })}
         </div>
 
-        {/* Left Capsule (RTL End): Compact Style Buttons + Recenter + Google Maps Action */}
-        <div className="flex items-center gap-1.5 pointer-events-auto shrink-0 flex-wrap justify-end">
-          {/* Style Pills */}
-          <div className="flex items-center p-1 rounded-xl bg-[#0A0D14]/92 backdrop-blur-xl border border-white/15 shadow-[0_10px_28px_rgba(0,0,0,0.85)] gap-1">
-            {(Object.keys(MAP_TILES) as MapStyleKey[]).map((key) => {
-              const tile = MAP_TILES[key];
-              const isSelected = mapStyle === key;
-              return (
-                <button
-                  key={key}
-                  type="button"
-                  onClick={() => {
-                    soundEngine.playClick();
-                    setMapStyle(key);
-                  }}
-                  className={`px-2.5 py-1 rounded-lg text-[11px] font-bold transition-all flex items-center gap-1 cursor-pointer whitespace-nowrap ${
-                    isSelected
-                      ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-stone-950 font-black shadow-sm'
-                      : 'text-slate-300 hover:text-white hover:bg-white/10'
-                  }`}
-                >
-                  <span className="text-[11px] leading-none">{tile.icon}</span>
-                  <span>{language === 'ar' ? tile.nameAr : tile.nameEn}</span>
-                </button>
-              );
-            })}
-          </div>
+        {/* Recenter Button (Icon only) */}
+        <button
+          type="button"
+          onClick={() => {
+            soundEngine.playClick();
+            setRecenterCount((c) => c + 1);
+          }}
+          className="w-8 h-8 rounded-xl bg-[#0A0D14]/92 hover:bg-[#141A28] backdrop-blur-xl border border-white/15 hover:border-amber-400/50 text-amber-400 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] cursor-pointer flex items-center justify-center shrink-0 active:scale-95"
+          title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
+          aria-label="Recenter map"
+        >
+          <Crosshair className="w-3.5 h-3.5" />
+        </button>
 
-          {/* Recenter Button */}
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              setRecenterCount((c) => c + 1);
-            }}
-            className="p-2 rounded-xl bg-[#0A0D14]/92 hover:bg-[#141A28] backdrop-blur-xl border border-white/15 hover:border-amber-400/50 text-amber-400 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] cursor-pointer flex items-center justify-center shrink-0"
-            title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
-          >
-            <Crosshair className="w-3.5 h-3.5" />
-          </button>
-
-          {/* Google Maps Button */}
-          <a
-            href={generateGoogleMapsRouteUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => soundEngine.playClick()}
-            className="px-3 py-1.5 rounded-xl bg-[#0A0D14]/92 hover:bg-[#0D241E] backdrop-blur-xl border border-emerald-400/50 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 text-xs font-black shadow-[0_10px_28px_rgba(0,0,0,0.85)] flex items-center gap-1.5 transition-all cursor-pointer shrink-0"
-            title={language === 'ar' ? 'فتح المسار في خرائط جوجل' : 'Open in Google Maps'}
-          >
-            <Navigation className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
-            <span className="whitespace-nowrap">Google Maps</span>
-            <ExternalLink className="w-3 h-3 text-emerald-400 shrink-0 inline" />
-          </a>
-        </div>
-
+        {/* Google Maps Button (Icon only) */}
+        <a
+          href={generateGoogleMapsRouteUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => soundEngine.playClick()}
+          className="w-8 h-8 rounded-xl bg-[#0A0D14]/92 hover:bg-[#0D241E] backdrop-blur-xl border border-emerald-400/50 hover:border-emerald-300 text-emerald-300 hover:text-emerald-200 transition-all shadow-[0_10px_28px_rgba(0,0,0,0.85)] flex items-center justify-center cursor-pointer shrink-0 active:scale-95"
+          title={language === 'ar' ? 'فتح المسار في Google Maps' : 'Open in Google Maps'}
+          aria-label="Open route in Google Maps"
+        >
+          <Navigation className="w-3.5 h-3.5 text-emerald-400" />
+        </a>
       </div>
 
-      {/* 2. MOBILE APPLE MAPS FLOATING ACTION HUD: Native iOS 18 Design (< 1024px) */}
-      <div className="flex lg:hidden absolute top-3 inset-x-3 z-[400] items-center justify-between pointer-events-none">
-        {/* Top Right (RTL Start): Small Glass Status Capsule */}
-        <div className="pointer-events-auto shrink-0">
-          <div className="px-3 py-2 rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] shadow-[0_8px_24px_rgba(0,0,0,0.5)] text-white text-[11px] font-black flex items-center gap-2">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400 ring-2 ring-emerald-400/40" />
-            </span>
-            <span className="text-white font-bold whitespace-nowrap">
-              {validStops.length} {language === 'ar' ? 'محطات' : 'stops'}
-            </span>
-            <span className="text-white/30">•</span>
-            <span className="text-amber-300 font-black whitespace-nowrap">
-              {routeBadge || (language === 'ar' ? 'فاخر VIP' : 'VIP')}
-            </span>
-          </div>
-        </div>
+      {/* 2. MOBILE APPLE MAPS FLOATING ACTION HUD: Minimal Circular Buttons (< 1024px) */}
+      <div className="flex lg:hidden absolute top-3 end-3 z-[400] items-center gap-2 pointer-events-auto">
+        {/* Circular Map Style Toggle Button */}
+        <button
+          type="button"
+          onClick={cycleMapStyle}
+          className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center text-base active:scale-95 transition-transform cursor-pointer"
+          title={language === 'ar' ? `نمط: ${currentTileConfig.nameAr}` : `Style: ${currentTileConfig.nameEn}`}
+          aria-label="Toggle map style"
+        >
+          <span className="select-none leading-none">{currentTileConfig.icon}</span>
+        </button>
 
-        {/* Top Left (RTL End): Apple Maps Circular Action Buttons (min 44x44px Touch Target) */}
-        <div className="flex items-center gap-2 pointer-events-auto shrink-0">
-          {/* Circular Map Style Toggle Button */}
-          <button
-            type="button"
-            onClick={cycleMapStyle}
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center text-base active:scale-95 transition-transform cursor-pointer"
-            title={language === 'ar' ? `نمط: ${currentTileConfig.nameAr}` : `Style: ${currentTileConfig.nameEn}`}
-            aria-label="Toggle map style"
-          >
-            <span className="select-none leading-none">{currentTileConfig.icon}</span>
-          </button>
+        {/* Circular Recenter Button */}
+        <button
+          type="button"
+          onClick={() => {
+            soundEngine.playClick();
+            setRecenterCount((c) => c + 1);
+          }}
+          className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+          title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
+          aria-label="Recenter map"
+        >
+          <Crosshair className="w-4 h-4" />
+        </button>
 
-          {/* Circular Recenter Button */}
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              setRecenterCount((c) => c + 1);
-            }}
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-white/[0.15] text-amber-300 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-            title={language === 'ar' ? 'إعادة تركيز الخريطة' : 'Recenter Route'}
-            aria-label="Recenter map"
-          >
-            <Crosshair className="w-4 h-4" />
-          </button>
-
-          {/* Circular Google Maps Shortcut */}
-          <a
-            href={generateGoogleMapsRouteUrl()}
-            target="_blank"
-            rel="noopener noreferrer"
-            onClick={() => soundEngine.playClick()}
-            className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-emerald-400/40 text-emerald-400 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
-            title={language === 'ar' ? 'فتح المسار في Google Maps' : 'Open in Google Maps'}
-            aria-label="Open route in Google Maps"
-          >
-            <Navigation className="w-4 h-4" />
-          </a>
-        </div>
+        {/* Circular Google Maps Shortcut */}
+        <a
+          href={generateGoogleMapsRouteUrl()}
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => soundEngine.playClick()}
+          className="w-11 h-11 min-w-[44px] min-h-[44px] rounded-full bg-[#16181D]/80 backdrop-blur-2xl saturate-150 border border-emerald-400/40 text-emerald-400 shadow-[0_8px_24px_rgba(0,0,0,0.5)] flex items-center justify-center active:scale-95 transition-transform cursor-pointer"
+          title={language === 'ar' ? 'فتح المسار في Google Maps' : 'Open in Google Maps'}
+          aria-label="Open route in Google Maps"
+        >
+          <Navigation className="w-4 h-4" />
+        </a>
       </div>
 
       <MapContainer
