@@ -194,12 +194,12 @@ export const QuickPlanWizard: React.FC = () => {
     setIsSynthesizing(true);
     setSynthesisStageIndex(0);
 
-    const stage1 = setTimeout(() => setSynthesisStageIndex(1), 800);
-    const stage2 = setTimeout(() => setSynthesisStageIndex(2), 1600);
+    const stage1 = setTimeout(() => setSynthesisStageIndex(1), 150);
+    const stage2 = setTimeout(() => setSynthesisStageIndex(2), 300);
     const stageFinal = setTimeout(() => {
       setIsSynthesizing(false);
       generatePlanFromPreferences();
-    }, 2400);
+    }, 480);
 
     return () => {
       clearTimeout(stage1);

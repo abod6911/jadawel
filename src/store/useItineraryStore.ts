@@ -292,7 +292,7 @@ export const useItineraryStore = create<ItineraryState>()(
         console.error('Plan generation error:', err);
         set({ isGeneratingPlan: false });
       }
-    }, 450);
+    }, 40);
   },
 
   setActiveVariant: (variantKey) => {

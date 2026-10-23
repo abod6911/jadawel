@@ -14,6 +14,7 @@ export const MobileTabBar: React.FC = () => {
   const wizardStep = useItineraryStore((state) => state.wizardStep) || 1;
   const setWizardStep = useItineraryStore((state) => state.setWizardStep);
   const generatePlanFromPreferences = useItineraryStore((state) => state.generatePlanFromPreferences);
+  const isGeneratingPlan = useItineraryStore((state) => state.isGeneratingPlan);
 
   // WIZARD CONTROLLER MODE ON MOBILE
   if (activeNavTab === 'quick-plan') {
@@ -75,18 +76,25 @@ export const MobileTabBar: React.FC = () => {
           <button
             type="button"
             onClick={handleNext}
-            className="min-h-[44px] px-5 py-2 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] text-xs font-black flex items-center gap-1.5 shadow-[0_0_20px_rgba(212,175,55,0.4)] active:scale-95 transition-all cursor-pointer"
+            disabled={isGeneratingPlan}
+            className="min-h-[44px] px-5 py-2 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] text-xs font-black flex items-center gap-1.5 shadow-[0_0_20px_rgba(212,175,55,0.4)] active:scale-95 transition-all cursor-pointer disabled:opacity-50"
           >
-            <span>
-              {wizardStep === 4
-                ? language === 'ar'
-                  ? 'ابتكر خطتي ✨'
-                  : 'Generate ✨'
-                : language === 'ar'
-                ? 'التالي'
-                : 'Next'}
-            </span>
-            {isRTL ? <ArrowLeft className="w-4 h-4 stroke-[3]" /> : <ArrowRight className="w-4 h-4 stroke-[3]" />}
+            {isGeneratingPlan ? (
+              <div className="w-4 h-4 border-2 border-[#06090F] border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <>
+                <span>
+                  {wizardStep === 4
+                    ? language === 'ar'
+                      ? 'ابتكر خطتي ✨'
+                      : 'Generate ✨'
+                    : language === 'ar'
+                    ? 'التالي'
+                    : 'Next'}
+                </span>
+                {isRTL ? <ArrowLeft className="w-4 h-4 stroke-[3]" /> : <ArrowRight className="w-4 h-4 stroke-[3]" />}
+              </>
+            )}
           </button>
         </div>
       </nav>

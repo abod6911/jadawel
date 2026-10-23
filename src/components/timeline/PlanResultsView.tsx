@@ -78,17 +78,20 @@ export const PlanResultsView: React.FC = () => {
       window.matchMedia?.('(prefers-reduced-motion: reduce)')?.matches;
 
     if (!prefersReducedMotion) {
-      try {
-        confetti({
-          particleCount: 42,
-          spread: 70,
-          origin: { y: 0.65 },
-          colors: ['#E5C378', '#F5E2B3', '#DF9F3D', '#FFFFFF', '#2DD4BF'],
-          disableForReducedMotion: true,
-        });
-      } catch (e) {
-        // graceful fallback if canvas blocked
-      }
+      const timer = setTimeout(() => {
+        try {
+          confetti({
+            particleCount: 36,
+            spread: 60,
+            origin: { y: 0.65 },
+            colors: ['#E5C378', '#F5E2B3', '#DF9F3D', '#FFFFFF', '#2DD4BF'],
+            disableForReducedMotion: true,
+          });
+        } catch (e) {
+          // graceful fallback
+        }
+      }, 150);
+      return () => clearTimeout(timer);
     }
   }, [hasCelebrated]);
 
@@ -174,13 +177,17 @@ export const PlanResultsView: React.FC = () => {
   ];
 
   // Budget calculations
-  const totalPerPerson = currentVariantData?.financials?.totalPerPersonSAR || 0;
+  const rawTotalPerPerson = currentVariantData?.financials?.totalPerPersonSAR || 0;
+  const transitCost = currentVariantData?.financials?.estimatedTransitSAR || 0;
+  const rawFood = currentVariantData?.financials?.foodAndBeverageSAR || 0;
+  const rawTickets = currentVariantData?.financials?.activitiesAndTicketsSAR || 0;
+
+  // Exact total per person: includes transit even when activities/food are free
+  const totalPerPerson = rawTotalPerPerson > 0 ? rawTotalPerPerson : (rawFood + rawTickets + transitCost);
   const isFreePlan = totalPerPerson === 0;
-  const foodShare = isFreePlan ? 0 : Math.round(totalPerPerson * 0.65);
-  const ticketsShare = isFreePlan ? 0 : Math.round(totalPerPerson * 0.22);
-  const uberShare = isFreePlan
-    ? (currentVariantData?.financials?.estimatedTransitSAR || 0)
-    : Math.max(15, totalPerPerson - foodShare - ticketsShare);
+  const foodShare = isFreePlan ? 0 : rawFood > 0 ? rawFood : Math.round((totalPerPerson - transitCost) * 0.75);
+  const ticketsShare = isFreePlan ? 0 : rawTickets > 0 ? rawTickets : Math.max(0, totalPerPerson - transitCost - foodShare);
+  const uberShare = isFreePlan ? 0 : transitCost > 0 ? transitCost : Math.max(0, totalPerPerson - foodShare - ticketsShare);
 
   return (
     <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-32 lg:pb-12 text-start select-none">
@@ -268,9 +275,10 @@ export const PlanResultsView: React.FC = () => {
                   <Icon className={`w-3.5 h-3.5 ${isActive ? 'text-[#0A0D12]' : tab.color}`} />
                   <span className="truncate max-w-[85px]">{language === 'ar' ? tab.title : tab.titleEn}</span>
                 </div>
-                <span className={`text-[10px] ${isActive ? 'text-[#0A0D12]/80 font-black' : 'text-slate-500 font-medium'}`}>
-                  ~{variantData?.financials?.totalPerPersonSAR ?? 0} ر.س
-                </span>
+                <div className={`text-[10px] flex items-center gap-1 font-mono ${isActive ? 'text-[#0A0D12]/90 font-black' : 'text-slate-400 font-medium'}`}>
+                  <span dir="ltr">~{variantData?.financials?.totalPerPersonSAR ?? 0}</span>
+                  <span>{language === 'ar' ? 'ر.س' : 'SAR'}</span>
+                </div>
               </button>
             );
           })}
@@ -308,8 +316,14 @@ export const PlanResultsView: React.FC = () => {
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-[11px] sm:text-xs text-slate-400 font-medium pt-0.5 sm:pt-1">
-                  <span>~{variantData?.financials?.totalPerPersonSAR ?? 0} ر.س / شخص</span>
-                  <span>~{variantData?.totalTransitMinutes ?? 15} د مشاوير</span>
+                  <span className="flex items-center gap-1 font-mono">
+                    <span dir="ltr">~{variantData?.financials?.totalPerPersonSAR ?? 0}</span>
+                    <span>{language === 'ar' ? 'ر.س / شخص' : 'SAR / person'}</span>
+                  </span>
+                  <span className="flex items-center gap-1 font-mono">
+                    <span dir="ltr">~{variantData?.totalTransitMinutes ?? 15}</span>
+                    <span>{language === 'ar' ? 'د مشاوير' : 'min rides'}</span>
+                  </span>
                 </div>
               </div>
             );

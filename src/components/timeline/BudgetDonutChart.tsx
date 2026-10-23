@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Utensils, Ticket, Car, Wallet, Sparkles, Users, Coins, Info, CheckCircle2 } from 'lucide-react';
+import { Utensils, Ticket, Car, Wallet, Sparkles, Users, Coins, Info } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface BudgetDonutChartProps {
@@ -16,6 +16,7 @@ type CategoryKey = 'food' | 'tickets' | 'transit';
 
 /**
  * AnimatedNumber — Smooth Counting Ticker with ease-out cubic interpolation
+ * Guaranteed LTR alignment to prevent Arabic tilde / sign inversion glitches.
  */
 export const AnimatedNumber: React.FC<{
   value: number;
@@ -23,7 +24,7 @@ export const AnimatedNumber: React.FC<{
   prefix?: string;
   suffix?: string;
   className?: string;
-}> = ({ value, duration = 0.8, prefix = '', suffix = '', className = '' }) => {
+}> = ({ value, duration = 0.5, prefix = '', suffix = '', className = '' }) => {
   const [displayValue, setDisplayValue] = useState(value);
 
   useEffect(() => {
@@ -38,7 +39,6 @@ export const AnimatedNumber: React.FC<{
       if (!startTime) startTime = timestamp;
       const elapsed = (timestamp - startTime) / 1000;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease out cubic
       const easeProgress = 1 - Math.pow(1 - progress, 3);
       setDisplayValue(Math.round(startVal + diff * easeProgress));
 
@@ -52,7 +52,7 @@ export const AnimatedNumber: React.FC<{
   }, [value, duration]);
 
   return (
-    <span className={className}>
+    <span className={className} dir="ltr">
       {prefix}
       {displayValue.toLocaleString()}
       {suffix}
@@ -69,27 +69,52 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
   const { language, isRTL } = useLanguage();
   const [activeHover, setActiveHover] = useState<CategoryKey | null>(null);
 
-  const total = Math.max(1, totalPerPersonSAR);
-  const isFree = totalPerPersonSAR === 0;
+  // Exact math: effective total sums all three pillars
+  const sumItems = (foodShareSAR || 0) + (ticketsShareSAR || 0) + (transitShareSAR || 0);
+  const effectiveTotal = Math.max(totalPerPersonSAR || 0, sumItems);
+  const isFree = effectiveTotal === 0;
 
-  // Percentages
-  const foodPct = isFree ? 0 : Math.round((foodShareSAR / total) * 100);
-  const ticketsPct = isFree ? 0 : Math.round((ticketsShareSAR / total) * 100);
-  const transitPct = isFree ? 0 : Math.max(0, 100 - foodPct - ticketsPct);
+  // Percentages Calculation
+  let foodPct = 0;
+  let ticketsPct = 0;
+  let transitPct = 0;
+
+  if (effectiveTotal > 0) {
+    const divisor = sumItems > 0 ? sumItems : effectiveTotal;
+    foodPct = Math.round(((foodShareSAR || 0) / divisor) * 100);
+    ticketsPct = Math.round(((ticketsShareSAR || 0) / divisor) * 100);
+    transitPct = Math.max(0, 100 - foodPct - ticketsPct);
+  }
 
   // SVG Donut Calculations (Radius = 40, Circumference = 2 * PI * 40 ≈ 251.327)
   const radius = 40;
   const circumference = 2 * Math.PI * radius;
 
-  // Segment stroke lengths with 3.5px gap spacing
-  const gap = total > 0 ? 3.5 : 0;
-  const activeSegmentsCount = [foodShareSAR, ticketsShareSAR, transitShareSAR].filter((v) => v > 0).length;
+  const activeSegmentsCount = [foodShareSAR, ticketsShareSAR, transitShareSAR].filter((v) => (v || 0) > 0).length;
+  const gap = effectiveTotal > 0 && activeSegmentsCount > 1 ? 3.5 : 0;
   const totalGap = activeSegmentsCount > 1 ? gap * activeSegmentsCount : 0;
   const usableCircumference = Math.max(0, circumference - totalGap);
 
-  const foodStroke = total > 0 && foodPct > 0 ? Math.max(2, (foodPct / 100) * usableCircumference) : 0;
-  const ticketsStroke = total > 0 && ticketsPct > 0 ? Math.max(2, (ticketsPct / 100) * usableCircumference) : 0;
-  const transitStroke = total > 0 && transitPct > 0 ? Math.max(2, (transitPct / 100) * usableCircumference) : 0;
+  const foodStroke =
+    effectiveTotal > 0 && foodPct > 0
+      ? activeSegmentsCount === 1
+        ? circumference
+        : Math.max(2, (foodPct / 100) * usableCircumference)
+      : 0;
+
+  const ticketsStroke =
+    effectiveTotal > 0 && ticketsPct > 0
+      ? activeSegmentsCount === 1
+        ? circumference
+        : Math.max(2, (ticketsPct / 100) * usableCircumference)
+      : 0;
+
+  const transitStroke =
+    effectiveTotal > 0 && transitPct > 0
+      ? activeSegmentsCount === 1
+        ? circumference
+        : Math.max(2, (transitPct / 100) * usableCircumference)
+      : 0;
 
   const foodOffset = 0;
   const ticketsOffset = -(foodStroke + (foodStroke > 0 ? gap : 0));
@@ -101,7 +126,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       name: language === 'ar' ? 'الأكل والمقاهي' : 'Dining & Specialty Cafes',
       subtitle: language === 'ar' ? 'وجبات رئيسية، قهوة مختصة وحلى حجازي' : 'Main courses, specialty roasts & dessert',
       highlightTag: language === 'ar' ? 'أطباق وقهوة' : 'Dining',
-      amount: foodShareSAR,
+      amount: foodShareSAR || 0,
       percentage: foodPct,
       icon: Utensils,
       color: '#E5C378',
@@ -116,7 +141,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       name: language === 'ar' ? 'التذاكر والأنشطة' : 'Tickets & Experiences',
       subtitle: language === 'ar' ? 'دخول المعارض الرقمية، الفعاليات والمزارات' : 'Museum admissions & curated attraction entry',
       highlightTag: language === 'ar' ? 'فعاليات ومعارض' : 'Entry',
-      amount: ticketsShareSAR,
+      amount: ticketsShareSAR || 0,
       percentage: ticketsPct,
       icon: Ticket,
       color: '#F4956C',
@@ -131,7 +156,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       name: language === 'ar' ? 'مشاوير أوبر والتنقل' : 'Uber & Local Transit',
       subtitle: language === 'ar' ? 'المسافات البينية المباشرة وتوصيل المحطات' : 'Inter-station rides & point-to-point transit',
       highlightTag: language === 'ar' ? 'مشاوير سريعة' : 'Rides',
-      amount: transitShareSAR,
+      amount: transitShareSAR || 0,
       percentage: transitPct,
       icon: Car,
       color: '#2DD4BF',
@@ -142,9 +167,6 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       barShadow: 'shadow-[0_0_12px_rgba(45,212,191,0.4)]',
     },
   ];
-
-  // Highest expense category for executive insight
-  const highestCategory = [...categories].sort((a, b) => b.amount - a.amount)[0];
 
   // Dynamic center values based on active hover
   const getCenterData = () => {
@@ -161,7 +183,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
     if (activeHover === 'food') {
       return {
         badge: language === 'ar' ? '🍴 الأكل والمقاهي' : '🍴 Dining & Cafes',
-        value: `${foodShareSAR}`,
+        value: foodShareSAR,
         sub: `${foodPct}% ${language === 'ar' ? 'من ميزانية الجولة' : 'of total budget'}`,
         color: 'text-[#F5E2B3]',
         borderColor: 'border-[#E5C378]/40',
@@ -170,7 +192,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
     if (activeHover === 'tickets') {
       return {
         badge: language === 'ar' ? '🎟️ التذاكر والأنشطة' : '🎟️ Experiences',
-        value: `${ticketsShareSAR}`,
+        value: ticketsShareSAR,
         sub: `${ticketsPct}% ${language === 'ar' ? 'من ميزانية الجولة' : 'of total budget'}`,
         color: 'text-[#F4956C]',
         borderColor: 'border-[#F4956C]/40',
@@ -179,7 +201,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
     if (activeHover === 'transit') {
       return {
         badge: language === 'ar' ? '🚗 مشاوير أوبر' : '🚗 Uber Rides',
-        value: `${transitShareSAR}`,
+        value: transitShareSAR,
         sub: `${transitPct}% ${language === 'ar' ? 'من ميزانية الجولة' : 'of total budget'}`,
         color: 'text-[#2DD4BF]',
         borderColor: 'border-[#2DD4BF]/40',
@@ -188,7 +210,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
     return {
       badge: language === 'ar' ? '✦ التكلفة التقديرية' : '✦ Estimated Cost',
-      value: `~${totalPerPersonSAR}`,
+      value: effectiveTotal,
       sub: language === 'ar' ? 'ريال سعودي / لكل فرد' : 'SAR / per person',
       color: 'text-white',
       borderColor: 'border-[#E5C378]/30',
@@ -199,7 +221,6 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
   return (
     <div className="relative rounded-[2rem] sm:rounded-[2.5rem] p-4 sm:p-8 lg:p-9 bg-gradient-to-b from-[#111622]/95 via-[#0C1018]/95 to-[#090C12]/98 backdrop-blur-3xl border border-white/[0.08] shadow-[0_30px_90px_rgba(0,0,0,0.8),inset_0_1px_1px_rgba(255,255,255,0.12)] space-y-5 sm:space-y-7 select-none text-start overflow-hidden">
-      
       {/* Top Specular Gold Reflection Accent */}
       <div className="absolute top-0 inset-x-12 h-px bg-gradient-to-r from-transparent via-[#E5C378]/50 to-transparent pointer-events-none" />
 
@@ -207,9 +228,8 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
       <div className="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-[#E5C378]/8 blur-[100px] pointer-events-none" />
       <div className="absolute -bottom-32 -right-32 w-96 h-96 rounded-full bg-[#2DD4BF]/7 blur-[100px] pointer-events-none" />
 
-      {/* 1. Header with Executive Badges & Refined Hierarchy */}
+      {/* 1. Header with Clean Executive Badges & Refined Hierarchy */}
       <div className="relative z-10 flex flex-wrap items-center justify-between gap-4 pb-5 border-b border-white/[0.07]">
-        
         {/* Title + Icon */}
         <div className="flex items-center gap-3.5">
           <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-gradient-to-br from-[#E5C378]/20 via-[#DF9F3D]/10 to-transparent border border-[#E5C378]/35 text-[#F5E2B3] flex items-center justify-center shadow-[0_0_20px_rgba(229,195,120,0.15)] shrink-0">
@@ -220,7 +240,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
               <h4 className="text-base sm:text-lg font-black text-white tracking-wide">
                 {language === 'ar' ? 'تفصيل الميزانية التقديرية' : 'Itemized Budget Architecture'}
               </h4>
-              <span className="hidden sm:inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/30 text-[#F5E2B3]">
+              <span className="inline-flex items-center gap-1 text-[10px] font-black px-2.5 py-0.5 rounded-full bg-[#E5C378]/15 border border-[#E5C378]/30 text-[#F5E2B3]">
                 <Sparkles className="w-3 h-3 text-[#E5C378]" />
                 {language === 'ar' ? 'حساب دقيق' : 'Smart Precision'}
               </span>
@@ -233,30 +253,29 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
           </div>
         </div>
 
-        {/* Executive Metrics Pills */}
-        <div className="flex items-center gap-2 sm:gap-2.5">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.08] shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+        {/* Executive Metric Pill (Spacious, isolated, with no overlapping badges) */}
+        <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2.5 px-4 py-2 rounded-2xl bg-white/[0.04] border border-white/[0.1] shadow-sm">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
             <span className="text-xs font-bold text-slate-300">
               {language === 'ar' ? 'المعدل للفرد:' : 'Per Person:'}
             </span>
-            <span className="text-xs sm:text-sm font-black text-[#F5E2B3]">
-              ~<AnimatedNumber value={totalPerPersonSAR} /> {language === 'ar' ? 'ر.س' : 'SAR'}
-            </span>
+            <div className="flex items-center gap-1 font-mono text-xs sm:text-sm font-black text-[#F5E2B3]">
+              <span dir="ltr">
+                {isFree ? '0' : `~`}<AnimatedNumber value={effectiveTotal} />
+              </span>
+              <span className="text-[11px] text-[#E5C378] font-bold">
+                {language === 'ar' ? 'ر.س' : 'SAR'}
+              </span>
+            </div>
           </div>
-
-          <span className="text-[11px] font-bold px-3 py-1.5 rounded-xl bg-[#E5C378]/10 border border-[#E5C378]/25 text-[#F5E2B3] shadow-sm hidden md:inline-block">
-            {language === 'ar' ? '✦ تقدير مستقل' : '✦ Individual Share'}
-          </span>
         </div>
       </div>
 
       {/* 2. Balanced Dual-Pane Composition: Gauge Hub + Financial Asset Bento Cards */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-stretch">
-        
         {/* PANE 1: Luxury Gauge Pod & Donut Hub (5 Cols) */}
         <div className="lg:col-span-5 flex flex-col justify-between rounded-3xl bg-gradient-to-b from-[#131924]/70 to-[#0B0E15]/90 border border-white/[0.07] p-4 sm:p-6 shadow-xl relative overflow-hidden text-center group">
-          
           {/* Subtle Pod Corner Highlight */}
           <div className="absolute top-0 right-0 w-36 h-36 bg-[#E5C378]/5 rounded-full blur-2xl pointer-events-none" />
 
@@ -274,7 +293,6 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
           {/* Luxury Horology-Inspired Donut Dial */}
           <div className="my-auto py-3 flex items-center justify-center">
             <div className="relative w-52 h-52 sm:w-56 sm:h-56 shrink-0 flex items-center justify-center">
-              
               {/* Outer Ambient Halo on Hover */}
               <div
                 className={`absolute inset-4 rounded-full blur-xl transition-opacity duration-500 pointer-events-none ${
@@ -290,7 +308,6 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
               <svg className="w-full h-full -rotate-90 transform relative z-10" viewBox="0 0 100 100">
                 <defs>
-                  {/* Linear Gradients for Luxury Sheen */}
                   <linearGradient id="foodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#DF9F3D" />
                     <stop offset="60%" stopColor="#E5C378" />
@@ -342,7 +359,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeWidth={activeHover === 'food' ? '14' : '11'}
                     strokeDasharray={`${foodStroke} ${circumference}`}
                     strokeDashoffset={foodOffset}
-                    strokeLinecap="round"
+                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
                     style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('food')}
@@ -361,7 +378,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeWidth={activeHover === 'tickets' ? '14' : '11'}
                     strokeDasharray={`${ticketsStroke} ${circumference}`}
                     strokeDashoffset={ticketsOffset}
-                    strokeLinecap="round"
+                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
                     style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('tickets')}
@@ -380,7 +397,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                     strokeWidth={activeHover === 'transit' ? '14' : '11'}
                     strokeDasharray={`${transitStroke} ${circumference}`}
                     strokeDashoffset={transitOffset}
-                    strokeLinecap="round"
+                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
                     style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
                     className="transition-all duration-300 ease-out cursor-pointer"
                     onMouseEnter={() => setActiveHover('transit')}
@@ -395,8 +412,8 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                   {centerData.badge}
                 </span>
 
-                <div className="flex items-baseline justify-center gap-1 my-0.5">
-                  <span className={`text-2xl sm:text-3xl font-black tracking-tight ${centerData.color} transition-colors duration-200`}>
+                <div className="flex items-baseline justify-center gap-1 my-0.5 font-mono">
+                  <span className={`text-2xl sm:text-3xl font-black tracking-tight ${centerData.color} transition-colors duration-200`} dir="ltr">
                     {isFree ? (
                       centerData.value
                     ) : (
@@ -404,7 +421,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                         value={
                           typeof centerData.value === 'number'
                             ? centerData.value
-                            : parseInt(String(centerData.value).replace(/[^0-9]/g, '')) || totalPerPersonSAR
+                            : parseInt(String(centerData.value).replace(/[^0-9]/g, '')) || effectiveTotal
                         }
                         prefix={activeHover ? '' : '~'}
                       />
@@ -425,23 +442,34 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
           </div>
 
           {/* Quick Color Pill Dots (Mini Legend) */}
-          <div className="pt-2 border-t border-white/[0.05] flex items-center justify-center gap-3 text-[11px] font-bold text-slate-400">
-            <span className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors" onMouseEnter={() => setActiveHover('food')} onMouseLeave={() => setActiveHover(null)}>
+          <div className="pt-2 border-t border-white/[0.05] flex items-center justify-center gap-3 text-[11px] font-bold text-slate-400 font-mono" dir="ltr">
+            <span
+              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
+              onMouseEnter={() => setActiveHover('food')}
+              onMouseLeave={() => setActiveHover(null)}
+            >
               <span className="w-2.5 h-2.5 rounded-full bg-[#E5C378] shadow-[0_0_8px_rgba(229,195,120,0.6)]" />
               <span>{foodPct}%</span>
             </span>
             <span>•</span>
-            <span className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors" onMouseEnter={() => setActiveHover('tickets')} onMouseLeave={() => setActiveHover(null)}>
+            <span
+              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
+              onMouseEnter={() => setActiveHover('tickets')}
+              onMouseLeave={() => setActiveHover(null)}
+            >
               <span className="w-2.5 h-2.5 rounded-full bg-[#F4956C] shadow-[0_0_8px_rgba(244,149,108,0.6)]" />
               <span>{ticketsPct}%</span>
             </span>
             <span>•</span>
-            <span className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors" onMouseEnter={() => setActiveHover('transit')} onMouseLeave={() => setActiveHover(null)}>
+            <span
+              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
+              onMouseEnter={() => setActiveHover('transit')}
+              onMouseLeave={() => setActiveHover(null)}
+            >
               <span className="w-2.5 h-2.5 rounded-full bg-[#2DD4BF] shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
               <span>{transitPct}%</span>
             </span>
           </div>
-
         </div>
 
         {/* PANE 2: Sculpted Financial Asset Bento Cards (7 Cols) */}
@@ -471,10 +499,11 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
                 {/* Top Row: Icon + Title + Category Pill + Price */}
                 <div className="relative z-10 flex items-start justify-between gap-3">
-                  
                   {/* Left Info Group */}
                   <div className="flex items-start gap-3.5 min-w-0">
-                    <div className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border ${cat.bgGlow} shadow-sm transition-transform duration-300 group-hover:scale-105`}>
+                    <div
+                      className={`w-10 h-10 sm:w-11 sm:h-11 rounded-xl flex items-center justify-center shrink-0 border ${cat.bgGlow} shadow-sm transition-transform duration-300 group-hover:scale-105`}
+                    >
                       <Icon className="w-5 h-5" />
                     </div>
 
@@ -483,7 +512,10 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                         <span className="text-sm sm:text-base font-black text-white block">
                           {cat.name}
                         </span>
-                        <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${cat.badgeBg} shrink-0`}>
+                        <span
+                          className={`text-[10px] font-black px-2 py-0.5 rounded-md border font-mono ${cat.badgeBg} shrink-0`}
+                          dir="ltr"
+                        >
                           <AnimatedNumber value={cat.percentage} suffix="%" />
                         </span>
                         <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-white/[0.03] text-slate-400 border border-white/[0.05] hidden sm:inline-block">
@@ -498,9 +530,9 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
 
                   {/* Right Price Display */}
                   <div className="text-end shrink-0 pt-0.5">
-                    <div className="flex items-baseline justify-end gap-1">
-                      <span className="text-base sm:text-lg font-black text-white tracking-tight">
-                        ~<AnimatedNumber value={cat.amount} />
+                    <div className="flex items-baseline justify-end gap-1 font-mono">
+                      <span className="text-base sm:text-lg font-black text-white tracking-tight" dir="ltr">
+                        {cat.amount === 0 ? '0' : '~'}<AnimatedNumber value={cat.amount} />
                       </span>
                       <span className="text-xs font-black text-[#E5C378]">
                         {language === 'ar' ? 'ر.س' : 'SAR'}
@@ -519,29 +551,29 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                       className={`h-full rounded-full transition-all duration-700 ease-out bg-gradient-to-r ${cat.barColor} ${
                         isHovered ? cat.barShadow : ''
                       }`}
-                      style={{ width: `${Math.max(5, cat.percentage)}%` }}
+                      style={{ width: `${Math.max(cat.percentage > 0 ? 5 : 0, cat.percentage)}%` }}
                     />
                   </div>
                 </div>
-
               </div>
             );
           })}
         </div>
-
       </div>
 
       {/* 3. Executive Strip: Group Math & Trust Disclaimer */}
       <div className="pt-4 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
-        
         {/* Real-World Group Multiplier */}
         <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-white/[0.03] border border-white/[0.07] text-slate-300 w-full sm:w-auto justify-center sm:justify-start">
-          <Users className="w-3.5 h-3.5 text-[#E5C378]" />
+          <Users className="w-3.5 h-3.5 text-[#E5C378] shrink-0" />
           <span className="font-bold">
             {language === 'ar' ? 'تقدير للمجموعة (3 أفراد):' : 'Estimated for group of 3:'}
           </span>
-          <span className="font-black text-[#F5E2B3]">
-            ~{totalPerPersonSAR * 3} {language === 'ar' ? 'ر.س' : 'SAR'}
+          <span className="font-black text-[#F5E2B3] inline-flex items-center gap-1 font-mono">
+            <span dir="ltr">
+              {effectiveTotal === 0 ? '0' : `~${effectiveTotal * 3}`}
+            </span>
+            <span>{language === 'ar' ? 'ر.س' : 'SAR'}</span>
           </span>
         </div>
 
@@ -554,9 +586,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
               : 'Estimates calculated from official menu averages and verified venue admissions.'}
           </span>
         </div>
-
       </div>
-
     </div>
   );
 };
