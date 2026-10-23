@@ -54,7 +54,7 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full rounded-[2.5rem] overflow-hidden bg-[#06090F] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.9)] select-none">
+    <section className="relative w-full min-h-[560px] sm:min-h-[640px] lg:min-h-[720px] rounded-[2.5rem] overflow-hidden bg-[#06090F] border border-white/10 shadow-[0_24px_70px_rgba(0,0,0,0.9)] select-none flex flex-col justify-center">
       
       {/* 1. BACKGROUND CINEMATIC VIDEO & ATMOSPHERIC LAYERS */}
       <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
@@ -77,11 +77,11 @@ export const HeroSection: React.FC = () => {
         {/* Ambient Dark Gradient Layering */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-[#06090F]/60 to-[#06090F]/30" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_50%_at_50%_0%,rgba(212,175,55,0.14),transparent_70%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-[#06090F] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#06090F] to-transparent" />
       </div>
 
       {/* 2. FOREGROUND CONTENT: Clean Headline + Direct Curate Action */}
-      <div className="relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-10 pb-16 sm:py-24 lg:py-28 flex flex-col items-center">
+      <div className="relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-12 pb-24 sm:pt-24 sm:pb-36 lg:pt-28 lg:pb-44 flex flex-col items-center">
         
         {/* EDITORIAL HERO HEADER */}
         <div className="w-full max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
