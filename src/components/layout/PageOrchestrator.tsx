@@ -6,14 +6,10 @@ import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { HeroSection } from '@/components/hero/HeroSection';
-import { SocialProofBar } from '@/components/home/SocialProofBar';
-import { BentoMoodGrid } from '@/components/home/BentoMoodGrid';
 import { CuratedReadyPlans } from '@/components/home/CuratedReadyPlans';
 import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
 import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
-import { JeddahRouteStudio } from '@/components/home/JeddahRouteStudio';
-import { TrendingPlacesShowcase } from '@/components/home/TrendingPlacesShowcase';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
@@ -88,24 +84,6 @@ export const PageOrchestrator: React.FC = () => {
                 {/* 1. Grand Widescreen Atmospheric Hero */}
                 <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
                   <HeroSection />
-                </div>
-
-                {/* 2. Main Content Sections */}
-                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 space-y-10 sm:space-y-24 lg:space-y-32">
-                  {/* Live Social Proof Marquee Bar */}
-                  <SocialProofBar />
-
-                  {/* Viral Trending Hotspots & Top Google Maps Places (Al-Khal, BART, Kuuru, etc.) */}
-                  <TrendingPlacesShowcase />
-
-                  {/* 3D Interactive Route Canvas / Dark Obsidian Route Studio */}
-                  <JeddahRouteStudio />
-
-                  {/* Asymmetrical 3D Bento Mood Grid */}
-                  <BentoMoodGrid />
-
-                  {/* Curated Ready Plans & Exclusive Partner Deals */}
-                  <CuratedReadyPlans />
                 </div>
               </motion.div>
             )}
