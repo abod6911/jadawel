@@ -419,18 +419,18 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ startingDistrict: item.id });
                         }}
-                        className={`text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`p-2 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                        <div className="w-full flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className={`p-2 rounded-xl transition-colors shrink-0 ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-xs sm:text-sm font-bold text-white">
+                            <span className="text-xs sm:text-sm font-bold text-white truncate">
                               {language === 'ar' ? item.nameAr : item.nameEn}
                             </span>
                           </div>
@@ -439,7 +439,7 @@ export const QuickPlanWizard: React.FC = () => {
                               initial={{ scale: 0, rotate: -20 }}
                               animate={{ scale: 1, rotate: 0 }}
                               transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0 ms-auto"
                             >
                               <Check className="w-3 h-3 stroke-[3]" />
                             </motion.div>
@@ -469,18 +469,18 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ companions: item.id });
                         }}
-                        className={`text-start p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-3">
-                            <div className={`p-2.5 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                        <div className="w-full flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className={`p-2.5 rounded-xl transition-colors shrink-0 ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
                               <Icon className="w-5 h-5" />
                             </div>
-                            <span className="text-sm sm:text-base font-bold text-white">
+                            <span className="text-sm sm:text-base font-bold text-white truncate">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
@@ -489,7 +489,7 @@ export const QuickPlanWizard: React.FC = () => {
                               initial={{ scale: 0, rotate: -20 }}
                               animate={{ scale: 1, rotate: 0 }}
                               transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0 ms-auto"
                             >
                               <Check className="w-3 h-3 stroke-[3]" />
                             </motion.div>
@@ -519,18 +519,18 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ vibe: item.id as any });
                         }}
-                        className={`text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
                         }`}
                       >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2.5">
-                            <div className={`p-2 rounded-xl transition-colors ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
+                        <div className="w-full flex items-center justify-between gap-3">
+                          <div className="flex items-center gap-2.5 min-w-0">
+                            <div className={`p-2 rounded-xl transition-colors shrink-0 ${isSelected ? 'bg-[#D4AF37] text-[#06090F]' : 'bg-white/5 text-slate-300 group-hover:text-[#F5D07A]'}`}>
                               <Icon className="w-4 h-4" />
                             </div>
-                            <span className="text-xs sm:text-sm font-bold text-white">
+                            <span className="text-xs sm:text-sm font-bold text-white truncate">
                               {language === 'ar' ? item.labelAr : item.labelEn}
                             </span>
                           </div>
@@ -539,7 +539,7 @@ export const QuickPlanWizard: React.FC = () => {
                               initial={{ scale: 0, rotate: -20 }}
                               animate={{ scale: 1, rotate: 0 }}
                               transition={{ type: 'spring', stiffness: 500, damping: 25 }}
-                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0"
+                              className="w-5 h-5 rounded-full bg-gradient-to-br from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_10px_rgba(212,175,55,0.6)] shrink-0 ms-auto"
                             >
                               <Check className="w-3 h-3 stroke-[3]" />
                             </motion.div>
@@ -575,21 +575,21 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ budgetTier: item.id === 'premium' ? ('luxury' as any) : item.id });
                             }}
-                            className={`text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
+                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
                                 ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
                                 : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
                             }`}
                           >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs sm:text-sm font-bold text-white">
+                            <div className="w-full flex items-center justify-between gap-2">
+                              <span className="text-xs sm:text-sm font-bold text-white truncate min-w-0">
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
                               {isSelected && (
                                 <motion.div
                                   initial={{ scale: 0 }}
                                   animate={{ scale: 1 }}
-                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0"
+                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
                                 >
                                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                                 </motion.div>
@@ -622,21 +622,21 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ duration: item.id });
                             }}
-                            className={`text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
+                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
                                 ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
                                 : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
                             }`}
                           >
-                            <div className="flex items-center justify-between">
-                              <span className="text-xs sm:text-sm font-bold text-white">
+                            <div className="w-full flex items-center justify-between gap-2">
+                              <span className="text-xs sm:text-sm font-bold text-white truncate min-w-0">
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
                               {isSelected && (
                                 <motion.div
                                   initial={{ scale: 0 }}
                                   animate={{ scale: 1 }}
-                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0"
+                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
                                 >
                                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                                 </motion.div>
