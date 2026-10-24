@@ -104,7 +104,7 @@ const COMPANION_OPTIONS = [
 const VIBE_OPTIONS = [
   { id: 'beach_sunset' as const, labelAr: 'بحر وغروب', labelEn: 'Beach & Sunset', descAr: 'شواطئ ونسمة عليلة وإطلالات بحرية', descEn: 'Waterfront views & beach relaxation', icon: Waves },
   { id: 'coffee_dessert' as const, labelAr: 'قهوة وروقان', labelEn: 'Coffee & Dessert', descAr: 'محامص مختصة وجلسات هادئة رايقة', descEn: 'Specialty roasters & curated desserts', icon: Coffee },
-  { id: 'food' as const, labelAr: 'عشاء وتجارب تذوق', labelEn: 'Culinary Dining', descAr: 'تجارب طعام استثنائية ومأكولات بحرية', descEn: 'Fine dining & Red Sea seafood gems', icon: UtensilsCrossed },
+  { id: 'food' as const, labelAr: 'عشاء وتجارب تذوق', labelEn: 'Culinary Dining', descAr: 'أصلاً في شي أحلى من الأكل؟', descEn: 'Fine dining & Red Sea seafood gems', icon: UtensilsCrossed },
   { id: 'heritage_arts' as const, labelAr: 'تراث وفنون وثقافة', labelEn: 'Heritage & Culture', descAr: 'أزقة البلد التاريخية والمتاحف والمعارض', descEn: 'Historic alleys, museums & art galleries', icon: Landmark },
   { id: 'free_walk' as const, labelAr: 'ممشى وطبيعة مجانية', labelEn: 'Free Scenic Walk', descAr: '0 ر.س — ممشى الكورنيش والحدائق العامة', descEn: '0 SAR — Scenic promenade & sea views', icon: Footprints },
   { id: 'luxury_vip' as const, labelAr: 'سهرة فاخرة VIP', labelEn: 'Luxury VIP Night', descAr: 'أرقى مطاعم ونوادي اليخوت بإطلالة ساحرة', descEn: 'Exclusive yacht lounges & premier dining', icon: Sparkles },
