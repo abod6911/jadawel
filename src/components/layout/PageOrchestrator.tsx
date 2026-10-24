@@ -15,6 +15,31 @@ import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
+// Easing Wizard (https://easingwizard.com/) Spring Physics for Seamless Tab Transitions
+const pageMotionVariants = {
+  initial: { opacity: 0, y: 14, scale: 0.995 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      type: 'spring',
+      stiffness: 340,
+      damping: 30,
+      mass: 0.85,
+    },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    scale: 0.995,
+    transition: {
+      duration: 0.2,
+      ease: [0.4, 0, 1, 1],
+    },
+  },
+};
+
 export const PageOrchestrator: React.FC = () => {
   const activeNavTab = useItineraryStore((state) => state.activeNavTab);
   const theme = useItineraryStore((state) => state.theme);
@@ -75,10 +100,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'home' && (
               <motion.div
                 key="home"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                variants={pageMotionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
                 className="space-y-10 sm:space-y-24 lg:space-y-32"
               >
                 {/* 1. Grand Widescreen Atmospheric Hero */}
@@ -92,10 +117,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'quick-plan' && (
               <motion.div
                 key="quick-plan"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                variants={pageMotionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanGeneratorWizard />
@@ -106,10 +131,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'timeline' && (
               <motion.div
                 key="timeline"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                variants={pageMotionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <PlanResultsView />
@@ -120,10 +145,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'explore' && (
               <motion.div
                 key="explore"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                variants={pageMotionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <ExploreDirectory />
@@ -134,10 +159,10 @@ export const PageOrchestrator: React.FC = () => {
             {activeNavTab === 'curated' && (
               <motion.div
                 key="curated"
-                initial={{ opacity: 0, y: 18 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -12 }}
-                transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                variants={pageMotionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
                 className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8"
               >
                 <CuratedReadyPlans />

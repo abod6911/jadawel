@@ -131,7 +131,7 @@ export const HeroSection: React.FC = () => {
             type="button"
             onClick={handleGeneratePlan}
             disabled={isGeneratingPlan}
-            className="h-13 sm:h-14 px-8 sm:px-12 rounded-full bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0E14] font-black text-sm sm:text-base flex items-center justify-center gap-2.5 active:scale-95 transition-all shadow-[0_8px_30px_rgba(223,159,61,0.35)] cursor-pointer disabled:opacity-50"
+            className="h-13 sm:h-14 px-8 sm:px-12 rounded-full bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] hover:opacity-95 text-[#0B0E14] font-black text-sm sm:text-base flex items-center justify-center gap-2.5 hover:scale-[1.02] active:scale-95 transition-all duration-300 ease-spring-snappy shadow-[0_8px_30px_rgba(223,159,61,0.35)] cursor-pointer disabled:opacity-50"
           >
             {isGeneratingPlan ? (
               <div className="w-5 h-5 border-2 border-[#0B0E14] border-t-transparent rounded-full animate-spin" />

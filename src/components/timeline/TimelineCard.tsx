@@ -80,7 +80,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
 
       {/* Card Surface Container */}
       <div
-        className={`ms-10 sm:ms-14 rounded-2xl sm:rounded-3xl p-4 sm:p-6 transition-all duration-300 border ${
+        className={`ms-10 sm:ms-14 rounded-2xl sm:rounded-3xl p-4 sm:p-6 transition-all duration-300 ease-spring-snappy border ${
           isFocused
             ? 'bg-[#0E1524]/90 border-[#D4AF37]/80 shadow-[0_15px_40px_-10px_rgba(212,175,55,0.25)] ring-1 ring-[#D4AF37]/40 -translate-y-1'
             : 'bg-[#0B111E]/70 backdrop-blur-xl border-white/[0.08] hover:border-[#D4AF37]/50 hover:bg-[#0E1524]/80'
@@ -168,7 +168,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
               alt={place.nameEn}
               loading="lazy"
               decoding="async"
-              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500"
+              className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-spring-smooth"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
 

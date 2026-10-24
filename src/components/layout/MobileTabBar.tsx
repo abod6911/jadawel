@@ -121,11 +121,11 @@ export const MobileTabBar: React.FC = () => {
             soundEngine.playClick();
             setActiveNavTab('home');
           }}
-          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full transition-all cursor-pointer ${
+          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full active:scale-90 transition-all duration-200 ease-spring-snappy cursor-pointer ${
             activeNavTab === 'home' ? 'text-[#F5D07A] font-bold' : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Flame className={`w-5 h-5 transition-transform ${activeNavTab === 'home' ? 'scale-110 text-[#F5D07A]' : 'text-slate-400'}`} />
+          <Flame className={`w-5 h-5 transition-transform duration-300 ease-spring-bouncy ${activeNavTab === 'home' ? 'scale-110 text-[#F5D07A]' : 'text-slate-400'}`} />
           <span className="text-[10px] mt-1 font-bold truncate">
             {language === 'ar' ? 'الرئيسية' : 'Home'}
           </span>
@@ -141,11 +141,11 @@ export const MobileTabBar: React.FC = () => {
             soundEngine.playClick();
             setActiveNavTab('explore');
           }}
-          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full transition-all cursor-pointer ${
+          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full active:scale-90 transition-all duration-200 ease-spring-snappy cursor-pointer ${
             activeNavTab === 'explore' ? 'text-[#0EA5E9] font-bold' : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Compass className={`w-5 h-5 transition-transform ${activeNavTab === 'explore' ? 'scale-110 text-[#0EA5E9]' : 'text-slate-400'}`} />
+          <Compass className={`w-5 h-5 transition-transform duration-300 ease-spring-bouncy ${activeNavTab === 'explore' ? 'scale-110 text-[#0EA5E9]' : 'text-slate-400'}`} />
           <span className="text-[10px] mt-1 font-bold truncate">
             {language === 'ar' ? 'استكشف' : 'Explore'}
           </span>
@@ -159,7 +159,7 @@ export const MobileTabBar: React.FC = () => {
           <button
             type="button"
             onClick={handleCenterPlanClick}
-            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.6)] border-2 border-[#06090F] hover:scale-105 active:scale-95 transition-all cursor-pointer relative group"
+            className="w-14 h-14 rounded-full bg-gradient-to-tr from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] text-[#06090F] flex items-center justify-center shadow-[0_0_25px_rgba(212,175,55,0.6)] border-2 border-[#06090F] hover:scale-105 active:scale-90 transition-all duration-300 ease-spring-snappy cursor-pointer relative group"
             title="اصنع خطتك أو افتح الجدول"
           >
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F5D07A] opacity-25 pointer-events-none" />
@@ -174,11 +174,11 @@ export const MobileTabBar: React.FC = () => {
             soundEngine.playClick();
             setActiveNavTab('curated');
           }}
-          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full transition-all cursor-pointer ${
+          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full active:scale-90 transition-all duration-200 ease-spring-snappy cursor-pointer ${
             activeNavTab === 'curated' ? 'text-[var(--accent-gold)] font-bold' : 'text-slate-400 hover:text-white'
           }`}
         >
-          <Bookmark className={`w-5 h-5 transition-transform ${activeNavTab === 'curated' ? 'scale-110 text-[var(--accent-gold)]' : 'text-slate-400'}`} />
+          <Bookmark className={`w-5 h-5 transition-transform duration-300 ease-spring-bouncy ${activeNavTab === 'curated' ? 'scale-110 text-[var(--accent-gold)]' : 'text-slate-400'}`} />
           <span className="text-[10px] mt-1 font-bold truncate">
             {language === 'ar' ? 'المقترحة' : 'Curated'}
           </span>
@@ -194,12 +194,12 @@ export const MobileTabBar: React.FC = () => {
             soundEngine.playClick();
             setActiveNavTab('timeline');
           }}
-          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full transition-all cursor-pointer ${
+          className={`min-h-[44px] relative flex flex-col items-center justify-center h-full active:scale-90 transition-all duration-200 ease-spring-snappy cursor-pointer ${
             activeNavTab === 'timeline' ? 'text-[var(--accent-gold)] font-bold' : 'text-slate-400 hover:text-white'
           }`}
         >
           <div className="relative">
-            <Calendar className={`w-5 h-5 transition-transform ${activeNavTab === 'timeline' ? 'scale-110 text-[var(--accent-gold)]' : 'text-slate-400'}`} />
+            <Calendar className={`w-5 h-5 transition-transform duration-300 ease-spring-bouncy ${activeNavTab === 'timeline' ? 'scale-110 text-[var(--accent-gold)]' : 'text-slate-400'}`} />
             {currentItinerary && (
               <span className="absolute -top-1.5 -end-2 w-4 h-4 rounded-full bg-[var(--accent-gold)] text-[#080B11] text-[9px] font-black flex items-center justify-center shadow-sm">
                 {currentItinerary.stops.length}

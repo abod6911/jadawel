@@ -62,7 +62,7 @@ export const CuratedReadyPlans: React.FC = () => {
           {CURATED_PLANS.map((plan, idx) => (
             <div
               key={plan.id}
-              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0B111E]/80 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col justify-between group hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.2)] hover:-translate-y-1.5 transition-all duration-300"
+              className="w-[84vw] max-w-[340px] shrink-0 snap-center md:w-auto md:max-w-none relative rounded-3xl bg-[#0B111E]/80 backdrop-blur-xl border border-white/[0.08] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.7)] flex flex-col justify-between group hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.2)] hover:-translate-y-1.5 transition-all duration-300 ease-spring-snappy"
             >
               {idx === 0 && (
                 <BorderBeam size={260} duration={12} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
@@ -74,7 +74,7 @@ export const CuratedReadyPlans: React.FC = () => {
                     alt={plan.titleEn}
                     loading="lazy"
                     decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600"
+                    className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600 ease-spring-smooth"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[#0B111E] via-black/35 to-transparent" />
                   
@@ -131,7 +131,7 @@ export const CuratedReadyPlans: React.FC = () => {
                   <button
                     type="button"
                     onClick={() => handleLoadPlan(plan.id)}
-                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] hover:brightness-110 text-[#06090F] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.35)] active:scale-[0.98]"
+                    className="w-full py-3.5 px-4 rounded-2xl bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#AA7C11] hover:brightness-110 text-[#06090F] text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer shadow-[0_6px_25px_rgba(212,175,55,0.35)] active:scale-[0.97] ease-spring-snappy duration-200"
                   >
                     <span>{language === 'ar' ? 'تحميل واعتماد هذا الجدول' : 'Load This Plan'}</span>
                     {isRTL ? <ArrowLeft className="w-4 h-4 stroke-[3]" /> : <ArrowRight className="w-4 h-4 stroke-[3]" />}

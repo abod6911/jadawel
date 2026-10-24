@@ -419,7 +419,7 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ startingDistrict: item.id });
                         }}
-                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 ease-spring-snappy active:scale-[0.98] cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
@@ -469,7 +469,7 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ companions: item.id });
                         }}
-                        className={`w-full text-start p-4 sm:p-5 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-4 sm:p-5 rounded-2xl border transition-all duration-300 ease-spring-snappy active:scale-[0.98] cursor-pointer flex flex-col justify-between gap-2.5 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
@@ -519,7 +519,7 @@ export const QuickPlanWizard: React.FC = () => {
                           soundEngine.playClick();
                           updateWizardPreferences({ vibe: item.id as any });
                         }}
-                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
+                        className={`w-full text-start p-3.5 sm:p-4 rounded-2xl border transition-all duration-300 ease-spring-snappy active:scale-[0.98] cursor-pointer flex flex-col justify-between gap-2 touch-manipulation relative overflow-hidden group ${
                           isSelected
                             ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_25px_rgba(212,175,55,0.30)] -translate-y-0.5'
                             : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85 hover:-translate-y-0.5'
@@ -575,7 +575,7 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ budgetTier: item.id === 'premium' ? ('luxury' as any) : item.id });
                             }}
-                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
+                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 ease-spring-snappy active:scale-[0.98] cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
                                 ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
                                 : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
@@ -586,10 +586,7 @@ export const QuickPlanWizard: React.FC = () => {
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
                               {isSelected && (
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
+                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 25 }} className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
                                 >
                                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                                 </motion.div>
@@ -622,7 +619,7 @@ export const QuickPlanWizard: React.FC = () => {
                               soundEngine.playClick();
                               updateWizardPreferences({ duration: item.id });
                             }}
-                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
+                            className={`w-full text-start p-3 sm:p-4 rounded-2xl border transition-all duration-300 ease-spring-snappy active:scale-[0.98] cursor-pointer flex flex-col justify-between gap-1.5 touch-manipulation relative overflow-hidden group ${
                               isSelected
                                 ? 'bg-gradient-to-br from-[#D4AF37]/18 via-[#D4AF37]/08 to-transparent border-[#D4AF37] ring-1 ring-[#F5D07A]/50 shadow-[0_0_20px_rgba(212,175,55,0.25)] -translate-y-0.5'
                                 : 'bg-[#101726]/60 backdrop-blur-md border-white/[0.08] hover:border-[#D4AF37]/40 hover:bg-[#101726]/85'
@@ -633,10 +630,7 @@ export const QuickPlanWizard: React.FC = () => {
                                 {language === 'ar' ? item.labelAr : item.labelEn}
                               </span>
                               {isSelected && (
-                                <motion.div
-                                  initial={{ scale: 0 }}
-                                  animate={{ scale: 1 }}
-                                  className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
+                                <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: "spring", stiffness: 500, damping: 25 }} className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] flex items-center justify-center shrink-0 ms-auto"
                                 >
                                   <Check className="w-2.5 h-2.5 stroke-[3]" />
                                 </motion.div>

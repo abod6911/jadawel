@@ -15,21 +15,26 @@
   --motion-duration-shimmer: 1600ms;  /* Skeleton loader shimmer wave */
 
   /* ==========================================================================
-     2. Easing Curves (Cubic-Beziers)
+     2. Easing Curves — Powered by Easing Wizard (https://easingwizard.com/)
+        Physics-based spring curves utilizing native CSS linear()
      ========================================================================== */
-  /* Snappy entrance curve: rapid initial acceleration, elegant deceleration */
-  --motion-ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
-  
-  /* Standard smooth transition curve for opacity & subtle fades */
-  --motion-ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
-  
-  /* Tactile micro-bounce for icons, checkmarks, badges */
-  --motion-ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-  
-  /* Exit curve: rapid departure to keep UI feeling responsive */
-  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  /* Snappy Micro-Interaction Spring (Buttons, Chips, Checkboxes, Toggle switches) */
+  --ease-spring-snappy: linear(0, 0.009, 0.038 2.3%, 0.158 5.1%, 0.738 15.3%, 0.916 20%, 0.984 22.8%, 1.026 25.8%, 1.046 29%, 1.05 32.5%, 1.039 36.6%, 1.018 42.1%, 1.003 48.7%, 0.998 56.4%, 1 100%);
 
-  /* Linear for constant-rate shimmers and infinite loops */
+  /* Silky Smooth Fluid Spring (Modals, Sheets, Page & Tab Transitions) */
+  --ease-spring-smooth: linear(0, 0.004, 0.016 1.5%, 0.064 3.4%, 0.25 7.5%, 0.5 13.5%, 0.707 20.2%, 0.854 28.5%, 0.943 38.6%, 0.985 51.5%, 0.998 68.2%, 1 100%);
+
+  /* Energetic Bouncy Spring (Heart / Favorite Pop, Badges, Success Checkmarks) */
+  --ease-spring-bouncy: linear(0, 0.006, 0.025 1.5%, 0.101 3.2%, 0.523 9.4%, 0.812 13.5%, 0.978 16.4%, 1.082 19.5%, 1.135 22.6%, 1.147 25.8%, 1.127 29.2%, 1.05 37.1%, 1.002 42.7%, 0.983 48.4%, 0.985 54.7%, 1.003 67.5%, 1 100%);
+
+  /* Elastic Overshoot (Drawers, Menus, Floating Pill Dock) */
+  --ease-overshoot: linear(0, 0.008, 0.034 2%, 0.138 4.3%, 0.612 12.5%, 0.828 16.8%, 0.943 20.3%, 1.01 23.6%, 1.045 27.1%, 1.056 30.7%, 1.05 34.6%, 1.032 39.4%, 1.005 48.2%, 0.998 57.8%, 1 100%);
+
+  /* System aliases */
+  --motion-ease-spring: var(--ease-spring-snappy);
+  --motion-ease-smooth: var(--ease-spring-smooth);
+  --motion-ease-bounce: var(--ease-spring-bouncy);
+  --motion-ease-exit: cubic-bezier(0.4, 0, 1, 1);
   --motion-ease-linear: linear;
 }
 
@@ -168,6 +173,51 @@
 .dropdown-scale-origin {
   transform-origin: var(--dropdown-origin, top right);
   animation: jadawelScaleIn var(--motion-duration-fast) var(--motion-ease-spring) forwards;
+}
+
+
+/* ==========================================================================
+   4.1 Easing Wizard Spring Utility Classes
+   ========================================================================== */
+.ease-spring-snappy {
+  transition-timing-function: var(--ease-spring-snappy) !important;
+}
+.ease-spring-smooth {
+  transition-timing-function: var(--ease-spring-smooth) !important;
+}
+.ease-spring-bouncy {
+  transition-timing-function: var(--ease-spring-bouncy) !important;
+}
+.ease-overshoot {
+  transition-timing-function: var(--ease-overshoot) !important;
+}
+
+/* Card Spring Lift with Tactile Response */
+.card-spring-hover {
+  transition: transform 340ms var(--ease-spring-snappy),
+              box-shadow 340ms var(--ease-spring-smooth),
+              border-color 220ms ease;
+}
+.card-spring-hover:hover {
+  transform: translateY(-4px) scale(1.005);
+}
+.card-spring-hover:active {
+  transform: translateY(0px) scale(0.985);
+  transition-duration: 90ms;
+}
+
+/* Tactile Elastic Button */
+.btn-spring {
+  transition: transform 260ms var(--ease-spring-snappy),
+              filter 200ms ease,
+              box-shadow 260ms var(--ease-spring-smooth);
+}
+.btn-spring:hover {
+  transform: translateY(-1.5px);
+}
+.btn-spring:active {
+  transform: translateY(1px) scale(0.96);
+  transition-duration: 80ms;
 }
 
 /* ==========================================================================

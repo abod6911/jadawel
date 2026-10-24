@@ -40,7 +40,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group relative bg-[#0B111E]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.18)] hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between"
+      className="group relative bg-[#0B111E]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.18)] hover:-translate-y-1.5 transition-all duration-300 ease-spring-snappy flex flex-col justify-between"
     >
       {/* Radial Spotlight Hover Glow */}
       {isHovered && (
@@ -57,7 +57,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
         <img
           src={getAssetUrl(place.imageUrl)}
           alt={place.nameEn}
-          className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600"
+          className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600 ease-spring-smooth"
           loading="lazy"
           onError={(e) => {
             (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');
@@ -111,7 +111,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
               e.stopPropagation();
               toggleFavoritePlace(place.id);
             }}
-            className="p-2 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white hover:text-red-400 transition-colors pointer-events-auto shadow-sm cursor-pointer border border-white/10"
+            className="p-2 rounded-xl bg-[#0B0D12]/85 backdrop-blur-md text-white hover:text-red-400 active:scale-125 transition-all duration-300 ease-spring-bouncy pointer-events-auto shadow-sm cursor-pointer border border-white/10"
             aria-label="Favorite"
           >
             <Heart
