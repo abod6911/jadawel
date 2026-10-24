@@ -108,33 +108,30 @@ export const HeroSection: React.FC = () => {
                 <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   جدة.. كما لم تعشها من قبل
                 </span>
-                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                  <span className="text-slate-300">مسارك اليومي </span>
+                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
+                  <span className="text-slate-300">مسارك اليومي</span>
                   <TextRotate
                     as="span"
                     texts={[
                       'بدقة استثنائية',
                       'بين أزقة البلد',
                       'على بحر أبحر',
-                      'لأرقى مقاهي الروضة',
+                      'في مقاهي الروضة',
                       'على كورنيش الحمراء',
                       'على مودك وميزانيتك',
                     ]}
-                    mainClassName="text-shimmer-champagne px-1"
-                    splitBy="words"
-                    staggerDuration={0.03}
-                    rotationInterval={3000}
-                    transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                    mainClassName="text-shimmer-champagne px-3.5 sm:px-4 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/75 backdrop-blur-md border border-[#D4AF37]/35 shadow-[0_4px_25px_rgba(212,175,55,0.18)]"
+                    rotationInterval={2800}
                   />
-                </span>
+                </div>
               </>
             ) : (
               <>
                 <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   Jeddah.. Curated Like Never Before
                 </span>
-                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                  <span className="text-slate-300">Bespoke Itineraries </span>
+                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
+                  <span className="text-slate-300">Bespoke Itineraries</span>
                   <TextRotate
                     as="span"
                     texts={[
@@ -145,13 +142,10 @@ export const HeroSection: React.FC = () => {
                       'By King Fahd Fountain',
                       'Tailored To Your Budget',
                     ]}
-                    mainClassName="text-shimmer-champagne px-1"
-                    splitBy="words"
-                    staggerDuration={0.02}
-                    rotationInterval={3000}
-                    transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                    mainClassName="text-shimmer-champagne px-3.5 sm:px-4 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/75 backdrop-blur-md border border-[#D4AF37]/35 shadow-[0_4px_25px_rgba(212,175,55,0.18)]"
+                    rotationInterval={2800}
                   />
-                </span>
+                </div>
               </>
             )}
           </h1>
