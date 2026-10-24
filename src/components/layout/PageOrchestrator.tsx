@@ -149,8 +149,8 @@ export const PageOrchestrator: React.FC = () => {
         {/* Global Modals */}
         <SavedPlansModal />
 
-        {/* Footer */}
-        <Footer />
+        {/* Footer (Hidden on Home screen for an ultra-clean, minimalist landing interface) */}
+        {(activeNavTab === 'explore' || activeNavTab === 'curated') && <Footer />}
 
         {/* Mobile Bottom Dock Navigation */}
         <MobileNav />
