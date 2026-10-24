@@ -12,6 +12,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 import { RawashinPattern } from '@/components/ui/RawashinPattern';
+import { LayoutGroup } from 'framer-motion';
 import TextRotate from '@/components/fancy/text/text-rotate';
 
 export const HeroSection: React.FC = () => {
@@ -108,44 +109,54 @@ export const HeroSection: React.FC = () => {
                 <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   جدة.. كما لم تعشها من قبل
                 </span>
-                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                  <span className="text-slate-300">مسارك اليومي</span>
-                  <TextRotate
-                    as="span"
-                    texts={[
-                      'بدقة استثنائية',
-                      'بين أزقة البلد',
-                      'على بحر أبحر',
-                      'في مقاهي الروضة',
-                      'على كورنيش الحمراء',
-                      'على مودك وميزانيتك',
-                    ]}
-                    mainClassName="px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] text-[#F5D07A] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)]"
-                    rotationInterval={2800}
-                  />
-                </div>
+                <LayoutGroup>
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
+                    <span className="text-slate-300">مسارك اليومي</span>
+                    <TextRotate
+                      as="span"
+                      texts={[
+                        'بدقة استثنائية',
+                        'بين أزقة البلد',
+                        'على بحر أبحر',
+                        'في مقاهي الروضة',
+                        'على كورنيش الحمراء',
+                        'على مودك وميزانيتك',
+                      ]}
+                      splitBy="words"
+                      staggerDuration={0.02}
+                      rotationInterval={2600}
+                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden"
+                      splitLevelClassName="overflow-hidden pb-0.5"
+                    />
+                  </div>
+                </LayoutGroup>
               </>
             ) : (
               <>
                 <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   Jeddah.. Curated Like Never Before
                 </span>
-                <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                  <span className="text-slate-300">Bespoke Itineraries</span>
-                  <TextRotate
-                    as="span"
-                    texts={[
-                      'At Your Fingertips',
-                      'Along Obhur Coast',
-                      'Through Al-Balad Alleys',
-                      'Across Al-Rawdah Cafés',
-                      'By King Fahd Fountain',
-                      'Tailored To Your Budget',
-                    ]}
-                    mainClassName="px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] text-[#F5D07A] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)]"
-                    rotationInterval={2800}
-                  />
-                </div>
+                <LayoutGroup>
+                  <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
+                    <span className="text-slate-300">Bespoke Itineraries</span>
+                    <TextRotate
+                      as="span"
+                      texts={[
+                        'At Your Fingertips',
+                        'Along Obhur Coast',
+                        'Through Al-Balad Alleys',
+                        'Across Al-Rawdah Cafés',
+                        'By King Fahd Fountain',
+                        'Tailored To Your Budget',
+                      ]}
+                      splitBy="words"
+                      staggerDuration={0.02}
+                      rotationInterval={2600}
+                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden"
+                      splitLevelClassName="overflow-hidden pb-0.5"
+                    />
+                  </div>
+                </LayoutGroup>
               </>
             )}
           </h1>
