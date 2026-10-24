@@ -12,6 +12,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 import { RawashinPattern } from '@/components/ui/RawashinPattern';
+import TextRotate from '@/components/fancy/text/text-rotate';
 
 export const HeroSection: React.FC = () => {
   const { language, isRTL } = useLanguage();
@@ -109,7 +110,22 @@ export const HeroSection: React.FC = () => {
                 </span>
                 <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
                   <span className="text-slate-300">مسارك اليومي </span>
-                  <span className="text-shimmer-champagne px-1">بدقة استثنائية</span>
+                  <TextRotate
+                    as="span"
+                    texts={[
+                      'بدقة استثنائية',
+                      'بين أزقة البلد',
+                      'على بحر أبحر',
+                      'لأرقى مقاهي الروضة',
+                      'على كورنيش الحمراء',
+                      'على مودك وميزانيتك',
+                    ]}
+                    mainClassName="text-shimmer-champagne px-1"
+                    splitBy="words"
+                    staggerDuration={0.03}
+                    rotationInterval={3000}
+                    transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                  />
                 </span>
               </>
             ) : (
@@ -119,7 +135,22 @@ export const HeroSection: React.FC = () => {
                 </span>
                 <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
                   <span className="text-slate-300">Bespoke Itineraries </span>
-                  <span className="text-shimmer-champagne px-1">At Your Fingertips</span>
+                  <TextRotate
+                    as="span"
+                    texts={[
+                      'At Your Fingertips',
+                      'Along Obhur Coast',
+                      'Through Al-Balad Alleys',
+                      'Across Al-Rawdah Cafés',
+                      'By King Fahd Fountain',
+                      'Tailored To Your Budget',
+                    ]}
+                    mainClassName="text-shimmer-champagne px-1"
+                    splitBy="words"
+                    staggerDuration={0.02}
+                    rotationInterval={3000}
+                    transition={{ type: 'spring', damping: 28, stiffness: 340 }}
+                  />
                 </span>
               </>
             )}
