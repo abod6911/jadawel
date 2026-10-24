@@ -95,30 +95,42 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
   const totalGap = activeSegmentsCount > 1 ? gap * activeSegmentsCount : 0;
   const usableCircumference = Math.max(0, circumference - totalGap);
 
-  const foodStroke =
-    effectiveTotal > 0 && foodPct > 0
-      ? activeSegmentsCount === 1
-        ? circumference
-        : Math.max(2, (foodPct / 100) * usableCircumference)
-      : 0;
+  // Dynamic slices calculation for smooth rendering & perfect label placement directly on arcs
+  const slices = React.useMemo(() => {
+    if (effectiveTotal <= 0) return [];
 
-  const ticketsStroke =
-    effectiveTotal > 0 && ticketsPct > 0
-      ? activeSegmentsCount === 1
-        ? circumference
-        : Math.max(2, (ticketsPct / 100) * usableCircumference)
-      : 0;
+    const raw: { key: CategoryKey; pct: number; color: string; gradId: string; textColor: string }[] = [];
+    if (foodPct > 0) raw.push({ key: 'food', pct: foodPct, color: '#E5C378', gradId: 'foodGrad', textColor: '#0B0E14' });
+    if (ticketsPct > 0) raw.push({ key: 'tickets', pct: ticketsPct, color: '#F4956C', gradId: 'ticketsGrad', textColor: '#0B0E14' });
+    if (transitPct > 0) raw.push({ key: 'transit', pct: transitPct, color: '#2DD4BF', gradId: 'transitGrad', textColor: '#0B0E14' });
 
-  const transitStroke =
-    effectiveTotal > 0 && transitPct > 0
-      ? activeSegmentsCount === 1
-        ? circumference
-        : Math.max(2, (transitPct / 100) * usableCircumference)
-      : 0;
+    if (raw.length === 0) return [];
 
-  const foodOffset = 0;
-  const ticketsOffset = -(foodStroke + (foodStroke > 0 ? gap : 0));
-  const transitOffset = -(foodStroke + ticketsStroke + (foodStroke > 0 ? gap : 0) + (ticketsStroke > 0 ? gap : 0));
+    const count = raw.length;
+    const currentGap = count > 1 ? 3.5 : 0;
+    const usable = count === 1 ? circumference : Math.max(0, circumference - currentGap * count);
+
+    let accumulatedDist = 0;
+    return raw.map((item) => {
+      const stroke = count === 1 ? circumference : Math.max(2, (item.pct / 100) * usable);
+      const offset = -accumulatedDist;
+      const midDist = accumulatedDist + stroke / 2;
+      const angleDeg = (midDist / circumference) * 360;
+      const rad = (angleDeg * Math.PI) / 180;
+      const midX = 50 + radius * Math.sin(rad);
+      const midY = 50 - radius * Math.cos(rad);
+
+      accumulatedDist += stroke + currentGap;
+
+      return {
+        ...item,
+        stroke,
+        offset,
+        midX,
+        midY,
+      };
+    });
+  }, [effectiveTotal, foodPct, ticketsPct, transitPct, circumference, radius]);
 
   const categories = [
     {
@@ -306,7 +318,7 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                 }`}
               />
 
-              <svg className="w-full h-full -rotate-90 transform relative z-10" viewBox="0 0 100 100">
+              <svg className="w-full h-full relative z-10" viewBox="0 0 100 100">
                 <defs>
                   <linearGradient id="foodGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                     <stop offset="0%" stopColor="#DF9F3D" />
@@ -348,62 +360,75 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                   strokeWidth="11"
                 />
 
-                {/* Food Slice */}
-                {foodStroke > 0 && (
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r={radius}
-                    fill="transparent"
-                    stroke="url(#foodGrad)"
-                    strokeWidth={activeHover === 'food' ? '14' : '11'}
-                    strokeDasharray={`${foodStroke} ${circumference}`}
-                    strokeDashoffset={foodOffset}
-                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
-                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
-                    className="transition-all duration-300 ease-out cursor-pointer"
-                    onMouseEnter={() => setActiveHover('food')}
-                    onMouseLeave={() => setActiveHover(null)}
-                  />
-                )}
+                {/* Slices Group rotated -90 deg so slice starts at 12 o'clock */}
+                <g transform="rotate(-90 50 50)">
+                  {slices.map((slice) => (
+                    <circle
+                      key={slice.key}
+                      cx="50"
+                      cy="50"
+                      r={radius}
+                      fill="transparent"
+                      stroke={`url(#${slice.gradId})`}
+                      strokeWidth={activeHover === slice.key ? '14' : '11'}
+                      strokeDasharray={`${slice.stroke} ${circumference}`}
+                      strokeDashoffset={slice.offset}
+                      strokeLinecap={slices.length === 1 ? 'butt' : 'round'}
+                      style={{
+                        transition:
+                          'stroke-width 0.3s ease, stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)',
+                      }}
+                      className="transition-all duration-300 ease-out cursor-pointer"
+                      onMouseEnter={() => setActiveHover(slice.key)}
+                      onMouseLeave={() => setActiveHover(null)}
+                    />
+                  ))}
+                </g>
 
-                {/* Tickets Slice */}
-                {ticketsStroke > 0 && (
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r={radius}
-                    fill="transparent"
-                    stroke="url(#ticketsGrad)"
-                    strokeWidth={activeHover === 'tickets' ? '14' : '11'}
-                    strokeDasharray={`${ticketsStroke} ${circumference}`}
-                    strokeDashoffset={ticketsOffset}
-                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
-                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
-                    className="transition-all duration-300 ease-out cursor-pointer"
-                    onMouseEnter={() => setActiveHover('tickets')}
-                    onMouseLeave={() => setActiveHover(null)}
-                  />
-                )}
+                {/* Percentage Labels directly ON each slice arc */}
+                {slices.map((slice) => {
+                  if (slice.pct < 6) return null;
+                  const isHovered = activeHover === slice.key;
+                  const isDoubleDigit = slice.pct >= 10;
+                  const badgeWidth = isDoubleDigit ? (isHovered ? 13.5 : 12) : (isHovered ? 10.5 : 9.5);
+                  const badgeHeight = isHovered ? 6.8 : 6;
 
-                {/* Transit Slice */}
-                {transitStroke > 0 && (
-                  <circle
-                    cx="50"
-                    cy="50"
-                    r={radius}
-                    fill="transparent"
-                    stroke="url(#transitGrad)"
-                    strokeWidth={activeHover === 'transit' ? '14' : '11'}
-                    strokeDasharray={`${transitStroke} ${circumference}`}
-                    strokeDashoffset={transitOffset}
-                    strokeLinecap={activeSegmentsCount === 1 ? 'butt' : 'round'}
-                    style={{ transition: 'stroke-dasharray 0.7s cubic-bezier(0.22, 1, 0.36, 1), stroke-dashoffset 0.7s cubic-bezier(0.22, 1, 0.36, 1)' }}
-                    className="transition-all duration-300 ease-out cursor-pointer"
-                    onMouseEnter={() => setActiveHover('transit')}
-                    onMouseLeave={() => setActiveHover(null)}
-                  />
-                )}
+                  return (
+                    <g
+                      key={`pct-label-${slice.key}`}
+                      className="pointer-events-none select-none transition-all duration-300"
+                    >
+                      {/* Sculpted Luxury Capsule Pill on Arc */}
+                      <rect
+                        x={slice.midX - badgeWidth / 2}
+                        y={slice.midY - badgeHeight / 2}
+                        width={badgeWidth}
+                        height={badgeHeight}
+                        rx={badgeHeight / 2}
+                        fill="rgba(7, 10, 16, 0.72)"
+                        stroke="rgba(255, 255, 255, 0.22)"
+                        strokeWidth="0.4"
+                        className="transition-all duration-300"
+                      />
+                      <text
+                        x={slice.midX}
+                        y={slice.midY + 0.3}
+                        textAnchor="middle"
+                        dominantBaseline="central"
+                        fill="#FFFFFF"
+                        className="font-black font-mono tracking-tighter"
+                        style={{
+                          fontSize: isHovered ? '4.5px' : '3.8px',
+                          fontWeight: 900,
+                          transition: 'font-size 0.2s ease',
+                          letterSpacing: '-0.3px',
+                        }}
+                      >
+                        {slice.pct}%
+                      </text>
+                    </g>
+                  );
+                })}
               </svg>
 
               {/* Dynamic Center Horology Core */}
@@ -439,36 +464,6 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Quick Color Pill Dots (Mini Legend) */}
-          <div className="pt-2 border-t border-white/[0.05] flex items-center justify-center gap-3 text-[11px] font-bold text-slate-400 font-mono" dir="ltr">
-            <span
-              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
-              onMouseEnter={() => setActiveHover('food')}
-              onMouseLeave={() => setActiveHover(null)}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#E5C378] shadow-[0_0_8px_rgba(229,195,120,0.6)]" />
-              <span>{foodPct}%</span>
-            </span>
-            <span>•</span>
-            <span
-              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
-              onMouseEnter={() => setActiveHover('tickets')}
-              onMouseLeave={() => setActiveHover(null)}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#F4956C] shadow-[0_0_8px_rgba(244,149,108,0.6)]" />
-              <span>{ticketsPct}%</span>
-            </span>
-            <span>•</span>
-            <span
-              className="flex items-center gap-1.5 cursor-pointer hover:text-white transition-colors"
-              onMouseEnter={() => setActiveHover('transit')}
-              onMouseLeave={() => setActiveHover(null)}
-            >
-              <span className="w-2.5 h-2.5 rounded-full bg-[#2DD4BF] shadow-[0_0_8px_rgba(45,212,191,0.6)]" />
-              <span>{transitPct}%</span>
-            </span>
           </div>
         </div>
 
