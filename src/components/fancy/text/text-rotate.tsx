@@ -105,7 +105,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
       animate = { y: '0%', opacity: 1, filter: 'blur(0px)' },
       exit = { y: '-100%', opacity: 0, filter: 'blur(3px)' },
       animatePresenceMode = 'popLayout',
-      animatePresenceInitial = false,
+      animatePresenceInitial = true,
       rotationInterval = 3000,
       staggerDuration = 0,
       staggerFrom = 'first',
@@ -121,6 +121,10 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
     ref
   ) => {
     const [currentTextIndex, setCurrentTextIndex] = useState(0);
+    const isFirstRenderRef = React.useRef(true);
+    useEffect(() => {
+      isFirstRenderRef.current = false;
+    }, []);
 
     const handleIndexChange = useCallback(
       (newIndex: number) => {
@@ -247,7 +251,7 @@ export const TextRotate = forwardRef<TextRotateRef, TextRotateProps>(
           <motion.span
             key={currentTextIndex}
             layout
-            initial={initial}
+            initial={isFirstRenderRef.current ? false : initial}
             animate={animate}
             exit={exit}
             transition={transition}

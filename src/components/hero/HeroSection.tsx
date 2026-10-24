@@ -120,7 +120,7 @@ export const HeroSection: React.FC = () => {
                       'على كورنيش الحمراء',
                       'على مودك وميزانيتك',
                     ]}
-                    mainClassName="text-shimmer-champagne px-3.5 sm:px-4 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/75 backdrop-blur-md border border-[#D4AF37]/35 shadow-[0_4px_25px_rgba(212,175,55,0.18)]"
+                    mainClassName="px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] text-[#F5D07A] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)]"
                     rotationInterval={2800}
                   />
                 </div>
@@ -142,7 +142,7 @@ export const HeroSection: React.FC = () => {
                       'By King Fahd Fountain',
                       'Tailored To Your Budget',
                     ]}
-                    mainClassName="text-shimmer-champagne px-3.5 sm:px-4 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/75 backdrop-blur-md border border-[#D4AF37]/35 shadow-[0_4px_25px_rgba(212,175,55,0.18)]"
+                    mainClassName="px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] text-[#F5D07A] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)]"
                     rotationInterval={2800}
                   />
                 </div>
