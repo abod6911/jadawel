@@ -1,9 +1,9 @@
 'use client';
 
 import React from 'react';
-import { Search, MapPin, LayoutGrid, Map as MapIcon, X, Compass, Filter, Sparkles } from 'lucide-react';
+import { Search, MapPin, X, Compass } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { PlaceCategory, DistrictId, PlaceTierFilter } from '@/types';
+import { PlaceCategory, DistrictId } from '@/types';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
 import { soundEngine } from '@/utils/audioEngine';
 
@@ -14,8 +14,6 @@ interface FilterBarProps {
   onCategoryChange: (cat: PlaceCategory | 'all') => void;
   selectedDistrict: DistrictId | 'all';
   onDistrictChange: (d: DistrictId | 'all') => void;
-  selectedTier?: PlaceTierFilter;
-  onTierChange?: (tier: PlaceTierFilter) => void;
   activeFeatures: {
     freeOnly: boolean;
     familyOnly: boolean;
@@ -23,8 +21,6 @@ interface FilterBarProps {
     indoorOnly: boolean;
   };
   onFeatureToggle: (key: 'freeOnly' | 'familyOnly' | 'seaViewOnly' | 'indoorOnly') => void;
-  viewMode: 'grid' | 'map';
-  onViewModeChange: (m: 'grid' | 'map') => void;
   resultsCount: number;
 }
 
@@ -35,33 +31,29 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onCategoryChange,
   selectedDistrict,
   onDistrictChange,
-  selectedTier = 'all',
-  onTierChange,
   activeFeatures,
   onFeatureToggle,
-  viewMode,
-  onViewModeChange,
   resultsCount,
 }) => {
-  const { language, isRTL } = useLanguage();
+  const { language } = useLanguage();
 
-  const categories: { id: PlaceCategory | 'all'; labelAr: string; labelEn: string; emoji: string }[] = [
-    { id: 'all', labelAr: 'الكل', labelEn: 'All', emoji: '📍' },
-    { id: 'culinary', labelAr: 'مطاعم ومقاهي', labelEn: 'Dining & Cafes', emoji: '☕' },
-    { id: 'waterfront', labelAr: 'واجهات بحرية', labelEn: 'Waterfront', emoji: '🌊' },
-    { id: 'heritage', labelAr: 'تراث وتاريخ', labelEn: 'Heritage', emoji: '🏛️' },
-    { id: 'beach_resorts', labelAr: 'شواطئ ونوادي', labelEn: 'Beaches & Clubs', emoji: '🏖️' },
-    { id: 'arts_entertainment', labelAr: 'فنون وفعاليات', labelEn: 'Arts & Events', emoji: '🎨' },
-    { id: 'nature_parks', labelAr: 'ترفيه ومغامرة', labelEn: 'Fun & Adventure', emoji: '🎡' },
+  const categories: { id: PlaceCategory | 'all'; labelAr: string; labelEn: string }[] = [
+    { id: 'all', labelAr: 'الكل', labelEn: 'All' },
+    { id: 'culinary', labelAr: 'مطاعم ومقاهي', labelEn: 'Dining & Cafes' },
+    { id: 'waterfront', labelAr: 'واجهات بحرية', labelEn: 'Waterfront' },
+    { id: 'heritage', labelAr: 'تراث وتاريخ', labelEn: 'Heritage' },
+    { id: 'beach_resorts', labelAr: 'شواطئ ونوادي', labelEn: 'Beaches & Clubs' },
+    { id: 'arts_entertainment', labelAr: 'فنون وفعاليات', labelEn: 'Arts & Events' },
+    { id: 'nature_parks', labelAr: 'ترفيه ومغامرة', labelEn: 'Fun & Adventure' },
   ];
 
   return (
     <div className="space-y-4 text-start">
-      {/* 1. Search Bar + District Selector + View Toggle */}
+      {/* 1. Clean Search Bar + District Selector (No Map toggle) */}
       <div className="grid grid-cols-1 sm:grid-cols-12 gap-3 items-center">
         {/* Search Input */}
-        <div className="sm:col-span-7 relative">
-          <Search className="absolute top-1/2 -translate-y-1/2 start-3.5 w-4 h-4 text-gold-400 pointer-events-none" />
+        <div className="sm:col-span-8 relative">
+          <Search className="absolute top-1/2 -translate-y-1/2 start-3.5 w-4 h-4 text-[#E5C378] pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
@@ -71,7 +63,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 ? 'ابحث باسم المكان، الحي، أو نوع التجربة...'
                 : 'Search by name, district, or vibe...'
             }
-            className="w-full ps-10 pe-10 py-3.5 rounded-2xl bg-abyss-950/80 border border-white/10 text-xs sm:text-sm text-pearl placeholder-pearl-muted/60 focus:outline-none focus:border-gold-500/60 focus:ring-1 focus:ring-gold-500/50 transition-all shadow-inner"
+            className="w-full ps-10 pe-10 py-3 sm:py-3.5 rounded-2xl bg-[#090C12]/90 border border-white/10 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:border-[#E5C378]/70 focus:ring-1 focus:ring-[#E5C378]/50 transition-all shadow-inner"
           />
           {searchQuery && (
             <button
@@ -80,7 +72,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 soundEngine.playClick();
                 onSearchChange('');
               }}
-              className="absolute top-1/2 -translate-y-1/2 end-3.5 p-1 rounded-full text-pearl-muted hover:text-white cursor-pointer"
+              className="absolute top-1/2 -translate-y-1/2 end-3.5 p-1 rounded-full text-slate-400 hover:text-white cursor-pointer"
               aria-label="Clear Search"
             >
               <X className="w-4 h-4" />
@@ -89,7 +81,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </div>
 
         {/* District Selector */}
-        <div className="sm:col-span-3 relative">
+        <div className="sm:col-span-4 relative">
           <MapPin className="absolute top-1/2 -translate-y-1/2 start-3.5 w-4 h-4 text-teal-400 pointer-events-none" />
           <select
             value={selectedDistrict}
@@ -97,10 +89,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
               soundEngine.playClick();
               onDistrictChange(e.target.value as any);
             }}
-            className="w-full ps-10 pe-8 py-3.5 rounded-2xl bg-abyss-950/80 border border-white/10 text-xs sm:text-sm text-pearl font-bold focus:outline-none focus:border-gold-500/60 transition-all cursor-pointer"
+            className="w-full ps-10 pe-8 py-3 sm:py-3.5 rounded-2xl bg-[#090C12]/90 border border-white/10 text-xs sm:text-sm text-white font-bold focus:outline-none focus:border-[#E5C378]/70 transition-all cursor-pointer"
           >
             <option value="all" className="bg-[#090B0E] text-white">
-              {language === 'ar' ? 'جميع أحياء جدة 📍' : 'All Districts 📍'}
+              {language === 'ar' ? 'جميع أحياء جدة' : 'All Districts'}
             </option>
             {JEDDAH_DISTRICTS.map((d) => (
               <option key={d.id} value={d.id} className="bg-[#090B0E] text-white">
@@ -109,80 +101,9 @@ export const FilterBar: React.FC<FilterBarProps> = ({
             ))}
           </select>
         </div>
-
-        {/* View Mode Toggle: Grid vs Map */}
-        <div className="sm:col-span-2 flex items-center justify-end gap-1 p-1 bg-abyss-950/80 rounded-2xl border border-white/10">
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              onViewModeChange('grid');
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              viewMode === 'grid'
-                ? 'bg-abyss-800 text-gold-400 border border-gold-500/40 shadow-glow-gold'
-                : 'text-pearl-muted hover:text-pearl'
-            }`}
-            title="عرض الشبكة"
-          >
-            <LayoutGrid className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{language === 'ar' ? 'شبكة' : 'Grid'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              onViewModeChange('map');
-            }}
-            className={`flex-1 py-2 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-              viewMode === 'map'
-                ? 'bg-abyss-800 text-teal-300 border border-teal-400/40 shadow-glow-teal'
-                : 'text-pearl-muted hover:text-pearl'
-            }`}
-            title="عرض الخريطة"
-          >
-            <MapIcon className="w-3.5 h-3.5" />
-            <span className="hidden sm:inline">{language === 'ar' ? 'خريطة' : 'Map'}</span>
-          </button>
-        </div>
       </div>
 
-      {/* 2. Google Maps Curated Collections (الأشهر، الأرخص، الأغلى) */}
-      <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
-        <span className="text-[11px] font-black text-[#E5C378] shrink-0 flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-[#E5C378]/10 border border-[#E5C378]/25">
-          <Sparkles className="w-3.5 h-3.5 text-[#E5C378]" />
-          <span>{language === 'ar' ? 'مجموعات Google Maps:' : 'Google Maps:'}</span>
-        </span>
-        {[
-          { id: 'all' as const, labelAr: 'الكل ✨', labelEn: 'All ✨' },
-          { id: 'trending' as const, labelAr: 'ترند حالياً 🔥', labelEn: 'Trending Now 🔥' },
-          { id: 'famous' as const, labelAr: 'الأشهر والأيقونية ⭐', labelEn: 'Most Famous ⭐' },
-          { id: 'budget' as const, labelAr: 'الأرخص وتوفير الجيب 💰', labelEn: 'Budget Gems (≤ 35 SAR) 💰' },
-          { id: 'luxury' as const, labelAr: 'الأفخم والأغلى VIP 👑', labelEn: 'Ultra-Luxury VIP 👑' },
-        ].map((tier) => {
-          const isSelected = selectedTier === tier.id;
-          return (
-            <button
-              key={tier.id}
-              type="button"
-              onClick={() => {
-                soundEngine.playClick();
-                onTierChange?.(tier.id);
-              }}
-              className={`shrink-0 px-3.5 py-1.5 rounded-xl text-xs font-black flex items-center gap-1.5 transition-all cursor-pointer border ${
-                isSelected
-                  ? 'bg-gradient-to-r from-[#DF9F3D]/25 via-[#E5C378]/30 to-[#C8A452]/25 text-[#F5E2B3] border-[#E5C378]/80 shadow-[0_0_15px_rgba(229,195,120,0.3)] scale-[1.02]'
-                  : 'bg-abyss-950/70 text-pearl-muted border-white/10 hover:border-white/20 hover:text-pearl'
-              }`}
-            >
-              <span>{language === 'ar' ? tier.labelAr : tier.labelEn}</span>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* 3. Category Filter Pills */}
+      {/* 2. Streamlined Category Filter Pills (Zero Emojis, Pure Elegance) */}
       <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
         {categories.map((cat) => {
           const isSelected = selectedCategory === cat.id;
@@ -194,27 +115,26 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 soundEngine.playClick();
                 onCategoryChange(cat.id);
               }}
-              className={`shrink-0 px-3.5 py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer border ${
+              className={`shrink-0 px-4 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer border ${
                 isSelected
-                  ? 'bg-gradient-to-r from-gold-500/20 to-gold-600/20 text-gold-300 border-gold-500/60 shadow-glow-gold'
-                  : 'bg-abyss-950/60 text-pearl-muted border-white/10 hover:border-white/20 hover:text-pearl'
+                  ? 'bg-gradient-to-r from-[#DF9F3D]/25 via-[#E5C378]/30 to-[#C8A452]/25 text-[#F5E2B3] border-[#E5C378]/80 shadow-[0_0_15px_rgba(229,195,120,0.25)] scale-[1.02]'
+                  : 'bg-white/[0.03] text-slate-400 border-white/[0.08] hover:border-white/20 hover:text-white'
               }`}
             >
-              <span>{cat.emoji}</span>
               <span>{language === 'ar' ? cat.labelAr : cat.labelEn}</span>
             </button>
           );
         })}
       </div>
 
-      {/* 3. Feature Chips & Live Counter */}
-      <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-white/10">
+      {/* 3. Subtle Quick Filters & Counter */}
+      <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-white/[0.07]">
         <div className="flex flex-wrap items-center gap-2">
           {[
-            { key: 'freeOnly' as const, labelAr: 'دخول مجاني 🆓', labelEn: 'Free Entry 🆓' },
-            { key: 'seaViewOnly' as const, labelAr: 'إطلالة بحرية 🌊', labelEn: 'Sea View 🌊' },
-            { key: 'familyOnly' as const, labelAr: 'مناسب للعوائل 👨‍👩‍👧', labelEn: 'Family Friendly 👨‍👩‍👧' },
-            { key: 'indoorOnly' as const, labelAr: 'مكيف داخلي ❄️', labelEn: 'Indoor AC ❄️' },
+            { key: 'freeOnly' as const, labelAr: 'دخول مجاني', labelEn: 'Free Entry' },
+            { key: 'seaViewOnly' as const, labelAr: 'إطلالة بحرية', labelEn: 'Sea View' },
+            { key: 'familyOnly' as const, labelAr: 'مناسب للعوائل', labelEn: 'Family Friendly' },
+            { key: 'indoorOnly' as const, labelAr: 'مكيف داخلي', labelEn: 'Indoor AC' },
           ].map((feat) => {
             const isActive = activeFeatures[feat.key];
             return (
@@ -227,8 +147,8 @@ export const FilterBar: React.FC<FilterBarProps> = ({
                 }}
                 className={`px-3 py-1 rounded-lg text-[11px] font-bold border transition-all cursor-pointer ${
                   isActive
-                    ? 'bg-teal-500/20 text-teal-300 border-teal-400/50 shadow-glow-teal'
-                    : 'bg-abyss-950/40 text-pearl-muted border-white/5 hover:border-white/15'
+                    ? 'bg-teal-500/20 text-teal-300 border-teal-400/50 shadow-sm'
+                    : 'bg-white/[0.02] text-slate-400 border-white/[0.06] hover:border-white/15 hover:text-slate-300'
                 }`}
               >
                 <span>{language === 'ar' ? feat.labelAr : feat.labelEn}</span>
@@ -238,12 +158,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         </div>
 
         {/* Live Result Counter */}
-        <div className="text-xs text-pearl-muted font-medium flex items-center gap-1.5">
-          <Compass className="w-3.5 h-3.5 text-gold-400" />
+        <div className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
+          <Compass className="w-3.5 h-3.5 text-[#E5C378]" />
           <span>
             {language === 'ar'
-              ? `${resultsCount} وجهة مطابقة`
-              : `${resultsCount} spots found`}
+              ? `${resultsCount} وجهة معتمدة`
+              : `${resultsCount} verified spots`}
           </span>
         </div>
       </div>
