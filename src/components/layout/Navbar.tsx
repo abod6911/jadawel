@@ -103,7 +103,7 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* 2. CENTER NAVIGATION TABS */}
-        <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-full border border-white/[0.06]">
+        <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-full border border-white/[0.06] backdrop-blur-md">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeNavTab === item.id;
@@ -116,24 +116,22 @@ export const Navbar: React.FC = () => {
                   soundEngine.playClick();
                   setActiveNavTab(item.id);
                 }}
-                className={`relative px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors flex items-center gap-1.5 cursor-pointer z-10 ${
+                className={`relative px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 whitespace-nowrap shrink-0 select-none ${
                   isActive
-                    ? 'text-white font-bold'
-                    : 'text-slate-400 hover:text-slate-200'
+                    ? 'text-[#F5D07A] font-bold drop-shadow-[0_1px_4px_rgba(245,208,122,0.25)]'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
                 }`}
               >
-                {/* Sliding Gold Indicator with Specular Bottom Bar */}
+                {/* Clean Luxury Active Pill Indicator (No Bottom Line) */}
                 {isActive && (
                   <motion.div
                     layoutId="activeNavTabIndicator"
-                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#D4AF37]/15 via-[#D4AF37]/25 to-[#D4AF37]/15 border border-[#D4AF37]/40 shadow-[0_0_15px_rgba(212,175,55,0.25)] -z-10"
+                    className="absolute inset-0 rounded-full bg-gradient-to-r from-[#D4AF37]/20 via-[#F5D07A]/22 to-[#D4AF37]/20 border border-[#D4AF37]/50 shadow-[0_2px_14px_rgba(212,175,55,0.25),inset_0_1px_1px_rgba(255,255,255,0.18)] -z-10"
                     transition={{ type: 'spring', stiffness: 480, damping: 34 }}
-                  >
-                    <span className="absolute bottom-1 inset-x-3 h-0.5 rounded-full bg-gradient-to-r from-[#F5D07A] via-[#D4AF37] to-[#F5D07A] shadow-[0_0_8px_#D4AF37]" />
-                  </motion.div>
+                  />
                 )}
 
-                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#F5D07A]' : 'text-slate-500'}`} />
+                <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#F5D07A]' : 'text-slate-400'}`} />
                 <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
                 {item.badge !== undefined && (
                   <span className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] text-[9px] font-black flex items-center justify-center shadow-sm">
@@ -154,7 +152,7 @@ export const Navbar: React.FC = () => {
               soundEngine.playClick();
               setActiveNavTab('quick-plan');
             }}
-            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#F5D07A]/20 via-[#D4AF37]/25 to-[#AA7C11]/20 hover:brightness-110 border border-[#D4AF37]/45 text-[#F5D07A] text-xs font-bold transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] cursor-pointer select-none"
+            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#F5D07A]/20 via-[#D4AF37]/25 to-[#AA7C11]/20 hover:brightness-110 border border-[#D4AF37]/45 text-[#F5D07A] text-xs font-bold transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] cursor-pointer select-none whitespace-nowrap shrink-0"
           >
             <span>{language === 'ar' ? 'صانع الجداول ✦' : 'Plan Trip ✦'}</span>
           </button>
