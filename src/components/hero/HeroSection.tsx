@@ -12,7 +12,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 import { RawashinPattern } from '@/components/ui/RawashinPattern';
-import { LayoutGroup } from 'framer-motion';
+import { LayoutGroup, motion } from 'framer-motion';
 import TextRotate from '@/components/fancy/text/text-rotate';
 
 export const HeroSection: React.FC = () => {
@@ -110,8 +110,17 @@ export const HeroSection: React.FC = () => {
                   جدة.. كما لم تعشها من قبل
                 </span>
                 <LayoutGroup>
-                  <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                    <span className="text-slate-300">مسارك اليومي</span>
+                  <motion.div
+                    className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1"
+                    layout
+                  >
+                    <motion.span
+                      className="text-slate-300"
+                      layout
+                      transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                    >
+                      مسارك اليومي
+                    </motion.span>
                     <TextRotate
                       as="span"
                       texts={[
@@ -123,12 +132,17 @@ export const HeroSection: React.FC = () => {
                         'على مودك وميزانيتك',
                       ]}
                       splitBy="words"
-                      staggerDuration={0.02}
-                      rotationInterval={2600}
-                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden"
-                      splitLevelClassName="overflow-hidden pb-0.5"
+                      staggerFrom="last"
+                      initial={{ y: '100%' }}
+                      animate={{ y: 0 }}
+                      exit={{ y: '-120%' }}
+                      staggerDuration={0.025}
+                      splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                      transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                      rotationInterval={2400}
+                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden justify-center items-center inline-flex"
                     />
-                  </div>
+                  </motion.div>
                 </LayoutGroup>
               </>
             ) : (
@@ -137,8 +151,17 @@ export const HeroSection: React.FC = () => {
                   Jeddah.. Curated Like Never Before
                 </span>
                 <LayoutGroup>
-                  <div className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
-                    <span className="text-slate-300">Bespoke Itineraries</span>
+                  <motion.div
+                    className="flex items-center justify-center gap-2 sm:gap-3 flex-wrap mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1"
+                    layout
+                  >
+                    <motion.span
+                      className="text-slate-300"
+                      layout
+                      transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                    >
+                      Bespoke Itineraries
+                    </motion.span>
                     <TextRotate
                       as="span"
                       texts={[
@@ -150,12 +173,17 @@ export const HeroSection: React.FC = () => {
                         'Tailored To Your Budget',
                       ]}
                       splitBy="words"
-                      staggerDuration={0.02}
-                      rotationInterval={2600}
-                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden"
-                      splitLevelClassName="overflow-hidden pb-0.5"
+                      staggerFrom="last"
+                      initial={{ y: '100%' }}
+                      animate={{ y: 0 }}
+                      exit={{ y: '-120%' }}
+                      staggerDuration={0.025}
+                      splitLevelClassName="overflow-hidden pb-0.5 sm:pb-1 md:pb-1"
+                      transition={{ type: 'spring', damping: 30, stiffness: 400 }}
+                      rotationInterval={2400}
+                      mainClassName="text-[#F5D07A] px-3.5 sm:px-5 py-0.5 sm:py-1 rounded-2xl bg-[#0B111E]/90 backdrop-blur-md border border-[#D4AF37]/40 shadow-[0_4px_25px_rgba(212,175,55,0.22)] drop-shadow-[0_0_12px_rgba(245,208,122,0.4)] overflow-hidden justify-center items-center inline-flex"
                     />
-                  </div>
+                  </motion.div>
                 </LayoutGroup>
               </>
             )}
