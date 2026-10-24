@@ -92,33 +92,34 @@ export const HeroSection: React.FC = () => {
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
             </span>
-            <span>
-              {language === 'ar'
-                ? `✦ المنصة المعتمدة لطلعات جدة • ${atmosphere.phaseNameAr} (${atmosphere.temperatureC}°C)`
-                : `✦ Curated Red Sea Bride • ${atmosphere.phaseNameEn} (${atmosphere.temperatureC}°C)`}
+            <span className="flex items-center gap-1.5 flex-wrap justify-center">
+              <span>{language === 'ar' ? '✦ المنصة المعتمدة لطلعات جدة' : '✦ Curated Red Sea Bride'}</span>
+              <span className="text-white/30">•</span>
+              <span>{language === 'ar' ? atmosphere.phaseNameAr : atmosphere.phaseNameEn}</span>
+              <span className="font-mono text-[#F5D07A]" dir="ltr">({atmosphere.temperatureC}°C)</span>
             </span>
           </div>
 
           {/* Master Headline with Metallic Shimmer */}
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-black tracking-tight leading-[1.18] max-w-4xl mx-auto drop-shadow-md">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-bold tracking-normal leading-[1.3] sm:leading-[1.35] max-w-4xl mx-auto drop-shadow-md py-1">
             {language === 'ar' ? (
               <>
-                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   جدة.. كما لم تعشها من قبل
                 </span>
-                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-sans">
+                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
                   <span className="text-slate-300">مسارك اليومي </span>
-                  <span className="text-shimmer-champagne">بدقة استثنائية</span>
+                  <span className="text-shimmer-champagne px-1">بدقة استثنائية</span>
                 </span>
               </>
             ) : (
               <>
-                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-white via-[#FFF8E7] to-[#F5D07A] bg-clip-text text-transparent py-1.5 sm:py-2 px-1">
                   Jeddah.. Curated Like Never Before
                 </span>
-                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold">
+                <span className="block mt-2 sm:mt-3 text-2xl sm:text-4xl md:text-5xl font-bold font-heading py-1">
                   <span className="text-slate-300">Bespoke Itineraries </span>
-                  <span className="text-shimmer-champagne">At Your Fingertips</span>
+                  <span className="text-shimmer-champagne px-1">At Your Fingertips</span>
                 </span>
               </>
             )}

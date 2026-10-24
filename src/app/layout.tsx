@@ -13,7 +13,7 @@ const ibmPlexArabic = IBM_Plex_Sans_Arabic({
 // 2. Body, UI & Numbers Font: Clean, Readable & Native
 const readexPro = Readex_Pro({
   subsets: ['arabic', 'latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
   variable: '--font-body',
   display: 'swap',
 });

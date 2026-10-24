@@ -224,7 +224,10 @@ input, select, textarea {
   -webkit-background-clip: text;
   background-clip: text;
   animation: metallicShimmer 6s linear infinite;
-  display: inline;
+  display: inline-block;
+  padding-top: 0.12em;
+  padding-bottom: 0.22em;
+  overflow: visible;
 }
 
 /* Ambient Slow Floating Mesh Gradients */
