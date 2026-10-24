@@ -1,8 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Compass, ArrowLeft, ArrowRight, Clock, Coins, MapPin, Tag, Gift, Check, Copy, AlertCircle } from 'lucide-react';
+import React from 'react';
+import { Compass, ArrowLeft, ArrowRight, Clock, Gift, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { CURATED_PLANS } from '@/data/curated-plans';
@@ -15,8 +14,6 @@ import { MagneticButton } from '@/components/fancy/MagneticButton';
 export const CuratedReadyPlans: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const loadCuratedPlan = useItineraryStore((state) => state.loadCuratedPlan);
-  const [copiedCode, setCopiedCode] = useState<string | null>(null);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   const getPlanBudgetRange = (plan: typeof CURATED_PLANS[0]) => {
     const places = plan.placesIds
@@ -30,53 +27,6 @@ export const CuratedReadyPlans: React.FC = () => {
     const max = Math.max(min + 25, Math.round((baseCost * 1.15) / 5) * 5);
 
     return { min, max };
-  };
-
-  const deals = [
-    {
-      id: 'deal-1',
-      code: 'JADAW20',
-      discountAr: 'خصم 20% على تذاكر تيم لاب بلا حدود',
-      discountEn: '20% Off teamLab Borderless Tickets',
-      descAr: 'استخدم الكود عند الدفع الإلكتروني للتذاكر',
-      descEn: 'Apply code at online ticket checkout',
-      category: 'فنون وترفيه',
-    },
-    {
-      id: 'deal-2',
-      code: 'TWINA15',
-      discountAr: 'ضيافة مجانية + 15% بمطعم توينا أبحر',
-      discountEn: 'Complimentary Dessert + 15% at Twina Obhur',
-      descAr: 'أظهر بطاقة جداول للكابتن عند الطلب',
-      descEn: 'Show Jadawel pass to your server',
-      category: 'مأكولات بحرية',
-    },
-    {
-      id: 'deal-3',
-      code: 'MEDDCOFFEE',
-      discountAr: 'ترقية الحجم مجاناً لدى محمصة مد البلد',
-      discountEn: 'Free Size Upgrade at Medd Al-Balad',
-      descAr: 'على جميع مشروبات الفلتر والاسبريسو الحرفية',
-      descEn: 'On all filter and artisanal espresso drinks',
-      category: 'قهوة مختصة',
-    },
-  ];
-
-  const handleCopyCode = (code: string) => {
-    soundEngine.playClick();
-    if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(code);
-      setCopiedCode(code);
-      setToastMessage(
-        language === 'ar'
-          ? `✅ تم نسخ كود الخصم (${code}) إلى الحافظة بنجاح!`
-          : `✅ Promo code (${code}) copied to clipboard!`
-      );
-      setTimeout(() => {
-        setCopiedCode(null);
-        setToastMessage(null);
-      }, 3000);
-    }
   };
 
   const handleLoadPlan = (planId: string) => {
@@ -193,93 +143,50 @@ export const CuratedReadyPlans: React.FC = () => {
         </div>
       </div>
 
-      {/* Exclusive Partner Deals Section */}
-      <div className="relative p-6 sm:p-8 rounded-3xl bg-[#0E1118]/85 backdrop-blur-2xl border border-[#E5C378]/30 shadow-2xl space-y-6 overflow-hidden">
-        <BorderBeam size={320} duration={15} borderWidth={1.5} colorFrom="#E5C378" colorTo="#F5E2B3" />
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-[#E5C378]/15 text-[#E5C378] border border-[#E5C378]/30 flex items-center justify-center shadow-[0_0_15px_rgba(229,195,120,0.25)]">
-              <Gift className="w-5 h-5" />
+      {/* Exclusive Partner Deals Section - Coming Soon */}
+      <div className="relative p-6 sm:p-8 rounded-3xl bg-gradient-to-br from-[#0E131F]/90 via-[#0B0F19]/90 to-[#070A12]/90 backdrop-blur-2xl border border-[#D4AF37]/30 shadow-[0_20px_50px_rgba(0,0,0,0.6)] overflow-hidden">
+        <BorderBeam size={340} duration={14} borderWidth={1.5} colorFrom="#F5D07A" colorTo="#D4AF37" />
+        
+        <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <div className="space-y-3.5 max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/15 border border-[#D4AF37]/35 text-[#F5D07A] text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-[#F5D07A] animate-pulse" />
+              <span>{language === 'ar' ? 'ميزة ستتوفر قريباً' : 'Coming Soon'}</span>
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h3 className="text-xl font-black text-white">
-                  {language === 'ar' ? 'عروض وخصومات حصرية لطلعتك' : 'Exclusive Partner Deals'}
-                </h3>
-                <span className="text-[10px] px-2.5 py-0.5 rounded-full bg-amber-500/15 border border-amber-500/35 text-amber-300 font-bold">
-                  {language === 'ar' ? 'عروض تجريبية' : 'Demo Offers'}
-                </span>
+
+            <div className="flex items-center gap-3">
+              <div className="w-11 h-11 rounded-2xl bg-[#D4AF37]/15 text-[#F5D07A] border border-[#D4AF37]/35 flex items-center justify-center shrink-0 shadow-[0_0_20px_rgba(212,175,55,0.25)]">
+                <Gift className="w-5 h-5 text-[#F5D07A]" />
               </div>
-              <p className="text-xs text-slate-300 font-medium">
-                {language === 'ar'
-                  ? 'عروض وكوبونات استرشادية وتجريبية قيد التنسيق والاعتماد مع الشركاء المحليين'
-                  : 'Demonstration partner vouchers and discount perks in validation phase'}
-              </p>
+              <h3 className="text-xl sm:text-2xl font-black text-white">
+                {language === 'ar' ? 'عروض وخصومات حصرية لطلعتك' : 'Exclusive Partner Deals'}
+              </h3>
+            </div>
+
+            <p className="text-xs sm:text-sm text-slate-300 font-medium leading-relaxed">
+              {language === 'ar'
+                ? 'نعمل حالياً على إبرام شراكات استثنائية مع نخبة من أفضل المطاعم والمقاهي والأنشطة الترفيهية في جدة، لتقديم خصومات وتجارب حصرية لرواد المنصة قريباً جداً.'
+                : 'We are curating exclusive partnerships with premier restaurants, cafés, and entertainment destinations in Jeddah to unlock curated discounts and perks soon.'}
+            </p>
+          </div>
+
+          {/* Feature Highlights Pills */}
+          <div className="flex flex-col sm:flex-row lg:flex-col gap-2.5 shrink-0">
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-xs font-semibold text-slate-200 shadow-sm">
+              <Sparkles className="w-4 h-4 text-[#F5D07A] shrink-0" />
+              <span>{language === 'ar' ? 'خصومات خاصة بالمطاعم والمقاهي' : 'Special Dining & Café Offers'}</span>
+            </div>
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-xs font-semibold text-slate-200 shadow-sm">
+              <Sparkles className="w-4 h-4 text-teal-400 shrink-0" />
+              <span>{language === 'ar' ? 'تجارب وتذاكر فعاليات مخفضة' : 'Discounted Event Passes'}</span>
+            </div>
+            <div className="flex items-center gap-2.5 px-4 py-2.5 rounded-2xl bg-white/[0.04] border border-white/[0.08] text-xs font-semibold text-slate-200 shadow-sm">
+              <Sparkles className="w-4 h-4 text-amber-400 shrink-0" />
+              <span>{language === 'ar' ? 'ضيافات مجانية لرواد جداول' : 'Complimentary VIP Perks'}</span>
             </div>
           </div>
         </div>
-
-        <div className="flex md:grid md:grid-cols-3 gap-3.5 sm:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-none snap-x snap-mandatory -mx-1 px-1">
-          {deals.map((deal) => {
-            const isCopied = copiedCode === deal.code;
-            return (
-              <div
-                key={deal.id}
-                className="w-[82vw] max-w-[320px] shrink-0 snap-center md:w-auto md:max-w-none p-4 rounded-2xl bg-[#131722]/80 border border-white/[0.08] flex flex-col justify-between space-y-3 shadow-inner hover:border-[#E5C378]/40 transition-colors"
-              >
-                <div>
-                  <span className="text-[10px] px-2 py-0.5 rounded-lg bg-teal-500/20 text-teal-300 font-bold border border-teal-500/30">
-                    {deal.category}
-                  </span>
-                  <h4 className="text-sm font-black text-white mt-2">
-                    {language === 'ar' ? deal.discountAr : deal.discountEn}
-                  </h4>
-                  <p className="text-[11px] text-slate-300 mt-1 font-medium leading-relaxed">
-                    {language === 'ar' ? deal.descAr : deal.descEn}
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={() => handleCopyCode(deal.code)}
-                  className="p-2.5 rounded-xl bg-[#0B0D12] border border-dashed border-[#E5C378]/50 hover:border-[#E5C378] flex items-center justify-between text-xs font-mono font-bold text-[#E5C378] cursor-pointer transition-all"
-                  title="نسخ كود الخصم"
-                >
-                  <span className="tracking-wider">{deal.code}</span>
-                  <span className="text-[10px] text-slate-400 flex items-center gap-1 font-sans">
-                    {isCopied ? (
-                      <>
-                        <Check className="w-3.5 h-3.5 text-emerald-400" />
-                        <span className="text-emerald-400">{language === 'ar' ? 'تم النسخ!' : 'Copied!'}</span>
-                      </>
-                    ) : (
-                      <>
-                        <Copy className="w-3.5 h-3.5" />
-                        <span>{language === 'ar' ? 'نسخ الكود' : 'Copy'}</span>
-                      </>
-                    )}
-                  </span>
-                </button>
-              </div>
-            );
-          })}
-        </div>
       </div>
-
-      {/* Floating Toast Notification on Copy */}
-      <AnimatePresence>
-        {toastMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 30, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            className="fixed bottom-6 start-1/2 -translate-x-1/2 z-[9999] px-5 py-3 rounded-2xl bg-[#0F1420]/95 border border-[#E5C378]/50 text-white font-bold text-xs sm:text-sm shadow-[0_16px_50px_rgba(0,0,0,0.9)] flex items-center gap-2.5 backdrop-blur-xl"
-          >
-            <Check className="w-4 h-4 text-emerald-400 shrink-0" />
-            <span>{toastMessage}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </div>
   );
 };
