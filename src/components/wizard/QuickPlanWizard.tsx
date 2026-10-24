@@ -97,7 +97,7 @@ const COMPANION_OPTIONS = [
   { id: 'friends' as const, labelAr: 'مع الأصحاب', labelEn: 'With Friends', descAr: 'حماس وفعاليات وأماكن حيوية للشلة', descEn: 'High-energy group spots & activities', icon: Users },
   { id: 'couples' as const, labelAr: 'كابلز واحتفال', labelEn: 'Couples / Celebration', descAr: 'جلسة رومانسية هادئة وإطلالة مميزة', descEn: 'Intimate scenic dining & sunset views', icon: Heart },
   { id: 'family' as const, labelAr: 'جمعة عائلية', labelEn: 'Family Gathering', descAr: 'جلسات رحبة ومريحة تناسب كافة الأعمار', descEn: 'Spacious, relaxed seating for all ages', icon: Smile },
-  { id: 'solo' as const, labelAr: 'لحالي بروقان', labelEn: 'Solo Chill', descAr: 'عزلة إيجابية، قهوة، وقراءة واستجمام', descEn: 'Quiet me-time, artisanal coffee & peace', icon: Compass },
+  { id: 'solo' as const, labelAr: 'طلعة فردية', labelEn: 'Solo Outing', descAr: 'جلسة هادئة، قهوة مختصة، وتأمل واستجمام', descEn: 'Quiet me-time, artisanal coffee & peace', icon: Compass },
 ];
 
 // Vibe Options (Unified Lucide Icons — No Emojis)
