@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Utensils, Ticket, Car, Wallet, Sparkles, Users, Coins, Info } from 'lucide-react';
+import { Utensils, Ticket, Car, Footprints, Wallet, Sparkles, Users, Coins, Info } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface BudgetDonutChartProps {
@@ -165,12 +165,18 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
     },
     {
       key: 'transit' as const,
-      name: language === 'ar' ? 'مشاوير أوبر والتنقل' : 'Uber & Local Transit',
-      subtitle: language === 'ar' ? 'المسافات البينية المباشرة وتوصيل المحطات' : 'Inter-station rides & point-to-point transit',
-      highlightTag: language === 'ar' ? 'مشاوير سريعة' : 'Rides',
+      name: isFree
+        ? (language === 'ar' ? 'كعابي (المشي)' : 'Walking Trail')
+        : (language === 'ar' ? 'مشاوير أوبر والتنقل' : 'Uber & Local Transit'),
+      subtitle: isFree
+        ? (language === 'ar' ? 'ممشى ومعالم مجانية على الأقدام (0 ر.س)' : 'Free walking trail between stops (0 SAR)')
+        : (language === 'ar' ? 'المسافات البينية المباشرة وتوصيل المحطات' : 'Inter-station rides & point-to-point transit'),
+      highlightTag: isFree
+        ? (language === 'ar' ? 'كعابي (المشي)' : 'Walking')
+        : (language === 'ar' ? 'مشاوير سريعة' : 'Rides'),
       amount: transitShareSAR || 0,
       percentage: transitPct,
-      icon: Car,
+      icon: isFree ? Footprints : Car,
       color: '#2DD4BF',
       activeBorder: 'border-[#2DD4BF]/50 shadow-[0_0_30px_rgba(45,212,191,0.18)]',
       bgGlow: 'bg-[#2DD4BF]/10 text-[#2DD4BF] border-[#2DD4BF]/30',
@@ -212,9 +218,13 @@ export const BudgetDonutChart: React.FC<BudgetDonutChartProps> = ({
     }
     if (activeHover === 'transit') {
       return {
-        badge: language === 'ar' ? '🚗 مشاوير أوبر' : '🚗 Uber Rides',
-        value: transitShareSAR,
-        sub: `${transitPct}% ${language === 'ar' ? 'من ميزانية الجولة' : 'of total budget'}`,
+        badge: isFree
+          ? (language === 'ar' ? '🚶‍♂️ كعابي (المشي)' : '🚶‍♂️ Walking')
+          : (language === 'ar' ? '🚗 مشاوير أوبر' : '🚗 Uber Rides'),
+        value: isFree ? 0 : transitShareSAR,
+        sub: isFree
+          ? (language === 'ar' ? '0 ر.س — تنقل مشياً على الأقدام' : '0 SAR — Free Walking')
+          : `${transitPct}% ${language === 'ar' ? 'من ميزانية الجولة' : 'of total budget'}`,
         color: 'text-[#2DD4BF]',
         borderColor: 'border-[#2DD4BF]/40',
       };

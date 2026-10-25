@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Users, Plus, Minus, Calculator, MessageCircle, Utensils, Ticket, Car, Coins } from 'lucide-react';
+import { Users, Plus, Minus, Calculator, MessageCircle, Utensils, Ticket, Car, Footprints, Coins } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
@@ -46,7 +46,7 @@ export const SplitBillModal: React.FC = () => {
       msg += `📊 *تفاصيل الحسبة:*\n`;
       msg += `▫️ الأكل والمقاهي: ~${foodBase} ر.س\n`;
       msg += `▫️ التذاكر والأنشطة: ~${activitiesBase} ر.س\n`;
-      msg += `▫️ مشاوير أوبر: ~${transitBase} ر.س\n`;
+      msg += transitBase === 0 ? `▫️ المواصلات: كعابي (المشي) مجاناً 🚶‍♂️\n` : `▫️ مشاوير أوبر: ~${transitBase} ر.س\n`;
       if (includeBuffer) msg += `▫️ احتياطي طوارئ (10%): ~${bufferTotal} ر.س\n`;
       msg += `▫️ المجموع الكلي: *${grandTotal} ر.س*\n\n`;
       msg += `تم الترتيب والحساب تلقائياً عبر منصة جداول 🌊\n`;
@@ -180,10 +180,20 @@ export const SplitBillModal: React.FC = () => {
 
           <div className="flex items-center justify-between text-pearl-muted py-1 border-b border-white/5">
             <span className="flex items-center gap-1.5">
-              <Car className="w-3.5 h-3.5 text-teal-400" />
-              <span>{language === 'ar' ? 'مشاوير أوبر المقدرة' : 'Uber Transit'}</span>
+              {transitBase === 0 ? (
+                <Footprints className="w-3.5 h-3.5 text-emerald-400" />
+              ) : (
+                <Car className="w-3.5 h-3.5 text-teal-400" />
+              )}
+              <span>
+                {transitBase === 0
+                  ? language === 'ar' ? 'المواصلات: كعابي (المشي)' : 'Transit: Walking'
+                  : language === 'ar' ? 'مشاوير أوبر المقدرة' : 'Uber Transit'}
+              </span>
             </span>
-            <span className="font-bold text-pearl">~{transitBase} ر.س</span>
+            <span className="font-bold text-pearl">
+              {transitBase === 0 ? (language === 'ar' ? '0 ر.س (مجاناً)' : '0 SAR (Free)') : `~${transitBase} ر.س`}
+            </span>
           </div>
 
           {includeBuffer && (

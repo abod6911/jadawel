@@ -112,7 +112,7 @@ const VIBE_OPTIONS = [
 
 // Budget Options (Unified Lucide Icons — No Emojis)
 const BUDGET_OPTIONS = [
-  { id: 'free' as const, labelAr: 'مجانية 100%', labelEn: '100% Free', priceAr: '0 ر.س (ممشى ومعالم عامة)', priceEn: '0 SAR free promenade', icon: Footprints },
+  { id: 'free' as const, labelAr: 'الوضع طفرة', labelEn: 'Tafra (100% Free)', priceAr: '0 ر.س • كعابي (المشي)', priceEn: '0 SAR • Walking Trail', icon: Footprints },
   { id: 'economy' as const, labelAr: 'اقتصادية', labelEn: 'Economy', priceAr: '≤ 60 ر.س للشخص', priceEn: '≤ 60 SAR per person', icon: Coins },
   { id: 'moderate' as const, labelAr: 'متوسطة وموزونة', labelEn: 'Moderate Value', priceAr: '~ 150 ر.س للشخص', priceEn: '~ 150 SAR per person', icon: SlidersHorizontal },
   { id: 'premium' as const, labelAr: 'فاخرة VIP', labelEn: 'Luxury VIP', priceAr: '+ 350 ر.س للشخص', priceEn: '+ 350 SAR luxury tier', icon: Sparkles },

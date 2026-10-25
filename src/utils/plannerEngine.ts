@@ -827,13 +827,17 @@ export function generateVariantStops(
               fromPlaceId: stops[idx - 1].place.id,
               toPlaceId: bestPlace.id,
               distanceKm: Math.round(distKm * 10) / 10,
-              drivingMinutes: drivingMins,
-              durationMinutes: drivingMins,
-              transitMode: 'car',
-              estimatedUberSAR: uberSAR,
-              trafficLevel: drivingMins > 16 ? 'moderate' : 'low',
-              routeDescriptionAr: `المسار المباشر الموصى به (~${drivingMins} دقيقة)`,
-              routeDescriptionEn: `Direct recommended route (~${drivingMins} mins)`,
+              drivingMinutes: isFreePlan ? Math.max(5, Math.round(distKm * 12)) : drivingMins,
+              durationMinutes: isFreePlan ? Math.max(5, Math.round(distKm * 12)) : drivingMins,
+              transitMode: isFreePlan ? 'walking' : 'car',
+              estimatedUberSAR: isFreePlan ? 0 : uberSAR,
+              trafficLevel: isFreePlan ? 'low' : (drivingMins > 16 ? 'moderate' : 'low'),
+              routeDescriptionAr: isFreePlan
+                ? `كعابي (المشي) بين المحطات (~${Math.max(5, Math.round(distKm * 12))} دقيقة)`
+                : `المسار المباشر الموصى به (~${drivingMins} دقيقة)`,
+              routeDescriptionEn: isFreePlan
+                ? `Walking trail between stops (~${Math.max(5, Math.round(distKm * 12))} mins)`
+                : `Direct recommended route (~${drivingMins} mins)`,
             }
           : undefined,
     };
@@ -1012,13 +1016,13 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
   if (isFreePlanMode) {
     freeVariant = {
       id: 'free',
-      titleAr: 'خطة الروقان المجانية',
-      titleEn: '100% Free Outing (0 SAR)',
-      taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
-      taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
-      badgeAr: 'مجانية 100%',
+      titleAr: 'خطة الوضع طفرة',
+      titleEn: 'Tafra Zero-Cost Outing',
+      taglineAr: 'مسار كعابي (المشي) ومعالم مجانية 100% بدون أي تكاليف مواصلات أو دخول',
+      taglineEn: 'Zero-cost walking itinerary across open promenades, historic alleys, and fountain viewpoints',
+      badgeAr: 'الوضع طفرة 💸',
       badgeEn: '100% Free (0 SAR)',
-      icon: 'Compass',
+      icon: 'Footprints',
       stops: thirdStops,
       financials: thirdFinancials,
       totalTransitMinutes: thirdTransitTotals.minutes,

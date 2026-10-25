@@ -28,6 +28,7 @@ import {
   FolderHeart,
   Sparkles,
   Plus,
+  Footprints,
   X,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -182,7 +183,7 @@ export const PlanResultsView: React.FC = () => {
       titleEn: thirdVariantObj?.titleEn || 'VIP Luxury Signature',
       badge: thirdVariantObj?.badgeAr || 'VIP',
       badgeEn: thirdVariantObj?.badgeEn || 'VIP',
-      icon: isThirdFree ? Compass : Crown,
+      icon: isThirdFree ? Footprints : Crown,
       color: isThirdFree ? 'text-teal-300' : 'text-coral-400',
       activeBorder: isThirdFree
         ? 'border-teal-400 ring-2 ring-teal-400/40 bg-abyss-800'

@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Car, Navigation } from 'lucide-react';
+import { Car, Footprints, Navigation } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 
 interface TransitData {
   drivingMinutes: number;
   distanceKm: number;
   estimatedUberSAR: number;
+  transitMode?: string;
 }
 
 interface TransitConnectorProps {
@@ -21,9 +22,10 @@ export const TransitConnector: React.FC<TransitConnectorProps> = ({
   transit,
   drivingMinutes = transit?.drivingMinutes || 10,
   distanceKm = transit?.distanceKm || 3.5,
-  estimatedUberSAR = transit?.estimatedUberSAR || 18,
+  estimatedUberSAR = transit?.estimatedUberSAR ?? 18,
 }) => {
   const { language } = useLanguage();
+  const isWalking = transit?.transitMode === 'walking' || estimatedUberSAR === 0;
 
   return (
     <div className="relative py-2.5 ps-8 sm:ps-12 flex items-center gap-3 select-none text-start">
@@ -33,9 +35,15 @@ export const TransitConnector: React.FC<TransitConnectorProps> = ({
       {/* Transit indicator badge */}
       <div className="relative z-10 flex flex-wrap items-center gap-2 px-3.5 py-1.5 rounded-xl card-surface border border-[var(--border-subtle)] text-xs text-slate-300 shadow-sm">
         <div className="flex items-center gap-1.5 text-[var(--accent-gold)] font-bold">
-          <Car className="w-3.5 h-3.5" />
+          {isWalking ? (
+            <Footprints className="w-3.5 h-3.5 text-emerald-400" />
+          ) : (
+            <Car className="w-3.5 h-3.5" />
+          )}
           <span>
-            ~{drivingMinutes} {language === 'ar' ? 'دقيقة مشوار' : 'mins drive'}
+            {isWalking
+              ? `~${drivingMinutes} ${language === 'ar' ? 'دقيقة كعابي (المشي)' : 'mins walk'}`
+              : `~${drivingMinutes} ${language === 'ar' ? 'دقيقة مشوار' : 'mins drive'}`}
           </span>
         </div>
 
@@ -52,7 +60,11 @@ export const TransitConnector: React.FC<TransitConnectorProps> = ({
 
         <div className="text-teal-300 font-bold font-mono">
           <span>
-            ~{estimatedUberSAR} {language === 'ar' ? 'ر.س (أوبر)' : 'SAR (Uber)'}
+            {isWalking
+              ? language === 'ar'
+                ? '0 ر.س (كعابي)'
+                : '0 SAR (Free)'
+              : `~${estimatedUberSAR} ${language === 'ar' ? 'ر.س (أوبر)' : 'SAR (Uber)'}`}
           </span>
         </div>
       </div>
