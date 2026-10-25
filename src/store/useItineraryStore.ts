@@ -15,8 +15,18 @@ import { CURATED_PLANS } from '@/data/curated-plans';
 import {
   generateMultiPlanVariants,
   calculateFinancials,
+  calculateTransitTotals,
   normalizeDistrictId,
+  timeStringToMinutes,
+  minutesToTimeString,
+  formatTimeSlotLabel,
+  getWeatherNoticeForTime,
 } from '@/utils/plannerEngine';
+import {
+  calculateHaversineDistanceKm,
+  estimateDrivingMinutes,
+  estimateUberCostSAR,
+} from '@/utils/distanceCalculator';
 import { AtmospherePhase } from '@/utils/atmosphereEngine';
 
 interface ItineraryState {
@@ -53,6 +63,8 @@ interface ItineraryState {
   // Modals & Map Focus
   isSplitBillOpen: boolean;
   isVotingModalOpen: boolean;
+  isStoryPassOpen: boolean;
+  setIsStoryPassOpen: (open: boolean) => void;
   selectedPlaceForModal: Place | null;
   stopToSwap: ItineraryStop | null;
   focusedStopId: string | null;
@@ -85,6 +97,18 @@ interface ItineraryState {
   setIsVotingModalOpen: (open: boolean) => void;
   setSelectedPlaceForModal: (place: Place | null) => void;
 
+  // Toast Notifications
+  toast: {
+    message: string;
+    type: 'info' | 'success' | 'warning' | 'error';
+  } | null;
+  showToast: (message: string, type?: 'info' | 'success' | 'warning' | 'error') => void;
+  hideToast: () => void;
+
+  // Add Stop Modal
+  isAddStopModalOpen: boolean;
+  setIsAddStopModalOpen: (open: boolean) => void;
+
   // Stop Actions
   openSwapModal: (stop: ItineraryStop) => void;
   closeSwapModal: () => void;
@@ -92,6 +116,7 @@ interface ItineraryState {
   moveStopUp: (stopId: string) => void;
   moveStopDown: (stopId: string) => void;
   removeStop: (stopId: string) => void;
+  addStop: (place: Place) => boolean;
   addPlaceToItinerary: (place: Place) => void;
 
   loadCuratedPlan: (curatedId: string) => void;
@@ -228,8 +253,19 @@ export const useItineraryStore = create<ItineraryState>()(
       isLiveOutingOpen: false,
       activeLiveStopIndex: 0,
 
+      // Toast Notifications
+      toast: null,
+      showToast: (message, type = 'info') => set({ toast: { message, type } }),
+      hideToast: () => set({ toast: null }),
+
+      // Add Stop Modal
+      isAddStopModalOpen: false,
+      setIsAddStopModalOpen: (isAddStopModalOpen) => set({ isAddStopModalOpen }),
+
       isSplitBillOpen: false,
       isVotingModalOpen: false,
+      isStoryPassOpen: false,
+      setIsStoryPassOpen: (isStoryPassOpen) => set({ isStoryPassOpen }),
       selectedPlaceForModal: null,
       stopToSwap: null,
       focusedStopId: null,
@@ -410,7 +446,7 @@ export const useItineraryStore = create<ItineraryState>()(
     });
   },
 
-  addPlaceToItinerary: (place) => {
+  addStop: (place: Place): boolean => {
     const it = get().currentItinerary;
     if (!it) {
       const plan = generateMultiPlanVariants({
@@ -418,26 +454,106 @@ export const useItineraryStore = create<ItineraryState>()(
         startingDistrict: normalizeDistrictId(place.district as string),
       });
       set({ currentItinerary: plan, activeNavTab: 'timeline' });
-      return;
+      get().showToast('تم إنشاء خطة جديدة تبدأ من هذه المحطة 🎉', 'success');
+      return true;
     }
+
+    // Constraint: Max 4 Stops
+    const currentStops = it.stops || [];
+    if (currentStops.length >= 4) {
+      get().showToast('الحد الأقصى للخطة هو 4 محطات لضمان جدول واقعي ومريح', 'warning');
+      return false;
+    }
+
+    const lastStop = currentStops.length > 0 ? currentStops[currentStops.length - 1] : null;
+
+    let drivingMins = 15;
+    let distKm = 5;
+    let uberSAR = 22;
+    let startMinutes = 1020; // 5:00 PM default if no previous stop
+
+    if (lastStop) {
+      distKm = calculateHaversineDistanceKm(
+        lastStop.place.coordinates.lat,
+        lastStop.place.coordinates.lng,
+        place.coordinates.lat,
+        place.coordinates.lng
+      );
+      drivingMins = estimateDrivingMinutes(distKm);
+      uberSAR = estimateUberCostSAR(distKm, drivingMins);
+
+      const lastEndMinutes = timeStringToMinutes(lastStop.endTime);
+      startMinutes = lastEndMinutes + drivingMins + 5; // transit + 5 mins buffer
+    }
+
+    const dwellTime = place.dwellTimeMinutes || 60;
+    const endMinutes = startMinutes + dwellTime;
+    const slotAr = formatTimeSlotLabel(startMinutes, endMinutes, 'ar');
+    const startTimeStr = minutesToTimeString(startMinutes);
+    const endTimeStr = minutesToTimeString(endMinutes);
+    const weatherNotice = getWeatherNoticeForTime(startMinutes);
+
     const newStop: ItineraryStop = {
-      id: `custom-${Date.now()}-${place.id}`,
-      order: it.stops.length + 1,
-      dayNumber: 1,
-      timeSlot: '09:00 PM - 10:30 PM',
-      startTime: '21:00',
-      endTime: '22:30',
+      id: `stop-add-${Date.now()}-${place.id}`,
+      order: currentStops.length + 1,
       place,
+      startTime: startTimeStr,
+      endTime: endTimeStr,
+      timeSlot: slotAr,
+      weatherNotice: {
+        type: weatherNotice.type,
+        textAr: weatherNotice.textAr,
+        textEn: weatherNotice.textEn,
+      },
       isCustom: true,
+      transitFromPrevious: lastStop
+        ? {
+            fromPlaceId: lastStop.place.id,
+            toPlaceId: place.id,
+            distanceKm: Math.round(distKm * 10) / 10,
+            drivingMinutes: drivingMins,
+            durationMinutes: drivingMins,
+            transitMode: 'car',
+            estimatedUberSAR: uberSAR,
+            trafficLevel: drivingMins > 16 ? 'moderate' : 'low',
+            routeDescriptionAr: `المسار المباشر الموصى به (~${drivingMins} دقيقة)`,
+            routeDescriptionEn: `Direct recommended route (~${drivingMins} mins)`,
+          }
+        : undefined,
     };
-    const newStops = [...it.stops, newStop];
+
+    const newStops = [...currentStops, newStop];
+    const newFinancials = calculateFinancials(newStops, it.financials?.groupSize || 2);
+    const newTransit = calculateTransitTotals(newStops);
+    const activeVarKey = get().activeVariant;
+
+    // Synchronize active variant stops
+    const updatedVariants = { ...it.variants };
+    if (updatedVariants[activeVarKey]) {
+      updatedVariants[activeVarKey] = {
+        ...updatedVariants[activeVarKey]!,
+        stops: newStops,
+        financials: newFinancials,
+        totalTransitMinutes: newTransit.minutes,
+        totalDistanceKm: newTransit.km,
+      };
+    }
+
     set({
       currentItinerary: {
         ...it,
         stops: newStops,
-        financials: calculateFinancials(newStops, it.financials?.groupSize || 2),
+        financials: newFinancials,
+        variants: updatedVariants,
       },
     });
+
+    get().showToast('تمت إضافة المحطة للخطة بنجاح 🎉', 'success');
+    return true;
+  },
+
+  addPlaceToItinerary: (place) => {
+    get().addStop(place);
   },
 
   loadCuratedPlan: (curatedId) => {

@@ -8,6 +8,8 @@ import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
+import { exportAndShareStoryPass } from '@/utils/planPosterCanvas';
+import { useItineraryStore } from '@/store/useItineraryStore';
 
 interface StoryPassModalProps {
   isOpen: boolean;
@@ -23,12 +25,47 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
   activeVariant,
 }) => {
   const { language, isRTL } = useLanguage();
+  const showToast = useItineraryStore((state) => state.showToast);
   const storyCardRef = useRef<HTMLDivElement>(null);
   const [isCopied, setIsCopied] = useState(false);
+  const [isExportingImage, setIsExportingImage] = useState(false);
 
   if (!itinerary) return null;
 
   const currentPlan = itinerary.variants[activeVariant] || itinerary.variants.balanced;
+
+  const handleExportPosterImage = async () => {
+    if (!itinerary || isExportingImage) return;
+    soundEngine.playClick();
+    setIsExportingImage(true);
+    showToast(
+      language === 'ar' ? 'جاري تجهيز بوستر الستوري 9:16 بدقة فائقة...' : 'Generating 9:16 Story Pass...',
+      'info'
+    );
+
+    try {
+      const result = await exportAndShareStoryPass(itinerary, language);
+      if (result.shared) {
+        showToast(
+          language === 'ar' ? 'تم فتح نافذة المشاركة بنجاح 📸' : 'Opened share sheet successfully!',
+          'success'
+        );
+      } else if (result.downloaded) {
+        showToast(
+          language === 'ar' ? 'تم تحميل بوستر الستوري (PNG) بنجاح 🎉' : 'Story Pass image downloaded!',
+          'success'
+        );
+      }
+    } catch (e) {
+      console.error('Failed to export story pass image:', e);
+      showToast(
+        language === 'ar' ? 'حدث خطأ أثناء تصدير الصورة' : 'Failed to export image',
+        'error'
+      );
+    } finally {
+      setIsExportingImage(false);
+    }
+  };
 
   const handleShareStory = () => {
     soundEngine.playClick();
@@ -214,49 +251,75 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
         </div>
 
         {/* Action Controls */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2 max-w-md mx-auto">
-          {/* Primary Share to WhatsApp */}
+        <div className="space-y-3 pt-2 max-w-md mx-auto">
+          {/* Primary 1-Click Export Story Pass (9:16 PNG) */}
           <button
             type="button"
-            onClick={handleShareStory}
-            className="w-full sm:flex-1 py-3.5 px-5 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 text-abyss-950 font-black text-sm flex items-center justify-center gap-2 shadow-lg cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+            disabled={isExportingImage}
+            onClick={handleExportPosterImage}
+            className="w-full py-4 px-5 rounded-2xl bg-gradient-to-r from-[#DF9F3D] via-[#E5C378] to-[#C8A452] text-[#0A0D12] font-black text-sm flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(229,195,120,0.35)] hover:scale-[1.01] active:scale-[0.98] transition-all cursor-pointer"
           >
-            <Share2 className="w-4 h-4" />
-            <span>{language === 'ar' ? 'مشاركة عبر واتساب للشلة' : 'Share via WhatsApp'}</span>
-          </button>
-
-          {/* Copy Link Button */}
-          <button
-            type="button"
-            onClick={handleCopyLink}
-            className="w-full sm:w-auto py-3.5 px-4 rounded-2xl bg-abyss-800 hover:bg-abyss-700 text-pearl font-bold text-xs sm:text-sm border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
-          >
-            {isCopied ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-400">{language === 'ar' ? 'تم النسخ ✓' : 'Copied ✓'}</span>
-              </>
+            {isExportingImage ? (
+              <span className="flex items-center gap-2">
+                <span className="animate-spin w-4 h-4 border-2 border-[#0A0D12] border-t-transparent rounded-full" />
+                <span>{language === 'ar' ? 'جاري رسم وتصدير البوستر...' : 'Generating 9:16 Poster...'}</span>
+              </span>
             ) : (
               <>
-                <Copy className="w-4 h-4 text-gold-400" />
-                <span>{language === 'ar' ? 'نسخ الرابط' : 'Copy Link'}</span>
+                <Download className="w-4 h-4" />
+                <span>
+                  {language === 'ar'
+                    ? 'حفظ ومشاركة بوستر الستوري (PNG 9:16) 📸'
+                    : 'Save & Share Story Pass (9:16 PNG) 📸'}
+                </span>
               </>
             )}
           </button>
 
-          {/* Print / Save */}
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              window.print();
-            }}
-            className="w-full sm:w-auto py-3.5 px-4 rounded-2xl bg-abyss-800 hover:bg-abyss-700 text-pearl font-bold text-xs sm:text-sm border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
-            title="طباعة / حفظ PDF"
-          >
-            <Printer className="w-4 h-4 text-pearl-muted" />
-            <span>{language === 'ar' ? 'طباعة' : 'Print'}</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
+            {/* Primary Share to WhatsApp */}
+            <button
+              type="button"
+              onClick={handleShareStory}
+              className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 text-abyss-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm cursor-pointer hover:scale-[1.02] active:scale-[0.98] transition-all"
+            >
+              <Share2 className="w-4 h-4" />
+              <span>{language === 'ar' ? 'مشاركة عبر واتساب للشلة' : 'Share via WhatsApp'}</span>
+            </button>
+
+            {/* Copy Link Button */}
+            <button
+              type="button"
+              onClick={handleCopyLink}
+              className="w-full sm:w-auto py-3 px-3.5 rounded-xl bg-abyss-800 hover:bg-abyss-700 text-pearl font-bold text-xs border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+            >
+              {isCopied ? (
+                <>
+                  <Check className="w-4 h-4 text-emerald-400" />
+                  <span className="text-emerald-400">{language === 'ar' ? 'تم النسخ ✓' : 'Copied ✓'}</span>
+                </>
+              ) : (
+                <>
+                  <Copy className="w-4 h-4 text-gold-400" />
+                  <span>{language === 'ar' ? 'نسخ الرابط' : 'Copy Link'}</span>
+                </>
+              )}
+            </button>
+
+            {/* Print / Save */}
+            <button
+              type="button"
+              onClick={() => {
+                soundEngine.playClick();
+                window.print();
+              }}
+              className="w-full sm:w-auto py-3 px-3 rounded-xl bg-abyss-800 hover:bg-abyss-700 text-pearl font-bold text-xs border border-white/15 flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+              title="طباعة / حفظ PDF"
+            >
+              <Printer className="w-4 h-4 text-pearl-muted" />
+              <span>{language === 'ar' ? 'طباعة' : 'Print'}</span>
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

@@ -11,6 +11,9 @@ import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
 import { PlanResultsView } from '@/components/timeline/PlanResultsView';
 import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { CursorGlow } from '@/components/ui/CursorGlow';
+import { Toast } from '@/components/ui/Toast';
+import { RegisterSW } from '@/components/pwa/RegisterSW';
+import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -171,8 +174,11 @@ export const PageOrchestrator: React.FC = () => {
           </AnimatePresence>
         </main>
 
-        {/* Global Modals */}
+        {/* Global Modals & Notifications */}
         <SavedPlansModal />
+        <Toast />
+        <OfflineIndicator />
+        <RegisterSW />
 
         {/* Footer (Hidden on Home screen for an ultra-clean, minimalist landing interface) */}
         {(activeNavTab === 'explore' || activeNavTab === 'curated') && <Footer />}

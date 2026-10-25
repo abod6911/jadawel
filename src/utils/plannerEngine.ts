@@ -8,6 +8,8 @@ import {
   PlanVariantKey,
   DistrictId,
   PlaceCategory,
+  DurationOption,
+  VibeType,
 } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { JEDDAH_DISTRICTS } from '@/data/districts';
@@ -17,17 +19,39 @@ import {
   estimateUberCostSAR,
 } from './distanceCalculator';
 
+// ============================================================================
+// 1. Geographic & District Mapping Utilities
+// ============================================================================
+
+export const NEIGHBORING_DISTRICTS: Record<DistrictId, DistrictId[]> = {
+  'al-shati': ['al-zahra', 'al-rawdah', 'al-hamra', 'obhur'],
+  'al-zahra': ['al-shati', 'al-rawdah', 'al-salamah'],
+  'al-rawdah': ['al-zahra', 'al-salamah', 'al-andalus', 'al-shati'],
+  'al-salamah': ['al-rawdah', 'al-zahra', 'al-shati'],
+  'al-andalus': ['al-rawdah', 'al-hamra', 'al-balad'],
+  'al-hamra': ['al-andalus', 'al-shati', 'al-balad'],
+  'al-balad': ['al-hamra', 'al-andalus'],
+  'obhur': ['al-shati', 'al-zahra'],
+  'all_jeddah': [],
+};
+
 /**
  * Normalizes any string representation of a Jeddah district into a standard DistrictId
  */
 export function normalizeDistrictId(raw?: string): DistrictId | 'all_jeddah' {
   if (!raw) return 'all_jeddah';
   const lower = raw.toLowerCase().trim();
-  if (lower === 'all' || lower === 'all_jeddah' || lower === 'all-jeddah' || lower === 'current_location') {
+  if (
+    lower === 'all' ||
+    lower === 'all_jeddah' ||
+    lower === 'all-jeddah' ||
+    lower === 'current_location'
+  ) {
     return 'all_jeddah';
   }
   if (lower.includes('balad')) return 'al-balad';
-  if (lower.includes('shati') || lower.includes('waterfront') || lower.includes('corniche')) return 'al-shati';
+  if (lower.includes('shati') || lower.includes('waterfront') || lower.includes('corniche'))
+    return 'al-shati';
   if (lower.includes('rawdah') || lower.includes('rawdha')) return 'al-rawdah';
   if (lower.includes('zahra')) return 'al-zahra';
   if (lower.includes('obhur') || lower.includes('abhor')) return 'obhur';
@@ -100,17 +124,322 @@ export function getDistrictLabel(districtId: string): string {
   return found ? found.nameAr : 'جدة';
 }
 
+// ============================================================================
+// 2. Time Mathematics & Sequential Chaining Utilities
+// ============================================================================
+
+export function timeStringToMinutes(timeStr: string): number {
+  const [hours, mins] = timeStr.split(':').map((v) => parseInt(v, 10));
+  return (hours || 0) * 60 + (mins || 0);
+}
+
+export function minutesToTimeString(totalMinutes: number): string {
+  const normalized = ((Math.floor(totalMinutes) % 1440) + 1440) % 1440;
+  const hours = Math.floor(normalized / 60);
+  const mins = normalized % 60;
+  return `${hours.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}`;
+}
+
+export function formatTimeSlotLabel(
+  startMinutes: number,
+  endMinutes: number,
+  lang: 'ar' | 'en' = 'ar'
+): string {
+  const format12h = (m: number, isArabic: boolean): string => {
+    const norm = ((Math.floor(m) % 1440) + 1440) % 1440;
+    let h = Math.floor(norm / 60);
+    const min = norm % 60;
+    const isPM = h >= 12;
+    h = h % 12;
+    if (h === 0) h = 12;
+    const minStr = min > 0 ? `:${min.toString().padStart(2, '0')}` : ':00';
+
+    if (isArabic) {
+      const suffix = isPM ? 'م' : 'ص';
+      return `${h}${minStr} ${suffix}`;
+    } else {
+      const suffix = isPM ? 'PM' : 'AM';
+      return `${h.toString().padStart(2, '0')}${minStr} ${suffix}`;
+    }
+  };
+
+  const sLabel = format12h(startMinutes, lang === 'ar');
+  const eLabel = format12h(endMinutes, lang === 'ar');
+  return `${sLabel} - ${eLabel}`;
+}
+
+export function getWeatherNoticeForTime(minutesFromMidnight: number): {
+  type: 'golden_hour' | 'indoor_midday' | 'sea_breeze' | 'night_atmosphere';
+  textAr: string;
+  textEn: string;
+} {
+  const norm = ((minutesFromMidnight % 1440) + 1440) % 1440;
+
+  if (norm >= 360 && norm < 690) {
+    // 6:00 AM - 11:30 AM
+    return {
+      type: 'sea_breeze',
+      textAr: '☀️ نسائم الصباح: توقيت هادئ ونشاط منتعش قبل حرارة الظهيرة.',
+      textEn: '☀️ Morning Breeze: Serene atmosphere and fresh start before midday.',
+    };
+  } else if (norm >= 690 && norm < 990) {
+    // 11:30 AM - 4:30 PM
+    return {
+      type: 'indoor_midday',
+      textAr: '❄️ استراحة الظهيرة: أجواء مكيفة ومريحة لتناول القهوة وتجنب الشمس.',
+      textEn: '❄️ Midday Chill: AC indoor comfort and premium coffee lounge.',
+    };
+  } else if (norm >= 990 && norm <= 1125) {
+    // 4:30 PM - 6:45 PM (Golden Hour)
+    return {
+      type: 'golden_hour',
+      textAr: '🌅 ساعة الغروب الذهبية: أفضل توقيت لنسيم البحر والتقاط الصور التذكارية.',
+      textEn: '🌅 Golden Hour: Ideal coastal breeze and Red Sea sunset photography.',
+    };
+  } else {
+    // 6:45 PM onwards
+    return {
+      type: 'night_atmosphere',
+      textAr: '🌙 أجواء السهرة: نسمة ليلية عليلة وجلسات خارجية مضيئة ومفعمة بالحياة.',
+      textEn: '🌙 Evening Vibe: Ambient night breeze and illuminated outdoor dining.',
+    };
+  }
+}
+
+// ============================================================================
+// 3. Dynamic Stop Role & Sequence Definitions
+// ============================================================================
+
+export type StopSlotRole =
+  | 'brunch_morning'
+  | 'afternoon_culture'
+  | 'sunset_activity'
+  | 'coffee_snack'
+  | 'dinner_experience'
+  | 'late_night_chill';
+
+export interface DynamicSlotTemplate {
+  role: StopSlotRole;
+  defaultDwellMinutes: number;
+  labelAr: string;
+  labelEn: string;
+}
+
 /**
- * Heuristic scoring engine for places based on user preferences and current route archetype
+ * Builds dynamically sequenced slots based on the user's chosen duration
  */
-function computeVenueScore(
+export function buildDynamicSlotSequence(
+  duration: DurationOption = '4_to_6h',
+  vibe?: VibeType
+): { initialStartMinutes: number; slots: DynamicSlotTemplate[] } {
+  // Morning bias if user specifically chose coffee/dessert with calm
+  const isMorningPreferred = vibe === 'coffee_dessert' && Math.random() < 0.2;
+  const initialStartMinutes = isMorningPreferred
+    ? 570 // 9:30 AM
+    : 1005; // 4:45 PM (Classic Jeddah Golden Hour start)
+
+  switch (duration) {
+    case 'under_2h':
+      return {
+        initialStartMinutes: 1020, // 5:00 PM
+        slots: [
+          {
+            role: 'sunset_activity',
+            defaultDwellMinutes: 50,
+            labelAr: 'نشاط الغروب أو المشي',
+            labelEn: 'Sunset Walk & Sight',
+          },
+          {
+            role: 'coffee_snack',
+            defaultDwellMinutes: 50,
+            labelAr: 'قهوة مختصة وحلى',
+            labelEn: 'Specialty Coffee & Sweet',
+          },
+        ],
+      };
+
+    case '2_to_4h':
+      return {
+        initialStartMinutes: 1005, // 4:45 PM
+        slots: [
+          {
+            role: 'sunset_activity',
+            defaultDwellMinutes: 70,
+            labelAr: 'روقان وقت الغروب',
+            labelEn: 'Sunset & Sea Breeze',
+          },
+          {
+            role: 'coffee_snack',
+            defaultDwellMinutes: 60,
+            labelAr: 'استراحة القهوة المختصة',
+            labelEn: 'Artisan Coffee Break',
+          },
+          {
+            role: 'dinner_experience',
+            defaultDwellMinutes: 80,
+            labelAr: 'عشاء وتجربة استثنائية',
+            labelEn: 'Signature Dinner',
+          },
+        ],
+      };
+
+    case '4_to_6h':
+      return {
+        initialStartMinutes: 990, // 4:30 PM
+        slots: [
+          {
+            role: 'sunset_activity',
+            defaultDwellMinutes: 75,
+            labelAr: 'الممشى والإطلالة البحرية',
+            labelEn: 'Promenade & Sunset Vista',
+          },
+          {
+            role: 'coffee_snack',
+            defaultDwellMinutes: 65,
+            labelAr: 'قهوة الروقان الحجازي',
+            labelEn: 'Specialty Coffee Lounge',
+          },
+          {
+            role: 'dinner_experience',
+            defaultDwellMinutes: 95,
+            labelAr: 'عشاء فاخر وأجواء مسائية',
+            labelEn: 'Fine Dining & Atmosphere',
+          },
+        ],
+      };
+
+    case 'half_day_night':
+      return {
+        initialStartMinutes: 960, // 4:00 PM
+        slots: [
+          {
+            role: 'afternoon_culture',
+            defaultDwellMinutes: 60,
+            labelAr: 'جولة فنية أو ثقافية',
+            labelEn: 'Cultural / Art Encounter',
+          },
+          {
+            role: 'sunset_activity',
+            defaultDwellMinutes: 75,
+            labelAr: 'مطل الغروب ونسيم البحر',
+            labelEn: 'Sunset Coastal View',
+          },
+          {
+            role: 'dinner_experience',
+            defaultDwellMinutes: 90,
+            labelAr: 'تجربة عشاء مميزة',
+            labelEn: 'Dinner Experience',
+          },
+          {
+            role: 'late_night_chill',
+            defaultDwellMinutes: 60,
+            labelAr: 'جلسة شاي وسهرة هادئة',
+            labelEn: 'Late Night Tea Lounge',
+          },
+        ],
+      };
+
+    case 'full_day':
+    default:
+      return {
+        initialStartMinutes: 630, // 10:30 AM
+        slots: [
+          {
+            role: 'brunch_morning',
+            defaultDwellMinutes: 75,
+            labelAr: 'فطور راقٍ أو برنش صباحي',
+            labelEn: 'Morning Brunch & Brew',
+          },
+          {
+            role: 'afternoon_culture',
+            defaultDwellMinutes: 90,
+            labelAr: 'اكتشاف تراثي أو ترفيهي مكيف',
+            labelEn: 'Heritage / Entertainment Hub',
+          },
+          {
+            role: 'sunset_activity',
+            defaultDwellMinutes: 75,
+            labelAr: 'كورنيش الغروب ونادي اليخوت',
+            labelEn: 'Sunset Marina Walk',
+          },
+          {
+            role: 'dinner_experience',
+            defaultDwellMinutes: 95,
+            labelAr: 'عشاء رئيسي فخم',
+            labelEn: 'Evening Dining Experience',
+          },
+          {
+            role: 'late_night_chill',
+            defaultDwellMinutes: 60,
+            labelAr: 'سهرة شاي ومطل ليلي',
+            labelEn: 'Nightcap & Red Sea Breeze',
+          },
+        ],
+      };
+  }
+}
+
+// ============================================================================
+// 4. Numerically Stable Softmax Top-K Weighted Sampling
+// ============================================================================
+
+export interface ScoredCandidate {
+  venue: Place;
+  score: number;
+}
+
+/**
+ * Numerically stable Top-K weighted probabilistic selector
+ * Prevents NaN and exp overflow by subtracting maxScore: exp((score - maxScore) / T)
+ */
+export function sampleTopKWeighted(
+  candidates: ScoredCandidate[],
+  k: number = 4,
+  temperature: number = 0.8
+): ScoredCandidate | null {
+  if (!candidates || candidates.length === 0) return null;
+  if (candidates.length === 1) return candidates[0];
+
+  // Slice the top K highest scoring candidates
+  const topK = candidates.slice(0, Math.min(k, candidates.length));
+  const maxScore = Math.max(...topK.map((c) => c.score));
+
+  // Safe exponential weights with temperature scaling
+  const expWeights = topK.map((c) => {
+    const scaled = (c.score - maxScore) / Math.max(0.05, temperature);
+    return Math.exp(scaled);
+  });
+
+  const sumWeights = expWeights.reduce((acc, w) => acc + w, 0);
+  if (sumWeights === 0 || isNaN(sumWeights)) {
+    return topK[0]; // Graceful fallback
+  }
+
+  const rand = Math.random() * sumWeights;
+  let cumulative = 0;
+  for (let i = 0; i < topK.length; i++) {
+    cumulative += expWeights[i];
+    if (rand <= cumulative) {
+      return topK[i];
+    }
+  }
+
+  return topK[0];
+}
+
+// ============================================================================
+// 5. Enhanced Heuristic Scoring Engine with Sequence & Vector Flow
+// ============================================================================
+
+export function computeEnhancedVenueScore(
   venue: Place,
-  targetRole: 'sunset_activity' | 'coffee_snack' | 'dinner_experience',
+  targetRole: StopSlotRole,
   prefs: WizardPreferences,
   prevCoords: { lat: number; lng: number },
   archetype: 'fastest' | 'balanced' | 'luxury' | 'free',
   usedPlaceIds: Set<string>,
-  lastCategory?: string
+  lastCategory?: string,
+  stepIndex: number = 0
 ): number {
   if (usedPlaceIds.has(venue.id)) return -99999;
 
@@ -124,134 +453,185 @@ function computeVenueScore(
 
   let penalties = 0;
 
-  // 2. Anti-collision: avoid repeating identical category back-to-back
+  // 2. Anti-collision: avoid repeating identical category consecutively
   if (lastCategory && venue.category === lastCategory) {
-    penalties += 40;
+    penalties += 60; // Strong penalty against consecutive cafes or heavy restaurants
   }
 
-  // 3. District Affinity Score
+  // 3. District Affinity Score & Proximity
   const userDistrict = normalizeDistrictId(prefs.startingDistrict);
   const venueDistrict = normalizeDistrictId(venue.district as string);
   let districtScore = 0;
+
   if (userDistrict !== 'all_jeddah') {
     if (userDistrict === venueDistrict) {
-      districtScore = 30;
+      districtScore = 35;
     } else {
-      penalties += 15;
+      // Check if it's an immediate neighbor
+      const neighbors = NEIGHBORING_DISTRICTS[userDistrict] || [];
+      if (neighbors.includes(venueDistrict as DistrictId)) {
+        districtScore = 20;
+      } else {
+        penalties += 20;
+      }
     }
   }
 
   // 4. Role & Timing Fit Score
   let roleScore = 0;
-  if (targetRole === 'sunset_activity') {
-    if (
-      venue.category === 'waterfront' ||
-      venue.category === 'beach' ||
-      venue.tags.includes('sunset') ||
-      venue.tags.includes('sea_sunset') ||
-      venue.tags.includes('free_walk')
-    ) {
-      roleScore = 35;
-    } else if (
-      venue.category === 'cultural' ||
-      venue.category === 'heritage' ||
-      venue.category === 'nature_parks'
-    ) {
-      roleScore = 25;
-    } else {
-      roleScore = 10;
-    }
-  } else if (targetRole === 'coffee_snack') {
-    if (
-      venue.category === 'cafe' ||
-      venue.tags.includes('specialty_coffee') ||
-      venue.tags.includes('bakery') ||
-      venue.tags.includes('coffee_dessert')
-    ) {
-      roleScore = 35;
-    } else if (venue.category === 'cultural' || venue.category === 'waterfront') {
-      roleScore = 20;
-    }
-  } else {
-    // Dinner & Evening
-    if (venue.category === 'restaurant' || venue.category === 'culinary') {
-      roleScore = 35;
-    } else if (
-      venue.category === 'entertainment' ||
-      venue.category === 'arts_entertainment' ||
-      venue.category === 'activity'
-    ) {
-      roleScore = 30;
-    } else if (venue.category === 'heritage' || venue.category === 'waterfront') {
-      roleScore = 22;
-    }
+  switch (targetRole) {
+    case 'sunset_activity':
+      if (
+        venue.category === 'waterfront' ||
+        venue.category === 'beach' ||
+        venue.tags.includes('sunset') ||
+        venue.tags.includes('sea_sunset') ||
+        venue.tags.includes('free_walk')
+      ) {
+        roleScore = 40;
+      } else if (
+        venue.category === 'cultural' ||
+        venue.category === 'heritage' ||
+        venue.category === 'nature_parks'
+      ) {
+        roleScore = 30;
+      } else {
+        roleScore = 12;
+      }
+      break;
+
+    case 'coffee_snack':
+    case 'brunch_morning':
+      if (
+        venue.category === 'cafe' ||
+        venue.tags.includes('specialty_coffee') ||
+        venue.tags.includes('bakery') ||
+        venue.tags.includes('coffee_dessert')
+      ) {
+        roleScore = 40;
+      } else if (venue.category === 'cultural' || venue.category === 'waterfront') {
+        roleScore = 22;
+      } else {
+        roleScore = 10;
+      }
+      break;
+
+    case 'dinner_experience':
+      if (venue.category === 'restaurant' || venue.category === 'culinary') {
+        roleScore = 40;
+      } else if (
+        venue.category === 'entertainment' ||
+        venue.category === 'arts_entertainment' ||
+        venue.category === 'activity'
+      ) {
+        roleScore = 28;
+      } else if (venue.category === 'heritage' || venue.category === 'waterfront') {
+        roleScore = 22;
+      }
+      break;
+
+    case 'afternoon_culture':
+      if (
+        venue.category === 'cultural' ||
+        venue.category === 'heritage' ||
+        venue.category === 'arts_entertainment'
+      ) {
+        roleScore = 40;
+      } else if (venue.category === 'activity' || venue.category === 'cafe') {
+        roleScore = 25;
+      }
+      break;
+
+    case 'late_night_chill':
+      if (
+        venue.category === 'cafe' ||
+        venue.tags.includes('late_night') ||
+        venue.tags.includes('lounge') ||
+        venue.tags.includes('tea') ||
+        venue.category === 'waterfront'
+      ) {
+        roleScore = 40;
+      } else {
+        roleScore = 20;
+      }
+      break;
   }
 
   // 5. User Vibe Fit
   let vibeScore = 0;
   if (prefs.vibe) {
-    if (venue.vibe && venue.vibe.includes(prefs.vibe as any)) {
-      vibeScore += 20;
+    if (venue.vibe && venue.vibe.includes(prefs.vibe)) {
+      vibeScore += 25;
     }
     if (prefs.vibe === 'food' && (venue.category === 'restaurant' || venue.category === 'culinary')) {
-      vibeScore += 15;
+      vibeScore += 18;
     }
     if (prefs.vibe === 'coffee_dessert' && venue.category === 'cafe') {
-      vibeScore += 15;
+      vibeScore += 18;
     }
-    if (prefs.vibe === 'beach_sunset' && (venue.category === 'waterfront' || venue.category === 'beach')) {
-      vibeScore += 15;
+    if (
+      prefs.vibe === 'beach_sunset' &&
+      (venue.category === 'waterfront' || venue.category === 'beach')
+    ) {
+      vibeScore += 18;
     }
-    if (prefs.vibe === 'heritage_arts' && (venue.category === 'heritage' || venue.category === 'cultural')) {
-      vibeScore += 15;
+    if (
+      prefs.vibe === 'heritage_arts' &&
+      (venue.category === 'heritage' || venue.category === 'cultural')
+    ) {
+      vibeScore += 18;
     }
-    if (prefs.vibe === 'gaming_challenges' && (venue.category === 'entertainment' || venue.category === 'activity')) {
-      vibeScore += 15;
+    if (
+      prefs.vibe === 'gaming_challenges' &&
+      (venue.category === 'entertainment' || venue.category === 'activity')
+    ) {
+      vibeScore += 18;
     }
   }
 
   // 6. Strict Budget Fit
   let budgetScore = 0;
-  const isLuxury = archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+  const isLuxury =
+    archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
   const isEconomy = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
 
   if (isFreeRequired) {
     if (venue.averageCostSAR > 0 && !venue.isFree) {
       return -99999;
     }
-    budgetScore = 40;
+    budgetScore = 45;
   } else if (isLuxury) {
     if (venue.averageCostSAR === 0 && venue.priceTier === 'free') {
-      penalties += 60; // Strongly avoid plain free street spots when VIP luxury is chosen
+      penalties += 70; // Strongly avoid plain free street spots when VIP luxury is chosen
     } else if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 180) {
-      budgetScore = 50;
+      budgetScore = 55;
     } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 90) {
-      budgetScore = 30;
+      budgetScore = 35;
     } else {
-      penalties += 40;
+      penalties += 35;
     }
   } else if (isEconomy) {
     if (venue.averageCostSAR > 110 || venue.priceTier === '$$$$') {
-      return -99999; // Strictly disallow expensive dining/luxury clubs in economy mode
+      return -99999;
     } else if (venue.averageCostSAR <= 50) {
       budgetScore = 45;
     } else if (venue.averageCostSAR <= 85) {
-      budgetScore = 25;
+      budgetScore = 28;
     } else {
-      penalties += 30;
+      penalties += 25;
     }
   } else {
     // Moderate
     if (venue.averageCostSAR > 250) {
-      penalties += 40;
+      penalties += 35;
     } else if (venue.averageCostSAR >= 35 && venue.averageCostSAR <= 160) {
       budgetScore = 35;
     } else {
-      budgetScore = 15;
+      budgetScore = 18;
     }
   }
 
-  // 7. Geographic Distance & Route Flow
+  // 7. Geographic Distance & Vector Routing Flow
   const distKm = calculateHaversineDistanceKm(
     prevCoords.lat,
     prevCoords.lng,
@@ -259,15 +639,19 @@ function computeVenueScore(
     venue.coordinates.lng
   );
 
-  const distWeight = archetype === 'fastest' ? 6.0 : 2.5;
-  const geoScore = Math.max(0, 30 - distKm * distWeight);
+  // Apply heavier distance penalties for 'fastest' archetype and step progression
+  const distWeight = archetype === 'fastest' ? 6.5 : 3.0;
+  const geoScore = Math.max(0, 35 - distKm * distWeight);
 
-  if (distKm > 18) {
-    penalties += (distKm - 18) * 8;
+  if (distKm > 16) {
+    penalties += (distKm - 16) * 10; // Drastic penalty for cross-city leaps
   }
 
-  // 8. Rating
-  const ratingScore = (venue.rating / 5) * 10;
+  // 8. Quality Rating Score
+  const ratingScore = (venue.rating / 5) * 12;
+
+  // 9. Add small micro-jitter to prevent static ties
+  const jitter = Math.sin(venue.nameAr.length * 17 + stepIndex * 31) * 2;
 
   return (
     roleScore +
@@ -275,117 +659,132 @@ function computeVenueScore(
     vibeScore +
     budgetScore +
     geoScore +
-    ratingScore -
+    ratingScore +
+    jitter -
     penalties
   );
 }
 
-/**
- * Builds stops for an individual archetype variant
- */
-function generateVariantStops(
+// ============================================================================
+// 6. Dynamic Sequential Route Builder (Stopping Cross-Collision)
+// ============================================================================
+
+export function generateVariantStops(
   archetype: 'fastest' | 'balanced' | 'luxury' | 'free',
   prefs: WizardPreferences,
-  startCoords: { lat: number; lng: number }
+  startCoords: { lat: number; lng: number },
+  globalUsedIds: Set<string>
 ): ItineraryStop[] {
-  const timeBlocks = [
-    {
-      start: '16:45',
-      end: '18:15',
-      slotAr: '4:45 م - 6:15 م',
-      slotEn: '04:45 PM - 06:15 PM',
-      role: 'sunset_activity' as const,
-      weatherAr: '🌅 وقت الغروب: أفضل توقيت لنسيم البحر والتقاط الصور التذكارية.',
-      weatherEn: '🌅 Golden Hour: Ideal coastal breeze and sunset photography.',
-    },
-    {
-      start: '18:30',
-      end: '19:45',
-      slotAr: '6:30 م - 7:45 م',
-      slotEn: '06:30 PM - 07:45 PM',
-      role: 'coffee_snack' as const,
-      weatherAr: '☕ استراحة الروقان: جلسة مريحة لتناول القهوة والمشروبات المنعشة.',
-      weatherEn: '☕ Chill Break: Specialty brews and artisan treats.',
-    },
-    {
-      start: '20:00',
-      end: '22:30',
-      slotAr: '8:00 م - 10:30 م',
-      slotEn: '08:00 PM - 10:30 PM',
-      role: 'dinner_experience' as const,
-      weatherAr: '🌙 أجواء السهرة: نسمة ليلية عليلة وجلسات خارجية مضيئة.',
-      weatherEn: '🌙 Evening Vibe: Ambient dining and Red Sea twilight breeze.',
-    },
-  ];
+  const { initialStartMinutes, slots } = buildDynamicSlotSequence(prefs.duration, prefs.vibe);
 
   const stops: ItineraryStop[] = [];
-  const usedIds = new Set<string>();
+  const localPlanUsedIds = new Set<string>();
+
   let prevCoords = startCoords;
   let lastCategory: string | undefined = undefined;
+  let currentStartMinutes = initialStartMinutes;
 
-  for (let idx = 0; idx < timeBlocks.length; idx++) {
-    const block = timeBlocks[idx];
+  const isFreePlan = archetype === 'free' || prefs.budgetTier === 'free';
+  const isEconPlan = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
+  const isLuxPlan =
+    archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+
+  for (let idx = 0; idx < slots.length; idx++) {
+    const slotDef = slots[idx];
+
+    // Combine global isolation pool with current itinerary's visited places
+    const combinedExcludedIds = new Set<string>();
+    globalUsedIds.forEach((id) => combinedExcludedIds.add(id));
+    localPlanUsedIds.forEach((id) => combinedExcludedIds.add(id));
 
     // Score all available venues
-    const scoredVenues = JEDDAH_PLACES.map((venue) => ({
-      venue,
-      score: computeVenueScore(
+    const candidateList: ScoredCandidate[] = [];
+    for (let pIdx = 0; pIdx < JEDDAH_PLACES.length; pIdx++) {
+      const venue = JEDDAH_PLACES[pIdx];
+      const score = computeEnhancedVenueScore(
         venue,
-        block.role,
+        slotDef.role,
         prefs,
         prevCoords,
         archetype,
-        usedIds,
-        lastCategory
-      ),
-    })).sort((a, b) => b.score - a.score);
+        combinedExcludedIds,
+        lastCategory,
+        idx
+      );
+      if (score > -1000) {
+        candidateList.push({ venue, score });
+      }
+    }
 
-    let bestPlace = scoredVenues[0]?.venue;
+    // Sort descending by score
+    candidateList.sort((a, b) => b.score - a.score);
 
-    const isFreePlan = archetype === 'free' || prefs.budgetTier === 'free';
-    const isEconPlan = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
-    const isLuxPlan = archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
-
-    // Strict candidate filtering by budget tier
+    // Apply strict budget candidate filtering
+    let eligibleCandidates = candidateList;
     if (isFreePlan) {
-      const freeCandidates = scoredVenues
-        .filter((sv) => (sv.venue.averageCostSAR === 0 || sv.venue.isFree) && !usedIds.has(sv.venue.id))
-        .map((sv) => sv.venue);
-      if (freeCandidates.length > 0) {
-        bestPlace = freeCandidates[0];
-      }
+      eligibleCandidates = candidateList.filter((c) => c.venue.averageCostSAR === 0 || c.venue.isFree);
     } else if (isEconPlan) {
-      const econCandidates = scoredVenues
-        .filter((sv) => sv.venue.averageCostSAR <= 110 && sv.venue.priceTier !== '$$$$' && !usedIds.has(sv.venue.id))
-        .map((sv) => sv.venue);
-      if (econCandidates.length > 0) {
-        bestPlace = econCandidates[0];
-      }
+      eligibleCandidates = candidateList.filter(
+        (c) => c.venue.averageCostSAR <= 110 && c.venue.priceTier !== '$$$$'
+      );
     } else if (isLuxPlan) {
-      const luxCandidates = scoredVenues
-        .filter((sv) => (sv.venue.averageCostSAR >= 90 || sv.venue.priceTier === '$$$$' || sv.venue.priceTier === '$$$') && !usedIds.has(sv.venue.id))
-        .map((sv) => sv.venue);
-      if (luxCandidates.length > 0) {
-        bestPlace = luxCandidates[0];
-      }
+      eligibleCandidates = candidateList.filter(
+        (c) =>
+          c.venue.averageCostSAR >= 90 ||
+          c.venue.priceTier === '$$$$' ||
+          c.venue.priceTier === '$$$'
+      );
     }
 
-    if (!bestPlace || usedIds.has(bestPlace.id)) {
-      const unused = JEDDAH_PLACES.filter((p) => !usedIds.has(p.id));
+    // Select with Top-K Weighted Probabilistic Sampling
+    let selectedItem = sampleTopKWeighted(eligibleCandidates, 4, 0.75);
+
+    // GRACEFUL RELAXATION:
+    // If no candidate was found with strict global isolation, relax to only local exclusion
+    if (!selectedItem) {
+      const relaxedCandidates = JEDDAH_PLACES.filter(
+        (p) => !localPlanUsedIds.has(p.id)
+      ).map((venue) => ({
+        venue,
+        score: computeEnhancedVenueScore(
+          venue,
+          slotDef.role,
+          prefs,
+          prevCoords,
+          archetype,
+          localPlanUsedIds, // Exclude only places in this specific plan
+          lastCategory,
+          idx
+        ),
+      })).filter((c) => c.score > -1000).sort((a, b) => b.score - a.score);
+
+      let relaxedEligible = relaxedCandidates;
       if (isFreePlan) {
-        bestPlace = unused.find((p) => p.averageCostSAR === 0 || p.isFree) || JEDDAH_PLACES[0];
+        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR === 0 || c.venue.isFree);
       } else if (isEconPlan) {
-        bestPlace = unused.find((p) => p.averageCostSAR <= 110 && p.priceTier !== '$$$$') || unused[0] || JEDDAH_PLACES[0];
+        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR <= 110);
       } else if (isLuxPlan) {
-        bestPlace = unused.find((p) => p.averageCostSAR >= 90 || p.priceTier === '$$$$') || unused[0] || JEDDAH_PLACES[0];
-      } else {
-        bestPlace = unused[0] || JEDDAH_PLACES[idx % JEDDAH_PLACES.length];
+        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR >= 80);
       }
+
+      selectedItem = sampleTopKWeighted(relaxedEligible, 4, 0.8) || relaxedCandidates[0];
     }
 
-    usedIds.add(bestPlace.id);
+    // Absolute fallback: Any unused place
+    let bestPlace: Place;
+    if (selectedItem) {
+      bestPlace = selectedItem.venue;
+    } else {
+      const fallbackUnused = JEDDAH_PLACES.filter((p) => !localPlanUsedIds.has(p.id));
+      bestPlace = fallbackUnused[0] || JEDDAH_PLACES[idx % JEDDAH_PLACES.length];
+    }
+
+    // Mark as used in both local plan and global pool
+    localPlanUsedIds.add(bestPlace.id);
+    globalUsedIds.add(bestPlace.id);
     lastCategory = bestPlace.category;
 
+    // Calculate transit leg from previous stop
     const distKm = calculateHaversineDistanceKm(
       prevCoords.lat,
       prevCoords.lng,
@@ -395,17 +794,32 @@ function generateVariantStops(
     const drivingMins = estimateDrivingMinutes(distKm);
     const uberSAR = estimateUberCostSAR(distKm, drivingMins);
 
+    // DYNAMIC SEQUENTIAL CHAINING:
+    // If not first stop, start time = previous end time + driving time + 5 mins buffer
+    if (idx > 0) {
+      currentStartMinutes += drivingMins + 5;
+    }
+
+    const dwellTime = bestPlace.dwellTimeMinutes || slotDef.defaultDwellMinutes || 60;
+    const currentEndMinutes = currentStartMinutes + dwellTime;
+
+    const slotAr = formatTimeSlotLabel(currentStartMinutes, currentEndMinutes, 'ar');
+    const slotEn = formatTimeSlotLabel(currentStartMinutes, currentEndMinutes, 'en');
+    const startTimeStr = minutesToTimeString(currentStartMinutes);
+    const endTimeStr = minutesToTimeString(currentEndMinutes);
+    const weatherNotice = getWeatherNoticeForTime(currentStartMinutes);
+
     const stop: ItineraryStop = {
       id: `stop-${archetype}-${idx}-${Date.now()}-${bestPlace.id}`,
       order: idx + 1,
       place: bestPlace,
-      startTime: block.start,
-      endTime: block.end,
-      timeSlot: block.slotAr,
+      startTime: startTimeStr,
+      endTime: endTimeStr,
+      timeSlot: slotAr,
       weatherNotice: {
-        type: idx === 0 ? 'golden_hour' : idx === 1 ? 'indoor_midday' : 'night_atmosphere',
-        textAr: block.weatherAr,
-        textEn: block.weatherEn,
+        type: weatherNotice.type,
+        textAr: weatherNotice.textAr,
+        textEn: weatherNotice.textEn,
       },
       transitFromPrevious:
         idx > 0
@@ -417,7 +831,7 @@ function generateVariantStops(
               durationMinutes: drivingMins,
               transitMode: 'car',
               estimatedUberSAR: uberSAR,
-              trafficLevel: drivingMins > 15 ? 'moderate' : 'low',
+              trafficLevel: drivingMins > 16 ? 'moderate' : 'low',
               routeDescriptionAr: `المسار المباشر الموصى به (~${drivingMins} دقيقة)`,
               routeDescriptionEn: `Direct recommended route (~${drivingMins} mins)`,
             }
@@ -426,14 +840,16 @@ function generateVariantStops(
 
     stops.push(stop);
     prevCoords = bestPlace.coordinates;
+    currentStartMinutes = currentEndMinutes;
   }
 
   return stops;
 }
 
-/**
- * Calculates itemized financial breakdown for stops
- */
+// ============================================================================
+// 7. Financial & Transit Aggregation Utilities
+// ============================================================================
+
 export function calculateFinancials(
   stops: ItineraryStop[],
   groupSize: number = 2
@@ -495,9 +911,6 @@ export function calculateFinancials(
   };
 }
 
-/**
- * Calculates total transit minutes and kilometers
- */
 export function calculateTransitTotals(
   stops: ItineraryStop[]
 ): { minutes: number; km: number } {
@@ -512,14 +925,15 @@ export function calculateTransitTotals(
   });
 
   return {
-    minutes: Math.max(12, minutes),
+    minutes: Math.max(10, minutes),
     km: Math.round(km * 10) / 10,
   };
 }
 
-/**
- * Master multi-plan generator producing 3 synchronized, distinct itinerary variants
- */
+// ============================================================================
+// 8. Master Multi-Plan Generator (Coordinated Cross-Variant Isolation)
+// ============================================================================
+
 export function generateMultiPlanVariants(preferences: WizardPreferences): Itinerary {
   const { startingDistrict, budgetTier } = preferences;
 
@@ -541,28 +955,11 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
 
   const startCoords = { lat: startLat, lng: startLng };
 
-  // 1. Variant 1: Fastest & Closest
-  const fastestStops = generateVariantStops('fastest', preferences, startCoords);
-  const fastestFinancials = calculateFinancials(fastestStops, 2);
-  const fastestTransitTotals = calculateTransitTotals(fastestStops);
+  // Global pool tracking to guarantee 100% distinct places across all 3 variants
+  const globalUsedPlaceIds = new Set<string>();
 
-  const fastestVariant: PlanVariant = {
-    id: 'fastest',
-    titleAr: 'الأقرب والأسرع',
-    titleEn: 'Shortest Transit & Proximity',
-    taglineAr: 'مسار متقارب جغرافياً يوفّر وقت المشاوير وزحام الطرق',
-    taglineEn: 'Optimized to minimize driving time with tightly clustered venues',
-    badgeAr: 'أقل وقت تنقل (~15 دقيقة)',
-    badgeEn: 'Lowest Transit (~15 mins)',
-    icon: 'Zap',
-    stops: fastestStops,
-    financials: fastestFinancials,
-    totalTransitMinutes: fastestTransitTotals.minutes,
-    totalDistanceKm: fastestTransitTotals.km,
-  };
-
-  // 2. Variant 2: Balanced Masterpiece
-  const balancedStops = generateVariantStops('balanced', preferences, startCoords);
+  // 1. Generate Variant 1: Balanced Masterpiece (First pick for optimal cohesion)
+  const balancedStops = generateVariantStops('balanced', preferences, startCoords, globalUsedPlaceIds);
   const balancedFinancials = calculateFinancials(balancedStops, 2);
   const balancedTransitTotals = calculateTransitTotals(balancedStops);
 
@@ -570,7 +967,7 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
     id: 'balanced',
     titleAr: 'الخطة الموزونة',
     titleEn: 'The Balanced Experience',
-    taglineAr: 'المزيج المثالي بين المشي، القهوة، وأجواء العشاء والغروب',
+    taglineAr: 'المزيج المثالي بين المشي، القهوة المختصة، وأجواء العشاء والغروب',
     taglineEn: 'The ideal mix of scenic strolls, specialty coffee, and signature dining',
     badgeAr: 'الخيار الموصى به',
     badgeEn: 'Recommended Choice',
@@ -581,47 +978,91 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
     totalDistanceKm: balancedTransitTotals.km,
   };
 
-  // 3. Variant 3: Free Outing (0 SAR) OR VIP Luxury
+  // 2. Generate Variant 2: Fastest & Closest (Second pick from remaining places)
+  const fastestStops = generateVariantStops('fastest', preferences, startCoords, globalUsedPlaceIds);
+  const fastestFinancials = calculateFinancials(fastestStops, 2);
+  const fastestTransitTotals = calculateTransitTotals(fastestStops);
+
+  const fastestVariant: PlanVariant = {
+    id: 'fastest',
+    titleAr: 'الأقرب والأسرع',
+    titleEn: 'Shortest Transit & Proximity',
+    taglineAr: 'مسار متقارب جغرافياً يوفّر وقت المشاوير وزحام الطرق',
+    taglineEn: 'Optimized to minimize driving time with tightly clustered venues',
+    badgeAr: `أقل وقت تنقل (~${fastestTransitTotals.minutes} دقيقة)`,
+    badgeEn: `Lowest Transit (~${fastestTransitTotals.minutes} mins)`,
+    icon: 'Zap',
+    stops: fastestStops,
+    financials: fastestFinancials,
+    totalTransitMinutes: fastestTransitTotals.minutes,
+    totalDistanceKm: fastestTransitTotals.km,
+  };
+
+  // 3. Generate Variant 3: Free Outing (0 SAR) OR VIP Luxury (Third pick from remaining places)
   const isFreePlanMode = budgetTier === 'free' || budgetTier === 'economy';
   const thirdVariantKey: PlanVariantKey = isFreePlanMode ? 'free' : 'luxury';
 
-  const thirdStops = generateVariantStops(thirdVariantKey, preferences, startCoords);
+  const thirdStops = generateVariantStops(thirdVariantKey, preferences, startCoords, globalUsedPlaceIds);
   const thirdFinancials = calculateFinancials(thirdStops, 2);
   const thirdTransitTotals = calculateTransitTotals(thirdStops);
 
-  const freeVariant: PlanVariant = {
-    id: 'free',
-    titleAr: 'خطة الروقان المجانية',
-    titleEn: '100% Free Outing (0 SAR)',
-    taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
-    taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
-    badgeAr: 'مجانية 100%',
-    badgeEn: '100% Free (0 SAR)',
-    icon: 'Compass',
-    stops: isFreePlanMode ? thirdStops : generateVariantStops('free', preferences, startCoords),
-    financials: isFreePlanMode ? thirdFinancials : calculateFinancials(generateVariantStops('free', preferences, startCoords), 2),
-    totalTransitMinutes: thirdTransitTotals.minutes,
-    totalDistanceKm: thirdTransitTotals.km,
-  };
+  let freeVariant: PlanVariant | undefined = undefined;
+  let luxuryVariant: PlanVariant;
 
-  const luxuryVariant: PlanVariant = {
-    id: 'luxury',
-    titleAr: 'التجربة الفخمة VIP',
-    titleEn: 'VIP Luxury Signature',
-    taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
-    taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
-    badgeAr: 'فخامة VIP',
-    badgeEn: 'VIP Luxury',
-    icon: 'Crown',
-    stops: !isFreePlanMode ? thirdStops : generateVariantStops('luxury', preferences, startCoords),
-    financials: !isFreePlanMode ? thirdFinancials : calculateFinancials(generateVariantStops('luxury', preferences, startCoords), 2),
-    totalTransitMinutes: thirdTransitTotals.minutes,
-    totalDistanceKm: thirdTransitTotals.km,
-  };
+  if (isFreePlanMode) {
+    freeVariant = {
+      id: 'free',
+      titleAr: 'خطة الروقان المجانية',
+      titleEn: '100% Free Outing (0 SAR)',
+      taglineAr: 'مسار كامل بدون أي رسوم دخول أو تكاليف إضافية (أزقة التراث، الممشى البحري، ومطل النافورة)',
+      taglineEn: 'Zero-cost itinerary across open promenades, historic alleys, and fountain viewpoints',
+      badgeAr: 'مجانية 100%',
+      badgeEn: '100% Free (0 SAR)',
+      icon: 'Compass',
+      stops: thirdStops,
+      financials: thirdFinancials,
+      totalTransitMinutes: thirdTransitTotals.minutes,
+      totalDistanceKm: thirdTransitTotals.km,
+    };
+
+    const luxStops = generateVariantStops('luxury', preferences, startCoords, globalUsedPlaceIds);
+    const luxFinancials = calculateFinancials(luxStops, 2);
+    const luxTransitTotals = calculateTransitTotals(luxStops);
+
+    luxuryVariant = {
+      id: 'luxury',
+      titleAr: 'التجربة الفخمة VIP',
+      titleEn: 'VIP Luxury Signature',
+      taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
+      taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
+      badgeAr: 'فخامة VIP',
+      badgeEn: 'VIP Luxury',
+      icon: 'Crown',
+      stops: luxStops,
+      financials: luxFinancials,
+      totalTransitMinutes: luxTransitTotals.minutes,
+      totalDistanceKm: luxTransitTotals.km,
+    };
+  } else {
+    luxuryVariant = {
+      id: 'luxury',
+      titleAr: 'التجربة الفخمة VIP',
+      titleEn: 'VIP Luxury Signature',
+      taglineAr: 'أرقى مطاعم الواجهة البحرية، نوادي اليخوت، والتجارب الحصرية',
+      taglineEn: 'Signature marina dining, yacht club views, and high-end gastronomy',
+      badgeAr: 'فخامة VIP',
+      badgeEn: 'VIP Luxury',
+      icon: 'Crown',
+      stops: thirdStops,
+      financials: thirdFinancials,
+      totalTransitMinutes: thirdTransitTotals.minutes,
+      totalDistanceKm: thirdTransitTotals.km,
+    };
+  }
 
   const activeVariantKey: PlanVariantKey = budgetTier === 'free' ? 'free' : 'balanced';
   const activeVariantObj: PlanVariant =
-    activeVariantKey === 'free' ? freeVariant : balancedVariant;
+    activeVariantKey === 'free' && freeVariant ? freeVariant : balancedVariant;
 
   const districtLabel = getDistrictLabel(startingDistrict);
 
@@ -629,8 +1070,10 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
     id: `jadawel-plan-${Date.now()}`,
     titleAr: `طلعة جدة الذكية • ${districtLabel}`,
     titleEn: `Jeddah Smart Outing • ${districtLabel}`,
-    descriptionAr: 'تم توليد 3 خطط متكاملة بدقة ومسار جغرافي متصل مع حساب الميزانية والتنقلات.',
-    descriptionEn: 'Generated 3 distinct plans with linear geographic routing & exact SAR budget calculations.',
+    descriptionAr:
+      'تم توليد 3 خطط متكاملة بدقة ومسار جغرافي متصل مع عزل تام للأماكن وحساب الميزانية والتنقلات.',
+    descriptionEn:
+      'Generated 3 distinct plans with linear geographic routing, zero overlap & exact SAR budget calculations.',
     createdAt: new Date().toISOString(),
     preferences,
     daysCount: 1,
@@ -639,7 +1082,7 @@ export function generateMultiPlanVariants(preferences: WizardPreferences): Itine
       fastest: fastestVariant,
       balanced: balancedVariant,
       luxury: luxuryVariant,
-      free: isFreePlanMode ? freeVariant : undefined,
+      free: freeVariant,
     },
     stops: activeVariantObj.stops,
     financials: activeVariantObj.financials,

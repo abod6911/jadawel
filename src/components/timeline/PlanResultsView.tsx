@@ -27,6 +27,7 @@ import {
   Bookmark,
   FolderHeart,
   Sparkles,
+  Plus,
   X,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
@@ -35,6 +36,7 @@ import { TimelineCard } from './TimelineCard';
 import { TransitConnector } from './TransitConnector';
 import { BudgetDonutChart } from './BudgetDonutChart';
 import { SwapPlaceModal } from './SwapPlaceModal';
+import { AddStopModal } from './AddStopModal';
 import { ExportHubModal } from '@/components/export/ExportHubModal';
 import { LiveOutingModal } from '@/components/modals/LiveOutingModal';
 import { SplitBillModal } from '@/components/modals/SplitBillModal';
@@ -68,10 +70,13 @@ export const PlanResultsView: React.FC = () => {
   const setSelectedPlaceForModal = useItineraryStore((state) => state.setSelectedPlaceForModal);
   const saveCurrentPlan = useItineraryStore((state) => state.saveCurrentPlan);
   const setIsSavedPlansModalOpen = useItineraryStore((state) => state.setIsSavedPlansModalOpen);
+  const setIsAddStopModalOpen = useItineraryStore((state) => state.setIsAddStopModalOpen);
   const savedPlans = useItineraryStore((state) => state.savedPlans);
 
+  const isStoryPassOpen = useItineraryStore((state) => state.isStoryPassOpen);
+  const setIsStoryPassOpen = useItineraryStore((state) => state.setIsStoryPassOpen);
+
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
-  const [isStoryPassOpen, setIsStoryPassOpen] = useState(false);
   const [mobileViewMode, setMobileViewMode] = useState<'timeline' | 'map'>('timeline');
   const [saveToast, setSaveToast] = useState(false);
   const [hasCelebrated, setHasCelebrated] = useState(false);
@@ -541,6 +546,70 @@ export const PlanResultsView: React.FC = () => {
                   </React.Fragment>
                 );
               })}
+
+              {/* Add Stop to Plan Button with Max 4 Constraint */}
+              {(() => {
+                const stopCount = currentVariantData?.stops?.length || 0;
+                const isMaxReached = stopCount >= 4;
+
+                return (
+                  <div className="pt-2 ps-6 sm:ps-8">
+                    <button
+                      type="button"
+                      disabled={isMaxReached}
+                      onClick={() => {
+                        soundEngine.playClick();
+                        setIsAddStopModalOpen(true);
+                      }}
+                      className={`w-full py-3.5 px-4 rounded-2xl border text-center transition-all flex items-center justify-center gap-2.5 font-black text-xs sm:text-sm group ${
+                        isMaxReached
+                          ? 'bg-[#0E1118]/50 border-white/5 text-slate-500 cursor-not-allowed'
+                          : 'bg-gradient-to-r from-[#121622]/90 to-[#181D2B]/90 hover:from-[#171D2E] hover:to-[#1E2538] border-dashed border-[#E5C378]/30 hover:border-[#E5C378]/60 text-[#E5C378] hover:text-[#F5E2B3] cursor-pointer shadow-lg hover:shadow-[0_0_20px_rgba(229,195,120,0.15)] active:scale-[0.99]'
+                      }`}
+                      title={
+                        isMaxReached
+                          ? 'الحد الأقصى للخطة هو 4 محطات لضمان جدول واقعي ومريح'
+                          : 'إضافة محطة جديدة للخطة'
+                      }
+                    >
+                      <span
+                        className={`p-1 rounded-xl border transition-transform duration-300 ${
+                          isMaxReached
+                            ? 'bg-white/5 border-white/10 text-slate-500'
+                            : 'bg-[#E5C378]/10 border-[#E5C378]/30 text-[#E5C378] group-hover:scale-110'
+                        }`}
+                      >
+                        <Plus className="w-3.5 h-3.5" />
+                      </span>
+                      <span>
+                        {isMaxReached
+                          ? (language === 'ar'
+                              ? 'تم الوصول للحد الأقصى (4/4 محطات)'
+                              : 'Maximum Reached (4/4 Stops)')
+                          : (language === 'ar'
+                              ? 'إضافة محطة للخطة +'
+                              : 'Add Stop to Plan +')}
+                      </span>
+                      <span
+                        className={`text-[10px] px-2 py-0.5 rounded-full border ms-auto font-mono ${
+                          isMaxReached
+                            ? 'bg-white/5 text-slate-500 border-white/10'
+                            : 'bg-[#E5C378]/15 text-[#E5C378] border-[#E5C378]/30'
+                        }`}
+                      >
+                        {stopCount}/4
+                      </span>
+                    </button>
+                    {isMaxReached && (
+                      <p className="text-[11px] text-slate-400 mt-1.5 text-center font-medium">
+                        {language === 'ar'
+                          ? '✨ تم تحديد 4 محطات كحد أقصى لضمان تجربة مريحة وأوقات كافية بين المواقع.'
+                          : '✨ Capped at 4 stops to guarantee optimal pacing and realistic travel times.'}
+                      </p>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
           </div>
         </div>
@@ -592,6 +661,7 @@ export const PlanResultsView: React.FC = () => {
 
       {/* Modals Suite */}
       <SwapPlaceModal />
+      <AddStopModal />
       <ExportHubModal
         isOpen={isExportModalOpen}
         onClose={() => setIsExportModalOpen(false)}

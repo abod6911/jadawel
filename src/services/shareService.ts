@@ -1,6 +1,7 @@
 import { Itinerary, WizardPreferences } from '@/types';
 import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { calculateFinancials } from '@/utils/plannerEngine';
+import { validateSharedPlanParams } from '@/lib/validation';
 import {
   calculateHaversineDistanceKm,
   estimateDrivingMinutes,
@@ -36,7 +37,11 @@ export function buildPlanShareUrl(itinerary: Itinerary, preferences?: WizardPref
 export function reconstructPlanFromUrl(
   params: URLSearchParams
 ): { itinerary: Itinerary; preferences: WizardPreferences } | null {
-  const stopsParam = params.get('stops');
+  // Validate and sanitize URL query parameters with Zod
+  const validated = validateSharedPlanParams(params);
+  if (!validated) return null;
+
+  const stopsParam = validated.stops;
   if (!stopsParam) return null;
 
   const slugs = stopsParam.split(',').map((s) => s.trim()).filter(Boolean);

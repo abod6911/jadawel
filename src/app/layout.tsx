@@ -22,7 +22,7 @@ export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
   viewportFit: 'cover',
-  themeColor: '#080B11',
+  themeColor: '#06090F',
 };
 
 export const metadata: Metadata = {
@@ -84,6 +84,7 @@ export const metadata: Metadata = {
     'خطط جدة',
     'سياحة جدة',
   ],
+  manifest: '/jadawel/manifest.json',
   icons: {
     icon: '/jadawel/images/brand/jadawel-logo.svg',
     apple: '/jadawel/images/brand/jadawel-logo.svg',
@@ -151,11 +152,18 @@ export default function RootLayout({
       className={`dark h-full ${ibmPlexArabic.variable} ${readexPro.variable}`}
     >
       <head>
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src 'self' https:;" />
+        <meta httpEquiv="X-Content-Type-Options" content="nosniff" />
+        <meta name="referrer" content="strict-origin-when-cross-origin" />
         <meta httpEquiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
         <meta httpEquiv="Pragma" content="no-cache" />
         <meta httpEquiv="Expires" content="0" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+        <meta name="apple-mobile-web-app-title" content="جداول" />
+        <meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="/jadawel/manifest.json" />
+        <link rel="apple-touch-icon" href="/jadawel/images/brand/jadawel-logo.svg" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLdData) }}

@@ -41,23 +41,25 @@ export const Navbar: React.FC = () => {
   }, []);
 
   const navItems = [
-    { id: 'home' as const, labelAr: 'الرئيسية', labelEn: 'Home', icon: Flame },
-    { id: 'quick-plan' as const, labelAr: 'صانع الجداول', labelEn: 'Planner', icon: Navigation },
+    { id: 'home' as const, labelAr: 'الرئيسية', shortLabelAr: 'الرئيسية', labelEn: 'Home', shortLabelEn: 'Home', icon: Flame },
+    { id: 'quick-plan' as const, labelAr: 'صانع الجداول', shortLabelAr: 'الخطة', labelEn: 'Planner', shortLabelEn: 'Plan', icon: Navigation },
     {
       id: 'timeline' as const,
       labelAr: 'مسار الخطة',
+      shortLabelAr: 'المسار',
       labelEn: 'Itinerary',
+      shortLabelEn: 'Route',
       icon: Calendar,
       badge: currentItinerary ? currentItinerary.stops.length : undefined,
     },
-    { id: 'explore' as const, labelAr: 'استكشف جدة', labelEn: 'Explore', icon: Compass },
-    { id: 'curated' as const, labelAr: 'جداول جاهزة', labelEn: 'Curated', icon: Bookmark },
+    { id: 'explore' as const, labelAr: 'استكشف جدة', shortLabelAr: 'استكشف', labelEn: 'Explore', shortLabelEn: 'Explore', icon: Compass },
+    { id: 'curated' as const, labelAr: 'جداول جاهزة', shortLabelAr: 'المقترحة', labelEn: 'Curated', shortLabelEn: 'Curated', icon: Bookmark },
   ];
 
   return (
     <header className="sticky top-[12px] z-50 w-full max-w-7xl mx-auto px-3 sm:px-6 transition-all duration-300">
       {/* Floating Pill Navbar - Ultra-Luxury Red Sea Night Palette with Specular Rim */}
-      <div className={`relative backdrop-blur-2xl rounded-full px-3.5 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-3 sm:gap-6 border transition-all duration-300 ${
+      <div className={`relative backdrop-blur-2xl rounded-full px-4 sm:px-6 py-2 sm:py-2.5 flex items-center justify-between gap-2 sm:gap-4 md:gap-6 border transition-all duration-300 ${
         isScrolled
           ? 'bg-[#06090F]/94 border-[rgba(212,175,55,0.35)] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.9),0_0_25px_rgba(212,175,55,0.18)]'
           : 'bg-[#06090F]/85 border-white/10 border-t-white/20 shadow-[0_12px_36px_rgba(0,0,0,0.75)]'
@@ -70,7 +72,7 @@ export const Navbar: React.FC = () => {
               soundEngine.playClick();
               setActiveNavTab('home');
             }}
-            className="flex items-center gap-2.5 cursor-pointer group select-none shrink-0"
+            className="flex items-center gap-2 cursor-pointer group select-none shrink-0"
           >
             <div className="w-8 h-8 sm:w-9 sm:h-9 flex items-center justify-center group-hover:scale-105 transition-transform shrink-0">
               <JadawelLogo className="w-8 h-8 sm:w-9 sm:h-9" />
@@ -87,7 +89,7 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Discreet Weather Status Pill */}
-          <div className="hidden lg:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner">
+          <div className="hidden xl:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner shrink-0">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
@@ -103,7 +105,7 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* 2. CENTER NAVIGATION TABS */}
-        <nav className="hidden md:flex items-center gap-1 bg-white/[0.03] p-1 rounded-full border border-white/[0.06] backdrop-blur-md">
+        <nav className="hidden md:flex items-center gap-0.5 lg:gap-1 bg-white/[0.03] p-1 rounded-full border border-white/[0.06] backdrop-blur-md">
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeNavTab === item.id;
@@ -116,7 +118,7 @@ export const Navbar: React.FC = () => {
                   soundEngine.playClick();
                   setActiveNavTab(item.id);
                 }}
-                className={`relative px-3.5 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-[13px] font-semibold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 whitespace-nowrap shrink-0 select-none ${
+                className={`relative px-2.5 sm:px-3 xl:px-4 py-1.5 sm:py-2 rounded-full text-xs xl:text-[13px] font-semibold transition-all flex items-center gap-1.5 sm:gap-2 cursor-pointer z-10 whitespace-nowrap shrink-0 select-none ${
                   isActive
                     ? 'text-[#F5D07A] font-bold drop-shadow-[0_1px_4px_rgba(245,208,122,0.25)]'
                     : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
@@ -132,7 +134,8 @@ export const Navbar: React.FC = () => {
                 )}
 
                 <Icon className={`w-3.5 h-3.5 transition-colors ${isActive ? 'text-[#F5D07A]' : 'text-slate-400'}`} />
-                <span>{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                <span className="hidden xl:inline">{language === 'ar' ? item.labelAr : item.labelEn}</span>
+                <span className="xl:hidden">{language === 'ar' ? item.shortLabelAr : item.shortLabelEn}</span>
                 {item.badge !== undefined && (
                   <span className="w-4 h-4 rounded-full bg-[#D4AF37] text-[#06090F] text-[9px] font-black flex items-center justify-center shadow-sm">
                     {item.badge}
@@ -143,20 +146,8 @@ export const Navbar: React.FC = () => {
           })}
         </nav>
 
-        {/* 3. UTILITIES (Planner CTA, Theme & Language) */}
-        <div className="flex items-center gap-1.5 sm:gap-2.5">
-          {/* Quick CTA to Planner */}
-          <button
-            type="button"
-            onClick={() => {
-              soundEngine.playClick();
-              setActiveNavTab('quick-plan');
-            }}
-            className="hidden lg:inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#F5D07A]/20 via-[#D4AF37]/25 to-[#AA7C11]/20 hover:brightness-110 border border-[#D4AF37]/45 text-[#F5D07A] text-xs font-bold transition-all shadow-[0_0_15px_rgba(212,175,55,0.2)] cursor-pointer select-none whitespace-nowrap shrink-0"
-          >
-            <span>{language === 'ar' ? 'صانع الجداول ✦' : 'Plan Trip ✦'}</span>
-          </button>
-
+        {/* 3. UTILITIES (Theme & Language) */}
+        <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
           {/* Theme Toggle */}
           <button
             type="button"

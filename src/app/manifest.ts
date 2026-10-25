@@ -1,0 +1,32 @@
+import { MetadataRoute } from 'next';
+
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'جداول | وش الخطة؟',
+    short_name: 'جداول',
+    description: 'دليلك الذكي لتخطيط طلعات وفعاليات جدة السينمائية',
+    start_url: '/jadawel/',
+    scope: '/jadawel/',
+    display: 'standalone',
+    background_color: '#06090F',
+    theme_color: '#06090F',
+    orientation: 'portrait',
+    lang: 'ar',
+    dir: 'rtl',
+    categories: ['lifestyle', 'travel', 'navigation'],
+    icons: [
+      {
+        src: '/jadawel/images/brand/jadawel-logo.svg',
+        sizes: '192x192 512x512',
+        type: 'image/svg+xml',
+        purpose: 'any',
+      },
+      {
+        src: '/jadawel/images/brand/jadawel-logo.svg',
+        sizes: '192x192 512x512',
+        type: 'image/svg+xml',
+        purpose: 'maskable',
+      },
+    ],
+  };
+}
