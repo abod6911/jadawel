@@ -17,6 +17,7 @@ import {
   Car,
   Coins,
   CheckCircle2,
+  AlertCircle,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -24,6 +25,8 @@ import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
 import { calculateTransitTotals } from '@/utils/plannerEngine';
+import { SafeVenueImage } from '@/components/ui/SafeVenueImage';
+import { generateUberDeepLink, generateMapsNavigationLink } from '@/utils/navigationDeepLink';
 
 export const LiveOutingModal: React.FC = () => {
   const { language } = useLanguage();
@@ -37,6 +40,7 @@ export const LiveOutingModal: React.FC = () => {
   const setIsStoryPassOpen = useItineraryStore((state) => state.setIsStoryPassOpen);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
   const showToast = useItineraryStore((state) => state.showToast);
+  const openReportModal = useItineraryStore((state) => state.openReportModal);
 
   const [isCompleted, setIsCompleted] = useState(false);
 
@@ -240,13 +244,11 @@ export const LiveOutingModal: React.FC = () => {
           <div className="space-y-6 pt-1 text-start">
             {/* Active Place Preview Banner */}
             <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-abyss-950 border border-white/10 shadow-lg">
-              <img
-                src={getAssetUrl(place.imageUrl)}
+              <SafeVenueImage
+                src={place.imageUrl}
                 alt={place.nameEn}
+                category={place.category}
                 className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');
-                }}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-abyss-950 via-abyss-950/40 to-transparent" />
 
@@ -326,22 +328,51 @@ export const LiveOutingModal: React.FC = () => {
               </button>
             </div>
 
-            {/* Direct Google Maps Navigation */}
-            <div className="pt-3 border-t border-white/10">
-              <a
-                href={place.googleMapsUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-abyss-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-glow-gold hover:scale-[1.01] transition-all"
-              >
-                <Navigation className="w-4 h-4" />
-                <span>
-                  {language === 'ar'
-                    ? 'بدء التوجيه في خرائط Google 🗺️'
-                    : 'Start Google Maps Navigation'}
-                </span>
-                <ExternalLink className="w-4 h-4" />
-              </a>
+            {/* Smart Field Mobility: Uber & Turn-by-Turn Navigation */}
+            <div className="pt-3 border-t border-white/10 space-y-2.5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {/* Uber Direct Launcher */}
+                <a
+                  href={generateUberDeepLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3.5 px-4 rounded-2xl bg-black hover:bg-neutral-900 border border-white/20 text-white hover:text-[#F5D07A] font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-all"
+                  title="طلب سيارة أوبر مباشرة إلى هذه الوجهة"
+                >
+                  <Car className="w-4 h-4 text-[#F5D07A]" />
+                  <span>{language === 'ar' ? 'انطلق مع Uber 🚗' : 'Ride with Uber 🚗'}</span>
+                </a>
+
+                {/* Smart Navigation (Apple/Google) */}
+                <a
+                  href={generateMapsNavigationLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="py-3.5 px-4 rounded-2xl bg-gradient-to-r from-gold-500 to-gold-600 hover:from-gold-600 hover:to-gold-700 text-abyss-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-glow-gold hover:scale-[1.01] active:scale-[0.98] transition-all"
+                  title="بدء الملاحة الذكية في خرائط الجوال"
+                >
+                  <Navigation className="w-4 h-4" />
+                  <span>
+                    {language === 'ar' ? 'الملاحة بالخرائط 🗺️' : 'Start Navigation 🗺️'}
+                  </span>
+                  <ExternalLink className="w-3.5 h-3.5 opacity-70" />
+                </a>
+              </div>
+
+              {/* Feedback Button */}
+              <div className="flex justify-center pt-1">
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEngine.playClick();
+                    openReportModal(place);
+                  }}
+                  className="text-xs text-slate-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 cursor-pointer py-1"
+                >
+                  <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
+                  <span>{language === 'ar' ? 'معلومة غير دقيقة في المكان؟ بلّغنا 📝' : 'Inaccurate place details? Report 📝'}</span>
+                </button>
+              </div>
             </div>
           </div>
         )

@@ -143,8 +143,25 @@ export const Footer: React.FC = () => {
           </div>
         </div>
 
+        {/* Real-world Disclaimer & Authenticity Bar */}
+        <div className="mt-10 p-4 rounded-2xl bg-white/[0.02] border border-white/[0.06] flex flex-col sm:flex-row items-center justify-between gap-3 text-start">
+          <div className="flex items-start sm:items-center gap-2.5 text-xs text-slate-400">
+            <span className="px-2 py-0.5 rounded-lg bg-[#E5C378]/10 text-[#E5C378] font-bold text-[11px] shrink-0 mt-0.5 sm:mt-0 border border-[#E5C378]/20">
+              {language === 'ar' ? 'تنويه' : 'Notice'}
+            </span>
+            <p className="leading-relaxed">
+              {language === 'ar'
+                ? 'الأسعار ومواعيد العمل وأوقات القيادة هي تقديرات ذكية قابلة للتغير بناءً على سياسات المنشآت وحركة السير في جدة.'
+                : 'Prices, opening hours, and transit times are smart estimates subject to venue policies and real-time Jeddah traffic.'}
+            </p>
+          </div>
+          <span className="shrink-0 text-[11px] font-bold text-teal-300 px-3 py-1 rounded-full bg-teal-500/10 border border-teal-500/20 shadow-sm">
+            {language === 'ar' ? 'صُنع بشغف لأجل جدة ومجتمعها 🌊' : 'Curated with passion for Jeddah 🌊'}
+          </span>
+        </div>
+
         {/* Bottom copyright */}
-        <div className="mt-12 pt-6 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
+        <div className="mt-8 pt-6 border-t border-white/[0.07] flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-400">
           <div className="flex items-center gap-2">
             <span>© 2026 جداول (Jadawel). جميع الحقوق محفوظة لعروس البحر الأحمر.</span>
           </div>

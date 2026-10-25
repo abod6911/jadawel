@@ -11,17 +11,23 @@ import {
   Lightbulb,
   DollarSign,
   Shield,
+  Car,
+  Navigation,
+  AlertCircle,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
 import { getAssetUrl } from '@/utils/paths';
+import { SafeVenueImage } from '@/components/ui/SafeVenueImage';
+import { generateUberDeepLink, generateMapsNavigationLink } from '@/utils/navigationDeepLink';
 
 export const PlaceDetailModal: React.FC = () => {
   const { language } = useLanguage();
   const selectedPlace = useItineraryStore((state) => state.selectedPlaceForModal);
   const setSelectedPlaceForModal = useItineraryStore((state) => state.setSelectedPlaceForModal);
   const addPlaceToItinerary = useItineraryStore((state) => state.addPlaceToItinerary);
+  const openReportModal = useItineraryStore((state) => state.openReportModal);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
 
   if (!selectedPlace) return null;
@@ -37,13 +43,11 @@ export const PlaceDetailModal: React.FC = () => {
       <div className="space-y-6 text-start">
         {/* Hero Photo Banner */}
         <div className="relative aspect-[16/9] -mx-5 -mt-5 sm:-mx-6 sm:-mt-6 rounded-t-3xl overflow-hidden bg-abyss-950">
-          <img
-            src={getAssetUrl(selectedPlace.imageUrl)}
+          <SafeVenueImage
+            src={selectedPlace.imageUrl}
             alt={selectedPlace.nameEn}
+            category={selectedPlace.category}
             className="w-full h-full object-cover"
-            onError={(e) => {
-              (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');
-            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-abyss-950 via-abyss-950/40 to-transparent" />
 
@@ -162,42 +166,73 @@ export const PlaceDetailModal: React.FC = () => {
           </div>
         )}
 
-        {/* Action Controls */}
-        <div className="pt-3 border-t border-white/10 flex items-center justify-between gap-3">
-          <a
-            href={selectedPlace.googleMapsUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-white/15 text-pearl border border-white/15 text-xs font-bold transition-all flex items-center gap-2"
-          >
-            <ExternalLink className="w-4 h-4 text-teal-300" />
-            <span>{language === 'ar' ? 'فتح في خرائط Google' : 'Open in Google Maps'}</span>
-          </a>
+        {/* Action Controls & Navigation Toolbar */}
+        <div className="pt-3 border-t border-white/10 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2.5">
+            {/* Feedback / Report Link */}
+            <button
+              type="button"
+              onClick={() => {
+                openReportModal(selectedPlace);
+              }}
+              className="text-xs text-slate-400 hover:text-amber-300 transition-colors flex items-center gap-1.5 cursor-pointer py-1"
+            >
+              <AlertCircle className="w-3.5 h-3.5 text-slate-400" />
+              <span>{language === 'ar' ? 'معلومة غير دقيقة في المكان؟ بلّغنا 📝' : 'Inaccurate info? Report 📝'}</span>
+            </button>
 
-          <button
-            type="button"
-            onClick={() => {
-              addPlaceToItinerary(selectedPlace);
-              setSelectedPlaceForModal(null);
-            }}
-            className={`px-6 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center gap-2 cursor-pointer ${
-              isAlreadyInPlan
-                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm font-black'
-                : 'bg-gold-500 hover:bg-gold-600 text-abyss-950 shadow-glow-gold hover:scale-[1.02]'
-            }`}
-          >
-            {isAlreadyInPlan ? (
-              <>
-                <Check className="w-4 h-4" />
-                <span>{language === 'ar' ? 'مضاف في خطتك الحالية' : 'Added to Plan'}</span>
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4" />
-                <span>{language === 'ar' ? 'أضف المكان إلى خطتك' : 'Add to Itinerary'}</span>
-              </>
-            )}
-          </button>
+            {/* Smart Navigation Links */}
+            <div className="flex items-center gap-2">
+              <a
+                href={generateUberDeepLink(selectedPlace.coordinates.lat, selectedPlace.coordinates.lng, selectedPlace.nameAr)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white hover:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
+                title="طلب سيارة أوبر مباشرة"
+              >
+                <Car className="w-3.5 h-3.5 text-amber-300" />
+                <span>{language === 'ar' ? 'Uber 🚗' : 'Uber 🚗'}</span>
+              </a>
+
+              <a
+                href={generateMapsNavigationLink(selectedPlace.coordinates.lat, selectedPlace.coordinates.lng, selectedPlace.nameAr)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 font-bold text-xs flex items-center gap-1.5 transition-colors active:scale-95"
+                title="الملاحة بالخرائط"
+              >
+                <Navigation className="w-3.5 h-3.5 text-teal-400" />
+                <span>{language === 'ar' ? 'الملاحة 🗺️' : 'Navigate 🗺️'}</span>
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end pt-1">
+            <button
+              type="button"
+              onClick={() => {
+                addPlaceToItinerary(selectedPlace);
+                setSelectedPlaceForModal(null);
+              }}
+              className={`w-full sm:w-auto px-7 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                isAlreadyInPlan
+                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 shadow-sm font-black'
+                  : 'bg-gold-500 hover:bg-gold-600 text-abyss-950 shadow-glow-gold hover:scale-[1.02] active:scale-95'
+              }`}
+            >
+              {isAlreadyInPlan ? (
+                <>
+                  <Check className="w-4 h-4" />
+                  <span>{language === 'ar' ? 'مضاف في خطتك الحالية' : 'Added to Plan'}</span>
+                </>
+              ) : (
+                <>
+                  <Plus className="w-4 h-4" />
+                  <span>{language === 'ar' ? 'أضف المكان إلى خطتك' : 'Add to Itinerary'}</span>
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

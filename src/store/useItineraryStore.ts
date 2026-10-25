@@ -109,6 +109,12 @@ interface ItineraryState {
   isAddStopModalOpen: boolean;
   setIsAddStopModalOpen: (open: boolean) => void;
 
+  // Report & Feedback Modal
+  isReportModalOpen: boolean;
+  placeToReport: Place | null;
+  openReportModal: (place: Place) => void;
+  closeReportModal: () => void;
+
   // Stop Actions
   openSwapModal: (stop: ItineraryStop) => void;
   closeSwapModal: () => void;
@@ -261,6 +267,12 @@ export const useItineraryStore = create<ItineraryState>()(
       // Add Stop Modal
       isAddStopModalOpen: false,
       setIsAddStopModalOpen: (isAddStopModalOpen) => set({ isAddStopModalOpen }),
+
+      // Report & Feedback Modal
+      isReportModalOpen: false,
+      placeToReport: null,
+      openReportModal: (placeToReport) => set({ isReportModalOpen: true, placeToReport }),
+      closeReportModal: () => set({ isReportModalOpen: false, placeToReport: null }),
 
       isSplitBillOpen: false,
       isVotingModalOpen: false,

@@ -30,6 +30,7 @@ import {
   Plus,
   Footprints,
   X,
+  Info,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -482,6 +483,18 @@ export const PlanResultsView: React.FC = () => {
         ticketsShareSAR={ticketsShare}
         transitShareSAR={uberShare}
       />
+
+      {/* Field Realism & Transparency Disclaimer */}
+      <div className="p-3.5 rounded-2xl bg-[#12151C]/70 border border-white/[0.06] flex items-center gap-3 text-xs text-slate-400 shadow-sm backdrop-blur-sm">
+        <div className="w-7 h-7 rounded-lg bg-[#E5C378]/10 border border-[#E5C378]/20 flex items-center justify-center shrink-0">
+          <Info className="w-4 h-4 text-[#E5C378]" />
+        </div>
+        <p className="leading-relaxed">
+          {language === 'ar'
+            ? 'الأسعار ومواعيد العمل وأوقات القيادة هي تقديرات ذكية قابلة للتغير بناءً على سياسات المنشآت وحركة السير في جدة.'
+            : 'Prices, opening hours, and transit times are smart estimates subject to venue policies and real-time traffic in Jeddah.'}
+        </p>
+      </div>
 
       {/* 4. Mobile Segmented Control (Zero Emojis, Pure Lucide SVGs) */}
       <div className="lg:hidden flex items-center p-1.5 rounded-2xl bg-[#080B11]/90 border border-[var(--border-subtle)] shadow-inner">

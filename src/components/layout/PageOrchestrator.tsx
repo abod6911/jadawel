@@ -15,6 +15,7 @@ import { Toast } from '@/components/ui/Toast';
 import { RegisterSW } from '@/components/pwa/RegisterSW';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
 import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
+import { ReportPlaceModal } from '@/components/modals/ReportPlaceModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
@@ -176,6 +177,7 @@ export const PageOrchestrator: React.FC = () => {
 
         {/* Global Modals & Notifications */}
         <SavedPlansModal />
+        <ReportPlaceModal />
         <Toast />
         <OfflineIndicator />
         <RegisterSW />

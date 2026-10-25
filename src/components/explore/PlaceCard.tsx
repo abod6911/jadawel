@@ -6,6 +6,7 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { Place } from '@/types';
 import { getAssetUrl } from '@/utils/paths';
+import { SafeVenueImage } from '@/components/ui/SafeVenueImage';
 
 interface PlaceCardProps {
   place: Place;
@@ -52,16 +53,13 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
         />
       )}
 
-      {/* Image Banner */}
+      {/* Image Banner with Safe Venue Image Fallback */}
       <div className="relative aspect-[16/10] overflow-hidden bg-[#06090F]">
-        <img
-          src={getAssetUrl(place.imageUrl)}
+        <SafeVenueImage
+          src={place.imageUrl}
           alt={place.nameEn}
+          category={place.category}
           className="w-full h-full object-cover group-hover:scale-[1.07] transition-transform duration-600 ease-spring-smooth"
-          loading="lazy"
-          onError={(e) => {
-            (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');
-          }}
         />
 
         {/* Top Badges overlay */}

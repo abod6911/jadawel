@@ -15,12 +15,17 @@ import {
   Sun,
   Compass,
   CheckCircle2,
+  Car,
+  Navigation,
+  AlertCircle,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { ItineraryStop } from '@/types';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
+import { SafeVenueImage } from '@/components/ui/SafeVenueImage';
+import { generateUberDeepLink, generateMapsNavigationLink } from '@/utils/navigationDeepLink';
 
 interface TimelineCardProps {
   stop: ItineraryStop;
@@ -36,6 +41,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
   const { language } = useLanguage();
   const setSelectedPlaceForModal = useItineraryStore((state) => state.setSelectedPlaceForModal);
   const openSwapModal = useItineraryStore((state) => state.openSwapModal);
+  const openReportModal = useItineraryStore((state) => state.openReportModal);
   const removeStop = useItineraryStore((state) => state.removeStop);
   const moveStopUp = useItineraryStore((state) => state.moveStopUp);
   const moveStopDown = useItineraryStore((state) => state.moveStopDown);
@@ -163,11 +169,10 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
           {/* Visual Thumbnail (Aspect 16:9 on mobile, 4:3 on desktop with 1.04 hover zoom) */}
           <div className="md:col-span-4 relative aspect-[16/10] rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/10 group-hover:border-[var(--border-gold)] transition-colors">
-            <img
-              src={getAssetUrl(place.imageUrl)}
+            <SafeVenueImage
+              src={place.imageUrl}
               alt={place.nameEn}
-              loading="lazy"
-              decoding="async"
+              category={place.category}
               className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-spring-smooth"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
@@ -249,42 +254,75 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
               </div>
             )}
 
-            {/* Action Bar with Google Maps Direct Link */}
-            <div className="pt-2 flex flex-wrap items-center justify-between gap-3 text-xs border-t border-[var(--border-subtle)]">
-              <button
-                type="button"
-                onClick={() => {
-                  soundEngine.playClick();
-                  setSelectedPlaceForModal(place);
-                }}
-                className="text-[var(--accent-gold)] font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
-              >
-                <Info className="w-3.5 h-3.5" />
-                <span>{language === 'ar' ? 'نصائح أهل جدة وتفاصيل المكان' : 'Insider Tips & Info'}</span>
-              </button>
+            {/* Action Bar with Uber, Smart Navigation, Swap & Feedback */}
+            <div className="pt-3 border-t border-[var(--border-subtle)] space-y-2.5">
+              <div className="flex flex-wrap items-center justify-between gap-2.5 text-xs">
+                {/* Details Trigger */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEngine.playClick();
+                    setSelectedPlaceForModal(place);
+                  }}
+                  className="text-[var(--accent-gold)] font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
+                >
+                  <Info className="w-3.5 h-3.5" />
+                  <span>{language === 'ar' ? 'نصائح أهل جدة وتفاصيل المكان' : 'Insider Tips & Info'}</span>
+                </button>
 
-              <div className="flex items-center gap-3">
+                {/* Report Incorrect Info Link */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    soundEngine.playClick();
+                    openReportModal(place);
+                  }}
+                  className="text-slate-400 hover:text-amber-300 text-[11px] font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                  title="الإبلاغ عن معلومة غير دقيقة أو مكان مغلق"
+                >
+                  <AlertCircle className="w-3 h-3 text-slate-400" />
+                  <span>{language === 'ar' ? 'معلومة غير دقيقة؟ بلّغنا 📝' : 'Report info 📝'}</span>
+                </button>
+              </div>
+
+              {/* Transit & Action Buttons */}
+              <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
+                {/* Swap Stop */}
                 <button
                   type="button"
                   onClick={() => {
                     soundEngine.playClick();
                     openSwapModal(stop);
                   }}
-                  className="text-slate-400 hover:text-white font-medium flex items-center gap-1 cursor-pointer transition-colors"
+                  className="px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 hover:text-white border border-white/10 font-medium flex items-center gap-1.5 cursor-pointer transition-all"
                 >
-                  <RefreshCw className="w-3 h-3" />
-                  <span>{language === 'ar' ? 'تبديل المحطة' : 'Swap'}</span>
+                  <RefreshCw className="w-3 h-3 text-slate-400" />
+                  <span>{language === 'ar' ? 'تبديل' : 'Swap'}</span>
                 </button>
 
+                {/* Direct Uber Deep Link */}
                 <a
-                  href={place.googleMapsUrl}
+                  href={generateUberDeepLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="px-3 py-1 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 font-bold flex items-center gap-1.5 transition-colors"
+                  className="px-3.5 py-1.5 rounded-xl bg-black/90 hover:bg-black text-white hover:text-[#F5D07A] border border-white/15 text-xs font-black flex items-center gap-1.5 transition-all shadow-sm active:scale-95"
+                  title="طلب سيارة أوبر مباشرة إلى هذه الوجهة"
                 >
-                  <MapPin className="w-3.5 h-3.5 text-teal-400" />
-                  <span>{language === 'ar' ? 'خرائط Google' : 'Google Maps'}</span>
-                  <ExternalLink className="w-3 h-3" />
+                  <Car className="w-3.5 h-3.5 text-[#F5D07A]" />
+                  <span>{language === 'ar' ? 'انطلق مع Uber 🚗' : 'Ride with Uber 🚗'}</span>
+                </a>
+
+                {/* Smart Navigation (Apple/Google) */}
+                <a
+                  href={generateMapsNavigationLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3.5 py-1.5 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 font-bold flex items-center gap-1.5 transition-colors active:scale-95"
+                  title="بدء الملاحة بالخرائط"
+                >
+                  <Navigation className="w-3.5 h-3.5 text-teal-400" />
+                  <span>{language === 'ar' ? 'الملاحة 🗺️' : 'Navigate 🗺️'}</span>
+                  <ExternalLink className="w-2.5 h-2.5 opacity-60" />
                 </a>
               </div>
             </div>
