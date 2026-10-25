@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import {
   ArrowLeft,
   ArrowRight,
@@ -15,9 +15,28 @@ import { RawashinPattern } from '@/components/ui/RawashinPattern';
 import { LayoutGroup, motion } from 'framer-motion';
 import TextRotate from '@/components/fancy/text/text-rotate';
 
+// Module-level flag: persists during client SPA tab switching, resets upon entering/reloading the site
+let hasInitialEntered = false;
+
 export const HeroSection: React.FC = () => {
   const { language, isRTL } = useLanguage();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [isTextVisible, setIsTextVisible] = useState<boolean>(hasInitialEntered);
+
+  // 2-second entry delay for the hero editorial headline & CTA
+  useEffect(() => {
+    if (hasInitialEntered) {
+      setIsTextVisible(true);
+      return;
+    }
+
+    const timer = setTimeout(() => {
+      setIsTextVisible(true);
+      hasInitialEntered = true;
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   // Store bindings
   const updateWizardPreferences = useItineraryStore((state) => state.updateWizardPreferences);
@@ -82,8 +101,22 @@ export const HeroSection: React.FC = () => {
         <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#06090F] to-transparent" />
       </div>
 
-      {/* 2. FOREGROUND CONTENT: Clean Headline + Direct Curate Action */}
-      <div className="relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-12 pb-24 sm:pt-24 sm:pb-36 lg:pt-28 lg:pb-44 flex flex-col items-center">
+      {/* 2. FOREGROUND CONTENT: Clean Headline + Direct Curate Action with 2s entrance delay */}
+      <motion.div
+        initial={hasInitialEntered ? false : { opacity: 0, y: 28, filter: 'blur(10px)' }}
+        animate={
+          isTextVisible
+            ? { opacity: 1, y: 0, filter: 'blur(0px)' }
+            : { opacity: 0, y: 28, filter: 'blur(10px)' }
+        }
+        transition={{
+          duration: 1.1,
+          ease: [0.16, 1, 0.3, 1],
+        }}
+        className={`relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-12 pb-24 sm:pt-24 sm:pb-36 lg:pt-28 lg:pb-44 flex flex-col items-center ${
+          isTextVisible ? 'pointer-events-auto' : 'pointer-events-none'
+        }`}
+      >
         
         {/* EDITORIAL HERO HEADER */}
         <div className="w-full max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
@@ -210,7 +243,7 @@ export const HeroSection: React.FC = () => {
           </button>
         </div>
 
-      </div>
+      </motion.div>
     </section>
   );
 };
