@@ -200,6 +200,8 @@ export const AddStopModal: React.FC = () => {
                   <img
                     src={getAssetUrl(place.imageUrl)}
                     alt={place.nameEn}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                     onError={(e) => {
                       (e.target as HTMLImageElement).src = getAssetUrl('/images/places/placeholder.jpg');

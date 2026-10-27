@@ -64,6 +64,8 @@ export const SwapPlaceModal: React.FC = () => {
             <img
               src={getAssetUrl(currentPlace.imageUrl)}
               alt={currentPlace.nameEn}
+              loading="lazy"
+              decoding="async"
               className="w-12 h-12 rounded-xl object-cover shrink-0 border border-white/10"
             />
             <div className="min-w-0">
@@ -103,6 +105,8 @@ export const SwapPlaceModal: React.FC = () => {
                     <img
                       src={getAssetUrl(altPlace.imageUrl)}
                       alt={altPlace.nameEn}
+                      loading="lazy"
+                      decoding="async"
                       className="w-14 h-14 rounded-xl object-cover shrink-0 border border-white/10"
                     />
                     <div className="space-y-0.5 min-w-0">

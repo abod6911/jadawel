@@ -527,6 +527,8 @@ export const LeafletMapContent: React.FC<LeafletMapContentProps> = ({
                     <img
                       src={getAssetUrl(stop.place.imageUrl)}
                       alt={cleanName}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-24 object-cover rounded-xl border border-white/10"
                     />
                   )}

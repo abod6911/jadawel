@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import confetti from 'canvas-confetti';
 import {
   Navigation,
   CheckCircle,
@@ -63,18 +62,19 @@ export const LiveOutingModal: React.FC = () => {
       soundEngine.playSuccess();
       markStopStatus(currentStop.id, 'arrived');
 
-      // Celebration Confetti Explosion
-      try {
-        confetti({
-          particleCount: 90,
-          spread: 80,
-          origin: { y: 0.55 },
-          zIndex: 9999,
-          colors: ['#E5C378', '#2DD4BF', '#DF9F3D', '#FFFFFF', '#F59E0B'],
-        });
-      } catch (e) {
-        // graceful fallback
-      }
+      // Celebration Confetti Explosion (Loaded On-Demand)
+      import('canvas-confetti')
+        .then((m) => {
+          const confetti = m.default;
+          confetti({
+            particleCount: 90,
+            spread: 80,
+            origin: { y: 0.55 },
+            zIndex: 9999,
+            colors: ['#E5C378', '#2DD4BF', '#DF9F3D', '#FFFFFF', '#F59E0B'],
+          });
+        })
+        .catch(() => {});
 
       setIsCompleted(true);
     } else {

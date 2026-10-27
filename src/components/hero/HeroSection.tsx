@@ -10,7 +10,6 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { useLanguage } from '@/hooks/useLanguage';
 import { soundEngine } from '@/utils/audioEngine';
 import { getAssetUrl } from '@/utils/paths';
-import { getJeddahAtmosphere } from '@/utils/atmosphereEngine';
 import { RawashinPattern } from '@/components/ui/RawashinPattern';
 import { LayoutGroup, motion } from 'framer-motion';
 import TextRotate from '@/components/fancy/text/text-rotate';
@@ -42,8 +41,6 @@ export const HeroSection: React.FC = () => {
   const updateWizardPreferences = useItineraryStore((state) => state.updateWizardPreferences);
   const generatePlanFromPreferences = useItineraryStore((state) => state.generatePlanFromPreferences);
   const isGeneratingPlan = useItineraryStore((state) => state.isGeneratingPlan);
-  const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
-  const atmosphere = getJeddahAtmosphere(atmospherePhase);
 
   // HTML5 Video Autoplay
   useEffect(() => {
@@ -121,19 +118,6 @@ export const HeroSection: React.FC = () => {
         {/* EDITORIAL HERO HEADER */}
         <div className="w-full max-w-4xl mx-auto text-center space-y-4 sm:space-y-6">
           
-          {/* Eyebrow Capsule */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.1] border-t-white/20 backdrop-blur-md text-[#F5D07A] text-xs font-semibold tracking-wide shadow-sm">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-            </span>
-            <span className="flex items-center gap-1.5 flex-wrap justify-center">
-              <span>{language === 'ar' ? '✦ المنصة المعتمدة لطلعات جدة' : '✦ Curated Red Sea Bride'}</span>
-              <span className="text-white/30">•</span>
-              <span>{language === 'ar' ? atmosphere.phaseNameAr : atmosphere.phaseNameEn}</span>
-              <span className="font-mono text-[#F5D07A]" dir="ltr">({atmosphere.temperatureC}°C)</span>
-            </span>
-          </div>
 
           {/* Master Headline with Metallic Shimmer */}
           <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-[4.4rem] font-bold tracking-normal leading-[1.3] sm:leading-[1.35] max-w-4xl mx-auto drop-shadow-md py-1">

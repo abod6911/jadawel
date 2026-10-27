@@ -8,7 +8,6 @@ import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
-import { exportAndShareStoryPass } from '@/utils/planPosterCanvas';
 import { useItineraryStore } from '@/store/useItineraryStore';
 
 interface StoryPassModalProps {
@@ -44,6 +43,7 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
     );
 
     try {
+      const { exportAndShareStoryPass } = await import('@/utils/planPosterCanvas');
       const result = await exportAndShareStoryPass(itinerary, language);
       if (result.shared) {
         showToast(

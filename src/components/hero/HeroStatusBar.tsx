@@ -1,22 +1,15 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Waves, Sunset, Navigation, Volume2, VolumeX } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
-import { getJeddahAtmosphere, JeddahAtmosphere } from '@/utils/atmosphereEngine';
+import { useJeddahWeather } from '@/hooks/useJeddahWeather';
 import { soundEngine } from '@/utils/audioEngine';
 
 export const HeroStatusBar: React.FC = () => {
   const { language } = useLanguage();
-  const [atmosphere, setAtmosphere] = useState<JeddahAtmosphere>(getJeddahAtmosphere());
+  const { atmosphere } = useJeddahWeather();
   const [isMuted, setIsMuted] = useState(false);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setAtmosphere(getJeddahAtmosphere());
-    }, 30000);
-    return () => clearInterval(timer);
-  }, []);
 
   const handleToggleSound = () => {
     const muted = soundEngine.toggleMute();

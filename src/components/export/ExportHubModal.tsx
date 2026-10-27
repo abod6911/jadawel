@@ -18,7 +18,6 @@ import { Itinerary } from '@/types';
 import { downloadIcsFile } from '@/utils/icsGenerator';
 import { buildWhatsAppShareUrl } from '@/utils/whatsappShare';
 import { buildPlanShareUrl, sharePlanViaWebShareOrCopy } from '@/services/shareService';
-import { downloadItineraryPoster } from '@/utils/planPosterCanvas';
 import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 
@@ -83,6 +82,7 @@ export const ExportHubModal: React.FC<ExportHubModalProps> = ({
     soundEngine.playClick();
     setIsGeneratingPoster(true);
     try {
+      const { downloadItineraryPoster } = await import('@/utils/planPosterCanvas');
       await downloadItineraryPoster(itinerary, language);
       soundEngine.playSuccess();
       setPosterDone(true);

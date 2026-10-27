@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
-import confetti from 'canvas-confetti';
 import {
   Zap,
   Scale,
@@ -36,16 +36,17 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { TimelineCard } from './TimelineCard';
 import { TransitConnector } from './TransitConnector';
-import { BudgetDonutChart } from './BudgetDonutChart';
-import { SwapPlaceModal } from './SwapPlaceModal';
-import { AddStopModal } from './AddStopModal';
-import { ExportHubModal } from '@/components/export/ExportHubModal';
-import { LiveOutingModal } from '@/components/modals/LiveOutingModal';
-import { SplitBillModal } from '@/components/modals/SplitBillModal';
-import { GroupVotingModal } from '@/components/modals/GroupVotingModal';
-import { StoryPassModal } from '@/components/modals/StoryPassModal';
-import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
-import { InteractiveMap } from '@/components/map/InteractiveMap';
+// Aggressive On-Demand Code Splitting for Heavy Interactive Modals & Visualizations
+const BudgetDonutChart = dynamic(() => import('./BudgetDonutChart').then((m) => m.BudgetDonutChart), { ssr: false });
+const SwapPlaceModal = dynamic(() => import('./SwapPlaceModal').then((m) => m.SwapPlaceModal), { ssr: false });
+const AddStopModal = dynamic(() => import('./AddStopModal').then((m) => m.AddStopModal), { ssr: false });
+const ExportHubModal = dynamic(() => import('@/components/export/ExportHubModal').then((m) => m.ExportHubModal), { ssr: false });
+const LiveOutingModal = dynamic(() => import('@/components/modals/LiveOutingModal').then((m) => m.LiveOutingModal), { ssr: false });
+const SplitBillModal = dynamic(() => import('@/components/modals/SplitBillModal').then((m) => m.SplitBillModal), { ssr: false });
+const GroupVotingModal = dynamic(() => import('@/components/modals/GroupVotingModal').then((m) => m.GroupVotingModal), { ssr: false });
+const StoryPassModal = dynamic(() => import('@/components/modals/StoryPassModal').then((m) => m.StoryPassModal), { ssr: false });
+const SavedPlansModal = dynamic(() => import('@/components/saved/SavedPlansModal').then((m) => m.SavedPlansModal), { ssr: false });
+const InteractiveMap = dynamic(() => import('@/components/map/InteractiveMap').then((m) => m.InteractiveMap), { ssr: false });
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { soundEngine } from '@/utils/audioEngine';
 import { PlanVariant, ItineraryStop } from '@/types';
@@ -95,17 +96,18 @@ export const PlanResultsView: React.FC = () => {
 
     if (!prefersReducedMotion) {
       const timer = setTimeout(() => {
-        try {
-          confetti({
-            particleCount: 36,
-            spread: 60,
-            origin: { y: 0.65 },
-            colors: ['#E5C378', '#F5E2B3', '#DF9F3D', '#FFFFFF', '#2DD4BF'],
-            disableForReducedMotion: true,
-          });
-        } catch (e) {
-          // graceful fallback
-        }
+        import('canvas-confetti')
+          .then((m) => {
+            const confetti = m.default;
+            confetti({
+              particleCount: 36,
+              spread: 60,
+              origin: { y: 0.65 },
+              colors: ['#E5C378', '#F5E2B3', '#DF9F3D', '#FFFFFF', '#2DD4BF'],
+              disableForReducedMotion: true,
+            });
+          })
+          .catch(() => {});
       }, 150);
       return () => clearTimeout(timer);
     }

@@ -14,6 +14,7 @@ import {
   Car,
   Navigation,
   AlertCircle,
+  Store,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -30,7 +31,25 @@ export const PlaceDetailModal: React.FC = () => {
   const openReportModal = useItineraryStore((state) => state.openReportModal);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
 
+  const [selectedBranchId, setSelectedBranchId] = React.useState<string | null>(null);
+
+  React.useEffect(() => {
+    setSelectedBranchId(null);
+  }, [selectedPlace?.id]);
+
   if (!selectedPlace) return null;
+
+  const activeBranch = selectedPlace.branches?.find((b) => b.id === (selectedBranchId || selectedPlace.selectedBranchId))
+    || selectedPlace.branches?.find((b) => b.isFlagship)
+    || selectedPlace.branches?.[0];
+
+  const currentCoordinates = activeBranch
+    ? { lat: activeBranch.lat, lng: activeBranch.lng }
+    : selectedPlace.coordinates;
+
+  const currentName = activeBranch
+    ? (language === 'ar' ? activeBranch.branchNameAr : activeBranch.branchNameEn)
+    : (language === 'ar' ? selectedPlace.nameAr : selectedPlace.nameEn);
 
   const isAlreadyInPlan = currentItinerary?.stops.some((s) => s.place.id === selectedPlace.id);
 
@@ -166,6 +185,85 @@ export const PlaceDetailModal: React.FC = () => {
           </div>
         )}
 
+        {/* Verified Branches Section */}
+        {selectedPlace.branches && selectedPlace.branches.length > 0 && (
+          <div className="space-y-3 p-4 rounded-2xl bg-abyss-900/90 border border-white/10">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Store className="w-4 h-4 text-gold-400" />
+                <h4 className="text-xs sm:text-sm font-black text-pearl">
+                  {language === 'ar' ? 'فروع جدة المعتمدة' : 'Verified Jeddah Branches'}
+                </h4>
+              </div>
+              <span className="px-2.5 py-0.5 rounded-full bg-gold-500/10 border border-gold-500/30 text-[11px] font-bold text-gold-300">
+                {selectedPlace.branches.length} {language === 'ar' ? 'فروع موثقة' : 'Verified Branches'}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1">
+              {selectedPlace.branches.map((branch) => {
+                const isSelected = activeBranch?.id === branch.id;
+                return (
+                  <div
+                    key={branch.id}
+                    onClick={() => setSelectedBranchId(branch.id)}
+                    className={`p-3 rounded-xl border transition-all text-start cursor-pointer flex flex-col justify-between gap-2.5 ${
+                      isSelected
+                        ? 'bg-gold-500/10 border-gold-500/60 shadow-sm ring-1 ring-gold-500/30'
+                        : 'bg-abyss-950/60 border-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center justify-between gap-1.5">
+                        <span className="text-xs font-black text-pearl line-clamp-1">
+                          {language === 'ar' ? branch.branchNameAr : branch.branchNameEn}
+                        </span>
+                        {branch.isFlagship && (
+                          <span className="shrink-0 px-1.5 py-0.5 rounded-md bg-gold-400/20 text-gold-300 border border-gold-400/40 text-[10px] font-black">
+                            {language === 'ar' ? 'الفرع الرئيسي' : 'Flagship'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 text-[11px] text-pearl-muted">
+                        <MapPin className="w-3 h-3 text-teal-400 shrink-0" />
+                        <span>{language === 'ar' ? branch.districtAr : branch.districtEn}</span>
+                      </div>
+                      {branch.openingHoursAr && (
+                        <div className="text-[10px] text-slate-400 line-clamp-1">
+                          🕒 {language === 'ar' ? branch.openingHoursAr : branch.openingHoursEn}
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 pt-1 border-t border-white/5" onClick={(e) => e.stopPropagation()}>
+                      <a
+                        href={generateMapsNavigationLink(branch.lat, branch.lng, branch.branchNameAr)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-1 px-2 rounded-lg bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 text-[11px] font-bold flex items-center justify-center gap-1 transition-colors"
+                        title="خرائط Google"
+                      >
+                        <Navigation className="w-3 h-3" />
+                        <span>{language === 'ar' ? 'الخريطة' : 'Map'}</span>
+                      </a>
+                      <a
+                        href={generateUberDeepLink(branch.lat, branch.lng, branch.branchNameAr)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-1 px-2 rounded-lg bg-black/60 hover:bg-black border border-white/20 text-amber-300 text-[11px] font-bold flex items-center justify-center gap-1 transition-colors"
+                        title="أوبر"
+                      >
+                        <Car className="w-3 h-3" />
+                        <span>Uber</span>
+                      </a>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
         {/* Action Controls & Navigation Toolbar */}
         <div className="pt-3 border-t border-white/10 space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2.5">
@@ -184,7 +282,7 @@ export const PlaceDetailModal: React.FC = () => {
             {/* Smart Navigation Links */}
             <div className="flex items-center gap-2">
               <a
-                href={generateUberDeepLink(selectedPlace.coordinates.lat, selectedPlace.coordinates.lng, selectedPlace.nameAr)}
+                href={generateUberDeepLink(currentCoordinates.lat, currentCoordinates.lng, currentName)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3.5 py-2 rounded-xl bg-black hover:bg-neutral-900 border border-white/20 text-white hover:text-amber-300 font-bold text-xs flex items-center gap-1.5 transition-all active:scale-95 shadow-sm"
@@ -195,7 +293,7 @@ export const PlaceDetailModal: React.FC = () => {
               </a>
 
               <a
-                href={generateMapsNavigationLink(selectedPlace.coordinates.lat, selectedPlace.coordinates.lng, selectedPlace.nameAr)}
+                href={generateMapsNavigationLink(currentCoordinates.lat, currentCoordinates.lng, currentName)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3.5 py-2 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 border border-teal-500/30 text-teal-300 font-bold text-xs flex items-center gap-1.5 transition-colors active:scale-95"
@@ -207,11 +305,31 @@ export const PlaceDetailModal: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-end pt-1">
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2 pt-1">
+            {activeBranch && selectedPlace.branches && selectedPlace.branches.length > 0 ? (
+              <div className="text-[11px] text-pearl-muted flex items-center gap-1.5">
+                <MapPin className="w-3.5 h-3.5 text-gold-400 shrink-0" />
+                <span>
+                  {language === 'ar' ? 'الفرع المعتمد المختار:' : 'Selected branch:'}{' '}
+                  <strong className="text-gold-400">{language === 'ar' ? activeBranch.branchNameAr : activeBranch.branchNameEn}</strong>
+                </span>
+              </div>
+            ) : <div />}
+
             <button
               type="button"
               onClick={() => {
-                addPlaceToItinerary(selectedPlace);
+                const placeToAdd = activeBranch
+                  ? {
+                      ...selectedPlace,
+                      coordinates: { lat: activeBranch.lat, lng: activeBranch.lng },
+                      googleMapsUrl: activeBranch.googleMapsUrl,
+                      selectedBranchId: activeBranch.id,
+                      districtNameAr: activeBranch.districtAr,
+                      districtNameEn: activeBranch.districtEn,
+                    }
+                  : selectedPlace;
+                addPlaceToItinerary(placeToAdd);
                 setSelectedPlaceForModal(null);
               }}
               className={`w-full sm:w-auto px-7 py-3 rounded-2xl text-xs sm:text-sm font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${

@@ -1,23 +1,49 @@
 'use client';
 
 import React, { useEffect } from 'react';
+import dynamic from 'next/dynamic';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { MobileNav } from '@/components/layout/MobileNav';
 import { HeroSection } from '@/components/hero/HeroSection';
-import { CuratedReadyPlans } from '@/components/home/CuratedReadyPlans';
-import { PlanGeneratorWizard } from '@/components/planner/PlanGeneratorWizard';
-import { PlanResultsView } from '@/components/timeline/PlanResultsView';
-import { ExploreDirectory } from '@/components/explore/ExploreDirectory';
 import { CursorGlow } from '@/components/ui/CursorGlow';
 import { Toast } from '@/components/ui/Toast';
 import { RegisterSW } from '@/components/pwa/RegisterSW';
 import { OfflineIndicator } from '@/components/pwa/OfflineIndicator';
-import { SavedPlansModal } from '@/components/saved/SavedPlansModal';
-import { ReportPlaceModal } from '@/components/modals/ReportPlaceModal';
 import { reconstructPlanFromUrl } from '@/services/shareService';
 import { useItineraryStore } from '@/store/useItineraryStore';
+
+// High-Performance Dynamic Code Splitting for Heavy Views & Interactive Modals
+const CuratedReadyPlans = dynamic(
+  () => import('@/components/home/CuratedReadyPlans').then((m) => m.CuratedReadyPlans),
+  { ssr: false }
+);
+
+const PlanGeneratorWizard = dynamic(
+  () => import('@/components/planner/PlanGeneratorWizard').then((m) => m.PlanGeneratorWizard),
+  { ssr: false }
+);
+
+const PlanResultsView = dynamic(
+  () => import('@/components/timeline/PlanResultsView').then((m) => m.PlanResultsView),
+  { ssr: false }
+);
+
+const ExploreDirectory = dynamic(
+  () => import('@/components/explore/ExploreDirectory').then((m) => m.ExploreDirectory),
+  { ssr: false }
+);
+
+const SavedPlansModal = dynamic(
+  () => import('@/components/saved/SavedPlansModal').then((m) => m.SavedPlansModal),
+  { ssr: false }
+);
+
+const ReportPlaceModal = dynamic(
+  () => import('@/components/modals/ReportPlaceModal').then((m) => m.ReportPlaceModal),
+  { ssr: false }
+);
 
 // Easing Wizard (https://easingwizard.com/) Spring Physics for Seamless Tab Transitions
 const pageMotionVariants = {

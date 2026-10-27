@@ -70,6 +70,21 @@ export type AmbienceType =
 
 export type BudgetTier = 'free' | 'budget' | 'economy' | 'moderate' | 'premium' | 'luxury';
 
+export interface VenueBranch {
+  id: string;
+  branchNameAr: string;
+  branchNameEn: string;
+  districtAr: string;
+  districtEn: string;
+  lat: number;
+  lng: number;
+  googleMapsUrl: string;
+  isFlagship?: boolean;
+  openingHoursAr?: string;
+  openingHoursEn?: string;
+  phone?: string;
+}
+
 export interface Place {
   id: string;
   slug: string;
@@ -121,6 +136,8 @@ export interface Place {
   aiReasoning?: { ar: string; en: string };
   isPartnerDeal?: boolean;
   dealDiscount?: string;
+  branches?: VenueBranch[];
+  selectedBranchId?: string;
 }
 
 export interface District {

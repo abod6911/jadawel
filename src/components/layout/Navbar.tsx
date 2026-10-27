@@ -17,17 +17,15 @@ import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
 import { soundEngine } from '@/utils/audioEngine';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
-import { useJeddahWeather } from '@/hooks/useJeddahWeather';
+import { WeatherBadge } from '@/components/layout/WeatherBadge';
 
 export const Navbar: React.FC = () => {
   const { language, toggleLanguage } = useLanguage();
   const activeNavTab = useItineraryStore((state) => state.activeNavTab);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
-  const atmospherePhase = useItineraryStore((state) => state.atmospherePhase);
   const theme = useItineraryStore((state) => state.theme);
   const toggleTheme = useItineraryStore((state) => state.toggleTheme);
-  const { atmosphere } = useJeddahWeather(atmospherePhase);
 
   const [isScrolled, setIsScrolled] = React.useState<boolean>(false);
 
@@ -88,20 +86,8 @@ export const Navbar: React.FC = () => {
             </div>
           </div>
 
-          {/* Discreet Weather Status Pill */}
-          <div className="hidden xl:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner shrink-0">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-60" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
-            </span>
-            <span className="text-[11px] font-medium text-slate-300">
-              {language === 'ar' ? atmosphere.phaseNameAr : atmosphere.phaseNameEn}
-            </span>
-            <span className="text-white/20">•</span>
-            <span className="text-[11px] font-mono text-slate-300 font-bold" dir="ltr">
-              {atmosphere.temperatureC}°C
-            </span>
-          </div>
+          {/* Real-time Dynamic Weather Badge */}
+          <WeatherBadge />
         </div>
 
         {/* 2. CENTER NAVIGATION TABS */}
