@@ -101,6 +101,12 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
                 {language === 'ar' ? '💰 توفيري' : 'Budget'}
               </span>
             )}
+            {place.branches && place.branches.length > 0 && (
+              <span className="px-2 py-0.5 rounded-lg bg-teal-950/85 backdrop-blur-md text-teal-300 text-[10px] font-black border border-teal-500/40 flex items-center gap-1 shadow-sm">
+                <span>📍</span>
+                <span>{place.branches.length} {language === 'ar' ? 'فروع' : 'branches'}</span>
+              </span>
+            )}
           </div>
 
           <button
