@@ -45,11 +45,6 @@ const ReportPlaceModal = dynamic(
   { ssr: false }
 );
 
-const TrendingPlacesShowcase = dynamic(
-  () => import('@/components/home/TrendingPlacesShowcase').then((m) => m.TrendingPlacesShowcase),
-  { ssr: false }
-);
-
 // Easing Wizard (https://easingwizard.com/) Spring Physics for Seamless Tab Transitions
 const pageMotionVariants = {
   initial: { opacity: 0, y: 14, scale: 0.995 },
@@ -139,16 +134,11 @@ export const PageOrchestrator: React.FC = () => {
                 initial="initial"
                 animate="animate"
                 exit="exit"
-                className="space-y-10 sm:space-y-16 lg:space-y-24"
+                className="space-y-10 sm:space-y-24 lg:space-y-32"
               >
                 {/* 1. Grand Widescreen Atmospheric Hero */}
                 <div className="w-full max-w-[1440px] mx-auto px-2 sm:px-4 lg:px-6">
                   <HeroSection />
-                </div>
-
-                {/* 2. Trending & Iconic Places Showcase */}
-                <div className="w-full max-w-7xl mx-auto px-3 sm:px-6 lg:px-8">
-                  <TrendingPlacesShowcase />
                 </div>
               </motion.div>
             )}

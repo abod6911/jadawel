@@ -2542,7 +2542,7 @@ export const JEDDAH_PLACES: Place[] = [
     photos: [
       'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&q=80&w=1200',
     ],
-    imageUrl: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&q=80&w=1200',
+    imageUrl: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&q=80&w=1200',
     indoorOutdoor: 'indoor',
     bestFor: ['friends', 'family', 'solo', 'couple'],
     vibe: ['food', 'chill'],
