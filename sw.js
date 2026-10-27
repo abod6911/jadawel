@@ -1,4 +1,4 @@
-const CACHE_NAME = 'jadawel-offline-v2';
+const CACHE_NAME = 'jadawel-offline-v3-ground-truth';
 const BASE_PATH = '/jadawel';
 
 const PRECACHE_URLS = [
