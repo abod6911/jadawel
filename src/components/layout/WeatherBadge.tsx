@@ -21,14 +21,14 @@ export const WeatherBadge: React.FC<WeatherBadgeProps> = ({ className = '' }) =>
   if (!isClient || (isLoading && !weather)) {
     return (
       <div
-        className={`hidden xl:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner shrink-0 animate-pulse select-none ${className}`}
-        style={{ minWidth: '124px', height: '26px' }}
+        className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 rounded-full bg-white/[0.03] border border-white/[0.08] text-xs shadow-inner shrink-0 animate-pulse select-none ${className}`}
+        style={{ minWidth: '95px', height: '26px' }}
         aria-label="Loading Jeddah weather"
       >
         <span className="w-2 h-2 rounded-full bg-white/20 shrink-0" />
         <span className="w-7 h-3 rounded bg-white/10 shrink-0" />
         <span className="text-white/20 select-none">•</span>
-        <span className="w-10 h-3 rounded bg-white/10 shrink-0" />
+        <span className="w-8 sm:w-10 h-3 rounded bg-white/10 shrink-0" />
       </div>
     );
   }
@@ -42,7 +42,7 @@ export const WeatherBadge: React.FC<WeatherBadgeProps> = ({ className = '' }) =>
 
   return (
     <div
-      className={`hidden xl:flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/15 text-xs shadow-inner shrink-0 transition-colors select-none cursor-default group ${className}`}
+      className={`flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 py-1 rounded-full bg-white/[0.03] hover:bg-white/[0.06] border border-white/[0.08] hover:border-white/15 text-xs shadow-inner shrink-0 transition-colors select-none cursor-default group ${className}`}
       title={tooltipText}
     >
       {/* 1. Dynamic Status Dot with Pulsing Glow */}
