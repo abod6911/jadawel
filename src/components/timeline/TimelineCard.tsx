@@ -167,10 +167,8 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
 
         {/* Place Content Grid (16:9 Visual + Details) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-          {/* Visual Thumbnail with Shared Element layoutId */}
-          <motion.div
-            layoutId={`venue-banner-${place.id}`}
-            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          {/* Visual Thumbnail */}
+          <div
             onClick={() => {
               soundEngine.playClick();
               setSelectedPlaceForModal(place);
@@ -203,7 +201,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 <span>{language === 'ar' ? 'مفتوح للزيارة' : 'Open'}</span>
               </span>
             </div>
-          </motion.div>
+          </div>
 
           {/* Details & Curated Reasoning */}
           <div className="md:col-span-8 space-y-3">

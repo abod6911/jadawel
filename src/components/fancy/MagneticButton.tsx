@@ -24,12 +24,21 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   ...props
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const rectRef = useRef<{ left: number; top: number; width: number; height: number } | null>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseEnter = () => {
+    if (disabled || !ref.current) return;
+    rectRef.current = ref.current.getBoundingClientRect();
+  };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (disabled || !ref.current) return;
+    if (!rectRef.current) {
+      rectRef.current = ref.current.getBoundingClientRect();
+    }
     const { clientX, clientY } = e;
-    const { left, top, width, height } = ref.current.getBoundingClientRect();
+    const { left, top, width, height } = rectRef.current;
     const centerX = left + width / 2;
     const centerY = top + height / 2;
     setPosition({
@@ -39,12 +48,14 @@ export const MagneticButton: React.FC<MagneticButtonProps> = ({
   };
 
   const handleMouseLeave = () => {
+    rectRef.current = null;
     setPosition({ x: 0, y: 0 });
   };
 
   return (
     <motion.div
       ref={ref}
+      onMouseEnter={handleMouseEnter}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       animate={{ x: position.x, y: position.y }}

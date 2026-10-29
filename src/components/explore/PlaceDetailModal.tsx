@@ -63,10 +63,8 @@ export const PlaceDetailModal: React.FC = () => {
       maxWidth="3xl"
     >
       <div className="space-y-6 text-start">
-        {/* Hero Photo Banner with Shared Element Transition */}
-        <motion.div
-          layoutId={`venue-banner-${selectedPlace.id}`}
-          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        {/* Hero Photo Banner */}
+        <div
           className="relative aspect-[16/9] -mx-5 -mt-5 sm:-mx-6 sm:-mt-6 rounded-t-3xl overflow-hidden bg-abyss-950"
         >
           <SafeVenueImage
@@ -119,7 +117,7 @@ export const PlaceDetailModal: React.FC = () => {
               {language === 'ar' ? selectedPlace.nameAr : selectedPlace.nameEn}
             </h2>
           </div>
-        </motion.div>
+        </div>
 
         {/* Quick Meta Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">

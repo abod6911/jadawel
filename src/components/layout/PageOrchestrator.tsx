@@ -117,10 +117,20 @@ export const PageOrchestrator: React.FC = () => {
       {/* LUXURY FLUID CURSOR SPOTLIGHT AMBIENT TRAIL */}
       <CursorGlow />
 
-      {/* Ultra-Luxury Ambient Mesh Gradients (Slow-Floating Metallic Gold & Red Sea Teal/Cyan) */}
+      {/* Ultra-Luxury Ambient Mesh Gradients (Hardware-Accelerated Zero-Cost Radial Blends) */}
       <div className="fixed inset-0 pointer-events-none overflow-hidden -z-0">
-        <div className="absolute -top-[10%] -start-[10%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] rounded-full bg-gradient-to-br from-[#D4AF37]/16 to-[#F5D07A]/04 blur-[130px] animate-ambient-orb-1" />
-        <div className="absolute top-[35%] -end-[10%] w-[50vw] h-[50vw] max-w-[620px] max-h-[620px] rounded-full bg-gradient-to-tl from-[#0EA5E9]/12 to-[#10B981]/05 blur-[140px] animate-ambient-orb-2" />
+        <div
+          className="absolute -top-[10%] -start-[10%] w-[55vw] h-[55vw] max-w-[680px] max-h-[680px] rounded-full opacity-70 pointer-events-none animate-ambient-orb-1"
+          style={{
+            background: 'radial-gradient(circle, rgba(212, 175, 55, 0.12) 0%, rgba(245, 208, 122, 0.03) 45%, transparent 70%)',
+          }}
+        />
+        <div
+          className="absolute top-[35%] -end-[10%] w-[50vw] h-[50vw] max-w-[620px] max-h-[620px] rounded-full opacity-60 pointer-events-none animate-ambient-orb-2"
+          style={{
+            background: 'radial-gradient(circle, rgba(14, 165, 233, 0.08) 0%, rgba(16, 185, 129, 0.03) 45%, transparent 70%)',
+          }}
+        />
       </div>
 
       {/* PERSISTENT APP SHELL */}

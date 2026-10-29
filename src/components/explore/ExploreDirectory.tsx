@@ -7,7 +7,6 @@ import { JEDDAH_PLACES } from '@/data/jeddah-places';
 import { PlaceCategory, DistrictId } from '@/types';
 import { FilterBar } from './FilterBar';
 import { PlaceCard } from './PlaceCard';
-import { PlaceDetailModal } from './PlaceDetailModal';
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { doesPlaceMatchDistrict, doesPlaceMatchCategory } from '@/utils/plannerEngine';
 
@@ -135,9 +134,6 @@ export const ExploreDirectory: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* Place Detail Modal */}
-      <PlaceDetailModal />
     </div>
   );
 };

@@ -21,9 +21,6 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
   const toggleFavoritePlace = useItineraryStore((state) => state.toggleFavoritePlace);
   const currentItinerary = useItineraryStore((state) => state.currentItinerary);
 
-  const [mousePos, setMousePos] = React.useState({ x: 0, y: 0 });
-  const [isHovered, setIsHovered] = React.useState(false);
-
   const isFavorite = favoritePlaceIds.includes(place.id);
   const isAlreadyInPlan = currentItinerary?.stops.some((s) => s.place.id === place.id);
 
@@ -32,32 +29,15 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
       ? `${place.dwellTimeMinutes} دقيقة`
       : `${place.dwellTimeMinutes} mins`;
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    setMousePos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
-  };
-
   return (
     <div
-      onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
       className="group relative bg-[#0B111E]/80 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/[0.08] shadow-[0_20px_50px_rgba(0,0,0,0.7)] hover:border-[#D4AF37]/50 hover:shadow-[0_25px_60px_rgba(212,175,55,0.18)] hover:-translate-y-1.5 transition-all duration-300 ease-spring-snappy flex flex-col justify-between"
     >
-      {/* Radial Spotlight Hover Glow */}
-      {isHovered && (
-        <div
-          className="pointer-events-none absolute -inset-px rounded-3xl transition-opacity duration-300 opacity-100 z-10"
-          style={{
-            background: `radial-gradient(350px circle at ${mousePos.x}px ${mousePos.y}px, rgba(212, 175, 55, 0.12), transparent 80%)`,
-          }}
-        />
-      )}
+      {/* Zero-Cost CSS Ambient Spotlight Hover Glow */}
+      <div className="pointer-events-none absolute -inset-px rounded-3xl transition-opacity duration-300 opacity-0 group-hover:opacity-100 z-10 bg-[radial-gradient(circle_at_50%_0%,rgba(212,175,55,0.14),transparent_70%)]" />
 
-      {/* Image Banner with Safe Venue Image Fallback and shared element layoutId */}
-      <motion.div
-        layoutId={`venue-banner-${place.id}`}
-        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      {/* Image Banner with Safe Venue Image Fallback */}
+      <div
         onClick={() => setSelectedPlaceForModal(place)}
         className="relative aspect-[16/10] overflow-hidden bg-[#06090F] cursor-pointer"
       >
@@ -142,7 +122,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
               : 'Free'}
           </span>
         </div>
-      </motion.div>
+      </div>
 
       {/* Content Area with No Text Clipping */}
       <div className="p-5 space-y-3 flex-1 flex flex-col justify-between text-start">

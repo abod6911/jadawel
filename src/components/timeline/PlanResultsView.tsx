@@ -45,7 +45,6 @@ const LiveOutingModal = dynamic(() => import('@/components/modals/LiveOutingModa
 const SplitBillModal = dynamic(() => import('@/components/modals/SplitBillModal').then((m) => m.SplitBillModal), { ssr: false });
 const GroupVotingModal = dynamic(() => import('@/components/modals/GroupVotingModal').then((m) => m.GroupVotingModal), { ssr: false });
 const StoryPassModal = dynamic(() => import('@/components/modals/StoryPassModal').then((m) => m.StoryPassModal), { ssr: false });
-const SavedPlansModal = dynamic(() => import('@/components/saved/SavedPlansModal').then((m) => m.SavedPlansModal), { ssr: false });
 const InteractiveMap = dynamic(() => import('@/components/map/InteractiveMap').then((m) => m.InteractiveMap), { ssr: false });
 import { BorderBeam } from '@/components/fancy/BorderBeam';
 import { soundEngine } from '@/utils/audioEngine';

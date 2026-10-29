@@ -61,7 +61,7 @@ export async function getLiveJeddahWeather(): Promise<JeddahWeatherResponse> {
     const apiRouteUrl = `${basePath}/api/weather`;
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 4000);
+    const timeoutId = setTimeout(() => controller.abort(), 1200);
 
     const res = await fetch(apiRouteUrl, {
       signal: controller.signal,

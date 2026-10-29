@@ -82,9 +82,10 @@ export const HeroSection: React.FC = () => {
           loop
           muted
           playsInline
-          preload="auto"
+          preload="metadata"
+          poster={getAssetUrl('/images/places/north-corniche.jpg')}
           src={getAssetUrl('/videos/jeddah-corniche.mp4?v=20261012b')}
-          className="w-full h-full object-cover brightness-[0.38] contrast-[1.15] saturate-[0.85] transition-opacity duration-1000"
+          className="w-full h-full object-cover opacity-60 transition-opacity duration-1000"
         />
 
         {/* Subtle Rawashin Historical Motif Background */}
@@ -92,22 +93,22 @@ export const HeroSection: React.FC = () => {
           <RawashinPattern className="text-[#D4AF37]" opacity={0.045} />
         </div>
 
-        {/* Ambient Dark Gradient Layering */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-[#06090F]/60 to-[#06090F]/30" />
+        {/* Ambient Dark Gradient Layering (Zero-Cost GPU Composite) */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#06090F] via-[#06090F]/75 to-[#06090F]/45" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_75%_50%_at_50%_0%,rgba(212,175,55,0.14),transparent_70%)]" />
         <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-[#06090F] to-transparent" />
       </div>
 
       {/* 2. FOREGROUND CONTENT: Clean Headline + Direct Curate Action with 2s entrance delay */}
       <motion.div
-        initial={hasInitialEntered ? false : { opacity: 0, y: 28, filter: 'blur(10px)' }}
+        initial={hasInitialEntered ? false : { opacity: 0, y: 20 }}
         animate={
           isTextVisible
-            ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-            : { opacity: 0, y: 28, filter: 'blur(10px)' }
+            ? { opacity: 1, y: 0 }
+            : { opacity: 0, y: 20 }
         }
         transition={{
-          duration: 1.1,
+          duration: 0.8,
           ease: [0.16, 1, 0.3, 1],
         }}
         className={`relative z-10 w-full px-3.5 sm:px-8 lg:px-12 pt-12 pb-24 sm:pt-24 sm:pb-36 lg:pt-28 lg:pb-44 flex flex-col items-center ${

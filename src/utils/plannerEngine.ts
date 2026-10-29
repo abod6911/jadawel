@@ -882,6 +882,30 @@ export function generateVariantStops(
       }
     }
 
+    // Directional Anti-Zig-Zag: Penalize candidates that cause acute 180-degree ping-pong reversals
+    if (idx >= 2 && stops.length >= 2) {
+      const pprevCoords = stops[idx - 2].place.coordinates;
+      const dLat1 = prevCoords.lat - pprevCoords.lat;
+      const dLng1 = prevCoords.lng - pprevCoords.lng;
+      const dist1 = Math.hypot(dLat1, dLng1);
+
+      if (dist1 >= 0.013) {
+        eligibleCandidates = eligibleCandidates.map((c) => {
+          const dLat2 = c.venue.coordinates.lat - prevCoords.lat;
+          const dLng2 = c.venue.coordinates.lng - prevCoords.lng;
+          const dist2 = Math.hypot(dLat2, dLng2);
+          if (dist2 >= 0.013) {
+            const dot = (dLat1 * dLat2 + dLng1 * dLng2) / (dist1 * dist2);
+            if (dot < -0.75) {
+              return { ...c, score: c.score * 0.05 };
+            }
+          }
+          return c;
+        });
+        eligibleCandidates.sort((a, b) => b.score - a.score);
+      }
+    }
+
     // Select with Top-K Weighted Probabilistic Sampling
     let selectedItem = sampleTopKWeighted(
       eligibleCandidates,

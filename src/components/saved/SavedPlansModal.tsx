@@ -32,6 +32,8 @@ export const SavedPlansModal: React.FC = () => {
   const duplicateSavedPlan = useItineraryStore((state) => state.duplicateSavedPlan);
   const setActiveNavTab = useItineraryStore((state) => state.setActiveNavTab);
 
+  if (!isOpen) return null;
+
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState('');
   const [shareFeedback, setShareFeedback] = useState<string | null>(null);

@@ -1,49 +1,55 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 export const CursorGlow: React.FC = () => {
-  const [pos, setPos] = useState({ x: -1000, y: -1000 });
-  const [isVisible, setIsVisible] = useState(false);
+  const glowRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Only enable on pointer-capable devices (skip pure touch devices for performance)
+    // Only enable on desktop pointer-capable devices (skip touch devices)
     if (typeof window === 'undefined' || window.matchMedia('(pointer: coarse)').matches) {
       return;
     }
 
-    let rafId: number;
+    const glowEl = glowRef.current;
+    if (!glowEl) return;
+
+    let isVisible = false;
 
     const handleMouseMove = (e: MouseEvent) => {
-      rafId = requestAnimationFrame(() => {
-        setPos({ x: e.clientX, y: e.clientY });
-        if (!isVisible) setIsVisible(true);
-      });
+      if (!isVisible) {
+        glowEl.style.opacity = '1';
+        isVisible = true;
+      }
+      // Zero React re-renders: pure hardware-accelerated GPU transform
+      glowEl.style.transform = `translate3d(${e.clientX - 325}px, ${e.clientY - 325}px, 0)`;
     };
 
     const handleMouseLeave = () => {
-      setIsVisible(false);
+      glowEl.style.opacity = '0';
+      isVisible = false;
     };
 
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave);
 
     return () => {
-      cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseleave', handleMouseLeave);
     };
-  }, [isVisible]);
-
-  if (!isVisible) return null;
+  }, []);
 
   return (
     <div
+      ref={glowRef}
       aria-hidden="true"
-      className="pointer-events-none fixed inset-0 z-30 transition-opacity duration-300"
+      className="pointer-events-none fixed top-0 left-0 w-[650px] h-[650px] rounded-full z-30 opacity-0 transition-opacity duration-300 will-change-transform"
       style={{
-        background: `radial-gradient(650px circle at ${pos.x}px ${pos.y}px, rgba(229, 169, 98, 0.065), rgba(78, 159, 150, 0.025) 45%, transparent 75%)`,
+        background:
+          'radial-gradient(circle, rgba(229, 169, 98, 0.055) 0%, rgba(78, 159, 150, 0.02) 45%, transparent 70%)',
       }}
     />
   );
 };
+
+export default CursorGlow;
