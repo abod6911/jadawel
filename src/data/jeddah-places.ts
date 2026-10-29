@@ -838,8 +838,8 @@ export const JEDDAH_PLACES: Place[] = [
     "nameEn": "San Carlo Cicchetti Jeddah",
     "category": "restaurant",
     "district": "Al-Rawdah",
-    "districtNameAr": "الروضة / شارع الأمير سلطان",
-    "districtNameEn": "Al-Rawdah / Sultan St.",
+    "districtNameAr": "الروضة / شارع التحلية (مركز البساتين)",
+    "districtNameEn": "Al-Rawdah / Tahlia St. (Al-Basateen)",
     "descriptionAr": "مطعم إيطالي راقٍ من ميلانو ولندن، يقدم أطباق التشارك الإيطالية الفاخرة مثل ريزوتو الكمأة والباستا الطازجة.",
     "descriptionEn": "Renowned Milanese & London fine dining serving Venetian-style sharing plates, truffle risotto, and handmade pastas.",
     "coordinates": {
@@ -1539,9 +1539,9 @@ export const JEDDAH_PLACES: Place[] = [
     "nameAr": "مطعم سكشن بي للبرجر الحرفي (Section-B)",
     "nameEn": "Section-B Artisan Burgers",
     "category": "restaurant",
-    "district": "Al-Andalus",
-    "districtNameAr": "الأندلس / شارع حراء",
-    "districtNameEn": "Al-Andalus",
+    "district": "Al-Shati",
+    "districtNameAr": "حي الشاطئ / شارع حراء (خلف الهيلتون)",
+    "districtNameEn": "Al-Shati / Hira St.",
     "descriptionAr": "العلامة الجداوية الأشهر لبرجر اللحم الأسترالي الطازج والبطاطس المقرمشة، انطلق من جدة وأصبح علامة وطنية.",
     "descriptionEn": "Jeddah’s home-grown cult gourmet burger icon serving prime Angus patties, truffle fries, and artisanal buns.",
     "coordinates": {
@@ -3943,13 +3943,13 @@ export const JEDDAH_PLACES: Place[] = [
     "nameEn": "KUURU Contemporary Nikkei (Michelin Selected)",
     "category": "culinary",
     "district": "Al-Rawdah",
-    "districtNameAr": "حي الروضة / طريق الملك",
-    "districtNameEn": "Al-Rawdah / King Road",
+    "districtNameAr": "حي الخالدية / طريق الملك عبد العزيز (مجمع ليلتي)",
+    "districtNameEn": "Al-Khalidiyyah / King Abdulaziz Rd (Leylaty Complex)",
     "descriptionAr": "مطعم العام في جدة والمدرج في دليل ميشلان العالمي؛ يقدم مطبخ النيكاي الفاخر الذي يدمج فن السوشي الياباني بنكهات السيفيش والبهارات البيروفية الحيوية في أجواء سينمائية فاخرة.",
     "descriptionEn": "Jeddah’s Restaurant of the Year and Michelin Guide selection; delivering ultra-refined Nikkei gastronomy fusing Japanese sushi artistry with lively Peruvian spices in an opulent setting.",
     "coordinates": {
-      "lat": 21.571,
-      "lng": 39.141
+      "lat": 21.5515,
+      "lng": 39.1338
     },
     "priceTier": "$$$$",
     "averageCostSAR": 330,
@@ -3994,7 +3994,7 @@ export const JEDDAH_PLACES: Place[] = [
     },
     "openingHoursAr": "السبت - الأربعاء: 1:00 ظهراً - 11:30 مساءً | الخميس والجمعة: 1:00 ظهراً - 12:30 بعد منتصف الليل",
     "openingHoursEn": "Sat - Wed: 01:00 PM - 11:30 PM | Thu - Fri: 01:00 PM - 12:30 AM",
-    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=21.571,39.141",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=21.5515,39.1338",
     "insiderTipAr": "احجز مسبقاً طاولتك أمام السوشي بار لمشاهدة الشيف، ولا تفوت تجربة واغيو كريسبي رايس، سمك القد الأسود إنكا، وسيفيش كورو المميز.",
     "insiderTipEn": "Reserve early at the sushi counter to watch the master chefs; don’t miss the Wagyu crispy rice and Inca black cod.",
     "aiReasoning": {
@@ -4089,9 +4089,9 @@ export const JEDDAH_PLACES: Place[] = [
     "nameAr": "مطعم ياشي الآسيوي العصري - الشيف سما جاد (Yashi)",
     "nameEn": "Yashi Contemporary Asian (Chef Sama Jaad)",
     "category": "culinary",
-    "district": "Al-Rawdah",
-    "districtNameAr": "حي الروضة",
-    "districtNameEn": "Al-Rawdah",
+    "district": "Al-Shati",
+    "districtNameAr": "حي المحمدية (شارع آمنة بنت وهب)",
+    "districtNameEn": "Al-Mohammadiyyah (Amna Bint Wahb St.)",
     "descriptionAr": "إبداع الشيف السعودية المتميزة سما جاد؛ تجربة طهي آسيوية عصرية جريئة تجمع التوم يام رامن الحار، تاكو الواغيو المقرمش، وسوشي مبتكر بلمسات محلية راقية.",
     "descriptionEn": "Masterminded by renowned Saudi Chef Sama Jad; a daring contemporary Asian concept featuring spicy Tom Yum ramen, crispy Wagyu tacos, and inventive fusion sushi in a chic space.",
     "coordinates": {
@@ -4234,13 +4234,13 @@ export const JEDDAH_PLACES: Place[] = [
     "nameEn": "Manko Jeddah - Peruvian & Latin Fine Dining",
     "category": "restaurant",
     "district": "Al-Rawdah",
-    "districtNameAr": "حي الخالدية",
-    "districtNameEn": "Al-Khalidiyyah District",
+    "districtNameAr": "الروضة / شارع التحلية (جدة ووك)",
+    "districtNameEn": "Al-Rawdah / Tahlia St. (Jeddah Walk)",
     "descriptionAr": "مطعم وسهرة لاتينية فاخرة مستوحاة من ثقافة الإنكا البيروفية، يجمع بين المطبخ اللاتيني المعاصر وأجواء ليلية راقية مع إيقاعات موسيقية حية.",
     "descriptionEn": "An ultra-chic Peruvian and Latin American fine-dining venue celebrating Incan heritage with contemporary gastronomy, signature ceviches, and vibrant nightlife.",
     "coordinates": {
-      "lat": 21.5642,
-      "lng": 39.1415
+      "lat": 21.5540,
+      "lng": 39.1560
     },
     "priceTier": "$$$$",
     "averageCostSAR": 275,
@@ -4290,7 +4290,7 @@ export const JEDDAH_PLACES: Place[] = [
     },
     "openingHoursAr": "السبت - الأربعاء: 5:00 عصراً - 2:00 بعد منتصف الليل | الخميس والجمعة: 5:00 عصراً - 3:00 فجراً",
     "openingHoursEn": "Sat - Wed: 05:00 PM - 02:00 AM | Thu - Fri: 05:00 PM - 03:00 AM",
-    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=21.5642,39.1415",
+    "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=21.554,39.156",
     "insiderTipAr": "احجز قبل 3 أيام على الأقل واطلب طاولة التراس الخارجي، وتذوق السيفيش الكلاسيكي ولحم الواغيو المشوي على الفحم.",
     "insiderTipEn": "Book at least 3 days in advance and request an outdoor terrace table; sample their classic sea bass ceviche and charcoal-grilled wagyu.",
     "aiReasoning": {
@@ -4988,8 +4988,8 @@ export const JEDDAH_PLACES: Place[] = [
     "nameEn": "Dripped Specialty Coffee 24/7",
     "category": "cafe",
     "district": "Al-Salamah",
-    "districtNameAr": "حي الفيصلية",
-    "districtNameEn": "Al-Faisaliyyah District",
+    "districtNameAr": "الفيصلية / السلامة",
+    "districtNameEn": "Al-Faisaliyyah / Al-Salamah",
     "descriptionAr": "مقهى مختص يركز على فنون استخلاص القهوة المقطرة بطريقة التنقيط اليدوي V60 والكيمكس، مفتوح على مدار 24 ساعة ويقدم محاصيل نادرة من إثيوبيا واليمن.",
     "descriptionEn": "A craft specialty bar in Al-Faisaliyyah dedicated to hand-dripped V60, Chemex, and rare single-origin Yemeni and Geisha beans, open around the clock.",
     "coordinates": {
@@ -5046,10 +5046,10 @@ export const JEDDAH_PLACES: Place[] = [
     "branches": [
       {
         "id": "br-dripped-01",
-        "branchNameAr": "فرع السلامة - شارع عبد الرحمن السديري (الفرع الأبرز)",
-        "branchNameEn": "Al-Salamah Branch - Abdulrahman Al-Sudairi St (Flagship)",
-        "districtAr": "السلامة",
-        "districtEn": "Al-Salamah",
+        "branchNameAr": "فرع الفيصلية - طريق الملك فهد (الفرع الأبرز)",
+        "branchNameEn": "Al-Faisaliyyah Branch - King Fahd Rd (Flagship)",
+        "districtAr": "الفيصلية",
+        "districtEn": "Al-Faisaliyyah",
         "lat": 21.561,
         "lng": 39.183,
         "googleMapsUrl": "https://www.google.com/maps/search/?api=1&query=21.561,39.183",
