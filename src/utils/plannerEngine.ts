@@ -439,45 +439,77 @@ export function computeEnhancedVenueScore(
   archetype: 'fastest' | 'balanced' | 'luxury' | 'free',
   usedPlaceIds: Set<string>,
   lastCategory?: string,
-  stepIndex: number = 0
+  stepIndex: number = 0,
+  directionalVector?: { dLat: number; dLng: number } | null,
+  previousDistricts?: string[]
 ): number {
   if (usedPlaceIds.has(venue.id)) return -99999;
 
-  // 1. Strict 100% Free Filter Constraint
   const isFreeRequired = archetype === 'free' || prefs.budgetTier === 'free';
+  const isEconomy = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
+  const isLuxury =
+    archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+
+  const venueSpend = venue.averageSpend ?? venue.averageCostSAR ?? 0;
+  const venuePriceLevel =
+    venue.priceLevel ??
+    (venueSpend === 0
+      ? 'free'
+      : venueSpend <= 50
+      ? 'budget'
+      : venueSpend <= 150
+      ? 'moderate'
+      : venueSpend <= 250
+      ? 'expensive'
+      : 'luxury');
+
+  // 1. Strict 100% Free Filter Constraint
   if (isFreeRequired) {
-    if (venue.averageCostSAR > 0 || venue.isFree === false) {
+    if (venueSpend > 0 || venue.isFree === false || venuePriceLevel !== 'free') {
+      return -99999;
+    }
+  }
+
+  // 2. Strict Hard Constraint for Low Budget ('budget' / 'economy')
+  if (isEconomy) {
+    if (
+      venuePriceLevel === 'expensive' ||
+      venuePriceLevel === 'luxury' ||
+      venue.priceTier === '$$$' ||
+      venue.priceTier === '$$$$' ||
+      venueSpend > 60
+    ) {
       return -99999;
     }
   }
 
   let penalties = 0;
 
-  // 2. Anti-collision: avoid repeating identical category consecutively
+  // 3. Anti-collision: avoid repeating identical category consecutively
   if (lastCategory && venue.category === lastCategory) {
     penalties += 60; // Strong penalty against consecutive cafes or heavy restaurants
   }
 
-  // 3. District Affinity Score & Proximity
+  // 4. District Affinity Score & Proximity Anchor
   const userDistrict = normalizeDistrictId(prefs.startingDistrict);
   const venueDistrict = normalizeDistrictId(venue.district as string);
   let districtScore = 0;
 
   if (userDistrict !== 'all_jeddah') {
     if (userDistrict === venueDistrict) {
-      districtScore = 35;
+      districtScore = 40;
     } else {
       // Check if it's an immediate neighbor
       const neighbors = NEIGHBORING_DISTRICTS[userDistrict] || [];
       if (neighbors.includes(venueDistrict as DistrictId)) {
-        districtScore = 20;
+        districtScore = 22;
       } else {
-        penalties += 20;
+        penalties += 25;
       }
     }
   }
 
-  // 4. Role & Timing Fit Score
+  // 5. Role & Timing Fit Score
   let roleScore = 0;
   switch (targetRole) {
     case 'sunset_activity':
@@ -557,7 +589,7 @@ export function computeEnhancedVenueScore(
       break;
   }
 
-  // 5. User Vibe Fit
+  // 6. User Vibe Fit
   let vibeScore = 0;
   if (prefs.vibe) {
     if (venue.vibe && venue.vibe.includes(prefs.vibe)) {
@@ -589,49 +621,40 @@ export function computeEnhancedVenueScore(
     }
   }
 
-  // 6. Strict Budget Fit
+  // 7. Strict Budget Tier Scoring
   let budgetScore = 0;
-  const isLuxury =
-    archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
-  const isEconomy = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
-
   if (isFreeRequired) {
-    if (venue.averageCostSAR > 0 && !venue.isFree) {
-      return -99999;
-    }
-    budgetScore = 45;
+    budgetScore = 50;
   } else if (isLuxury) {
-    if (venue.averageCostSAR === 0 && venue.priceTier === 'free') {
+    if (venueSpend === 0 && venue.priceTier === 'free') {
       penalties += 70; // Strongly avoid plain free street spots when VIP luxury is chosen
-    } else if (venue.priceTier === '$$$$' || venue.averageCostSAR >= 180) {
+    } else if (venue.priceTier === '$$$$' || venueSpend >= 180) {
       budgetScore = 55;
-    } else if (venue.priceTier === '$$$' || venue.averageCostSAR >= 90) {
+    } else if (venue.priceTier === '$$$' || venueSpend >= 90) {
       budgetScore = 35;
     } else {
       penalties += 35;
     }
   } else if (isEconomy) {
-    if (venue.averageCostSAR > 110 || venue.priceTier === '$$$$') {
-      return -99999;
-    } else if (venue.averageCostSAR <= 50) {
-      budgetScore = 45;
-    } else if (venue.averageCostSAR <= 85) {
-      budgetScore = 28;
+    if (venuePriceLevel === 'budget' || venueSpend <= 35) {
+      budgetScore = 50;
+    } else if (venueSpend <= 50) {
+      budgetScore = 32;
     } else {
-      penalties += 25;
+      budgetScore = 15;
     }
   } else {
     // Moderate
-    if (venue.averageCostSAR > 250) {
+    if (venueSpend > 250) {
       penalties += 35;
-    } else if (venue.averageCostSAR >= 35 && venue.averageCostSAR <= 160) {
+    } else if (venueSpend >= 35 && venueSpend <= 160) {
       budgetScore = 35;
     } else {
       budgetScore = 18;
     }
   }
 
-  // 7. Geographic Distance & Vector Routing Flow
+  // 8. Clustered Proximity Routing & Distance Constraints
   const distKm = calculateHaversineDistanceKm(
     prevCoords.lat,
     prevCoords.lng,
@@ -639,18 +662,51 @@ export function computeEnhancedVenueScore(
     venue.coordinates.lng
   );
 
-  // Apply heavier distance penalties for 'fastest' archetype and step progression
-  const distWeight = archetype === 'fastest' ? 6.5 : 3.0;
-  const geoScore = Math.max(0, 35 - distKm * distWeight);
-
-  if (distKm > 16) {
-    penalties += (distKm - 16) * 10; // Drastic penalty for cross-city leaps
+  // Prohibit consecutive hops > 6.0 km for clustered flow with quadratic penalty
+  if (stepIndex > 0) {
+    if (distKm > 6.0) {
+      penalties += Math.pow(distKm - 6.0, 1.8) * 35;
+    }
   }
 
-  // 8. Quality Rating Score
+  const distWeight = archetype === 'fastest' ? 7.5 : 4.5;
+  const geoScore = Math.max(0, 45 - distKm * distWeight);
+
+  // 9. Directional Vector & Anti-Zig-Zag Enforcement
+  if (stepIndex > 1 && directionalVector) {
+    const dLat = venue.coordinates.lat - prevCoords.lat;
+    const dLng = venue.coordinates.lng - prevCoords.lng;
+    const mag = Math.sqrt(dLat * dLat + dLng * dLng);
+    const prevMag = Math.sqrt(
+      directionalVector.dLat * directionalVector.dLat +
+        directionalVector.dLng * directionalVector.dLng
+    );
+
+    if (mag > 0.001 && prevMag > 0.001) {
+      const dot = (dLat * directionalVector.dLat + dLng * directionalVector.dLng) / (mag * prevMag);
+      // dot < -0.3 indicates reversing direction backwards (zig-zag ping pong)
+      if (dot < -0.3) {
+        penalties += 120 + Math.abs(dot) * 60;
+      } else if (dot > 0.3) {
+        districtScore += 15; // Reward coherent directional flow
+      }
+    }
+  }
+
+  // Anti-District Ping-Pong (e.g. Al-Shati -> Al-Balad -> Al-Shati)
+  if (previousDistricts && previousDistricts.length >= 2) {
+    const vNormDistrict = normalizeDistrictId(venue.district as string);
+    const lastD = previousDistricts[previousDistricts.length - 1];
+    const prevD = previousDistricts[previousDistricts.length - 2];
+    if (vNormDistrict !== lastD && vNormDistrict === prevD) {
+      penalties += 100; // Strictly forbid ping-ponging back to the previous district
+    }
+  }
+
+  // 10. Quality Rating Score
   const ratingScore = (venue.rating / 5) * 12;
 
-  // 9. Add small micro-jitter to prevent static ties
+  // 11. Deterministic micro-jitter to prevent static ties
   const jitter = Math.sin(venue.nameAr.length * 17 + stepIndex * 31) * 2;
 
   return (
@@ -683,11 +739,21 @@ export function generateVariantStops(
   let prevCoords = startCoords;
   let lastCategory: string | undefined = undefined;
   let currentStartMinutes = initialStartMinutes;
+  let directionalVector: { dLat: number; dLng: number } | null = null;
+  const visitedDistricts: string[] = [];
 
   const isFreePlan = archetype === 'free' || prefs.budgetTier === 'free';
   const isEconPlan = prefs.budgetTier === 'economy' || prefs.budgetTier === 'budget';
   const isLuxPlan =
     archetype === 'luxury' || prefs.budgetTier === 'luxury' || prefs.budgetTier === 'premium';
+
+  // 1. Hard Cumulative Budget Ceiling (per person)
+  // For 'free' / tafra: 0 SAR
+  // For 'budget' / 'economy': max 60 SAR per person overall, hard cap
+  const maxBudgetPerPerson = isFreePlan ? 0 : isEconPlan ? 60 : isLuxPlan ? 9999 : 180;
+  let remainingBudgetPerPerson = maxBudgetPerPerson;
+
+  const normUserDistrict = normalizeDistrictId(prefs.startingDistrict);
 
   for (let idx = 0; idx < slots.length; idx++) {
     const slotDef = slots[idx];
@@ -709,9 +775,11 @@ export function generateVariantStops(
         archetype,
         combinedExcludedIds,
         lastCategory,
-        idx
+        idx,
+        directionalVector,
+        visitedDistricts
       );
-      if (score > -1000) {
+      if (score > -500) {
         candidateList.push({ venue, score });
       }
     }
@@ -719,70 +787,262 @@ export function generateVariantStops(
     // Sort descending by score
     candidateList.sort((a, b) => b.score - a.score);
 
-    // Apply strict budget candidate filtering
+    // STEP A: Anchor Point for Stop 0 (Anchor to selected starting district if specified)
     let eligibleCandidates = candidateList;
+    if (idx === 0 && normUserDistrict !== 'all_jeddah') {
+      const districtMatches = candidateList.filter((c) =>
+        doesPlaceMatchDistrict(c.venue.district as string, normUserDistrict)
+      );
+      if (districtMatches.length > 0) {
+        eligibleCandidates = districtMatches;
+      }
+    }
+
+    // STEP B: Strict Budget Filter & Cumulative Budget Enforcement
     if (isFreePlan) {
-      eligibleCandidates = candidateList.filter((c) => c.venue.averageCostSAR === 0 || c.venue.isFree);
+      eligibleCandidates = eligibleCandidates.filter((c) => {
+        const cost = c.venue.averageSpend ?? c.venue.averageCostSAR ?? 0;
+        return cost === 0 || c.venue.isFree || c.venue.priceLevel === 'free';
+      });
     } else if (isEconPlan) {
-      eligibleCandidates = candidateList.filter(
-        (c) => c.venue.averageCostSAR <= 110 && c.venue.priceTier !== '$$$$'
-      );
+      // Hard Budget Constraint Filter:
+      // - Disqualify 'expensive' and 'luxury' tiers completely
+      // - Disqualify any candidate where spend > maxBudgetPerPerson
+      // - Cumulative check: candidate spend must NOT exceed remainingBudgetPerPerson
+      eligibleCandidates = eligibleCandidates.filter((c) => {
+        const cost = c.venue.averageSpend ?? c.venue.averageCostSAR ?? 0;
+        const pLevel =
+          c.venue.priceLevel ??
+          (cost === 0 ? 'free' : cost <= 50 ? 'budget' : 'moderate');
+
+        if (
+          pLevel === 'expensive' ||
+          pLevel === 'luxury' ||
+          c.venue.priceTier === '$$$' ||
+          c.venue.priceTier === '$$$$'
+        ) {
+          return false;
+        }
+
+        if (cost > maxBudgetPerPerson) return false;
+        if (cost > remainingBudgetPerPerson && cost > 0) return false;
+        return pLevel === 'budget' || pLevel === 'free' || cost === 0;
+      });
+
+      // If remaining budget is exhausted or no candidate meets remaining budget, fall back to 100% free venues
+      if (eligibleCandidates.length === 0) {
+        eligibleCandidates = candidateList.filter((c) => {
+          const cost = c.venue.averageSpend ?? c.venue.averageCostSAR ?? 0;
+          return cost === 0 || c.venue.isFree || c.venue.priceLevel === 'free';
+        });
+      }
     } else if (isLuxPlan) {
-      eligibleCandidates = candidateList.filter(
+      eligibleCandidates = eligibleCandidates.filter(
         (c) =>
-          c.venue.averageCostSAR >= 90 ||
+          (c.venue.averageSpend ?? c.venue.averageCostSAR) >= 80 ||
           c.venue.priceTier === '$$$$' ||
-          c.venue.priceTier === '$$$'
+          c.venue.priceTier === '$$$' ||
+          c.venue.priceLevel === 'luxury' ||
+          c.venue.priceLevel === 'expensive'
       );
+    }
+
+    // STEP C: Geographic Clustered Proximity Filter (Max 6.0 km from previous stop)
+    if (idx > 0) {
+      const within6Km = eligibleCandidates.filter((c) => {
+        const d = calculateHaversineDistanceKm(
+          prevCoords.lat,
+          prevCoords.lng,
+          c.venue.coordinates.lat,
+          c.venue.coordinates.lng
+        );
+        return d <= 6.0;
+      });
+
+      if (within6Km.length > 0) {
+        eligibleCandidates = within6Km;
+      } else {
+        // If no candidate exists within 6 km, strictly pick from the closest available cluster
+        const withDists = eligibleCandidates.map((c) => ({
+          candidate: c,
+          dist: calculateHaversineDistanceKm(
+            prevCoords.lat,
+            prevCoords.lng,
+            c.venue.coordinates.lat,
+            c.venue.coordinates.lng
+          ),
+        }));
+        withDists.sort((a, b) => a.dist - b.dist);
+        if (withDists.length > 0) {
+          const minDist = withDists[0].dist;
+          eligibleCandidates = withDists
+            .filter((item) => item.dist <= minDist + 2.5)
+            .map((item) => item.candidate);
+        }
+      }
     }
 
     // Select with Top-K Weighted Probabilistic Sampling
-    let selectedItem = sampleTopKWeighted(eligibleCandidates, 4, 0.75);
+    let selectedItem = sampleTopKWeighted(
+      eligibleCandidates,
+      Math.min(3, Math.max(1, eligibleCandidates.length)),
+      0.7
+    );
 
-    // GRACEFUL RELAXATION:
-    // If no candidate was found with strict global isolation, relax to only local exclusion
+    // GRACEFUL RELAXATION (if needed):
     if (!selectedItem) {
       const relaxedCandidates = JEDDAH_PLACES.filter(
         (p) => !localPlanUsedIds.has(p.id)
-      ).map((venue) => ({
-        venue,
-        score: computeEnhancedVenueScore(
+      )
+        .map((venue) => ({
           venue,
-          slotDef.role,
-          prefs,
-          prevCoords,
-          archetype,
-          localPlanUsedIds, // Exclude only places in this specific plan
-          lastCategory,
-          idx
-        ),
-      })).filter((c) => c.score > -1000).sort((a, b) => b.score - a.score);
+          score: computeEnhancedVenueScore(
+            venue,
+            slotDef.role,
+            prefs,
+            prevCoords,
+            archetype,
+            localPlanUsedIds, // Exclude only places in this specific plan
+            lastCategory,
+            idx,
+            directionalVector,
+            visitedDistricts
+          ),
+        }))
+        .filter((c) => c.score > -1000)
+        .sort((a, b) => b.score - a.score);
 
       let relaxedEligible = relaxedCandidates;
       if (isFreePlan) {
-        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR === 0 || c.venue.isFree);
+        relaxedEligible = relaxedCandidates.filter(
+          (c) =>
+            (c.venue.averageSpend ?? c.venue.averageCostSAR) === 0 ||
+            c.venue.isFree ||
+            c.venue.priceLevel === 'free'
+        );
       } else if (isEconPlan) {
-        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR <= 110);
+        relaxedEligible = relaxedCandidates.filter((c) => {
+          const cost = c.venue.averageSpend ?? c.venue.averageCostSAR ?? 0;
+          const pLevel =
+            c.venue.priceLevel ??
+            (cost === 0 ? 'free' : cost <= 50 ? 'budget' : 'moderate');
+          return (
+            pLevel !== 'expensive' &&
+            pLevel !== 'luxury' &&
+            c.venue.priceTier !== '$$$' &&
+            c.venue.priceTier !== '$$$$' &&
+            (cost <= remainingBudgetPerPerson || cost === 0)
+          );
+        });
+        if (relaxedEligible.length === 0) {
+          relaxedEligible = relaxedCandidates.filter(
+            (c) =>
+              (c.venue.averageSpend ?? c.venue.averageCostSAR) === 0 ||
+              c.venue.isFree ||
+              c.venue.priceLevel === 'free'
+          );
+        }
       } else if (isLuxPlan) {
-        relaxedEligible = relaxedCandidates.filter((c) => c.venue.averageCostSAR >= 80);
+        relaxedEligible = relaxedCandidates.filter(
+          (c) => (c.venue.averageSpend ?? c.venue.averageCostSAR) >= 80
+        );
       }
 
-      selectedItem = sampleTopKWeighted(relaxedEligible, 4, 0.8) || relaxedCandidates[0];
+      if (idx > 0) {
+        const relaxedProx = relaxedEligible.filter((c) => {
+          return (
+            calculateHaversineDistanceKm(
+              prevCoords.lat,
+              prevCoords.lng,
+              c.venue.coordinates.lat,
+              c.venue.coordinates.lng
+            ) <= 6.0
+          );
+        });
+        if (relaxedProx.length > 0) {
+          relaxedEligible = relaxedProx;
+        } else {
+          const withDists = relaxedEligible.map((c) => ({
+            candidate: c,
+            dist: calculateHaversineDistanceKm(
+              prevCoords.lat,
+              prevCoords.lng,
+              c.venue.coordinates.lat,
+              c.venue.coordinates.lng
+            ),
+          }));
+          withDists.sort((a, b) => a.dist - b.dist);
+          if (withDists.length > 0) {
+            const minDist = withDists[0].dist;
+            relaxedEligible = withDists
+              .filter((item) => item.dist <= minDist + 2.5)
+              .map((item) => item.candidate);
+          }
+        }
+      }
+
+      selectedItem = sampleTopKWeighted(relaxedEligible, 3, 0.75) || relaxedEligible[0];
     }
 
-    // Absolute fallback: Any unused place
+    // Absolute fallback: Any unused place that strictly respects budget constraints & proximity
     let bestPlace: Place;
     if (selectedItem) {
       bestPlace = selectedItem.venue;
     } else {
-      const fallbackUnused = JEDDAH_PLACES.filter((p) => !localPlanUsedIds.has(p.id));
-      bestPlace = fallbackUnused[0] || JEDDAH_PLACES[idx % JEDDAH_PLACES.length];
+      const budgetFallback = JEDDAH_PLACES.filter((p) => {
+        if (localPlanUsedIds.has(p.id)) return false;
+        const cost = p.averageSpend ?? p.averageCostSAR ?? 0;
+        if (isFreePlan) return cost === 0 || p.isFree;
+        if (isEconPlan) {
+          return (
+            p.priceLevel === 'budget' ||
+            p.priceLevel === 'free' ||
+            cost === 0 ||
+            p.isFree
+          );
+        }
+        return true;
+      });
+
+      budgetFallback.sort((a, b) => {
+        const dA = calculateHaversineDistanceKm(
+          prevCoords.lat,
+          prevCoords.lng,
+          a.coordinates.lat,
+          a.coordinates.lng
+        );
+        const dB = calculateHaversineDistanceKm(
+          prevCoords.lat,
+          prevCoords.lng,
+          b.coordinates.lat,
+          b.coordinates.lng
+        );
+        return dA - dB;
+      });
+
+      bestPlace =
+        budgetFallback[0] ||
+        JEDDAH_PLACES.find((p) => (p.averageSpend ?? p.averageCostSAR) === 0) ||
+        JEDDAH_PLACES[0];
     }
 
     // Mark as used in both local plan and global pool
     localPlanUsedIds.add(bestPlace.id);
     globalUsedIds.add(bestPlace.id);
     lastCategory = bestPlace.category;
+
+    // Deduct from remaining cumulative budget
+    const selectedCost = bestPlace.averageSpend ?? bestPlace.averageCostSAR ?? 0;
+    remainingBudgetPerPerson = Math.max(0, remainingBudgetPerPerson - selectedCost);
+
+    // Update directional vector & district history
+    if (stops.length > 0) {
+      directionalVector = {
+        dLat: bestPlace.coordinates.lat - prevCoords.lat,
+        dLng: bestPlace.coordinates.lng - prevCoords.lng,
+      };
+    }
+    visitedDistricts.push(normalizeDistrictId(bestPlace.district as string));
 
     // Calculate transit leg from previous stop
     const distKm = calculateHaversineDistanceKm(
@@ -831,7 +1091,7 @@ export function generateVariantStops(
               durationMinutes: isFreePlan ? Math.max(5, Math.round(distKm * 12)) : drivingMins,
               transitMode: isFreePlan ? 'walking' : 'car',
               estimatedUberSAR: isFreePlan ? 0 : uberSAR,
-              trafficLevel: isFreePlan ? 'low' : (drivingMins > 16 ? 'moderate' : 'low'),
+              trafficLevel: isFreePlan ? 'low' : drivingMins > 16 ? 'moderate' : 'low',
               routeDescriptionAr: isFreePlan
                 ? `كعابي (المشي) بين المحطات (~${Math.max(5, Math.round(distKm * 12))} دقيقة)`
                 : `المسار المباشر الموصى به (~${drivingMins} دقيقة)`,
@@ -893,7 +1153,7 @@ export function calculateFinancials(
 
   const buffer = Math.round((placesCost + transitCost) * 0.1);
   const totalSAR = placesCost + transitCost + buffer;
-  const totalPerPersonSAR = Math.max(30, Math.round(totalSAR / groupSize));
+  const totalPerPersonSAR = Math.round(totalSAR / Math.max(1, groupSize));
 
   return {
     totalSAR,

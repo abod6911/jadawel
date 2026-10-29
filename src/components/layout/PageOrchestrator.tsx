@@ -35,6 +35,11 @@ const ExploreDirectory = dynamic(
   { ssr: false }
 );
 
+const PlaceDetailModal = dynamic(
+  () => import('@/components/explore/PlaceDetailModal').then((m) => m.PlaceDetailModal),
+  { ssr: false }
+);
+
 const SavedPlansModal = dynamic(
   () => import('@/components/saved/SavedPlansModal').then((m) => m.SavedPlansModal),
   { ssr: false }
@@ -202,6 +207,7 @@ export const PageOrchestrator: React.FC = () => {
         </main>
 
         {/* Global Modals & Notifications */}
+        <PlaceDetailModal />
         <SavedPlansModal />
         <ReportPlaceModal />
         <Toast />

@@ -424,4 +424,25 @@ input, select, textarea {
   border-top: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+/* Mobile Safe Area Viewport Utilities */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+.pt-safe {
+  padding-top: env(safe-area-inset-top, 1rem);
+}
+
+.mb-safe {
+  margin-bottom: env(safe-area-inset-bottom, 1rem);
+}
+
+/* Obsidian Glassmorphism */
+.obsidian-glass {
+  background-color: rgba(6, 9, 15, 0.75);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
 

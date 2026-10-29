@@ -32,6 +32,7 @@ export type PlaceCategory =
   | 'beach_resorts';
 
 export type PriceTier = 'free' | '$' | '$$' | '$$$' | '$$$$';
+export type PlacePriceLevel = 'free' | 'budget' | 'moderate' | 'expensive' | 'luxury';
 export type PlaceTierFilter = 'all' | 'trending' | 'famous' | 'budget' | 'luxury';
 
 export type BestTimeToVisit = 'morning' | 'midday_indoor' | 'sunset_golden_hour' | 'night' | 'anytime';
@@ -102,6 +103,8 @@ export interface Place {
     lng: number;
   };
   priceTier: PriceTier;
+  priceLevel?: PlacePriceLevel;
+  averageSpend?: number;
   averageCostSAR: number;
   isFree?: boolean;
   durationMinutes?: number;
@@ -131,6 +134,9 @@ export interface Place {
   openingHoursAr: string;
   openingHoursEn: string;
   googleMapsUrl: string;
+  officialUrl?: string;
+  instagramUrl?: string;
+  menuUrl?: string;
   insiderTipAr?: string;
   insiderTipEn?: string;
   aiReasoning?: { ar: string; en: string };

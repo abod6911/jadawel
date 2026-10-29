@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import {
   MapPin,
   Clock,
@@ -15,6 +16,8 @@ import {
   Navigation,
   AlertCircle,
   Store,
+  Globe,
+  Share2,
 } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -60,8 +63,12 @@ export const PlaceDetailModal: React.FC = () => {
       maxWidth="3xl"
     >
       <div className="space-y-6 text-start">
-        {/* Hero Photo Banner */}
-        <div className="relative aspect-[16/9] -mx-5 -mt-5 sm:-mx-6 sm:-mt-6 rounded-t-3xl overflow-hidden bg-abyss-950">
+        {/* Hero Photo Banner with Shared Element Transition */}
+        <motion.div
+          layoutId={`venue-banner-${selectedPlace.id}`}
+          transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+          className="relative aspect-[16/9] -mx-5 -mt-5 sm:-mx-6 sm:-mt-6 rounded-t-3xl overflow-hidden bg-abyss-950"
+        >
           <SafeVenueImage
             src={selectedPlace.imageUrl}
             alt={selectedPlace.nameEn}
@@ -112,7 +119,7 @@ export const PlaceDetailModal: React.FC = () => {
               {language === 'ar' ? selectedPlace.nameAr : selectedPlace.nameEn}
             </h2>
           </div>
-        </div>
+        </motion.div>
 
         {/* Quick Meta Grid */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs">
@@ -260,6 +267,43 @@ export const PlaceDetailModal: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* 100% Verified Official Channels & Social Accounts */}
+        {(selectedPlace.officialUrl || selectedPlace.instagramUrl) && (
+          <div className="p-3.5 rounded-2xl bg-neutral-900/60 backdrop-blur-xl border border-white/10 flex flex-wrap items-center justify-between gap-2.5">
+            <span className="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+              <Globe className="w-4 h-4 text-amber-400" />
+              <span>{language === 'ar' ? 'القنوات والروابط الرسمية المعتمدة:' : 'Verified Official Links:'}</span>
+            </span>
+
+            <div className="flex flex-wrap items-center gap-2">
+              {selectedPlace.officialUrl && (
+                <a
+                  href={selectedPlace.officialUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-white hover:text-amber-300 border border-white/15 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <Globe className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{language === 'ar' ? 'الموقع الرسمي' : 'Official Website'}</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+              )}
+
+              {selectedPlace.instagramUrl && (
+                <a
+                  href={selectedPlace.instagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-purple-500/15 to-pink-500/15 hover:from-purple-500/25 hover:to-pink-500/25 text-pink-300 border border-pink-500/30 text-xs font-bold flex items-center gap-1.5 transition-colors"
+                >
+                  <span>Instagram</span>
+                  <ExternalLink className="w-3 h-3 opacity-60" />
+                </a>
+              )}
             </div>
           </div>
         )}

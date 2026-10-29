@@ -208,7 +208,7 @@ export const PlanResultsView: React.FC = () => {
   const uberShare = isFreePlan ? 0 : transitCost > 0 ? transitCost : Math.max(0, totalPerPerson - foodShare - ticketsShare);
 
   return (
-    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-32 lg:pb-12 text-start select-none">
+    <div className="space-y-6 sm:space-y-8 my-2 sm:my-4 pb-32 lg:pb-12 text-start select-none pb-safe">
       {/* 0. Celebration Announcement Banner */}
       <AnimatePresence>
         {showCelebrationBanner && (

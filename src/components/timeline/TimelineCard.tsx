@@ -167,8 +167,16 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
 
         {/* Place Content Grid (16:9 Visual + Details) */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-center">
-          {/* Visual Thumbnail (Aspect 16:9 on mobile, 4:3 on desktop with 1.04 hover zoom) */}
-          <div className="md:col-span-4 relative aspect-[16/10] rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/10 group-hover:border-[var(--border-gold)] transition-colors">
+          {/* Visual Thumbnail with Shared Element layoutId */}
+          <motion.div
+            layoutId={`venue-banner-${place.id}`}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            onClick={() => {
+              soundEngine.playClick();
+              setSelectedPlaceForModal(place);
+            }}
+            className="md:col-span-4 relative aspect-[16/10] rounded-2xl overflow-hidden bg-[#0A0D14] border border-white/10 group-hover:border-[var(--border-gold)] transition-colors cursor-pointer"
+          >
             <SafeVenueImage
               src={place.imageUrl}
               alt={place.nameEn}
@@ -195,7 +203,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 <span>{language === 'ar' ? 'مفتوح للزيارة' : 'Open'}</span>
               </span>
             </div>
-          </div>
+          </motion.div>
 
           {/* Details & Curated Reasoning */}
           <div className="md:col-span-8 space-y-3">
@@ -288,8 +296,11 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
               {/* Transit & Action Buttons */}
               <div className="flex flex-wrap items-center justify-end gap-2 text-xs">
                 {/* Swap Stop */}
-                <button
+                <motion.button
                   type="button"
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   onClick={() => {
                     soundEngine.playClick();
                     openSwapModal(stop);
@@ -298,10 +309,13 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 >
                   <RefreshCw className="w-3 h-3 text-slate-400" />
                   <span>{language === 'ar' ? 'تبديل' : 'Swap'}</span>
-                </button>
+                </motion.button>
 
                 {/* Direct Uber Deep Link */}
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   href={generateUberDeepLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -310,10 +324,13 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                 >
                   <Car className="w-3.5 h-3.5 text-[#F5D07A]" />
                   <span>{language === 'ar' ? 'انطلق مع Uber 🚗' : 'Ride with Uber 🚗'}</span>
-                </a>
+                </motion.a>
 
                 {/* Smart Navigation (Apple/Google) */}
-                <a
+                <motion.a
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.95 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 25 }}
                   href={generateMapsNavigationLink(place.coordinates.lat, place.coordinates.lng, place.nameAr)}
                   target="_blank"
                   rel="noopener noreferrer"
@@ -323,7 +340,7 @@ export const TimelineCard: React.FC<TimelineCardProps> = ({
                   <Navigation className="w-3.5 h-3.5 text-teal-400" />
                   <span>{language === 'ar' ? 'الملاحة 🗺️' : 'Navigate 🗺️'}</span>
                   <ExternalLink className="w-2.5 h-2.5 opacity-60" />
-                </a>
+                </motion.a>
               </div>
             </div>
           </div>

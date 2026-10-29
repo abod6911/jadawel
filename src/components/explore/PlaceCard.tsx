@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import { motion } from 'framer-motion';
 import { Star, MapPin, Clock, Plus, ExternalLink, Heart, Check } from 'lucide-react';
 import { useLanguage } from '@/hooks/useLanguage';
 import { useItineraryStore } from '@/store/useItineraryStore';
@@ -53,8 +54,13 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
         />
       )}
 
-      {/* Image Banner with Safe Venue Image Fallback */}
-      <div className="relative aspect-[16/10] overflow-hidden bg-[#06090F]">
+      {/* Image Banner with Safe Venue Image Fallback and shared element layoutId */}
+      <motion.div
+        layoutId={`venue-banner-${place.id}`}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+        onClick={() => setSelectedPlaceForModal(place)}
+        className="relative aspect-[16/10] overflow-hidden bg-[#06090F] cursor-pointer"
+      >
         <SafeVenueImage
           src={place.imageUrl}
           alt={place.nameEn}
@@ -136,7 +142,7 @@ export const PlaceCard: React.FC<PlaceCardProps> = ({ place }) => {
               : 'Free'}
           </span>
         </div>
-      </div>
+      </motion.div>
 
       {/* Content Area with No Text Clipping */}
       <div className="p-5 space-y-3 flex-1 flex flex-col justify-between text-start">
