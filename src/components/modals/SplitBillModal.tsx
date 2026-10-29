@@ -7,6 +7,7 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
+import { buildPlanShareUrl } from '@/services/shareService';
 
 export const SplitBillModal: React.FC = () => {
   const { language } = useLanguage();
@@ -37,6 +38,7 @@ export const SplitBillModal: React.FC = () => {
   const handleShareWhatsApp = () => {
     soundEngine.playClick();
     const isAr = language === 'ar';
+    const shareUrl = buildPlanShareUrl(currentItinerary, currentItinerary.preferences);
     let msg = '';
     if (isAr) {
       msg = `💳 *حسبة قطة طلعة جدة | جداول (Jadawel)*\n`;
@@ -50,7 +52,7 @@ export const SplitBillModal: React.FC = () => {
       if (includeBuffer) msg += `▫️ احتياطي طوارئ (10%): ~${bufferTotal} ر.س\n`;
       msg += `▫️ المجموع الكلي: *${grandTotal} ر.س*\n\n`;
       msg += `تم الترتيب والحساب تلقائياً عبر منصة جداول 🌊\n`;
-      msg += `🌐 https://jadawel.app`;
+      msg += `🌐 التفاصيل كاملة: ${shareUrl}`;
     } else {
       msg = `💳 *Jadawel Jeddah Outing Split Bill*\n`;
       msg += `📌 *${currentVariant.titleEn}*\n`;
@@ -62,7 +64,8 @@ export const SplitBillModal: React.FC = () => {
       msg += `▫️ Uber Rideshare: ~${transitBase} SAR\n`;
       if (includeBuffer) msg += `▫️ Emergency Buffer (10%): ~${bufferTotal} SAR\n`;
       msg += `▫️ Grand Total: *${grandTotal} SAR*\n\n`;
-      msg += `Calculated with Jadawel 🌊`;
+      msg += `Calculated with Jadawel 🌊\n`;
+      msg += `🌐 Details: ${shareUrl}`;
     }
 
     openWhatsAppShare(msg);

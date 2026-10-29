@@ -7,6 +7,7 @@ import { useItineraryStore } from '@/store/useItineraryStore';
 import { Modal } from '@/components/ui/Modal';
 import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
+import { buildPlanShareUrl } from '@/services/shareService';
 
 export const GroupVotingModal: React.FC = () => {
   const { language } = useLanguage();
@@ -28,6 +29,8 @@ export const GroupVotingModal: React.FC = () => {
 
   const buildPollText = () => {
     const isAr = language === 'ar';
+    const shareUrl = buildPlanShareUrl(currentItinerary, currentItinerary.preferences);
+
     if (isAr) {
       return (
         `🗳️ *تصويت الشلة: وش خطتنا اليوم في جدة؟*\n\n` +
@@ -41,7 +44,7 @@ export const GroupVotingModal: React.FC = () => {
         `   المسار: ${thirdVariant.stops.map((s) => s.place.nameAr).join(' ➔ ')}\n` +
         `   💰 التكلفة: ${isThirdFree ? '0 ر.س' : `~${thirdVariant.financials.totalPerPersonSAR} ر.س`} | ${isThirdFree ? '🚶‍♂️ كعابي (المشي)' : '🚗 وقت المشوار'}: ${thirdVariant.totalTransitMinutes} دقيقة\n\n` +
         `رد برقم الخيار اللي يناسبك! 👇\n` +
-        `🌐 التفاصيل كاملة عبر جداول: https://jadawel.app`
+        `🌐 التفاصيل كاملة عبر جداول: ${shareUrl}`
       );
     }
     return (
@@ -50,7 +53,7 @@ export const GroupVotingModal: React.FC = () => {
       `2️⃣ Option 2: The Balanced Plan ⚖️ (~${balanced.financials.totalPerPersonSAR} SAR)\n` +
       `3️⃣ Option 3: ${isThirdFree ? '100% Free Plan 🆓 (0 SAR)' : 'Luxury VIP 💎 (~' + thirdVariant.financials.totalPerPersonSAR + ' SAR)'}\n\n` +
       `Reply with your favorite option number! 👇\n` +
-      `🌐 Detailed plan: https://jadawel.app`
+      `🌐 Detailed plan: ${shareUrl}`
     );
   };
 

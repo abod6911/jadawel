@@ -9,6 +9,7 @@ import { soundEngine } from '@/utils/audioEngine';
 import { openWhatsAppShare } from '@/utils/whatsappShare';
 import { JadawelLogo } from '@/components/ui/JadawelLogo';
 import { useItineraryStore } from '@/store/useItineraryStore';
+import { buildPlanShareUrl } from '@/services/shareService';
 
 interface StoryPassModalProps {
   isOpen: boolean;
@@ -69,17 +70,19 @@ export const StoryPassModal: React.FC<StoryPassModalProps> = ({
 
   const handleShareStory = () => {
     soundEngine.playClick();
+    const shareUrl = buildPlanShareUrl(itinerary, itinerary.preferences);
     const text = language === 'ar'
-      ? `🌊 *بطاقة طلعتنا في جدة عبر جداول (Jadawel)* 🌊\n📌 *${currentPlan.titleAr}*\n💰 الميزانية: ~${currentPlan.financials.totalPerPersonSAR} ر.س / شخص\n⏱️ وقت المشاوير: ~${currentPlan.totalTransitMinutes} دقيقة\n\n📍 *المحطات:* \n${currentPlan.stops.map((s, i) => `${i + 1}. ${s.place.nameAr} (${s.timeSlot})`).join('\n')}\n\n🌐 افتح الخطة التفاعلية: https://jadawel.app`
-      : `🌊 *Our Jeddah Outing Pass via Jadawel* 🌊\n📌 *${currentPlan.titleEn}*\n💰 Budget: ~${currentPlan.financials.totalPerPersonSAR} SAR / person\n⏱️ Transit: ~${currentPlan.totalTransitMinutes} mins\n\n📍 *Stops:* \n${currentPlan.stops.map((s, i) => `${i + 1}. ${s.place.nameEn} (${s.timeSlot})`).join('\n')}\n\n🌐 View plan: https://jadawel.app`;
+      ? `🌊 *بطاقة طلعتنا في جدة عبر جداول (Jadawel)* 🌊\n📌 *${currentPlan.titleAr}*\n💰 الميزانية: ~${currentPlan.financials.totalPerPersonSAR} ر.س / شخص\n⏱️ وقت المشاوير: ~${currentPlan.totalTransitMinutes} دقيقة\n\n📍 *المحطات:* \n${currentPlan.stops.map((s, i) => `${i + 1}. ${s.place.nameAr} (${s.timeSlot})`).join('\n')}\n\n🌐 افتح الخطة التفاعلية: ${shareUrl}`
+      : `🌊 *Our Jeddah Outing Pass via Jadawel* 🌊\n📌 *${currentPlan.titleEn}*\n💰 Budget: ~${currentPlan.financials.totalPerPersonSAR} SAR / person\n⏱️ Transit: ~${currentPlan.totalTransitMinutes} mins\n\n📍 *Stops:* \n${currentPlan.stops.map((s, i) => `${i + 1}. ${s.place.nameEn} (${s.timeSlot})`).join('\n')}\n\n🌐 View plan: ${shareUrl}`;
 
     openWhatsAppShare(text);
   };
 
   const handleCopyLink = () => {
     soundEngine.playClick();
+    const shareUrl = buildPlanShareUrl(itinerary, itinerary.preferences);
     if (typeof window !== 'undefined' && navigator.clipboard) {
-      navigator.clipboard.writeText(window.location.href);
+      navigator.clipboard.writeText(shareUrl);
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2500);
     }

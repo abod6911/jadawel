@@ -1,4 +1,5 @@
 import { Itinerary } from '@/types';
+import { buildPlanShareUrl } from '@/services/shareService';
 
 /**
  * Safely opens a WhatsApp share link in a new window with noopener and noreferrer.
@@ -11,13 +12,19 @@ export function openWhatsAppShare(text: string): void {
 }
 
 /**
- * Builds a structured, beautifully formatted WhatsApp text payload for the itinerary.
+ * Builds a structured, beautifully formatted WhatsApp text payload for the itinerary,
+ * with real interactive deep-linking for recipients.
  */
-export function buildWhatsAppShareUrl(itinerary: Itinerary, language: 'ar' | 'en' = 'ar'): string {
+export function buildWhatsAppShareUrl(
+  itinerary: Itinerary,
+  language: 'ar' | 'en' = 'ar',
+  customShareUrl?: string
+): string {
   const isAr = language === 'ar';
   const title = isAr ? itinerary.titleAr : itinerary.titleEn;
   const daysCount = itinerary.daysCount || 1;
   const totalCost = itinerary.financials.totalPerPersonSAR;
+  const shareLink = customShareUrl || buildPlanShareUrl(itinerary, itinerary.preferences);
 
   let message = '';
 
@@ -47,7 +54,7 @@ export function buildWhatsAppShareUrl(itinerary: Itinerary, language: 'ar' | 'en
     });
 
     message += `\n🌊 صُمم عبر *جداول* - المخطط الذكي لرحلات جدة 🇸🇦\n`;
-    message += `🌐 افتح الخطة التفاعلية: https://jadawel.app/p/${itinerary.id.slice(-8)}`;
+    message += `🌐 افتح الخطة التفاعلية: ${shareLink}`;
   } else {
     message += `🌊 *Our Jeddah Itinerary via Jadawel* 🌊\n`;
     message += `📌 *${title}*\n`;
@@ -74,7 +81,7 @@ export function buildWhatsAppShareUrl(itinerary: Itinerary, language: 'ar' | 'en
     });
 
     message += `\n🌊 Crafted with *Jadawel* - Smart Jeddah Itinerary Planner 🇸🇦\n`;
-    message += `🌐 View interactive plan: https://jadawel.app/p/${itinerary.id.slice(-8)}`;
+    message += `🌐 View interactive plan: ${shareLink}`;
   }
 
   const encoded = encodeURIComponent(message);
